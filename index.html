@@ -1,7 +1,30 @@
-<h3><a href="https://www.github.com/episphere/blob/master/quest.js" target="_blank">quest.js</a> - questionnaire markup demo</h3>
+<h3><a href="https://www.github.com/episphere/blob/master/quest.js" target="_blank">quest.js</a> - questionnaire markdown demo</h3>
 
 <table>
-    <thead><tr><td>Markup</td><td>quest.js rendering</td></tr></thead>
-    <tbody><tr><td><textarea></textarea></td><td></td></tr></tbody>
+    <thead><tr><td>markdown (<a href="#questionnaries/demo.txt" id="demo">demo</a>)</td><td>quest.js rendering</td></tr></thead>
+    <tbody><tr><td id="markdown" style="vertical-align:top;width:30%"><textarea style="width:100%"></textarea></td><td id="rendering" style="vertical-align:top"></td></tr></tbody>
 </table>
+
 <script src="quest.js"></script>
+
+<script>
+    (function(){
+        console.log('local anonymous');
+        var ta = document.querySelector('textarea')
+        ta.style.height=500
+        ta.style.backgroundColor='#FAE5D3'
+        ta.style.color='navy'
+        ta.onkeyup=(ev)=>{
+            rendering.innerHTML=quest.render(ta.value)
+            ta.style.width="100%"
+        }
+        ta.innerHTML='// type or paste questionnaire markdown\n'
+        demo.onclick= async ()=>{
+            ta.value = await (await fetch('questionnaries/demo.txt')).text()
+            ta.onkeyup()
+        }
+
+        //debugger
+    })()
+
+</script>
