@@ -1,0 +1,51 @@
+I. DEMOGRAPHIC DATA
+
+1. Country _________________________
+
+2. City _________________________
+
+3. Site _________________________
+
+4. Subject ID _________________________
+
+5. Year of birth |__|__|__|__| 
+
+6. Country of Birth _________________________
+
+7. Gender at Birth (Biological sex) |_| Female |_| Male |_| Other, specify ________________
+
+8. Ethnicity |_| Hispanic or Latino |_| Not Hispanic or Latino
+
+9. Race 
+|_| White 
+|_| Black 
+|_| Amerindian 
+|_| Indigenous 
+|_| Mestizo 
+|_| Chinese 
+|_| Japanese 
+|_| Other, specify ________________ 
+|_| Don’t know
+
+10. How much did you weigh two years ago? |__|__|__| Kgs
+
+11. How tall are you with your shoes off? |__| m |__|__| cm
+
+12. What is the highest level of school that you have completed? 
+|_| Never attended school
+|_| Elementary/middle school
+|_| Some high school, no diploma
+|_| High school graduate
+|_| Some college, no degree
+|_| College graduate
+|_| Technical/vocational
+|_| Advanced degree (Master’s, Doctorate)
+|_| Other, specify ________________
+
+13. Which of the below best describes your current employment status?
+|_| Self-employed
+|_| Employed
+|_| Unemployed
+|_| Unable to work (disabled)
+|_| Retired
+|_| Other, specify ________________
