@@ -8,7 +8,7 @@
 <script src="quest.js"></script>
 
 <script>
-    (function(){
+    (async function(){
         console.log('local anonymous');
         var ta = document.querySelector('textarea')
         ta.style.height=500
@@ -19,12 +19,13 @@
             ta.style.width="100%"
         }
         ta.innerHTML='// type or paste questionnaire markdown\n'
-        demo.onclick= async ()=>{
-            ta.value = await (await fetch('questionnaries/demo.txt')).text()
+        
+        var q=(location.search+location.hash).replace(/[\#\?]/g,'')
+        if(q.length>3){
+            ta.value = await (await fetch(q.split('&')[0])).text() // getting the first of markup&css
             ta.onkeyup()
         }
 
-        //debugger
     })()
 
 </script>
