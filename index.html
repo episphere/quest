@@ -12,11 +12,11 @@
         console.log('local anonymous');
         var ta = document.querySelector('textarea')
         ta.style.height=500
+        ta.style.position='fixed'
         ta.style.backgroundColor='#FAE5D3'
         ta.style.color='navy'
         ta.onkeyup=(ev)=>{
             rendering.innerHTML=quest.render(ta.value)
-            ta.style.width="100%"
         }
         ta.innerHTML='// type or paste questionnaire markdown\n'
         
@@ -25,7 +25,7 @@
             ta.value = await (await fetch(q.split('&')[0])).text() // getting the first of markup&css
             ta.onkeyup()
         }
-
+        ta.style.width=parseInt(ta.parentElement.style.width.slice(0,-1))-5+'%'
     })()
 
 </script>
