@@ -1,8 +1,8 @@
-<h3><a href="https://github.com/episphere/quest" target="_blank">quest.js</a> - questionnaire markdown demo</h3>
+<h3><a href="https://github.com/episphere/quest" target="_blank">quest.js</a> - questionnaire markup demo</h3>
 
 <table>
-    <thead><tr><td>markdown (<a href="#questionnaries/demo.txt" id="demo">demo</a>)</td><td>quest.js rendering</td></tr></thead>
-    <tbody><tr><td id="markdown" style="vertical-align:top;width:30%"><textarea style="width:100%"></textarea></td><td id="rendering" style="vertical-align:top"></td></tr></tbody>
+    <thead><tr><td>markup (<a href="?questionnaries/demo.txt" id="demo">demo</a>)</td><td>quest.js rendering</td></tr></thead>
+    <tbody><tr><td id="markup" style="vertical-align:top;width:30%"><textarea style="width:100%"></textarea></td><td id="rendering" style="vertical-align:top"></td></tr></tbody>
 </table>
 
 <script src="quest.js"></script>
@@ -16,9 +16,9 @@
         ta.style.backgroundColor='#FAE5D3'
         ta.style.color='navy'
         ta.onkeyup=(ev)=>{
-            rendering.innerHTML=quest.render(ta.value)
+            rendering.innerHTML=quest.render(ta.value) // <-- this is where quest.js is engaged
         }
-        ta.innerHTML='// type or paste questionnaire markdown\n'
+        ta.innerHTML='// type or paste questionnaire markup\n'
         
         var q=(location.search+location.hash).replace(/[\#\?]/g,'')
         if(q.length>3){
