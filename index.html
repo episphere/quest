@@ -2,7 +2,7 @@
 
 <table>
     <thead><tr><td>markup (<a href="?questionnaries/demo.txt" id="demo">demo</a>)</td><td>quest.js rendering</td></tr></thead>
-    <tbody><tr><td id="markup" style="vertical-align:top;width:30%"><textarea style="width:100%"></textarea></td><td id="rendering" style="vertical-align:top"></td></tr></tbody>
+    <tbody><tr><td id="markup" style="vertical-align:top"><textarea></textarea></td><td id="rendering" style="vertical-align:top"></td></tr></tbody>
 </table>
 
 <script src="quest.js"></script>
@@ -12,7 +12,7 @@
         console.log('local anonymous');
         var ta = document.querySelector('textarea')
         ta.style.height=500
-        ta.style.position='fixed'
+        //ta.style.position='fixed'
         ta.style.backgroundColor='#FAE5D3'
         ta.style.color='navy'
         ta.onkeyup=(ev)=>{
