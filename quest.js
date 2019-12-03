@@ -31,7 +31,7 @@ quest.render = txt => {
 
   // Check Box []
   html = html.replace(/\[\]/g, '<input type="checkbox">');
-  html = html.replace(/[\n\r]/g, '<input type="checkbox">');
+  html = html.replace(/\*/g, '<input type="checkbox">');
 
   // Integer |_|
   html = html.replace(/\|_\|/g, "<input type='number'>");
