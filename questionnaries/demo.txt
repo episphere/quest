@@ -4,9 +4,10 @@ Background Information
 B0. Demographics
 |__| Name
 |__| Address
+|(###)-###-####| Phone
 
 B1. How old are you today?
-|_|_| Age
+|_| Age
 
 B2. What is the highest level of school that you have completed?
 [] Grade school (grades 1-8)
