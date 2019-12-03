@@ -30,19 +30,21 @@ quest.render = txt => {
   // ---- html elements ---- //
 
   // Check Box []
+  html = html.replace(/\*/g, "[]");
   html = html.replace(/\[\]/g, '<input type="checkbox">');
-  html = html.replace(/\*/g, '<input type="checkbox">');
 
   // Integer |_|
   html = html.replace(/\|_\|/g, "<input type='number'>");
+
+  // Age |__|__|
+  html = html.replace(/\|__|__\|/g, "<input size='1' maxlength='1'>");
 
   // Regular input field |__|
   html = html.replace(/\|__\|/g, "<input>");
 
   // Text Area |___|
+  html = html.replace(/\[text box\]/g, "|___|");
   html = html.replace(/\|___\|/g, "<textarea></textarea>");
-
-  html = html.replace(/\[text box\]/g, "<textarea></textarea>");
 
   // Phone Number |(###)-###-####|
   html = html.replace(
