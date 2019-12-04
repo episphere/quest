@@ -33,10 +33,15 @@ quest.render = txt => {
     html = html.replace(/\*/g, "[]");
     html = html.replace(/\[\]/g, '<input type="checkbox">');
 
+    // Year |__|__|__|__|
+    html = html.replace(/\|__\|__\|__\|__\|/g, "|_|");
+
     // Age |__|__|
-    html = html.replace(/\|__\|/g, "|_|");
+    html = html.replace(/\|__\|__\|/g, "|_|");
+
     // Integer |_|
     html = html.replace(/\|_\|/g, "<input type='number'>");
+
 
     // Regular input field |__|
     html = html.replace(/\|__\|/g, "<input>");
