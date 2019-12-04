@@ -15,7 +15,6 @@ Background Information [SECTION 1]
    * Yes 🡪 GO TO MARITAL
    * No 
 
-
 A1b.  [AGE] How old are you today? 
 Age: |__|__|
 
