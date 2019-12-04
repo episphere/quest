@@ -30,7 +30,7 @@ quest.render = txt => {
     // ---- html elements ---- //
 
     // Check Box []
-    html = html.replace(/\*/g, "<br>[]");
+    html = html.replace(/\*/g, "[]");
     html = html.replace(/\[\]/g, '<input type="checkbox">');
 
     // Age |__|__|
