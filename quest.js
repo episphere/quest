@@ -19,11 +19,11 @@ quest.render = txt => {
             //html += `<h3>${qq[0]} <span style="font-size:small;cursor:hand;color:blue">[hide]</span></h3>`
             html += `<h3>${qq[0]}</h3>`;
         } else if (qq.length > 1) {
-            html += `<p><b>${qq[0]}</b><br>`;
+            html += `<div><b>${qq[0]}</b><br>`;
             qq.slice(1).forEach(q => {
                 html += `${q}<br>`;
             });
-            html += "</p>";
+            html += "</div>";
         }
     });
 
@@ -32,6 +32,8 @@ quest.render = txt => {
     // Check Box []
     html = html.replace(/\*/g, "[]");
     html = html.replace(/\[\]/g, '<input type="checkbox">');
+
+    html = html.replace(/... GO TO/g, " ->");
 
     // Year |__|__|__|__|
     html = html.replace(/\|__\|__\|__\|__\|/g, "|_|");
