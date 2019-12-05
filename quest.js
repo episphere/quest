@@ -29,11 +29,13 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
+    html = html.replace(/... GO TO/g, " ->");
+    html = html.replace(/\* NO RESPONSE/g, "<br> NO RESPONSE")
+
     // Check Box []
     html = html.replace(/\*/g, "[]");
     html = html.replace(/\[\]/g, '<input type="checkbox">');
 
-    html = html.replace(/... GO TO/g, " ->");
 
     // Year |__|__|__|__|
     html = html.replace(/\|__\|__\|__\|__\|/g, "|_|");
