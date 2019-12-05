@@ -29,12 +29,16 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
-    html = html.replace(/(\[[A-Z\s0-9]+])/g, (word) => {
-        console.log(word)
-        let currentId = word
+    while (html.search(/\[[A-Z\s0-9]+]/) != -1) {
 
-        return ""
-    });
+        let word = html.match(/\[[A-Z\s0-9]+]/)[0];
+
+        html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "'>");
+
+        html = html.replace(word, "")
+
+    }
+
     html = html.replace(/... GO TO /g, " ->");
     html = html.replace(/\* NO RESPONSE/g, "<br> NO RESPONSE")
 
