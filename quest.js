@@ -21,7 +21,7 @@ quest.render = txt => {
         } else if (qq.length > 1) {
             html += `<div><b>${qq[0]}</b><br>`;
             qq.slice(1).forEach(q => {
-                html += `${q}<br>`;
+                html += `<p>${q}</p>`;
             });
             html += "</div>";
         }
@@ -29,7 +29,13 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
-    html = html.replace(/... GO TO/g, " ->");
+    html = html.replace(/(\[[A-Z\s0-9]+])/g, (word) => {
+        console.log(word)
+        let currentId = word
+
+        return ""
+    });
+    html = html.replace(/... GO TO /g, " ->");
     html = html.replace(/\* NO RESPONSE/g, "<br> NO RESPONSE")
 
     // Check Box []
