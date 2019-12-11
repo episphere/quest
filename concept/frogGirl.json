@@ -5,7 +5,7 @@
    "@prefix foaf":"http://xmlns.com/foaf/spec#",
    "uri": "https://episphere.github.io/quest/concept/frogGirl.json",
    "id": "frog123",
-   "name":"Nicole Gerlanc"
+   "name":"Nicole Gerlanc",
    "edit_at":"https://github.com/episphere/quest/edit/master/concept/frogGirl.json",
    "vers": "github uri could take care of this ...",
    "rdf:type":"foaf:term_Person",
