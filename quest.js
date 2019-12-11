@@ -16,7 +16,7 @@ quest.render = txt => {
     txt = txt.split(/\n\n/).map(qq => {
         qq = qq.split("\n");
         if (qq.length > 1) {
-            html += `<div>${qq[0]}<br>`;
+            html += `<div><b>${qq[0]}</b><br>`;
             qq.slice(1).forEach(q => {
                 html += `<p>${q}</p>`;
             });
@@ -40,12 +40,15 @@ quest.render = txt => {
 
     html = html.replace(/... GO TO /g, " -> ");
     html = html.replace(/\* NO RESPONSE | NO RESPONSE/g, "")
-        // html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
+    html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
     const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
-    for (i = 0; i < skips.length; i++) {
-        let word = skips[i];
-        html = html.replace(word, "<skipTo id='" + word.substr(4) + "'>");
-    }
+
+    // for (i = 0; i < skips.length; i++) {
+    //     let word = skips[i];
+    //     html = html.replace(word, "<skip id='" + word.substr(4) + "'>");
+    // }
+
+
     // console.log(html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g))
 
     // console.log(html.search(/\* NO RESPONSE | -> [A-Z0-9]+/g))
