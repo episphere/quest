@@ -39,9 +39,9 @@ quest.render = txt => {
     html = html.replace(/\[DISPLAY \w*\]/g, "")
 
     html = html.replace(/... GO TO /g, " -> ");
-    html = html.replace(/\* NO RESPONSE | NO RESPONSE/g, "")
-        // html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
-        // const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
+    html = html.replace(/\* NO RESPONSE | NO RESPONSE/g, "");
+    // html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
+    // const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
 
     // for (i = 0; i < skips.length; i++) {
     //     let word = skips[i];
