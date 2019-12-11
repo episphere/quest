@@ -1,0 +1,10 @@
+{
+   "url": "episphere.github.io/quest/frogGirl.json",
+   "id": "frog123",
+   "edit_at":"https://github.com/episphere/quest/edit/master/concept/connectFrog.json",
+   "vers": "remember github could help tracking this",
+   "description":"who is Dr. Frog Girl? Should we be using json-ld?",
+   "notes": "note how governance is managed at the dereferencing level, not UI",
+   "type":"input",
+   "fun":"(function(x){prompt('who is Dr Frog Girl?')})"
+}
