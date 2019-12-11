@@ -1,8 +1,14 @@
 {
-   "url": "episphere.github.io/quest/frogGirl.json",
+   "@context": "https://dceg.cancer.gov/research/who-we-study/cohorts/connect",
+   "@id": "https://github.com/FrogGirl1123",
+   "@prefix rdf":"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+   "@prefix foaf":"http://xmlns.com/foaf/spec#",
+   "uri": "https://episphere.github.io/quest/concept/frogGirl.json",
    "id": "frog123",
-   "edit_at":"https://github.com/episphere/quest/edit/master/concept/connectFrog.json",
-   "vers": "remember github could help tracking this",
+   "name":"Nicole Gerlanc"
+   "edit_at":"https://github.com/episphere/quest/edit/master/concept/frogGirl.json",
+   "vers": "github uri could take care of this ...",
+   "rdf:type":"foaf:term_Person",
    "description":"who is Dr. Frog Girl? Should we be using json-ld?",
    "notes": "note how governance is managed at the dereferencing level, not UI",
    "type":"input",
