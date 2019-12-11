@@ -44,7 +44,7 @@ quest.render = txt => {
     const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
     for (i = 0; i < skips.length; i++) {
         let word = skips[i];
-        html = html.replace(word, "<skip id='" + word.substr(4) + "'>");
+        html = html.replace(word, "<skipTo id='" + word.substr(4) + "'>");
     }
     // console.log(html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g))
 
