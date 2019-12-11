@@ -15,13 +15,10 @@ quest.render = txt => {
     // separate  questions
     txt = txt.split(/\n\n/).map(qq => {
         qq = qq.split("\n");
-        if (qq.length == 1) {
-            //html += `<h3>${qq[0]} <span style="font-size:small;cursor:hand;color:blue">[hide]</span></h3>`
-            html += `<h3>${qq[0]}</h3>`;
-        } else if (qq.length > 1) {
+        if (qq.length > 1) {
             html += `<div><b>${qq[0]}</b><br>`;
             qq.slice(1).forEach(q => {
-                html += `${q}<br>`;
+                html += `<p>${q}</p>`;
             });
             html += "</div>";
         }
@@ -29,8 +26,42 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
-    html = html.replace(/... GO TO/g, " ->");
-    html = html.replace(/\* NO RESPONSE/g, "<br> NO RESPONSE")
+    while (html.search(/\[[A-Z\s0-9]+]/) != -1) {
+
+        let word = html.match(/\[[A-Z\s0-9]+]/)[0];
+
+        html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "'>");
+
+        html = html.replace(word, "")
+
+    }
+
+    html = html.replace(/\[DISPLAY \w*\]/g, "")
+
+    html = html.replace(/... GO TO /g, " -> ");
+    html = html.replace(/\* NO RESPONSE | NO RESPONSE/g, "")
+        // html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
+    const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
+    for (i = 0; i < skips.length; i++) {
+        let word = skips[i];
+        html = html.replace(word, "<skip id='" + word.substr(4) + "'>");
+    }
+    // console.log(html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g))
+
+    // console.log(html.search(/\* NO RESPONSE | -> [A-Z0-9]+/g))
+    // console.log(html.search(/\* NO RESPONSE | -> [A-Z0-9]+/g))
+    // while (html.search(/\* NO RESPONSE | -> [A-Z0-9]+/g) != -1) {
+
+    //     let word = html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g)[0];
+    //     console.log(word)
+
+    //     // html = html.replace(word, "<skip id='" + word + "'>");
+
+    //     // html = html.replace(word, "")
+
+    // }
+
+    // let word = html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g)[0];
 
     // Check Box []
     html = html.replace(/\*/g, "[]");
