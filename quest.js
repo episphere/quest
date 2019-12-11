@@ -26,22 +26,22 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
-    while (html.search(/\[[A-Z\s0-9]+]/) != -1) {
+    // while (html.search(/\[[A-Z\s0-9]+]/) != -1) {
 
-        let word = html.match(/\[[A-Z\s0-9]+]/)[0];
+    //     let word = html.match(/\[[A-Z\s0-9]+]/)[0];
 
-        html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "'>");
+    //     html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "'>");
 
-        html = html.replace(word, "")
+    //     html = html.replace(word, "")
 
-    }
+    // }
 
     html = html.replace(/\[DISPLAY \w*\]/g, "")
 
     html = html.replace(/... GO TO /g, " -> ");
     html = html.replace(/\* NO RESPONSE | NO RESPONSE/g, "")
-    html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
-    const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
+        // html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
+        // const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
 
     // for (i = 0; i < skips.length; i++) {
     //     let word = skips[i];
