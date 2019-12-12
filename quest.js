@@ -44,9 +44,14 @@ quest.render = txt => {
     // Create skip tags
     const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
 
-    for (i = 0; i < skips.length; i++) {
-        let word = skips[i];
-        html = html.replace(word, "<skip id='" + word.substr(4) + "'>");
+    if (skips === null) {
+        null
+    } else {
+
+        for (i = 0; i < skips.length; i++) {
+            let word = skips[i];
+            html = html.replace(word, "<skip id='" + word.substr(4) + "'>");
+        }
     }
 
     // Check Box []
