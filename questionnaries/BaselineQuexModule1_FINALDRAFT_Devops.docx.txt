@@ -1,15 +1,15 @@
-﻿   Baseline Questionnaire Module 1_FINAL DRAFT                
+﻿  Baseline Questionnaire Module 1_FINAL DRAFT                
 
-
-   [INTROM1] Welcome, [insert participant name]! This survey will ask you about a wide range of topics, such as your medical conditions, water usage, sleep habits, and more. Our goal is to gather information about your life and behaviors. You can answer all of the questions now, or you can answer some questions now and answer the rest later. Your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.                                                                                                                                                                                                                                       
+[INTROM1] Welcome, [insert participant name]! This survey will ask you about a wide range of topics, such as your medical conditions, water usage, sleep habits, and more. Our goal is to gather information about your life and behaviors. You can answer all of the questions now, or you can answer some questions now and answer the rest later. Your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.                                                                                                                                                                                                                                       
    At a few points in this survey, you may see a word or phrase that appears as a button. Clicking the button will show more information that might help you answer the question. This sentence shows an example. [Text that appears when “example” is selected: This is an example of how additional information will be displayed.]                                                                                                                                                                                                                                                 
-  [INTROBAC] Module 1
+  
+[INTROBAC] Module 1
+
 First, we are interested in getting some general information about you, your medical history, and your family history. This information will help us better understand your current health status. It will also help us understand how your health may be different from the health of other people.
 Please remember that anything you tell us is completely confidential.
+
 [SECTION 1] Background Information 
 Please tell us about yourself.
-
-
 
    1.	[AGECOR] Based on the information you provided when you enrolled in this study, you are ${age} years old today. Is that correct?
 (1) Yes -> MARITAL
@@ -18,7 +18,6 @@ Please tell us about yourself.
 
    A1b.  [AGE] How old are you today? 
    Age: |__|__|
-
 
    2.  [MARITAL] Are you now married, widowed, divorced, separated, never married, or living with a partner?
 () Never Married
@@ -41,8 +40,8 @@ Please tell us about yourself.
 [98] Prefer not to answer
 
    [DISPLAY RACEETH2 IF 01 SELECTED AT RACEETH]
-   
-   4. Which of these categories describe you best? Select all that apply.
+
+4. Which of these categories describe you best? Select all that apply.
 [] American Indian
 [] Alaska Native
 [] Central or South American Indian
@@ -52,15 +51,12 @@ Please tell us about yourself.
 
    [DISPLAY RACEETH2B IF 01, 02, OR 03 SELECTED AT RACEETH2]
    5. [RACEETH2B] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik) Inupiat Traditional Government, Nome Eskimo Community, etc.
-
-
-
-
-
+     [text box]
       * I’m not sure
       * NO RESPONSE 🡪  GO TO RACEETH3
    [DISPLAY RACEETH3 IF 02 SELECTED AT RACEETH]
-   6. [RACEETH3] [Previously RACEETH2] Which of these categories describe you best? Select all that apply.
+
+6. [RACEETH3] [Previously RACEETH2] Which of these categories describe you best? Select all that apply.
       * Asian Indian
       * Cambodian
       * Chinese
@@ -74,7 +70,8 @@ Please tell us about yourself.
       * Prefer not to answer
       * NO RESPONSE 🡪  GO TO RACEETH4
    [DISPLAY RACEETH4 IF 03 SELECTED AT RACEETH]
-   7. [RACEETH4] Which of these categories describe you best? Select all that apply.
+
+7. [RACEETH4] Which of these categories describe you best? Select all that apply.
       * African American
       * Barbadian
       * Caribbean
@@ -90,7 +87,8 @@ Please tell us about yourself.
       * Prefer not to answer
       * NO RESPONSE 🡪  GO TO RACEETH5
    [DISPLAY RACEETH5 IF 04 SELECTED AT RACEETH]
-   8.  [RACEETH5] [Previously RACEETH3] Which of these categories describe you best? Select all that apply.
+
+8.  [RACEETH5] [Previously RACEETH3] Which of these categories describe you best? Select all that apply.
       * Colombian
       * Cuban
       * Dominican
@@ -119,7 +117,8 @@ Please tell us about yourself.
       * Prefer not to answer
       * NO RESPONSE🡪  GO TO RACEETH7
    [DISPLAY RACEETH7 IF 06 SELECTED AT RACEETH]
-   10. [RACEETH7] [Previously RACEETH4]  Which of these categories describe you best? Select all that apply.
+
+10. [RACEETH7] [Previously RACEETH4]  Which of these categories describe you best? Select all that apply.
       * Chamorro
       * Chuukese
       * Fijian
@@ -133,6 +132,7 @@ Please tell us about yourself.
       * Prefer not to answer
       * NO RESPONSE 🡪  GO TO RACEETH8
    [DISPLAY RACEETH8 IF 07 SELECTED AT RACEETH]
+   
    11. [RACEETH8] Which of these categories describe you best? Select all that apply.
       * Dutch
       * English
