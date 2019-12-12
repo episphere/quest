@@ -26,49 +26,35 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
-    // while (html.search(/\[[A-Z\s0-9]+]/) != -1) {
+    while (html.search(/\[[A-Z\s0-9]+]/) != -1) {
 
-    //     let word = html.match(/\[[A-Z\s0-9]+]/)[0];
+        let word = html.match(/\[[A-Z\s0-9]+]/)[0];
 
-    //     html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "'>");
+        html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "' class='question'>");
 
-    //     html = html.replace(word, "")
+        html = html.replace(word, "")
 
-    // }
+    }
 
     html = html.replace(/\[DISPLAY \w*\]/g, "")
 
     html = html.replace(/... GO TO /g, " -> ");
     html = html.replace(/\* NO RESPONSE | NO RESPONSE/g, "");
-    // html = html.replace(/\* NO RESPONSE | -> [A-Z0-9]+/g, "<skip>");
-    // const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
 
-    // for (i = 0; i < skips.length; i++) {
-    //     let word = skips[i];
-    //     html = html.replace(word, "<skip id='" + word.substr(4) + "'>");
-    // }
+    // Create skip tags
+    const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+ | -> [A-Z0-9]+/g);
 
-
-    // console.log(html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g))
-
-    // console.log(html.search(/\* NO RESPONSE | -> [A-Z0-9]+/g))
-    // console.log(html.search(/\* NO RESPONSE | -> [A-Z0-9]+/g))
-    // while (html.search(/\* NO RESPONSE | -> [A-Z0-9]+/g) != -1) {
-
-    //     let word = html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g)[0];
-    //     console.log(word)
-
-    //     // html = html.replace(word, "<skip id='" + word + "'>");
-
-    //     // html = html.replace(word, "")
-
-    // }
-
-    // let word = html.match(/\* NO RESPONSE | -> [A-Z0-9]+/g)[0];
+    for (i = 0; i < skips.length; i++) {
+        let word = skips[i];
+        html = html.replace(word, "<skip id='" + word.substr(4) + "'>");
+    }
 
     // Check Box []
     html = html.replace(/\*/g, "[]");
     html = html.replace(/\[\]/g, '<input type="checkbox">');
+
+    // Radio Button ()
+    html = html.replace(/\(\)/g, '<input type="radio">');
 
 
     // Year |__|__|__|__|
