@@ -26,9 +26,9 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
-    while (html.search(/\[[A-Z\s0-9]+]/) != -1) {
+    while (html.search(/\[[A-Z0-9]+]/) != -1) {
 
-        let word = html.match(/\[[A-Z\s0-9]+]/)[0];
+        let word = html.match(/\[[A-Z0-9]+]/)[0];
 
         html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "' class='question'>");
 
@@ -94,7 +94,7 @@ quest.render = txt => {
     return html + "<hr>"; //+txt0
 };
 
-quest.tout = function(fun, tt = 1000) {
+quest.tout = function(fun, tt = 500) {
     if (quest.tout.t) {
         clearTimeout(quest.tout.t)
     }
