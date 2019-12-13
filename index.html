@@ -1,68 +1,12 @@
-<h3>
-    <a href="https://github.com/episphere/quest" target="_blank">quest.js</a> - questionnaire markup demo
-</h3>
-
-<div id=legend style="border: 1px solid black">
-    <h3>Legend</h3>
-    <p>Check Box = * or []</p>
-    <p>Age = |__|__|</p>
-    <p>Year = |__|__|__|__|</p>
-    <p>Input Box = |__| (two underlines)</p>
-    <p>Text Box = [text box] or |___| (three underlines)</p>
-    <p>Phone Number = |(###)-###-####|</p>
-</div>
-
-<table>
-    <thead>
-        <tr>
-            <td>
-                <h3>markup (<a href="?questionnaries/demo.txt" id="demo">demo</a>)</h3>
-            </td>
-            <td style="color: navy;">
-                <h3>quest.js rendering</h3>
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td id="markup" style="vertical-align:top"><textarea></textarea></td>
-            <td id="rendering" style="vertical-align:top"></td>
-        </tr>
-    </tbody>
-</table>
-
-<script src="quest.js"></script>
-
-<script>
-    (async function() {
-        console.log("local anonymous");
-        var ta = document.querySelector("textarea");
-        ta.style.height = 600;
-        ta.style.width = 500;
-        //ta.style.position='fixed'
-        ta.style.backgroundColor = "#FAE5D3";
-        ta.style.color = "navy";
-        ta.onkeyup = ev => {
-            rendering.innerHTML = quest.render(ta.value); // <-- this is where quest.js is engaged
-        };
-        ta.innerHTML = "// type or paste questionnaire markup\n";
-
-        // let table = document.querySelector("table");
-        // let save = document.createElement("BUTTON");
-        // save.innerHTML = "Save";
-        // save.onclick = myFunction();
-        // table.appendChild(save);
-
-        // function myFunction() {
-        //     console.log("attempting to save");
-        // }
-
-        var q = (location.search + location.hash).replace(/[\#\?]/g, "");
-        if (q.length > 3) {
-            ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
-            ta.onkeyup();
-        }
-        ta.style.width =
-            parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
-    })();
-</script>
+console.log("quest.js loaded"); quest = function() { //ini }; quest.render = txt => { var html = ""; var txt0 = txt; // remove blocked out txt = txt.replace(/\/\*[\s\S]+\*\//g, ""); txt = txt.replace(/\/\/.*\n/g, ""); // separate questions txt = txt.split(/\n\n/).map(qq
+=> { qq = qq.split("\n"); if (qq.length > 1) { html += `
+<div><b>${qq[0]}</b><br>`; qq.slice(1).forEach(q => { html += `
+    <p>${q}</p>`; }); html += "</div>"; } }); // ---- html elements ---- // while (html.search(/\[[A-Z\s0-9]+]/) != -1) { let word = html.match(/\[[A-Z\s0-9]+]/)[0]; html = html.replace("
+<div>", "
+    <div id='" + word.substr(1, word.length - 2) + "' class='question'>"); html = html.replace(word, "") } html = html.replace(/\[DISPLAY \w*\]/g, "") html = html.replace(/... GO TO /g, " -> "); html = html.replace(/\* NO RESPONSE | NO RESPONSE/g, ""); // Create skip tags const skips = html.match(/\* NO RESPONSE -> [A-Z0-9]+
+        | -> [A-Z0-9]+/g); if (skips === null) { null } else { for (i = 0; i
+        < skips.length; i++) { let word=s kips[i]; html=h tml.replace(word, "<skip id='" + word.substr(4) + "'>"); } } // Check Box [] html=h tml.replace(/\*/g, "[]"); html=h tml.replace(/\[\]/g,
+            '<input type="checkbox">'); // Radio Button () html=h tml.replace(/\(\)/g, '<input type="radio">'); // Year |__|__|__|__| html=h tml.replace(/\|__\|__\|__\|__\|/g, "|_|"); // Age |__|__| html=h tml.replace(/\|__\|__\|/g, "|_|"); // Integer |_| html=h tml.replace(/\|_\|/g,
+            "<input type='number'>"); // Regular input field |__| html=h tml.replace(/\|__\|/g, "<input>"); // Text Area |___| html=h tml.replace(/\[text box\]/g, "|___|"); html=h tml.replace(/\|___\|/g, "<textarea></textarea>"); // Phone Number |(###)-###-####| html=h tml.replace(
+        /\|\(\###\)\-###-####\|/g, "<input type='tel' id='phone' name='phone' pattern='(((d{3}) ?)|(d{3}-))?d{3}-d{4}'>" ); // Social Security |###-##-####| html=h tml.replace( /\|###-##-####\|/g,
+            "<input type='tel' id='social' name='social' pattern='^(?!219099999|078051120)(?!666|000|9d{2})d{3}(?!00)d{2}(?!0{4})d{4}$'>" ); return html + "<hr>"; //+txt0 }; quest.tout=f unction(fun, tt=1 000) { if (quest.tout.t) { clearTimeout(quest.tout.t) } quest.tout.t=s etTimeout(fun, tt) } class Questionnaire {}

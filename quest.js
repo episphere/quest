@@ -94,4 +94,11 @@ quest.render = txt => {
     return html + "<hr>"; //+txt0
 };
 
+quest.tout = function(fun, tt = 1000) {
+    if (quest.tout.t) {
+        clearTimeout(quest.tout.t)
+    }
+    quest.tout.t = setTimeout(fun, tt)
+}
+
 class Questionnaire {}
