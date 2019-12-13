@@ -26,14 +26,26 @@ quest.render = txt => {
 
     // ---- html elements ---- //
 
-    while (html.search(/\[[A-Z0-9]+]/) != -1) {
+    while (html.search(/\[[A-Z][A-Z0-9]+]/) != -1) {
 
-        let word = html.match(/\[[A-Z0-9]+]/)[0];
+        let word = html.match(/\[[A-Z][A-Z0-9]+]/)[0];
 
         html = html.replace("<div>", "<div id='" + word.substr(1, word.length - 2) + "' class='question'>");
 
         html = html.replace(word, "")
 
+    }
+
+    while (html.search(/\[[a-z0-9][a-zA-Z0-9_]*]/) != -1) {
+        let term = html.match(/\[[a-z0-9][a-zA-Z0-9_]*]/)[0];
+        html = html.replace(term, "<input type='checkbox' value='" + term.substr(1, term.length - 2) + "'>")
+        html = html.replace(term, "")
+    }
+
+    while (html.search(/\([a-z0-9][a-zA-Z0-9]*\)/) != -1) {
+        let term = html.match(/\([a-z0-9][a-zA-Z0-9]*\)/)[0];
+        html = html.replace(term, "<input type='radio' value='" + term.substr(1, term.length - 2) + "'>")
+        html = html.replace(term, "")
     }
 
     html = html.replace(/\[DISPLAY \w*\]/g, "")
