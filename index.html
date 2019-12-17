@@ -45,7 +45,8 @@
     </tbody>
 </table>
 
-<script src="quest.js"></script>
+<script src="replace2.js"></script>
+<script src="questionnaire.js"></script>
 
 <script>
     (async function() {
@@ -58,11 +59,11 @@
         ta.style.color = "navy";
 
         ta.onkeyup = ev => {
-            quest.tout(() => {
-                rendering.innerHTML = quest.render(ta.value) // <-- this is where quest.js is engaged
-            })
 
-        };
+            rendering.innerHTML = transform(ta.value) // <-- this is where quest.js is engaged
+
+
+        }
 
         ta.innerHTML = "// type or paste questionnaire markup\n";
 
