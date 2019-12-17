@@ -60,13 +60,13 @@
 
         ta.onkeyup = ev => {
 
-            rendering.innerHTML = transform(ta.value) // <-- this is where quest.js is engaged
-
-
+            rendering.innerHTML = transform(ta.value + "<END>") // <-- this is where quest.js is engaged
+            if (document.querySelector(".question") != null) {
+                document.querySelector(".question").classList.add("active")
+            }
         }
 
         ta.innerHTML = "// type or paste questionnaire markup\n";
-
         // let table = document.querySelector("table");
         // let save = document.createElement("BUTTON");
         // save.innerHTML = "Save";

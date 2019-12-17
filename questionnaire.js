@@ -103,4 +103,4 @@ for (var v in userProfile) {
     console.log(v + "  " + userProfile[v]);
     document.querySelectorAll('[name=' + v + ']').forEach(x => x.innerHTML = userProfile[v]);
 }
-document.querySelector(".question").classList.add("active");
+// document.querySelector(".question").classList.add("active");

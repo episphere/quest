@@ -1,10 +1,10 @@
 // var fs = require('fs');
 // var lineReader = require('line-reader');
 
-var txt = "";
+var z = "";
 var qid = "";
 
-// fs.readFile('textfile.txt', 'utf8',
+// fs.readFile('textfile.z', 'utf8',
 //     function(err, contents) {
 //         transform(contents);
 //     });
@@ -26,8 +26,12 @@ function transform(contents) {
 
     var contents = contents.replace(regEx, function(x, y, z) {
         console.log();
-        // replace |__|__|  with a number box...
-        z = z.trim().replace(/\|(__\|)+/, "<input type='number' name='" + y + "'></input>");
+
+        z = z.replace(/\/\*[\s\S]+\*\//g, "");
+        z = z.replace(/\/\/.*\n/g, "");
+
+        // replace |__|__|  with a number box... 
+        z = z.trim().replace(/\|(__\|)+/g, "<input type='number' name='" + y + "'></input>");
 
         // replace [text box:xxx] with a textbox
         z = z.replace(/\[text\s?box:?(\w+)?\]/g, "<textarea name='$1'></textarea>")
@@ -45,11 +49,10 @@ function transform(contents) {
         z = z.replace(/<input (.*?)><\/input><label(.*?)>(.*?)\s*->\s*(.*?)<\/label>/g, "<input $1 skipTo='$4'></input><label $2>$3</label>")
 
         var rv =
-            "<div class='question' id='" + y + "'>" + z + "\n" +
+            "<div class='question' style='font-weight: bold' id='" + y + "'>" + z + "<br>" + "<br>" +
             "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-            "<input type='button' onclick='next(this)' class='next' value='next'></input>\n" +
-            "</div>\n";
-
+            "<input type='button' onclick='next(this)' class='next' value='next'></input>" + "<br>" + "<br>" +
+            "</div>";
         return (rv)
     });
 
@@ -64,8 +67,9 @@ function transform(contents) {
     // remove the hidden end tag...    
     contents = contents.replace("<END>", "");
 
+
     // add the HTML/HEAD/BODY tags...
-    return contents = '<html><head><link rel="stylesheet" type="text/css" href="Questionnaire.css"></head><body>' + contents + '\n<script src="questionnaire.js"></script></body>';
+    return contents = '<html><head></head><body>' + contents + '\n<script src="questionnaire.js"></script></body>';
 
     console.log("\n\n\n" + contents);
 }
