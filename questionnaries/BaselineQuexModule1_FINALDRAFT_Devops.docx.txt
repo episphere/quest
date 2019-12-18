@@ -41,7 +41,7 @@
 
       [DISPLAY RACEETH2 IF 01 SELECTED AT RACEETH]
 
-   4. Which of these categories describe you best? Select all that apply.
+   4. [RACEETH2] Which of these categories describe you best? Select all that apply.
    [] American Indian
    [] Alaska Native
    [] Central or South American Indian

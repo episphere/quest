@@ -1,0 +1,107 @@
+#questionnaire {
+    font-family: Ariel, sans-serif;
+    height: 70%;
+    border: solid 2px black;
+    padding: 20px
+}
+
+#welcome {
+    margin: 10px 0px;
+}
+
+#thankYou,
+.question {
+    margin: 10px 0px;
+    display: none;
+}
+
+#thankYou.active,
+.question.active {
+    display: block;
+}
+
+.previous {
+    float: left;
+}
+
+.next {
+    float: right;
+}
+
+
+/* this is an answer with a text area...*/
+
+.freeresponse {
+    display: flex;
+    width: 80%;
+}
+
+
+/* select labels inside freesponses */
+
+.freeresponse label {
+    flex-grow: 1;
+    text-align: left;
+    width: auto;
+}
+
+.freeresponse textarea,
+input[type="text"] {
+    flex-grow: 1;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+label {
+    display: block;
+    border-radius: 15px;
+    background-color: rgb(106, 186, 244);
+    border: solid 2px blue;
+    height: 40px;
+    width: 80%;
+    padding: 10px;
+    margin: 5px;
+    font-family: "Arial", "sans-serif";
+    font-size: 1.5em;
+    text-align: center;
+    /* vertical-align: middle; */
+    display: block;
+}
+
+label:hover {
+    background-color: white;
+}
+
+
+/* select all textareas immediately before a label*/
+
+
+/* label~textarea {} */
+
+
+/* select all labels immediately after a textarea */
+
+textarea+label {
+    float: right;
+}
+
+
+/* select all labels immediatle after a checked radio box */
+
+input[type="radio"]:checked+label {
+    border: solid 2px blue;
+    background-color: blue;
+    color: white;
+}
+
+input[type="checkbox"]:checked+label {
+    border: solid 2px blue;
+    background-color: blue;
+    color: white;
+}

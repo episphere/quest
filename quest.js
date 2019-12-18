@@ -16,7 +16,7 @@ quest.render = txt => {
     txt = txt.split(/\n\n/).map(qq => {
         qq = qq.split("\n");
         if (qq.length > 1) {
-            html += `<div><b>${qq[0]}</b>`;
+            html += `<div><b class="questionText">${qq[0]}</b>`;
             qq.slice(1).forEach(q => {
                 html += `<p>${q}</p>`;
             });
