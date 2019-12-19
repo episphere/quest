@@ -50,10 +50,13 @@ input[type="text"] {
     flex-grow: 1;
 }
 
+input#styling[type="radio"] {
+    display: inline;
+}
 
-/* input[type="radio"] {
+input[type="radio"] {
     display: none;
-} */
+}
 
 input[type="checkbox"] {
     display: none;
