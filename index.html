@@ -1,3 +1,7 @@
+<head>
+    <link id="pagestyle" href="Default.css" rel="stylesheet" type="text/css">
+</head>
+
 <h3>
     <a href="https://github.com/episphere/quest" target="_blank">quest.js</a> - questionnaire markup demo
 </h3>
@@ -19,8 +23,13 @@
             <td>
                 <div id=styling style="border: 1px solid black; width:500px; height:263px">
                     <h3>Styling</h3>
-                    <input type="radio" name="styling" checked>No Style</input>
-                    <input type="radio" name="styling">With Style 1</input>
+                    <input type="radio" id="defaultS" name="styling" checked>No Style</input>
+                    <input type="radio" id="stylesheet1" name="styling" onclick="changeStyle('Questionnaire.css')">With Style 1</input>
+                    <script>
+                        function changeStyle(sheet) {
+                            document.getElementById("pagestyle").setAttribute("href", sheet)
+                        }
+                    </script>
                 </div>
             </td>
         </tr>

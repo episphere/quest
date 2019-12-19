@@ -50,9 +50,10 @@ input[type="text"] {
     flex-grow: 1;
 }
 
-input[type="radio"] {
+
+/* input[type="radio"] {
     display: none;
-}
+} */
 
 input[type="checkbox"] {
     display: none;
