@@ -96,11 +96,11 @@ function prev(norp) {
     return;
 }
 
-// this is the user profile
-var userProfile = { firstName: "Daniel", lastName: "Russ", age: "40" };
-console.log(userProfile)
-for (var v in userProfile) {
-    console.log(v + "  " + userProfile[v]);
-    document.querySelectorAll('[name=' + v + ']').forEach(x => x.innerHTML = userProfile[v]);
-}
+// // this is the user profile
+// var userProfile = { firstName: "Daniel", lastName: "Russ", age: "40" };
+// console.log(userProfile)
+// for (var v in userProfile) {
+//     console.log(v + "  " + userProfile[v]);
+//     document.querySelectorAll('[name=' + v + ']').forEach(x => x.innerHTML = userProfile[v]);
+// }
 // document.querySelector(".question").classList.add("active");
