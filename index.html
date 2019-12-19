@@ -23,8 +23,8 @@
             <td>
                 <div id=styling style="border: 1px solid black; width:500px; height:263px">
                     <h3>Styling</h3>
-                    <input type="radio" id="defaultS" name="styling" checked>No Style</input>
-                    <input type="radio" id="stylesheet1" name="styling" onclick="changeStyle('Questionnaire.css')">With Style 1</input>
+                    <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked>No Style</input>
+                    <input type="radio" id="styling" name="styling" onclick="changeStyle('Questionnaire.css')">With Style 1</input>
                     <script>
                         function changeStyle(sheet) {
                             document.getElementById("pagestyle").setAttribute("href", sheet)
