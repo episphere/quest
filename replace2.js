@@ -41,10 +41,10 @@ function transform(contents) {
         z = z.replace(/\[text\s?box:?(\w+)?\]/g, "<textarea name='$1'></textarea>")
 
         // replace (XX) with a radio box...
-        z = z.replace(/^\s*\((\w+)\)([^<\n]*)/mg, "<br><br><input type='radio' name='" + y + "' value='$1' id='" + y + "_$1'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
+        z = z.replace(/^\s*\((\w+)\)([^<\n]*)|\(\)/mg, "<br><br><input type='radio' name='" + y + "' value='$1' id='" + y + "_$1'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
 
         // replace [a-zXX] with a checkbox box...
-        z = z.replace(/^\s*\[(\w+)\]([^<\n]*)/mg, "<br><br><input type='checkbox' name='" + y + "' value='$1' id='" + y + "_$1'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
+        z = z.replace(/^\s*\[(\w+)\]([^<\n]*)|\[\]|\*/mg, "<br><br><input type='checkbox' name='" + y + "' value='$1' id='" + y + "_$1'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
 
         // replace user profile variables...
         z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
