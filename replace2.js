@@ -22,14 +22,13 @@ function transform(contents) {
     // note: we want this possessive (NOT greedy) so add a ?
     //       otherwise it would match the first and last square bracket
 
-    var regEx = new RegExp('\\[([A-Z][A-Z0-9_]*)\\](.*?)(?=\\[[A-Z]|<END>)', "msg")
+    let regEx = new RegExp('\\[([A-Z][A-Z0-9_]*)\\](.*?)(?=\\[[A-Z])', "msg")
 
     var contents = contents.replace(regEx, function(x, y, z) {
         console.log();
 
-        z = z.replace(/\/\*[\s\S]+\*\//g, "");
-        z = z.replace(/\/\/.*\n/g, "");
-
+        // z = z.replace(/\/\*[\s\S]+\*\//g, "");
+        // z = z.replace(/\/\/.*\n/g, "");
 
         // replace |__|__|  with a number box... 
         z = z.trim().replace(/\|(__\|){2,}/g, "<input type='number' name='" + y + "'></input><br>");
@@ -52,7 +51,7 @@ function transform(contents) {
         // handle skips
         z = z.replace(/<input (.*?)><\/input><label(.*?)>(.*?)\s*->\s*(.*?)<\/label>/g, "<input $1 skipTo='$4'></input><label $2>$3</label>")
 
-        var rv =
+        let rv =
             "<div class='question' style='font-weight: bold' id='" + y + "'>" + z + "<br>" + "<br>" +
             "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
             "<input type='button' onclick='next(this)' class='next' value='next'></input>" + "<br>" + "<br>" +
@@ -60,16 +59,19 @@ function transform(contents) {
         return (rv)
     });
 
+    // contents = contents.replace(/\*|\[\]/g, "<input type='checkbox'></input")
+
+
     // handle the display if case...
     contents = contents.replace(/\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/gms, "<div $3 showIfId='$1' values='$2'>");
 
     // remove the first previous button...
     contents = contents.replace(/<input.*class='previous'.*?\n/, "");
     // remove the last next button...
-    contents = contents.replace(/<input.*class='next'.*?\n(?=<\/div>\n<END>)/, "");
+    contents = contents.replace(/<input.*class='next'.*?\n(?=<\/div>\n\[END\])/, "");
 
     // remove the hidden end tag...    
-    contents = contents.replace("<END>", "");
+    contents = contents.replace("[END]", "");
 
 
     // add the HTML/HEAD/BODY tags...
