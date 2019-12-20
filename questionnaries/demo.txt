@@ -6,7 +6,7 @@ B0. Demographics
 |__| Address
 
 B1. How old are you today?
-|_| Age
+|__| Age
 
 B2. What is the highest level of school that you have completed?
 [] Grade school (grades 1-8)
