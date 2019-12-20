@@ -4,7 +4,6 @@ Background Information
 B0. Demographics
 |__| Name
 |__| Address
-|(###)-###-####| Phone
 
 B1. How old are you today?
 |_| Age
