@@ -67,10 +67,10 @@
         ta.onkeyup = ev => {
             transform.tout(() => {
                 rendering.innerHTML = transform.render(ta.value + "[END]") // <-- this is where quest.js is engaged
+                if (document.querySelector(".question") != null) {
+                    document.querySelector(".question").classList.add("active")
+                }
             })
-            if (document.querySelector(".question") != null) {
-                document.querySelector(".question").classList.add("active")
-            }
         }
 
 
