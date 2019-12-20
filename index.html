@@ -65,7 +65,7 @@
         ta.style.color = "navy";
 
         ta.onkeyup = ev => {
-            rendering.innerHTML = transform(ta.value + "[END]") // <-- this is where quest.js is engaged
+            rendering.innerHTML = transform.render(ta.value + "[END]") // <-- this is where quest.js is engaged
             if (document.querySelector(".question") != null) {
                 document.querySelector(".question").classList.add("active")
             }

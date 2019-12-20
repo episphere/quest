@@ -9,7 +9,11 @@ var qid = "";
 //         transform(contents);
 //     });
 
-function transform(contents) {
+transform = function() {
+    // ini
+}
+
+transform.render = contents => {
 
     // hey, lets de-lint the contents..
     // convert (^|\n{2,}Q1. to [Q1]
@@ -113,4 +117,11 @@ function transform(contents) {
     return contents = '<html><head></head><body>' + contents + '\n<script src="questionnaire.js"></script></body>';
 
     console.log("\n\n\n" + contents);
+}
+
+transform.tout = function(fun, tt = 500) {
+    if (transform.tout.t) {
+        clearTimeout(transform.tout.t)
+    }
+    transform.tout.t = setTimeout(fun, tt)
 }
