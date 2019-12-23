@@ -50,6 +50,11 @@ function next(norp) {
     return (nextElement)
 }
 
+function prev(norp) {
+    console.log(norp)
+    return;
+}
+
 function checkForSkips(questionElement) {
     selectedElements = getSelected(questionElement, true);
     // if more than 1 element is selected...
@@ -92,9 +97,7 @@ function getChecked(elementArray, returnElement) {
     return (values)
 }
 
-function prev(norp) {
-    return;
-}
+
 
 // // this is the user profile
 // var userProfile = { firstName: "Daniel", lastName: "Russ", age: "40" };
