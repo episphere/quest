@@ -1,100 +1,105 @@
 <head>
     <link id="pagestyle" href="Default.css" rel="stylesheet" type="text/css">
-</head>
+    <link id="pagelogic" href="Default.css" rel="stylesheet" type="text/css" </head>
 
-<h3>
-    <a href="https://github.com/episphere/quest" target="_blank">quest.js</a> - questionnaire markup demo
-</h3>
+    <h3>
+        <a href="https://github.com/episphere/quest" target="_blank">quest.js</a> - questionnaire markup demo
+    </h3>
 
-<table>
-    <thead>
-        <tr>
-            <td>
-                <div id=legend style="border: 1px solid black; padding-right: 5px; padding-left:5px;" width="500px">
-                    <h3>Legend</h3>
-                    <p>To initialize a question, start by typing any capital letters or numbers in brackets i.e. [A-Z 0-9]</p>
-                    <p>Check Box = * or []</p>
-                    <p>Radio Button = ()</p>
-                    <p>Age = |__|__|</p>
-                    <p>Year = |__|__|__|__|</p>
-                    <p>Input Box = |__| (two underlines)</p>
-                    <p>Text Box = [text box] or |___| (three underlines)</p>
-                </div>
-            </td>
-            <td>
-                <div id=styling style="border: 1px solid black; width:500px; height:297px">
-                    <h3>Styling</h3>
-                    <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked>No Style</input>
-                    <input type="radio" id="styling" name="styling" onclick="changeStyle('Style1.css')">With Style 1</input>
-                    <script>
-                        function changeStyle(sheet) {
-                            document.getElementById("pagestyle").setAttribute("href", sheet)
-                        }
-                    </script>
-                    <h3>Logic</h3>
-                    <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked>Not Active</input>
-                    <input type="radio" id="styling" name="styling" onclick="changeStyle('ActiveLogic.css')">Active</input>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <h3>markup (<a href="?questionnaries/demo.txt" id="demo">demo</a>)</h3>
-            </td>
-            <td style="color: navy;">
-                <h3>quest.js rendering</h3>
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td id="markup" style="vertical-align:top"><textarea></textarea></td>
-            <td id="rendering" style="vertical-align:top;"></td>
-        </tr>
-    </tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    <div id=legend style="border: 1px solid black; padding-right: 5px; padding-left:5px;" width="500px">
+                        <h3>Legend</h3>
+                        <p>To initialize a question, start by typing any capital letters or numbers in brackets i.e. [A-Z 0-9]</p>
+                        <p>Check Box = * or []</p>
+                        <p>Radio Button = ()</p>
+                        <p>Age = |__|__|</p>
+                        <p>Year = |__|__|__|__|</p>
+                        <p>Input Box = |__| (two underlines)</p>
+                        <p>Text Box = [text box] or |___| (three underlines)</p>
+                    </div>
+                </td>
+                <td>
+                    <div id=styling style="border: 1px solid black; width:500px; height:297px">
+                        <h3>Styling</h3>
+                        <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked>No Style</input>
+                        <input type="radio" id="styling" name="styling" onclick="changeStyle('Style1.css')">With Style 1</input>
+                        <script>
+                            function changeStyle(sheet) {
+                                document.getElementById("pagestyle").setAttribute("href", sheet)
+                            }
+                        </script>
+                        <h3>Logic</h3>
+                        <input type="radio" id="styling" name="logic" onclick="changeLogic('Default.css')" checked>Not Active</input>
+                        <input type="radio" id="styling" name="logic" onclick="changeLogic('ActiveLogic.css')">Active</input>
+                        <script>
+                            function changeLogic(sheet) {
+                                document.getElementById("pagelogic").setAttribute("href", sheet)
+                            }
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h3>markup (<a href="?questionnaries/demo.txt" id="demo">demo</a>)</h3>
+                </td>
+                <td style="color: navy;">
+                    <h3>quest.js rendering</h3>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="markup" style="vertical-align:top"><textarea></textarea></td>
+                <td id="rendering" style="vertical-align:top;"></td>
+            </tr>
+        </tbody>
+    </table>
 
-<script src="replace2.js"></script>
-<script src="questionnaire.js"></script>
+    <script src="replace2.js"></script>
+    <script src="questionnaire.js"></script>
 
-<script>
-    (async function() {
-        console.log("local anonymous");
-        var ta = document.querySelector("textarea");
-        ta.style.height = 600;
-        ta.style.width = 500;
-        //ta.style.position='fixed'
-        ta.style.backgroundColor = "#FAE5D3";
-        ta.style.color = "navy";
+    <script>
+        (async function() {
+            console.log("local anonymous");
+            var ta = document.querySelector("textarea");
+            ta.style.height = 600;
+            ta.style.width = 500;
+            //ta.style.position='fixed'
+            ta.style.backgroundColor = "#FAE5D3";
+            ta.style.color = "navy";
 
-        ta.onkeyup = ev => {
-            transform.tout(() => {
-                rendering.innerHTML = transform.render(ta.value + "[END]") // <-- this is where quest.js is engaged
-                if (document.querySelector(".question") != null) {
-                    document.querySelector(".question").classList.add("active")
-                }
-            })
-        }
+            ta.onkeyup = ev => {
+                transform.tout(() => {
+                    rendering.innerHTML = transform.render(ta.value + "[END]") // <-- this is where quest.js is engaged
+                    if (document.querySelector(".question") != null) {
+                        document.querySelector(".question").classList.add("active")
+                    }
+                })
+            }
 
 
-        // ta.innerHTML = "// type or paste questionnaire markup\n";
+            // ta.innerHTML = "// type or paste questionnaire markup\n";
 
-        // let table = document.querySelector("table");
-        // let save = document.createElement("BUTTON");
-        // save.innerHTML = "Save";
-        // save.onclick = myFunction();
-        // table.appendChild(save);
+            // let table = document.querySelector("table");
+            // let save = document.createElement("BUTTON");
+            // save.innerHTML = "Save";
+            // save.onclick = myFunction();
+            // table.appendChild(save);
 
-        // function myFunction() {
-        //     console.log("attempting to save");
-        // }
+            // function myFunction() {
+            //     console.log("attempting to save");
+            // }
 
-        var q = (location.search + location.hash).replace(/[\#\?]/g, "");
-        if (q.length > 3) {
-            ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
-            ta.onkeyup();
-        }
-        ta.style.width =
-            parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
-    })();
-</script>
+            var q = (location.search + location.hash).replace(/[\#\?]/g, "");
+            if (q.length > 3) {
+                ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
+                ta.onkeyup();
+            }
+            ta.style.width =
+                parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
+        })();
+    </script>
