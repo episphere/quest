@@ -57,7 +57,7 @@ transform.render = contents => {
         z = z.trim().replace(/\|__\|/g, "<input name='" + y + "'></input>");
 
         // replace [text box:xxx] with a textbox
-        z = z.replace(/\[text\s?box:?(\w+)?\]/g, "<textarea name='$1'></textarea>")
+        z = z.replace(/\[text\s?box\]|\[text\s?box:\s?(\w+)?\]/g, "<textarea name='$1'></textarea>")
 
         // replace (XX) with a radio box...
         z = z.replace(/(?<=\W)\((\w+)\)([^<\n]*)|\(\)/g, "<br><input type='radio' name='" + y + "' value='$1' id='" + y + "_$1'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
@@ -78,28 +78,6 @@ transform.render = contents => {
             "</div>";
         return (rv)
     });
-
-    // // Check Box * OR []
-    // contents = contents.replace(/\*|\[\]/g, "<input type='checkbox'>")
-
-    // // Radio Button ()
-    // contents = contents.replace(/\(\)/g, "<input type='radio'>")
-
-    // // Year |__|__|__|__|
-    // contents = contents.replace(/\|__\|__\|__\|__\|/g, "|_|");
-
-    // // Age |__|__|
-    // contents = contents.replace(/\|__\|__\|/g, "|_|");
-
-    // // Integer |_|
-    // contents = contents.replace(/\|_\|/g, "<input type='number'>");
-
-    // // Regular input field |__|
-    // contents = contents.replace(/\|__\|/g, "<input>");
-
-    // // Text Area |___|
-    // contents = contents.replace(/\[text box\]/g, "|___|");
-    // contents = contents.replace(/\|___\|/g, "<textarea></textarea>");
 
     // handle the display if case...
     contents = contents.replace(/\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/gms, "<div $3 showIfId='$1' values='$2'>");
