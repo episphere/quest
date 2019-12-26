@@ -63,7 +63,7 @@ transform.render = contents => {
         z = z.replace(/(?<=\W)\((\w+)\)([^<\n]*)|\(\)/g, "<br><input type='radio' name='" + y + "' value='$1' id='" + y + "_$1'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
 
         // replace [a-zXX] with a checkbox box...
-        z = z.replace(/\s*\[(\w*)\]([^<\n]*)|\[\]|\*/g, "<br><input type='checkbox' name='" + y + "' value='$1' id='" + y + "_$1'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
+        z = z.replace(/\s*\[(\w*)\]([^<\n]*)|\[\]|\*/g, "<br><input type='checkbox' name='" + y + "' value='$1' id='" + y + "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal' for='" + y + "_$1'>$2</label>");
 
         // replace user profile variables...
         z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");

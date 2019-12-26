@@ -1,13 +1,16 @@
 function clearSelection(inputElement) {
     var state = inputElement.checked;
     var cb = inputElement.parentElement.querySelectorAll("input[type='checkbox']");
-    for (var x of cb) {
-        if (x != inputElement) {
-            x.checked = false;
-            x.clear = inputElement.id;
-            x.onclick = function() {
-                clearElement = document.getElementById(this.clear);
-                clearElement.checked = false;
+    console.log(inputElement)
+    if (inputElement.value == 99) {
+        for (var x of cb) {
+            if (x != inputElement) {
+                x.checked = false;
+                x.clear = inputElement.id;
+                x.onclick = function() {
+                    clearElement = document.getElementById(this.clear);
+                    clearElement.checked = false;
+                }
             }
         }
     }
@@ -51,8 +54,10 @@ function next(norp) {
 }
 
 function prev(norp) {
-    console.log(norp)
-    return;
+    // var prevElement = norp.parentElement.previousSibling
+    // norp.parentElement.classList.add("active")
+    // prevElement.classList.remove("active")
+    // return (prevElement);
 }
 
 function checkForSkips(questionElement) {
