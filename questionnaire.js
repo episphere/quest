@@ -19,6 +19,7 @@ function clearSelection(inputElement) {
 function next(norp) {
 
     // the default next question is ... well next...
+    console.log(norp.parentElement.nextElementSibling)
     var nextElement = norp.parentElement.nextElementSibling
     norp.parentElement.classList.remove("active");
 
@@ -53,10 +54,11 @@ function next(norp) {
 }
 
 function prev(norp) {
-    // var prevElement = norp.parentElement.previousSibling
-    // norp.parentElement.classList.add("active")
-    // prevElement.classList.remove("active")
-    // return (prevElement);
+    console.log(norp.parentElement.previousElementSibling)
+    var prevElement = norp.parentElement.previousElementSibling
+    norp.parentElement.classList.remove("active")
+    prevElement.classList.add("active")
+    return (prevElement);
 }
 
 function checkForSkips(questionElement) {
