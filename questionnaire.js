@@ -1,7 +1,6 @@
 function clearSelection(inputElement) {
     var state = inputElement.checked;
     var cb = inputElement.parentElement.querySelectorAll("input[type='checkbox']");
-    console.log(inputElement)
     if (inputElement.value == 99) {
         for (var x of cb) {
             if (x != inputElement) {
