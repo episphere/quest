@@ -56,6 +56,11 @@ function prev(norp) {
     var prevElement = norp.parentElement.previousElementSibling
     norp.parentElement.classList.remove("active")
     prevElement.classList.add("active")
+
+    var skipTo = checkForSkips(norp.parentElement);
+    if (skipTo != null) {
+        prevElement = document.getElementById(skipTo);
+    }
     return (prevElement);
 }
 
