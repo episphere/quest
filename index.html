@@ -94,7 +94,7 @@
             save.style.marginRight = "15px"
             save.style.marginLeft = "5px"
             save.style.float = "right"
-            save.onclick = ( e => saveDoc(ta.val,tb.value))();
+            save.onclick = saveDoc;
             div1.appendChild(save);
 
             let ext = document.createElement("p")
@@ -105,20 +105,17 @@
             
             tb.id = "fileName"
             tb.style.float = "right"
-            tb.style.marginTop = "5px"
+            tb.style.marginTop = "15px"
             div1.appendChild(tb)
-            function saveDoc(x, fileName) {
+            function saveDoc() {
                 // console.log(ta.value)
-                let bb = new Blob([x])
+                let bb = new Blob([ta.value])
                 let url = URL.createObjectURL(bb);
                 let a = document.createElement('a');
                 a.href = url;
-                if (fileName) {
-                    if (typeof(fileName) == "string") { // otherwise this is just a boolean toggle or something of the sort
-                        a.download = fileName;
-                    }
-                    a.click() // then download it automatically 
-                }
+                if(tb.value == 0){tb.value = "lala"}
+                a.download = tb.value;
+                a.click() // then download it automatically 
                 return a
 
             }
