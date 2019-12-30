@@ -35,7 +35,7 @@ B4. What best describes your race? Select all that apply to you.
 [] Middle Eastern or North African
 [] Native Hawaiian or other Pacific Islander
 [] White
-[] Other (specify)
+[] Other ( specify ) [text box]
 [] Do not know
 [] Prefer not to answer
 
