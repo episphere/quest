@@ -84,15 +84,62 @@
 
             // ta.innerHTML = "// type or paste questionnaire markup\n";
 
-            // let table = document.querySelector("table");
-            // let save = document.createElement("BUTTON");
-            // save.innerHTML = "Save";
-            // save.onclick = myFunction();
-            // table.appendChild(save);
+            let table = document.querySelector("#markup");
+            let save = document.createElement("button");
+            let div1 = document.createElement("div")
+            let tb = document.createElement("input")
+            table.appendChild(div1)
+            save.innerHTML = "Save";
+            save.style.marginTop = "15px"
+            save.style.marginRight = "15px"
+            save.style.marginLeft = "5px"
+            save.style.float = "right"
+            save.onclick = ( e => saveDoc(ta.val,tb.value))();
+            div1.appendChild(save);
 
-            // function myFunction() {
-            //     console.log("attempting to save");
-            // }
+            let ext = document.createElement("p")
+            ext.innerText = ".txt"
+            ext.style.float = "right"
+            div1.appendChild(ext)
+
+            
+            tb.id = "fileName"
+            tb.style.float = "right"
+            tb.style.marginTop = "5px"
+            div1.appendChild(tb)
+            function saveDoc(x, fileName) {
+                // console.log(ta.value)
+                let bb = new Blob([x])
+                let url = URL.createObjectURL(bb);
+                let a = document.createElement('a');
+                a.href = url;
+                if (fileName) {
+                    if (typeof(fileName) == "string") { // otherwise this is just a boolean toggle or something of the sort
+                        a.download = fileName;
+                    }
+                    a.click() // then download it automatically 
+                }
+                return a
+
+            }
+
+            let fN = document.createElement("p")
+            fN.innerText = "File Name:"
+            fN.style.float = "right"
+            fN.style.marginRight = "2px"
+            div1.appendChild(fN)
+
+            let load = document.createElement("button");
+            load.innerHTML = "Load";
+            load.style.marginTop = "15px"
+            load.style.marginRight = "5px"
+            load.style.float = "right"
+            load.onclick = loadDoc;
+            div1.appendChild(load);
+
+            function loadDoc() {
+                console.log("attempting to load");
+            }
 
             var q = (location.search + location.hash).replace(/[\#\?]/g, "");
             if (q.length > 3) {

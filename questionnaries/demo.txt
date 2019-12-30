@@ -125,9 +125,9 @@ B16. Do you currently work for pay?
 [] Yes --> B18
 [] No
 
-<B15=Yes AND B16=NO> --> B21 
+[B15=Yes AND B16=NO --> B21] 
 
-<B15=No AND B16=NO> --> B17
+[B15=No AND B16=NO --> B17]
 
 
 DCEG COHORT DRAFT BASELINE QUEX MODULES Baseline1_background_draftV3b_Oct2018
@@ -138,7 +138,7 @@ B17. Which of the following best describes your current employment status?
 [] Unable to work (disabled)
 [] Other
 [] Prefer not to answer
-<ALL RESPONSESgo to B21>
+[ALL RESPONSESgo to B21]
 B18. What is your occupation?
 B19. How many years have you work in that occupation [OCCUPATION FROM B18]? |__|__| #Years
 B20. Is this your longest held occupation?
