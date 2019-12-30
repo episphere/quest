@@ -17,7 +17,7 @@ B2. What is the highest level of school that you have completed?
 [] Associate’s degree
 [] College graduate (Bachelor’s degree)
 [] Advanced degree (Master’s, Doctorate, etc.)
-[] Other – Specify:
+[] Other ( specify ) [text box]
 
 B3. What is your current marital/partner status?
 [] Never married
