@@ -53,7 +53,20 @@
         </thead>
         <tbody>
             <tr>
-                <td id="markup" style="vertical-align:top"><textarea></textarea></td>
+                <td id="markup" style="vertical-align:top"><textarea id="ta"></textarea><div id="loadSaveDiv"><input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)"></div></td>
+                <script>
+                    function onFileSelected(event){
+                        let file = event.target.files[0]
+                        let reader = new FileReader()
+                        reader.onload = function(event){
+                            let ta = document.getElementById("ta")
+                            ta.value = event.target.result
+                            ta.onkeyup()
+                        }
+                        reader.readAsText(file)
+
+                    }
+                </script>
                 <td id="rendering" style="vertical-align:top;"></td>
             </tr>
         </tbody>
@@ -82,11 +95,11 @@
             }
 
 
-            // ta.innerHTML = "// type or paste questionnaire markup\n";
+            ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
 
             let table = document.querySelector("#markup");
             let save = document.createElement("button");
-            let div1 = document.createElement("div")
+            let div1 = document.getElementById("loadSaveDiv")
             let tb = document.createElement("input")
             table.appendChild(div1)
             save.innerHTML = "Save";
@@ -126,17 +139,16 @@
             fN.style.marginRight = "2px"
             div1.appendChild(fN)
 
-            let load = document.createElement("button");
-            load.innerHTML = "Load";
-            load.style.marginTop = "15px"
-            load.style.marginRight = "5px"
-            load.style.float = "right"
-            load.onclick = loadDoc;
-            div1.appendChild(load);
+            // let load = document.createElement("input");
+            // load.type = "file"
+            // load.onchange = "onFileSelected(event)"
+            // load.id = "myFile"
+            // load.style.marginTop = "15px"
+            // load.style.marginRight = "5px"
+            // load.style.float = "right"
+            // div1.appendChild(load);
 
-            function loadDoc() {
-                console.log("attempting to load");
-            }
+            
 
             var q = (location.search + location.hash).replace(/[\#\?]/g, "");
             if (q.length > 3) {
