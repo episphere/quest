@@ -53,7 +53,22 @@
         </thead>
         <tbody>
             <tr>
-                <td id="markup" style="vertical-align:top"><textarea id="ta"></textarea><div id="loadSaveDiv"><input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)"></div></td>
+                <td id="markup" style="vertical-align:top">
+                    <textarea id="ta"></textarea>
+                    <div id="loadSaveDiv">
+                        <input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)">
+                        <br>
+                        <p style="display: inline-block;">Enter URL:</p>
+                        <input id="url" style="margin-top: 15px; display: inline-block;" onchange="submitURL()">
+                        <input type="submit" onclick="submitURL()"></input>
+                    </div>
+                </td>
+                <script>
+                    function submitURL(){
+                        let url = document.getElementById("url").value
+                        location.search = url
+                    }
+                </script>
                 <script>
                     function onFileSelected(event){
                         let file = event.target.files[0]
@@ -115,13 +130,11 @@
             ext.style.float = "right"
             div1.appendChild(ext)
 
-            
             tb.id = "fileName"
             tb.style.float = "right"
             tb.style.marginTop = "15px"
             div1.appendChild(tb)
             function saveDoc() {
-                // console.log(ta.value)
                 let bb = new Blob([ta.value])
                 let url = URL.createObjectURL(bb);
                 let a = document.createElement('a');
@@ -136,18 +149,9 @@
             let fN = document.createElement("p")
             fN.innerText = "File Name:"
             fN.style.float = "right"
+            fN.style.marginLeft = "5px"
             fN.style.marginRight = "2px"
             div1.appendChild(fN)
-
-            // let load = document.createElement("input");
-            // load.type = "file"
-            // load.onchange = "onFileSelected(event)"
-            // load.id = "myFile"
-            // load.style.marginTop = "15px"
-            // load.style.marginRight = "5px"
-            // load.style.float = "right"
-            // div1.appendChild(load);
-
             
 
             var q = (location.search + location.hash).replace(/[\#\?]/g, "");
