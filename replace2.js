@@ -19,7 +19,7 @@ transform.render = contents => {
   // note:  the first question wont have the
   // \n\n so we need to look at start of string(^)
   //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
-  // contents = contents.replace(/(?<=\n{2,})(\w+)\./g, "[$1]");
+  contents = contents.replace(/(?<=\n{2,})(\w+)\./g, "[$1]");
   contents = contents.replace(/(\n{2,})([^\[])/g, "$1[_#]$2");
   contents = contents.replace(/\/\*.*\*\//g, "");
   contents = contents.replace(/\/\/.*/g, "");
@@ -35,7 +35,7 @@ transform.render = contents => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*)\\](.*?)(?=\\[[A-Z])", "g");
+  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*)\\](.*?)(?=\\[[A-Z])", "msg");
 
   contents = contents.replace(regEx, function(x, y, z) {
     console.log();
@@ -112,7 +112,7 @@ transform.render = contents => {
 
   // handle the display if case...
   contents = contents.replace(
-    /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,
+    /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/gms,
     "<div $3 showIfId='$1' values='$2'>"
   );
 
