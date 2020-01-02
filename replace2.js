@@ -19,7 +19,7 @@ transform.render = contents => {
   // note:  the first question wont have the
   // \n\n so we need to look at start of string(^)
   //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
-  contents = contents.replace(/(?<=\n{2,})(\w+)\./g, "[$1]");
+  // contents = contents.replace(/(?<=\n{2,})(\w+)\./g, "[$1]");
   contents = contents.replace(/(\n{2,})([^\[])/g, "$1[_#]$2");
   contents = contents.replace(/\/\*.*\*\//g, "");
   contents = contents.replace(/\/\/.*/g, "");
@@ -65,16 +65,16 @@ transform.render = contents => {
     );
 
     // replace (XX) with a radio button...
-    z = z.replace(
-      /(?<=\W)\((\w+)\)([^<\n]*)|\(\)/g,
-      "<br><input type='radio' name='" +
-        y +
-        "' value='$1' id='" +
-        y +
-        "_$1'></input><label style='font-weight: normal' for='" +
-        y +
-        "_$1'>$2</label>"
-    );
+    // z = z.replace(
+    //   /(?<=\W)\((\w+)\)([^<\n]*)|\(\)/g,
+    //   "<br><input type='radio' name='" +
+    //     y +
+    //     "' value='$1' id='" +
+    //     y +
+    //     "_$1'></input><label style='font-weight: normal' for='" +
+    //     y +
+    //     "_$1'>$2</label>"
+    // );
 
     // replace [a-zXX] with a checkbox box...
     z = z.replace(
