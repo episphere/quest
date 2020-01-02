@@ -19,9 +19,9 @@ transform.render = contents => {
   // note:  the first question wont have the
   // \n\n so we need to look at start of string(^)
   //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
-  contents = contents.replace(/(?<=\n{2,})(\w+)\./gms, "[$1]");
-  contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
-  contents = contents.replace(/\/\*.*\*\//gms, "");
+  contents = contents.replace(/(?<=\n{2,})(\w+)\./gm, "[$1]");
+  contents = contents.replace(/(\n{2,})([^\[])/gm, "$1[_#]$2");
+  contents = contents.replace(/\/\*.*\*\//gm, "");
   contents = contents.replace(/\/\/.*/gm, "");
 
   //console.log(contents)
