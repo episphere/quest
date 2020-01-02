@@ -19,10 +19,10 @@ transform.render = contents => {
   // note:  the first question wont have the
   // \n\n so we need to look at start of string(^)
   //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
-  contents = contents.replace(/(?<=\n{2,})(\w+)\./gm, "[$1]");
-  contents = contents.replace(/(\n{2,})([^\[])/gm, "$1[_#]$2");
-  contents = contents.replace(/\/\*.*\*\//gm, "");
-  contents = contents.replace(/\/\/.*/gm, "");
+  contents = contents.replace(/(?<=\n{2,})(\w+)\./g, "[$1]");
+  contents = contents.replace(/(\n{2,})([^\[])/g, "$1[_#]$2");
+  contents = contents.replace(/\/\*.*\*\//g, "");
+  contents = contents.replace(/\/\/.*/g, "");
 
   //console.log(contents)
   // first let's deal with breaking up questions..
