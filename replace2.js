@@ -112,7 +112,7 @@ transform.render = contents => {
 
   // handle the display if case...
   contents = contents.replace(
-    /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/gms,
+    /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,
     "<div $3 showIfId='$1' values='$2'>"
   );
 
