@@ -61,11 +61,30 @@
                     <div id="loadSaveDiv" style="width: 530px">
                         <input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)">
                         <br>
-                        <p style="display: inline-block;">Enter URL:</p>
-                        <input id="url" style="margin-top: 15px; display: inline-block;" onchange="submitURL()">
+                        <span>Enter URL:</span>
+                        <input id="url" style="margin-top: 10px;" onchange="submitURL()">
                         <input type="submit" onclick="submitURL()"></input>
+                        <br>
+                        <span>File Name:</span>
+                        <input id="tb" style="margin-top: 10px;">
+                        <span>.txt</span>
+                        <button onclick="saveDoc()">Save</button>
+                        
                     </div>
                 </td>
+                <script>
+                    function saveDoc() {
+                        let bb = new Blob([ta.value])
+                        let url = URL.createObjectURL(bb);
+                        let a = document.createElement('a');
+                        a.href = url;
+                        let tb = document.getElementById('tb')
+                        if(tb.value == 0){tb.value = "demo"}
+                        a.download = tb.value;
+                        a.click() // then download it automatically 
+                        return a
+                     }
+                </script>
                 <script>
                     function submitURL(){
                         let url = document.getElementById("url").value
@@ -112,47 +131,7 @@
 
             ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
 
-            let table = document.querySelector("#markup");
-            let save = document.createElement("button");
-            let div1 = document.getElementById("loadSaveDiv")
-            let tb = document.createElement("input")
-            table.appendChild(div1)
-            save.innerHTML = "Save";
-            save.style.marginTop = "15px"
-            save.style.marginRight = "15px"
-            save.style.marginLeft = "5px"
-            save.style.float = "right"
-            save.onclick = saveDoc;
-            div1.appendChild(save);
-
-            let ext = document.createElement("p")
-            ext.innerText = ".txt"
-            ext.style.float = "right"
-            div1.appendChild(ext)
-
-            tb.id = "fileName"
-            tb.style.float = "right"
-            tb.style.marginTop = "15px"
-            div1.appendChild(tb)
-            function saveDoc() {
-                let bb = new Blob([ta.value])
-                let url = URL.createObjectURL(bb);
-                let a = document.createElement('a');
-                a.href = url;
-                if(tb.value == 0){tb.value = "demo"}
-                a.download = tb.value;
-                a.click() // then download it automatically 
-                return a
-
-            }
-
-            let fN = document.createElement("p")
-            fN.innerText = "File Name:"
-            fN.style.display = "inline-block"
-            fN.style.paddingLeft = "5px"
-            div1.appendChild(fN)
-            
-
+    
             var q = (location.search + location.hash).replace(/[\#\?]/g, "");
             if (q.length > 3) {
                 ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css

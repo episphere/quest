@@ -47,6 +47,14 @@ transform.render = contents => {
 
     z = z.replace(/\[_#\]/g, "");
 
+    // replace |__|__|__|__|  with a number box...
+    z = z
+      .trim()
+      .replace(
+        /\|(__\|){4,}/g,
+        "<input type='number' name='" + y + "'></input>"
+      );
+
     // replace |__|__|  with a number box...
     z = z
       .trim()
