@@ -23,6 +23,7 @@ transform.render = contents => {
   contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
   contents = contents.replace(/\/\*.*\*\//gms, "");
   contents = contents.replace(/\/\/.*/gm, "");
+  // contents = contents.replace(/\[DISPLAY IF .*\]/g, "");
 
   //console.log(contents)
   // first let's deal with breaking up questions..
@@ -46,6 +47,8 @@ transform.render = contents => {
     z = z.replace(/\n/g, "<br>");
 
     z = z.replace(/\[_#\]/g, "");
+
+    y = y.replace(/\[DISPLAY IF .*\]/g, "");
 
     // replace |__|__|__|__|  with a number box...
     z = z

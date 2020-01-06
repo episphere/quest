@@ -71,8 +71,19 @@
                         <input id="tb" style="margin-top: 10px;">
                         <span>.txt</span>
                         <button onclick="saveDoc()">Save</button>
+                        <br>
+                        <span>Upload Questionnaire:</span>
+                        <button style="margin-top: 10px;" onclick="goToLink()">Upload</button>
                     </div>
                 </td>
+                <script>
+                    function goToLink(){
+                        let a = document.createElement('a')
+                        a.href = "https://github.com/episphere/quest/upload/master/questionnaires"
+                        a.target = "_blank"
+                        a.click()
+                    }
+                </script>
                 <script>
                     function saveDoc() {
                         let bb = new Blob([ta.value])
