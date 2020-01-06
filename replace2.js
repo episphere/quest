@@ -23,7 +23,7 @@ transform.render = contents => {
   contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
   contents = contents.replace(/\/\*.*\*\//gms, "");
   contents = contents.replace(/\/\/.*/gm, "");
-  // contents = contents.replace(/\[DISPLAY IF .*\]/g, "");
+  // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
 
   //console.log(contents)
   // first let's deal with breaking up questions..
