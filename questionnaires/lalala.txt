@@ -1,0 +1,2457 @@
+[INTROM1] Welcome, {$u:firstName}! This survey will ask you about a wide range of topics, such as your medical conditions, water usage, sleep habits, and more. Our goal is to gather information about your life and behaviors. You can answer all of the questions now, or you can answer some questions now and answer the rest later. Your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.                                                                                                                                                                                                                                       
+At a few points in this survey, you may see a word or phrase that appears as a button. Clicking the button will show more information that might help you answer the question. This sentence shows an example. [text that appears when “example” is selected: This is an example of how additional information will be displayed.]                                                                                                                                                                                                                                                 
+Let’s get started.
+
+[INTROBAC] Module 1
+First, we are interested in getting some general information about you, your medical history, and your family history. This information will help us better understand your current health status. It will also help us understand how your health may be different from the health of other people.
+
+Please remember that anything you tell us is completely confidential.
+[SECTION1] Background Information 
+Please tell us about yourself.
+
+[AGECOR] Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
+(1) Yes -> MARITAL
+(2) No 
+
+[AGE] How old are you today? 
+Age: |__|__|
+
+[MARITAL] Are you now married, widowed, divorced, separated, never married, or living with a partner?
+(1) Never Married
+(2) Not married but living with partner
+(3) Married
+(4) Divorced
+(5) Widowed
+(6) Separated
+(99) Prefer not to answer
+ NO RESPONSE 
+
+[RACEETH] Which categories describe you? Select all that apply. Note, you may select more than one group.
+[1] American Indian or Alaska Native 
+[2] Asian 
+[3] Black, African American, or African 
+[4] Hispanic, Latino, or Spanish
+[5] Middle Eastern or North African
+[6] Native Hawaiian or other Pacific Islander
+[7] White 
+None of these fully describe me: Please describe [text box:8]
+[99] Prefer not to answer
+NO RESPONSE   -> GO TO LANG
+
+[DISPLAY  IF RACEETH = 01 ]
+
+[RACEETH2] Which of these categories describe you best? Select all that apply.
+[1] American Indian
+[2] Alaska Native
+[3] Central or South American Indian
+[4] None of these fully describe me: Please describe [text box: RACEETH2_TB]
+[99] Prefer not to answer
+NO RESPONSE ->  GO TO RACEETH3
+
+[DISPLAY If RACEETH2 = 1, 2, 3 ]
+
+[RACEETH2B] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik ) Inupiat Traditional Government, Nome Eskimo Community, etc.
+
+(TRIBE)|__|
+(98) I’m not sure
+NO RESPONSE
+[DISPLAY IF RACEETH =2]
+
+[RACEETH3] Which of these categories describe you best? Select all that apply.
+[1] Asian Indian
+[2] Cambodian
+[3] Chinese
+[4] Filipino
+[5] Hmong
+[6] Japanese
+[7] Korean  
+[8] Pakistani 
+[9] Vietnamese
+[98] None of these fully describe me: Please describe [text box:RACEETH3_TB]
+[99] Prefer not to answer
+NO RESPONSE ->  GO TO RACEETH4
+[DISPLAY IF RACEETH= 3]
+
+[RACEETH4] Which of these categories describe you best? Select all that apply.
+[1] African American
+[2] Barbadian
+[3] Caribbean
+[4] Ethiopian
+[5] Ghanaian
+[6] Haitian
+[7] Jamaican
+[8] Liberian
+[9] Nigerian
+[10] Somali
+[11] South African
+[98] None of these fully describe me: Please describe [text box:RACEETH4_TB]
+[99] Prefer not to answer
+NO RESPONSE ->  GO TO RACEETH5
+
+[DISPLAY IF RACEETH = 4]
+
+[RACEETH5] Which of these categories describe you best? Select all that apply.
+[1] Colombian
+[2] Cuban
+[3] Dominican
+[4] Ecuadorian
+[5] Honduran
+[6] Mexican or Mexican American
+[7] Puerto Rican
+[8] Salvadoran
+[9] Spanish
+[98] None of these fully describe me: Please describe [text box:RACEETH5_TB]
+[99] Prefer not to answer
+NO RESPONSE ->  GO TO RACEETH6
+[DISPLAY IF RACEETH = 5]
+[RACEETH6] Which of these categories describe you best? Select all that apply.
+[1] Afghan
+[2] Algerian
+[3] Egyptian
+[4] Iranian
+[5] Iraqi
+[6] Israeli
+[7] Lebanese
+[8] Moroccan
+[9] Syrian 
+[10] Tunisian
+[98] None of these fully describe me: Please describe [text box: RACEETH6_TB]
+[99] Prefer not to answer
+NO RESPONSE ->  GO TO RACEETH7
+[DISPLAY IF RACEETH = 6]
+[RACEETH7] Which of these categories describe you best? Select all that apply.
+[1] Chamorro
+[2] Chuukese
+[3] Fijian
+[4] Marshallese
+[5] Native Hawaiian
+[6] Palauan
+[7] Samoan
+[8] Tahitian
+[9] Tongan
+[98] None of these fully describe me: Please describe [text box]
+[99] Prefer not to answer
+NO RESPONSE ->  GO TO RACEETH8
+[DISPLAY IF RACEETH = 7]
+[RACEETH8] Which of these categories describe you best? Select all that apply.
+[1] Dutch
+[2] English
+[3] European
+[4] French
+[5] German
+[6] Irish
+[7] Italian
+[8] Norwegian
+[9] Polish
+[10] Scottish
+[11] Spanish
+[98] None of these fully describe me: Please describe [text box:RACE_ETH8]
+[99] Prefer not to answer
+NO RESPONSE ->  GO TO LANG
+
+[LANG] When you were a child, what language(s) did you first learn at home? Select all that apply.
+[1] English
+[2] Spanish
+[3] Spanish Creole
+[4] French
+[5] French Creole
+[6] Italian
+[7] Portuguese
+[8] German
+[9] Russian
+[10] Polish
+[11] Hindi
+[12] Chinese
+[13] Korean
+[14] Vietnamese
+[15] Tagalog
+[16] Ilocano
+[17] Japanese
+[18] Arabic
+[98] Other language(s): Please describe [text box:LANG_TB]
+NO RESPONSE -> GO TO SEX
+
+[DISPLAY IF SEX= 03]
+[SEX2] Later questions in this survey will ask about surgeries and medical procedures. We want to make sure that you are asked the right questions. 
+Please select the body parts that you were born with.
+[1] Penis
+[2] Testes
+[3] Prostate
+[4] Vagina
+[5] Cervix
+[6] Uterus
+[7] Ovaries
+[8] Fallopian Tubes
+
+[GEN] Do you think of yourself as:
+(1) Male
+(2) Female
+(3) Transgender Male/Trans Man/Female-to-Male (FTM)
+(4) Transgender Female/Trans Woman/Male-to-Female (MTF)
+(5) Genderqueer, not exclusively male or female
+(6) Additional gender category: Please describe [text box:GEN_TB]
+(99) Prefer not to answer
+NO RESPONSE -> GO TO SEXORIENT
+
+[SEXORIENT] Do you think of yourself as: 
+(1) Straight or heterosexual
+(2) Lesbian, gay, or homosexual 
+(3) Bisexual
+(4) Something else: Please describe [text box:SEXORIENT]
+(99) Prefer not to answer
+NO RESPONSE -> GO TO MEDICAL HISTORY
+
+
+Medical History [SECTION 2]
+[INTROMH] The next group of questions ask about medical conditions you may have. Please answer “yes” to these questions only if a doctor or other health professional has told you that you have the condition.  You will also be asked how old you were when a doctor or health professional told you that.
+ We also ask about medical procedures you may have had.  
+Cancer	
+[SKINCANC] Has a doctor or other health professional ever told you that you have non-melanoma skin cancer? 
+(1) Yes
+(0) No -> GO TO MHGROUP1
+NO RESPONSE -> GO TO MHGROUP1
+
+[SKINCANC2] What type(s) of skin cancer did a doctor or other health professional tell you that you have? Select all that apply.
+[1] Basal cell
+[2]Squamous cell
+[77] Don’t know
+NO RESPONSE -> GO TO SKINCANC3
+
+[SKINCANC3] How old were you when a doctor or other health professional first told you that you have skin cancer? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year at diagnosis
+NO RESPONSE -> GO TO MHGROUP1
+
+Cardiovascular disease
+Piped text:
+[IF SEX =02 or 03, FILL [Please do not include hypertension during pregnancy.]]
+[IF SEX =01, EXCLUDE [Please do not include hypertension during pregnancy.]]
+
+[MHGROUP1] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] B-12 Deficiency (Pernicious Anemia)
+[2] Coronary Artery/Coronary Heart Disease
+[3] Congestive Heart Failure
+[4] High Cholesterol
+[5] Heart Attack (Myocardial Infarction)
+[6] Abnormal Heart Rhythm (Arrhythmia)
+[7] Chest Pain (Angina)
+[8] Heart Valve Problems
+[9] High Blood Pressure (Hypertension) [Please do not include hypertension during pregnancy.]
+[10] Blood Clots (Deep Vein Thrombosis, Pulmonary Embolism)
+[11] Stroke
+[12] I have not had any of these conditions -> GO TO MHGROUP2
+NO RESPONSE -> GO TO MHGROUP2
+
+[DISPLAY IF MHGROUP1= 01]
+[ANEMIA] How old were you when a doctor or other health professional first told you that you have or had vitamin B-12 deficiency (pernicious anemia)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CVD
+
+[DISPLAY IF MHGROUP1= 02]
+[CVD] How old were you when a doctor or other health professional first told you that you have coronary artery/coronary heart disease? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CHF
+
+
+[DISPLAY IF MHGROUP1= 03]
+[CHF] How old were you when a doctor or other health professional first told you that you have congestive heart failure? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CHOL
+
+
+[DISPLAY IF MHGROUP1= 04]
+[CHOL] How old were you when a doctor or other health professional first told you that you have high cholesterol? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HEARTATT
+[DISPLAY IF MHGROUP1= 05]
+[HEARTATT] How old were you when a doctor or other health professional first told you that you have had a heart attack (myocardial infarction)? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO ARRHYT
+
+[DISPLAY IF MHGROUP1= 06]
+[ARRHYT] How old were you when a doctor or other health professional first told you that you have abnormal heart rhythm (arrhythmia)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CHESTPAIN
+
+
+[DISPLAY IF MHGROUP1= 07]
+[CHESTPAIN] How old were you when a doctor or other health professional first told you that you have chest pain (angina)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HEARTVALV
+
+
+[DISPLAY IF MHGROUP1= 08]
+[HEARTVALV] How old were you when a doctor or other health professional first told you that you have heart valve problems? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HTN
+
+
+[DISPLAY IF MHGROUP1= 09]
+[HTN] How old were you when a doctor or other health professional first told you that you have high blood pressure (hypertension)? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO BLOODCLOT
+[DISPLAY IF MHGROUP1= 10]
+[BLOODCLOT] How old were you when a doctor or other health professional first told you that you have blood clots (deep vein thrombosis, pulmonary embolism)? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO STROKE
+
+
+[DISPLAY IF MHGROUP1= 11]
+[STROKE] How old were you when a doctor or other health professional first told you that you have had a stroke? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO MHGROUP2
+
+Respiratory problems
+[MHGROUP2] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Chronic lung disease (Emphysema, Chronic Bronchitis, or Chronic Obstructive Pulmonary Disease (COPD))
+[2] Asthma
+[3] Hay Fever (Allergic to pollen or Allergic Rhinitis)
+[] I have not had any of these conditions -> GO TO MHGROUP3
+[] NO RESPONSE -> GO TO MHGROUP3
+
+[DISPLAY IF MHGROUP2= 01]
+[COPD] How old were you when you a doctor or other health professional first told you that you have chronic lung disease (emphysema, chronic bronchitis, or chronic obstructive pulmonary disease (COPD))? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO ASTHMA
+
+[DISPLAY IF MHGROUP2= 02]
+[ASTHMA] How old were you when a doctor or other health professional first told you that you have asthma?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HAYFEVER
+
+
+[DISPLAY IF MHGROUP2= 03]
+[HAYFEVER] How old were you when a doctor or other health professional first told you that you have hay fever (allergic rhinitis) or are allergic to pollen?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO MHGROUP3
+
+Digestive system problems
+[MHGROUP3] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Esophageal Acid Reflux (GERD)
+[2] Barrett’s Esophagus
+[3] Irritable Bowel Syndrome
+[4] Inflammatory Bowel Disease
+[5] Diverticulitis or Diverticulosis
+[6] Ulcerative Colitis
+[7] Crohn’s Disease
+[8] Celiac Disease (also known as Gluten-Sensitive Enteropathy)
+[9] Gallstones (Biliary Stones)
+[10] Liver Cirrhosis
+[11] Pancreatitis
+[] I have not had any of these conditions -> GO TO MHGROUP4
+NO RESPONSE -> GO TO MHGROUP4
+
+[DISPLAY IF MHGROUP3= 01]
+[GERD] How old were you when a doctor or other health professional first told you that you have esophageal acid reflux (GERD)? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO BARESO
+[DISPLAY IF MHGROUP3= 02]
+[BARESO] How old were you when a doctor or other health professional first told you that you have Barrett’s esophagus? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO IBS
+
+
+[DISPLAY IF MHGROUP3= 03]
+[IBS] How old were you when a doctor or other health professional first told you that you have irritable bowel syndrome? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO IBD
+
+
+[DISPLAY IF MHGROUP3= 04]
+[IBD] How old were you when a doctor or other health professional first told you that you have inflammatory bowel disease? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO DIVERT
+
+
+[DISPLAY IF MHGROUP3= 05]
+[DIVERT] How old were you when a doctor or other health professional first told you that you have diverticulitis or diverticulosis? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO UC
+
+
+[DISPLAY IF MHGROUP3= 06]
+[UC] How old were you when a doctor or other health professional first told you that you have ulcerative colitis? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CD
+
+[DISPLAY IF MHGROUP3= 07]
+[CD] How old were you when a doctor or other health professional first told you that you have Crohn’s disease? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CCD
+
+[DISPLAY IF MHGROUP3= 08]
+[CCD] How old were you when a doctor or other health professional first told you that you have celiac disease (also known as gluten-sensitive enteropathy)? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO GALL
+
+
+[DISPLAY IF MHGROUP3= 09]
+[GALL] How old were you when a doctor or other health professional first told you that you have gallstones (biliary stones)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO LIVCIRR
+
+[DISPLAY IF MHGROUP3= 10]
+[LIVCIRR] How old were you when a doctor or other health professional first told you that you have liver cirrhosis?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO PANCREA
+
+
+[DISPLAY IF MHGROUP3= 11]
+[PANCREA] How old were you when a doctor or other health professional first told you that you have pancreatitis?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO MHGROUP4
+[MHGROUP4] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Thyroid Disorder (Overactive or Underactive Thyroid)
+[2] Diabetes
+[3] Graves’ Disease
+[] I have not had any of these conditions -> GO TO MHGROUP5
+NO RESPONSE -> GO TO MHGROUP5
+
+[DISPLAY IF MHGROUP4= 01]
+[THYROID] How old were you when a doctor or other health professional first told you that you have a thyroid disorder (overactive or underactive thyroid)? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO DM
+[DISPLAY IF MHGROUP4= 02]
+[DM] Which type of diabetes did a doctor or other health professional tell you that you have?
+(1) Type 1
+(2) Type 2
+() Don’t know
+NO RESPONSE -> GO TO DM2
+
+[DISPLAY IF MHGROUP4= 02]
+[DM2] How old were you when a doctor or other health professional first told you that you have diabetes?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO GRAVES
+
+[DISPLAY IF MHGROUP4= 03]
+[GRAVES] How old were you when a doctor or other health professional first told you that you have Graves’ disease?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO MHGROUP5
+
+Kidney Disease
+[MHGROUP5] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Kidney Stones
+[2] Chronic Kidney Disease (Also Known as Chronic Kidney Failure)
+[] I have not had any of these conditions -> GO TO MHGROUP6
+NO RESPONSE -> GO TO MHGROUP6
+
+[DISPLAY IF MHGROUP5= 01]
+[KIDNEY] How old were you when a doctor or other health professional first told you that you had kidney stones?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CKD
+
+[DISPLAY IF MHGROUP5= 02]
+[CKD] How old were you when a doctor or other health professional first told you that you have chronic kidney disease (also known as chronic kidney failure)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO MHGROUP6
+Systemic and other problems
+[MHGROUP6] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Rheumatoid Arthritis
+[2] Lupus
+[3] Gout
+[] I have not had any of these conditions -> GO TO MHGROUP7
+NO RESPONSE -> GO TO MHGROUP7
+
+[DISPLAY IF MHGROUP6= 01]
+[RA] How old were you when a doctor or other health professional first told you that you have rheumatoid arthritis?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO LUPUS
+[DISPLAY IF MHGROUP6= 02]
+[LUPUS] How old were you when a doctor or other health professional first told you that you have lupus?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO GOUT
+
+[DISPLAY IF MHGROUP6= 03]
+[GOUT] How old were you when a doctor or other health professional first told you that you have gout?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO STD/STI SECTION
+
+Sexually transmitted diseases and infections
+
+[INTROSTD] The next questions ask about conditions that may affect your reproductive system. Some questions ask about sexually transmitted diseases (STDs), which are infections that are spread by sexual contact. Please remember that anything you tell us is completely confidential.
+
+[MHGROUP7] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Infectious Mononucleosis (“Mono” or “Kissing Disease”)
+[2] Shingles (Herpes Zoster)
+[3] Chronic Hepatitis B or C
+[4] Gonorrhea
+[5] Chlamydia
+[6] Trichomoniasis
+[7] Syphilis
+[8] Genital Warts
+[9] HPV
+[10] HIV/AIDS
+[] I have not had any of these conditions -> GO TO MHGROUP8
+NO RESPONSE -> GO TO MHGROUP8
+
+[DISPLAY IF MHGROUP7= 01]
+[MONO] How old were you when a doctor or other health professional first told you that you have “mono” or “kissing disease” (infectious mononucleosis)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO SHINGLES
+
+[DISPLAY IF MHGROUP7= 02]
+[SHINGLES] How old were you when a doctor or other health professional first told you that you have shingles (herpes zoster)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HBVHCV
+
+[DISPLAY IF MHGROUP7= 03]
+[HBVHCV] How old were you when a doctor or other health professional first told you that you have chronic hepatitis B or C?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO GONORR
+
+[DISPLAY IF MHGROUP7= 04]
+[GONORR] How old were you when a doctor or other health professional first told you that you have gonorrhea?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO CHLA
+
+[DISPLAY IF MHGROUP7= 05]
+[CHLA] How old were you when a doctor or other health professional first told you that you have chlamydia?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO TRICH
+[DISPLAY IF MHGROUP7= 06]
+[TRICH] How old were you when a doctor or other health professional first told you that you have trichomoniasis?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO SYPH
+
+[DISPLAY IF MHGROUP7= 07]
+[SYPH] How old were you when a doctor or other health professional first told you that you have syphilis?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO GENWARTS
+
+[DISPLAY IF MHGROUP7= 08]
+[GENWARTS] How old were you when a doctor or other health professional first told you that you have genital warts?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HPV
+
+[DISPLAY IF MHGROUP7= 09]
+[HPV] How old were you when a doctor or other health professional first told you that you have human papillomavirus (HPV)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HIVAIDS
+
+[DISPLAY IF MHGROUP7= 10]
+[HIVAIDS] How old were you when a doctor or other health professional first told you that you have HIV/AIDS?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO MHGROUP8
+Urinary and reproductive system problems
+
+[MHGROUP8] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Uterine Fibroids [DISPLAY ONLY IF SEX = (02) OR (SEX= (03) AND SEX2 = (06))]
+[2] Endometriosis [DISPLAY ONLY IF SEX = (02) OR (SEX= (03) AND SEX2 = (06))]
+[3] Polycystic Ovary Syndrome (PCOS) [DISPLAY ONLY IF SEX = (02) OR (SEX= (03) AND SEX2 = (07))]
+[4] Enlarged Prostate [DISPLAY ONLY IF SEX = (01) OR (SEX = (03) AND SEX2 = (03))]
+[5] Fibrocystic Breast, or other Benign Breast Disease
+[] I have not had any of these conditions -> GO TO DEPRESS
+NO RESPONSE -> GO TO DEPRESS
+
+[DISPLAY IF MHGROUP8= 01]
+[UF] How old were you when a doctor or other health professional first told you that you have uterine fibroids?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO ENDO
+
+[DISPLAY IF MHGROUP8= 02]
+[ENDO] How old were you when a doctor or other health professional first told you that you have endometriosis?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO ENDO2
+
+
+[DISPLAY IF MHGROUP8= 02]
+[ENDO2]  Was your endometriosis confirmed by surgery?
+(1) Yes
+(2) No
+NO RESPONSE -> GO TO PCOS
+
+[DISPLAY IF MHGROUP8= 03]
+[PCOS] How old were you when a doctor or other health professional first told you that you have polycystic ovary syndrome (PCOS)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO ENLGPROS
+
+
+[DISPLAY IF MHGROUP8= 04]
+[ENLGPROS] How old were you when a doctor or other health professional first told you that you have an enlarged prostate (benign prostatic hyperplasia (BPH))?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO BREASTDIS
+
+[DISPLAY IF MHGROUP8= 05]
+[BREASTDIS] How old were you when a doctor or other health professional first told you that you have fibrocystic breasts, or other benign breast disease? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO BREASTDIS2
+[DISPLAY IF MHGROUP8= 05]
+[BREASTDIS2] When you were told that you have fibrocystic breasts, or other benign breast disease, was it confirmed by biopsy?
+(1) Yes
+(0) No
+NO RESPONSE -> GO TO DEPRESS
+
+ [DEPRESS] Has a doctor or other health professional ever told you that you have clinical depression? 
+(1) Yes
+(0) No -> GO TO INTROSURG
+NO RESPONSE -> GO TO INTROSURG
+
+[DEPRESS2] How old were you when a doctor or other health professional first told you that you have clinical depression?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO INTROSURG
+Surgical procedures
+[INTROSURG] The next questions ask about certain surgical procedures.
+[MHGROUP9] Have you ever had any of these surgeries? Select all that apply. 
+[1] Tonsils removed (tonsillectomy)
+[2] Gallbladder removed (cholecystectomy)
+[3] Appendix removed (appendectomy)
+[4] Liposuction
+[5] Bariatric surgery (lap band, gastric bypass)
+[6] Breast surgery
+[7] Uterus removed (hysterectomy) [DISPLAY IF SEX=02] or [SEX=03 AND SEX2 =06]
+[8] Tubes tied (tubal ligation) [DISPLAY IF SEX=02] or [SEX=03 AND SEX2 =08]
+[9] Removal of one or both ovaries (oophorectomy) [DISPLAY IF SEX=02] or [SEX=03 AND SEX2 =07]
+[10] Removal of one or both fallopian tubes (salpingectomy) [DISPLAY IF SEX=02] or [SEX=03 AND SEX2 =08]
+[11] Vasectomy [DISPLAY IF SEX=01] or [SEX=03 AND SEX2=01]
+[12] Removal of one or both testicles (orchiectomy or orchidectomy) [DISPLAY IF SEX=01] or [SEX=03 AND SEX2=02]
+[13] Prostate removed (prostatectomy) [DISPLAY IF SEX=01] or [EX=03 AND SEX2=03]
+[14] Penis removed (penectomy) [DISPLAY IF SEX=01] or [SEX=03 AND SEX2=01]
+[] I have not had any of these surgeries -> GO TO BLDTRANS
+NO RESPONSE -> GO TO BLDTRANS
+
+[DISPLAY IF MHGROUP9= 01]
+[TONSILS] How old were you when you had your tonsils removed (tonsillectomy)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO GALLREM
+
+[DISPLAY IF MHGROUP9= 02]
+[GALLREM] How old were you when you had your gallbladder removed (cholecystectomy)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO APPEND
+
+
+[DISPLAY IF MHGROUP9= 03]
+[APPEND] How old were you when you had your appendix removed (appendectomy)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO LIPOSUCT
+
+[DISPLAY IF MHGROUP9= 04]
+[LIPOSUCT] How old were you when you first had liposuction?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO BARSUR
+
+[DISPLAY IF MHGROUP9= 05]
+ [BARSUR] How old were you when you had your bariatric surgery (lap band, gastric bypass)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO BREASTSUR
+
+[DISPLAY IF MHGROUP9= 06]
+[BREASTSUR] Which of these breast surgeries have you had? Do not include a biopsy. Select all that apply.
+[1] Breast implants (augmentation surgery)
+[2] Breast lift surgery (mastopexy)
+[3] Breast reconstruction surgery
+[4] Breast reduction (reduction mammaplasty)
+[5] Removal of a part of my breast tissue (breast-conserving surgery (BCS),  lumpectomy, partial mastectomy, or segmental mastectomy)
+[6] Removal of one breast (mastectomy)
+[7] Removal of both breasts (double or bilateral mastectomy)
+[8] Surgery for a breast abscess (such as incision and draining)
+[9] Removal of a lactiferous or milk duct (microdochectomy) 
+[] Other: Please describe [text box]
+None of the above -> GO TO HYSTER
+
+ [BREASTSUR2] How old were you when you had breast surgery? If more than once, at what age did you last have this procedure? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO HYSTER
+[DISPLAY IF MHGROUP9= 07]	
+[HYSTER] How old were you when you had your uterus removed (hysterectomy)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO TUBLIG
+
+[DISPLAY IF MHGROUP9= 08]
+[TUBLIG] How old were you when you had your tubes tied (tubal ligation)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO OVARYREM
+
+[DISPLAY IF MHGROUP9= 09]
+ [OVARYREM] Which of these best describes the type of ovary removal surgery that you had?
+(1) I had surgery to remove one ovary
+(2) I had surgery to remove both ovaries
+() None of the above -> GO TO FTREM
+NO RESPONSE -> GO TO FTREM
+
+[OVARYREM2] How old were you when you had one or both ovaries removed (oophorectomy)? If more than one procedure, at what age did you last have this procedure?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO FTREM
+
+
+[DISPLAY IF MHGROUP9= 10]
+[FTREM] Which of these best describes the type of fallopian tube removal surgery that you had?
+(1) I had surgery to remove one fallopian tube
+(2) I had surgery to remove both fallopian tubes
+() None of the above -> GO TO VASEC
+NO RESPONSE -> GO TO VASEC
+
+ [FTREM2] How old were you when you had one or both fallopian tubes removed (salpingectomy)? If more than one procedure, at what age did you last have this procedure? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO VASEC
+[DISPLAY IF MHGROUP9= 11]
+[VASEC] [Previously VASEC2] How old were you when you had a vasectomy?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO TESTREM
+
+[DISPLAY IF MHGROUP9= 12]
+[TESTREM] Which of these best describes the type of testicle removal surgery that you had?
+(1) I had surgery to remove one testicle
+(2) I had surgery to remove both testicles
+() None of the above -> GO TO PROSREM
+NO RESPONSE -> GO TO PROSREM
+
+[TESTREM2] How old were you when you had one or both testicles removed (orchiectomy or orchidectomy)? If more than one procedure, at what age did you last have this procedure? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO PROSREM
+
+
+[DISPLAY IF MHGROUP9= 13]
+[PROSREM] Which of these best describes the type of prostate removal surgery that you had? 
+(1) I had surgery to remove part of my prostate
+(2) I had surgery to remove my whole prostate
+() None of the above -> GO TO PENREM
+NO RESPONSE -> GO TO PENREM
+
+ [PROSREM2] How old were you when you had part or all of your prostate removed (prostatectomy)? If more than one procedure, at what age did you last have this procedure? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO PENREM
+[DISPLAY IF MHGROUP9= 14]
+[PENREM] How old were you when you had your penis removed (penectomy)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+NO RESPONSE -> GO TO BLDTRANS
+
+Blood Transfusion
+[BLDTRANS] Have you ever had a blood transfusion? 
+(1) Yes
+(0) No ->GO TO FAMILY HISTORY SECTION
+NO RESPONSE -> GO TO FAMILY HISTORY SECTION
+
+[BLDTRANS2] How many blood transfusions have you had in total?  
+|__|__| # of transfusions 
+NO RESPONSE -> GO TO BLDTRANS3
+
+[IF BLDTRANS2 >1, GO TO BLDTRANS3]
+[IF BLDTRANS2 <=1, GO TO FAMILY HISTORY SECTION]
+
+[BLDTRANS3] How old were you when you had your first blood transfusion?
+|__|__| Age at first transfusion
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year at first transfusion
+NO RESPONSE -> GO TO BLDTRANS4
+
+[DISPLAY IF BLDTRANS2 > 1]
+[BLDTRANS4] How old were you when you had your last blood transfusion?
+|__|__| Age at last transfusion
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year at last transfusion
+NO RESPONSE -> GO TO FAMILY HISTORY SECTION
+Family History [SECTION 3]
+
+[ADOPTFOST] Were you adopted or a foster child?
+(0) No 
+(1) Yes
+NO RESPONSE -> GO TO MULTBIRTH
+
+[MULTBIRTH] Were you born a twin, triplet, or other multiple?
+(0) No
+(1) Yes, identical twins
+(2) Yes, fraternal twins (not identical)
+(3) Yes, triplets or higher multiple birth
+NO RESPONSE -> GO TO MOM
+[MOM] The next questions ask about your family and if people in your family have had cancer.
+Parents
+[MOM1] Is your biological mother still living?
+(1) Yes -> GO TO MOMAGE
+(0) No -> GO TO MOMDEATH
+() Don’t know -> GO TO MOMCANC
+NO RESPONSE -> GO TO MOMCANC
+
+[MOMAGE] How old is she today?
+|__|__|__| Mother’s age -> GO TO MOMCANC
+() Don’t know -> GO TO MOMCANC
+NO RESPONSE -> GO TO MOMCANC
+
+[MOMDEATH] How old was she when she died?
+|__|__|__| Mother’s age
+Don’t know 
+NO RESPONSE -> GO TO MOMCANC
+
+[MOMCANC] [If MOM=01] Has a doctor or other health professional ever told her that she has or had any type of cancer? [If MOM=00, 77, NON-RESPONSE] Did a doctor or other health professional ever tell her that she had any type of cancer?
+(1) Yes 
+(0) No-> GO TO DAD
+() Don’t know -> GO TO DAD
+NO RESPONSE -> GO TO DAD
+	
+[MOMCANC2] Which type(s) of cancer? Select all that apply.
+[1] Anal
+[2] Bladder
+[3] Brain
+[4] Breast
+[5] Cervical
+[6] Colon/rectal
+[7] Esophageal
+[8] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.)
+[9] Kidney
+[10] Leukemia (blood and bone marrow)
+[11] Liver
+[12] Lung or bronchial
+[13] Non-Hodgkin’s lymphoma
+[14] Lymphoma
+[15] Melanoma (skin)
+[16] Non-melanoma skin (basal or squamous)
+[17] Ovarian
+[18] Pancreatic
+[19] Stomach
+[20] Thyroid
+[21] Uterine (endometrial)
+[ ] Another type of cancer: Please describe [text box]
+[ ] I know she had cancer, but don’t know what type
+NO RESPONSE -> GO TO DAD
+
+[MOMCANC3A]
+[DISPLAY IF 01 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had anal cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had anal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3B
+
+[MOMCANC3B]
+[DISPLAY IF 02 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had bladder cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had bladder cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3C
+
+[MOMCANC3C]
+[DISPLAY IF 03 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had brain cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had brain cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3D
+
+[MOMCANC3D]
+[DISPLAY IF 04 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had breast cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had breast cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3E
+
+[MOMCANC3E]
+[DISPLAY IF 05 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had cervical cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had cervical cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3F
+
+[MOMCANC3F]
+[DISPLAY IF 06 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had colon/rectal cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had colon/rectal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3G
+
+[MOMCANC3G]
+[DISPLAY IF 07 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had esophageal cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had esophageal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3H
+
+[MOMCANC3H]
+[DISPLAY IF 08 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had head and neck cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had head and neck cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3I
+
+[MOMCANC3I]
+[DISPLAY IF 09 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had kidney cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had kidney cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3J
+
+[MOMCANC3J]
+[DISPLAY IF 10 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had leukemia? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had leukemia? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3K
+
+[MOMCANC3K]
+[DISPLAY IF 11 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had liver cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had liver cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3L
+
+[MOMCANC3L]
+[DISPLAY IF 12 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had lung or bronchial cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had lung or bronchial cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3M
+
+[MOMCANC3M]
+[DISPLAY IF 13 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had non-Hodgkin’s lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had non-Hodgkin’s lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3N
+
+[MOMCANC3N]
+[DISPLAY IF 14 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3O
+
+[MOMCANC3O]
+[DISPLAY IF 15 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had melanoma? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had melanoma? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3P
+
+[MOMCANC3P]
+[DISPLAY IF 16 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had non-melanoma skin cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had non-melanoma skin cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3Q
+
+[MOMCANC3Q]
+[DISPLAY IF 17 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had ovarian cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had ovarian cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3R
+
+[MOMCANC3R]
+[DISPLAY IF 18 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had pancreatic cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had pancreatic cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3S
+
+[MOMCANC3S]
+[DISPLAY IF 19 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had stomach cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had stomach cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3T
+
+[MOMCANC3T]
+[DISPLAY IF 20 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had thyroid cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had thyroid cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3U
+
+[MOMCANC3U]
+[DISPLAY IF 21 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had uterine cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had uterine cancer? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3V
+
+[MOMCANC3V]
+[DISPLAY IF 22 SELECTED AT MOMCANC2]
+[FILL RESPONSE FROM MOMCANC2. IF NO TEXT PROVIDED AT MOMCANC2, FILL “ANOTHER TYPE OF CANCER”]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had [response from MOMCANC2/another type of cancer]? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had [response from MOMCANC2/another type of cancer]? |__|__| Age
+
+NO RESPONSE -> GO TO MOMCANC3W
+
+[MOMCANC3W]
+[DISPLAY IF 23 SELECTED AT MOMCANC2]
+[If MOM=01] What year was she first told by a doctor or other health professional that she has or had cancer? |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
+[If MOM=00, 77, NON-RESPONSE] How old was she when she was first told by a doctor or other health professional that she had cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DAD
+[DAD] Is your biological father still living? 
+(1) Yes -> GO TO DADAGE 
+(0) No -> GO TO DADDEATH
+() Don’t know -> GO TO DADCANC
+NO RESPONSE -> GO TO DADCANC
+
+[DADAGE] How old is he today?
+|__|__|__| Father’s age -> GO TO DADCANC
+Don’t know -> GO TO DADCANC
+NO RESPONSE -> GO TO DADCANC
+
+[DADDEATH] How old was he when he died?
+|__|__|__| Father’s age
+Don’t know
+NO RESPONSE -> GO TO DADCANC
+
+[DADCANC] [If DAD=01] Has a doctor or other health professional ever told him that he has or had any type of cancer? [If DAD=00, 77, NON-RESPONSE] Did a doctor or other health professional ever tell him that he had any type of cancer?
+(1) Yes
+(0) No-> GO TO SIB
+() Don’t know -> GO TO SIB
+NO RESPONSE -> GO TO SIB
+
+[DADCANC2] Which type(s) of cancer? Select all that apply.
+[1] Anal
+[2] Bladder
+[3] Brain
+[4] Breast
+[5] Colon/rectal
+[6] Esophageal
+[7] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.)
+[8] Kidney
+[9] Leukemia (blood and bone marrow)
+[10] Liver
+[11] Lung or bronchial
+[12] Non-Hodgkin’s lymphoma
+[13] Lymphoma
+[14] Melanoma (skin)
+[15] Non-melanoma skin (basal or squamous)
+[16] Pancreatic
+[17] Prostate
+[18] Stomach
+[19] Testicular
+[20] Thyroid
+[] Another type of cancer: Please describe [text box]
+[] I know he had cancer, but don’t know what type
+NO RESPONSE -> GO TO SIB
+
+[DADCANC3A]
+[DISPLAY IF 01 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had anal cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had anal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3B
+
+[DADCANC3B]
+[DISPLAY IF 02 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had bladder cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had bladder cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3C
+
+[DADCANC3C]
+[DISPLAY IF 03 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had brain cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had brain cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3D
+
+[DADCANC3D]
+[DISPLAY IF 04 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had breast cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had breast cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3E
+
+[DADCANC3E]
+[DISPLAY IF 05 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had colon/rectal cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had colon/rectal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3F
+
+[DADCANC3F]
+[DISPLAY IF 06 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had esophageal cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had esophageal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3G
+
+[DADCANC3G]
+[DISPLAY IF 07 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had head and neck cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had head and neck cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3H
+
+[DADCANC3H]
+[DISPLAY IF 08 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had kidney cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had kidney cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3I
+
+[DADCANC3I]
+[DISPLAY IF 09 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had leukemia? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had leukemia? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3J
+
+[DADCANC3J]
+[DISPLAY IF 10 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first old by a doctor or other health professional that he has or had liver cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had liver cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3K
+
+[DADCANC3K]
+[DISPLAY IF 11 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had lung or bronchial cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had lung or bronchial cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3L
+
+[DADCANC3L]
+[DISPLAY IF 12 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had non-Hodgkin’s lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had non-Hodgkin’s lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3M
+
+[DADCANC3M]
+[DISPLAY IF 13 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3N
+
+[DADCANC3N]
+[DISPLAY IF 14 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had melanoma? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had melanoma? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3O
+
+[DADCANC3O]
+[DISPLAY IF 15 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had non-melanoma skin cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had non-melanoma skin cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3P
+
+[DADCANC3P]
+[DISPLAY IF 16 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had pancreatic cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had pancreatic cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3Q
+
+[DADCANC3Q]
+[DISPLAY IF 17 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had prostate cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had prostate cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3R
+
+[DADCANC3R]
+[DISPLAY IF 18 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had stomach cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first first told by a doctor or other health professional that he had stomach cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3S
+
+[DADCANC3S]
+[DISPLAY IF 19 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had testicular cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had testicular cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3T
+
+[DADCANC3T]
+[DISPLAY IF 20 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had thyroid cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had thyroid cancer? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3U
+
+[DADCANC3U]
+[DISPLAY IF 21 SELECTED AT DADCANC2]
+[FILL RESPONSE FROM DADCANC2. IF NO TEXT PROVIDED AT DADCANC2, FILL “ANOTHER TYPE OF CANCER”]
+[If DAD=01] What year was he first told by a doctor or other health professional that he has or had [response from DADCANC2/another type of cancer]? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had [response from DADCANC2/another type of cancer]? |__|__| Age
+
+NO RESPONSE -> GO TO DADCANC3V
+
+[DADCANC3V]
+[DISPLAY IF 22 SELECTED AT DADCANC2]
+[If DAD=01] What year was he first first told by a doctor or other health professional that he has or had cancer? |__|__|__|__| Year
+Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+
+[If DAD=00, 77, NON-RESPONSE] How old was he when he was first told by a doctor or other health professional that he had cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIB
+
+Siblings
+[SIB] The next questions are about your brothers and sisters, whether or not they are currently living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Do not include adopted or step siblings. 
+[SIB] How many siblings do you have, including full and half-siblings?
+|__|__| #Siblings  
+NO RESPONSE -> GO TO SIBCONFIRM
+
+[Insert numeric value from SIB. IF SIB=NON-RESPONSE, FILL "0"]
+IF SIB=0 OR NON-RESPONSE, fill [siblings]
+IF SIB=1, fill [sibling]
+IF SIB>1 fill [siblings]
+
+[SIBCONFIRM] You told us that you have [insert number from SIB] [sibling/siblings], including full and half-siblings. 
+
+If this is not correct, please select the “Back” button to update your response. If this is correct, please select the “Next” button to move forward.
+
+If SIB >1 and is first time question is displayed, fill [oldest]
+If SIB >1 and this is not the first time the question is displayed, fill [next oldest]
+If SIB = 1, do not fill [oldest] OR [next oldest]
+[SIB2] Thinking of your [oldest/next oldest] sibling, what physical sex was this sibling assigned at birth?
+(2) Female
+(1) Male
+(3) Intersex or other
+() Don’t know
+NO RESPONSE -> GO TO SIB3
+
+If SIB2 = (01) then fill [he]
+If SIB2 = (02) then fill [she]
+If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling]
+[SIB3] Is [he/she/your sibling] a…
+(1) Full sibling
+(2) Half sibling, same mother
+(3) Half sibling, same father
+NO RESPONSE -> GO TO SIB4
+
+If SIB2 = (01) then fill [he]
+If SIB2 = (02) then fill [she]
+If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling]
+[SIB4] Is [he/she/your sibling] still living? 
+(1) Yes -> GO TO SIBAGE
+(0) No -> GO TO SIBDEATH
+[] Don’t know -> GO TO SIBCANC
+NO RESPONSE -> GO TO SIBCANC
+
+If SIB2 = (01) then fill [he]
+If SIB2 = (02) then fill [she]
+If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling]
+[SIBAGE] How old is [he/she/your sibling] today?
+() |__|__|__| Sibling’s age -> GO TO SIBCANC
+() Don’t know -> GO TO SIBCANC 
+NO RESPONSE -> GO TO SIBCANC
+
+If SIB2 = (01) then fill [he]
+If SIB2 = (02) then fill [she]
+If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling] 
+[SIBDEATH] How old was [he/she/your sibling] when [he/she/they] died?
+|__|__|__| Sibling’s age
+()Don’t know
+NO RESPONSE -> GO TO SIBCANC
+[SIBCANC] [If SIB4=01] Has a doctor or other health professional ever told your sibling that they have or had any type of cancer? [If SIB4=00, 77, NON-RESPONSE] Did a doctor or other health professional ever your sibling that they had any type of cancer?
+(1) Yes
+(0) No -> GO TO NEXT SIBLING [REPEAT SIB2 - SIBCANC UP TO THE NUMBER OF SIBLINGS IN SIB. IF ONLY/LAST SIBLING, GO TO CHILD]
+(99) Don’t know -> GO TO NEXT SIBLING [REPEAT SIB2 - SIBCANC UP TO THE NUMBER OF SIBLINGS IN SIB. IF ONLY/LAST SIBLING, GO TO CHILD]
+NO RESPONSE -> GO TO NEXT SIBLING [REPEAT SIB2 - SIBCANC UP TO THE NUMBER OF SIBLINGS IN SIB. IF ONLY/LAST SIBLING, GO TO CHILD]
+
+[SIBCANC2] Which type(s) of cancer? Select all that apply.
+[1] Anal
+[2] Bladder
+[3] Brain
+[4] Breast
+[5] Cervical (Display if SIB2 = 02)
+[6] Colon/rectal
+[7] Esophageal
+[8] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.)
+[9] Kidney
+[10] Leukemia (blood and bone marrow)
+[11] Liver
+[12] Lung or bronchial
+[13] Non-Hodgkin’s lymphoma
+[14] Lymphoma
+[15] Melanoma (skin)
+[16] Non-melanoma skin (basal or squamous)
+[17] Ovarian (Display if SIB2 = 02)
+[18] Pancreatic
+[19] Prostate (Display if SIB2 = 01)
+[20] Stomach
+[21] Testicular (Display if SIB2 = 01)
+[22] Thyroid
+[23] Uterine (endometrial) (Display if SIB2 = 02)
+[] Another type of cancer: Please describe [text box]
+I know my sibling had cancer, but don’t know what type
+NO RESPONSE -> GO TO CHILD
+[SIBCANC3A]
+[DISPLAY IF 01 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had anal cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had anal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3B
+
+[SIBCANC3B]
+[DISPLAY IF 02 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had bladder cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had bladder cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3C
+
+[SIBCANC3C]
+[DISPLAY IF 03 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had brain cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had brain cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3D
+
+[SIBCANC3D]
+[DISPLAY IF 04 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had breast cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had breast cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3E
+
+[SIBCANC3E]
+[DISPLAY IF 05 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had cervical cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had cervical cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3F
+
+[SIBCANC3F]
+[DISPLAY IF 06 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had colon/rectal cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had colon/rectal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3G
+
+[SIBCANC3G]
+[DISPLAY IF 07 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had esophageal cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had esophageal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3H
+
+[SIBCANC3H]
+[DISPLAY IF 08 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had head and neck cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had head and neck cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3I
+
+[SIBCANC3I]
+[DISPLAY IF 09 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had kidney cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had kidney cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3J
+
+[SIBCANC3J]
+[DISPLAY IF 10 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had leukemia? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had leukemia? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3K
+
+[SIBCANC3K]
+[DISPLAY IF 11 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had liver cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had liver cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3L
+
+[SIBCANC3L]
+[DISPLAY IF 12 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had lung or bronchial cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had lung or bronchial cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3M
+
+[SIBCANC3M]
+[DISPLAY IF 13 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had non-Hodgkin’s lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had non-Hodgkin’s lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3N
+
+[SIBCANC3N]
+[DISPLAY IF 14 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3O
+
+[SIBCANC3O]
+[DISPLAY IF 15 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had melanoma? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had melanoma? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3P
+
+[SIBCANC3P]
+[DISPLAY IF 16 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had non-melanoma skin cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had non-melanoma skin cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3Q
+
+[SIBCANC3Q]
+[DISPLAY IF 17 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had ovarian cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had ovarian cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3R
+
+[SIBCANC3R]
+[DISPLAY IF 18 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had pancreatic cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had pancreatic cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3S
+
+[SIBCANC3S]
+[DISPLAY IF 19 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had prostate cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had prostate cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3T
+
+[SIBCANC3T]
+[DISPLAY IF 20 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had stomach cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had stomach cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3U
+
+[SIBCANC3U]
+[DISPLAY IF 21 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had testicular cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had testicular cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3V
+
+[SIBCANC3V]
+[DISPLAY IF 22 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had thyroid cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had thyroid cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3W
+[SIBCANC3W]
+[DISPLAY IF 23 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had uterine cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had uterine cancer? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3X
+
+[SIBCANC3X]
+[DISPLAY IF 24 SELECTED AT SIBCANC2]
+[FILL RESPONSE FROM SIBCANC2. IF NO TEXT PROVIDED AT SIBCANC2, FILL “ANOTHER TYPE OF CANCER”]
+[If SIB4=01] What year was your sibling first first told by a doctor or other health professional that they have or had [response from SIBCANC2/another type of cancer]? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had [response from SIBCANC2/another type of cancer]? |__|__| Age
+
+NO RESPONSE -> GO TO SIBCANC3Y
+
+[SIBCANC3Y]
+[DISPLAY IF 25 SELECTED AT SIBCANC2]
+[If SIB4=01] What year was your sibling first told by a doctor or other health professional that they have or had cancer? |__|__|__|__| Year
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[If SIB4=00, 77, NON-RESPONSE] How old was your sibling when they were first told by a doctor or other health professional that they had cancer? |__|__| Age
+
+GO TO NEXT SIBLING (REPEAT SIB2 – SIBCANC3Y) UP TO THE NUMBER OF SIBLINGS IN SIB.
+IF ONLY/LAST SIBLING, GO TO CHILD
+
+Children
+[CHILD] The next questions are about your children, whether or not they are currently living. Please include adopted and step children, as well as your biological children. 
+[CHILD] How many children do you have?
+|__|__| #Children 
+NO RESPONSE -> GO TO CHILDCONFIRM
+
+[Insert numeric value from CHILD. IF CHILD=NON-RESPONSE, FILL "0"]
+IF CHILD=0 OR NON-RESPONSE, fill [children]
+IF CHILD=1, fill [child]
+IF CHILD>1 fill [children]
+
+[CHILDCONFIRM] You told us that you have [insert number from CHILD] [child/children], including biological, adopted, and step children. 
+If this is not correct, please select the “Back” button to update your response. If this is correct, please select the “Next” button to move forward.
+
+If CHILD >1 and is first time question is displayed, fill [oldest]
+If CHILD >1 and this is not the first time the question is displayed, fill [next oldest]
+If CHILD = 1, do not fill [oldest] OR [next oldest]
+[CHILD2] Thinking of your [oldest/next oldest] child, what physical sex was this child assigned at birth?
+(2) Female
+(1) Male
+(3) Intersex or other
+() Don’t know
+NO RESPONSE -> GO TO CHILD3
+
+If CHILD2 = (01) then fill [he]
+If CHILD2 = (02) then fill [she]
+If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
+[CHILD3] Is [he/she/your child]…
+(1) Your biological child
+(2) Adopted
+(3) A step child
+NO RESPONSE -> GO TO CHILD4
+
+If CHILD2 = (01) then fill [he]
+If CHILD2 = (02) then fill [she]
+If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
+[CHILD4] Is [he/she/your child] still living? 
+(1) Yes -> GO TO CHILDAGE
+(0) No -> GO TO CHILDDEATH
+() Don’t know -> GO TO CHILDCANC
+NO RESPONSE -> GO TO CHILDCANC
+
+If CHILD2 = (01) then fill [he]
+If CHILD2 = (02) then fill [she]
+If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
+[CHILDAGE] How old is your [he/she/your child] today?
+|__|__|__| Child’s age -> GO TO CHILDCANC
+()Less than 1 year old -> GO TO CHILDCANC
+()Don’t know -> GO TO CHILDCANC
+NO RESPONSE -> GO TO CHILDCANC
+
+If CHILD2 = (01) then fill [he]
+If CHILD2 = (02) then fill [she]
+If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
+[CHILDDEATH] How old was [he/she/your child] when [he/she/they] died?
+|__|__|__| Child’s age
+() Less than 1 year old
+() Don’t know
+NO RESPONSE -> GO TO CHILDCANC
+
+[DISPLAY CHILDCANC if CHILD3 = 01 “YOUR BIOLOGICAL CHILD”]
+[CHILDCANC] [If CHILD4=01] Has a doctor or other health professional ever told your child that they have or had any type of cancer? [If CHILD4=00, 77, NON-RESPONSE] Did a doctor or other health professional ever tell your child that they had any type of cancer?
+Yes 
+No -> GO TO NEXT CHILD (REPEAT CHILD2 – CHILDCANC) UP TO THE NUMBER OF CHILDREN IN CHILD. IF ONLY/LAST CHILD LISTED, GO TO GENERAL HEALTH SECTION.
+Don’t know -> GO TO NEXT CHILD (REPEAT CHILD2 – CHILDCANC) UP TO THE NUMBER OF CHILDREN IN CHILD. IF ONLY/LAST CHILD LISTED, GO TO GENERAL HEALTH SECTION.
+NO RESPONSE -> GO TO NEXT CHILD (REPEAT CHILD2 – CHILDCANC) UP TO THE NUMBER OF CHILDREN IN CHILD. IF ONLY/LAST CHILD LISTED, GO TO GENERAL HEALTH SECTION.
+
+	•	[CHILDCANC2] Which type(s) of cancer? Select all that apply.
+[1] Anal
+[2] Bladder
+[3] Brain
+[4] Breast
+[5] Cervical (Display if CHILD2 = 02)
+[6] Colon/rectal
+[7] Esophageal
+[8] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or  skin cancers.)
+[9] Kidney
+[10] Leukemia (blood and bone marrow)
+[11] Liver
+[12] Lung or bronchial
+[13] Non-Hodgkin’s lymphoma
+[14] Lymphoma
+[15] Melanoma (skin)
+[16] Non-melanoma skin (basal or squamous)
+[17] Ovarian (Display if CHILD2 = 02)
+[18] Pancreatic
+[19] Prostate (Display if CHILD2 = 01)
+[20] Stomach
+[21] Testicular (Display if CHILD2 = 01)
+[22] Thyroid
+[23] Uterine (endometrial) (Display if CHILD2 = 02)
+[] Another type of cancer: Please describe [text box]
+[] I know my child had cancer, but don’t know what type
+NO RESPONSE -> GO TO GENERAL HEALTH SECTION
+
+[CHILDCANC3A]
+[DISPLAY IF 01 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had anal cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had anal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3B
+
+[CHILDCANC3B]
+[DISPLAY IF 02 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had bladder cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had bladder cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3C
+[CHILDCANC3C]
+[DISPLAY IF 03 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had brain cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had brain cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3D
+
+[CHILDCANC3D]
+[DISPLAY IF 04 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had breast cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had breast cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3E
+
+[CHILDCANC3E]
+[DISPLAY IF 05 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had cervical cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had cervical cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3F
+
+[CHILDCANC3F]
+[DISPLAY IF 06 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had colon/rectal cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had colon/rectal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3G
+
+[CHILDCANC3G]
+[DISPLAY IF 07 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had esophageal cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had esophageal cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3H
+
+[CHILDCANC3H]
+[DISPLAY IF 08 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had head and neck cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had head and neck cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3I
+
+[CHILDCANC3I]
+[DISPLAY IF 09 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had kidney cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had kidney cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3J
+
+[CHILDCANC3J]
+[DISPLAY IF 10 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had leukemia? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had leukemia? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3K
+
+[CHILDCANC3K]
+[DISPLAY IF 11 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had liver cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had liver cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3L
+
+[CHILDCANC3L]
+[DISPLAY IF 12 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had lung or bronchial cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had lung or bronchial cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3M
+
+[CHILDCANC3M]
+[DISPLAY IF 13 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had non-Hodgkin’s lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had non-Hodgkin’s lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3N
+
+[CHILDCANC3N]
+[DISPLAY IF 14 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had lymphoma? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had lymphoma? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3O
+
+[CHILDCANC3O]
+[DISPLAY IF 15 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had melanoma? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had melanoma? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3P
+
+[CHILDCANC3P]
+[DISPLAY IF 16 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had non-melanoma skin cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had non-melanoma skin cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3Q
+
+[CHILDCANC3Q]
+[DISPLAY IF 17 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had ovarian cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had ovarian cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3R
+
+[CHILDCANC3R]
+[DISPLAY IF 18 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had pancreatic cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had pancreatic cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3S
+
+[CHILDCANC3S]
+[DISPLAY IF 19 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had prostate cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had prostate cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3T
+
+[CHILDCANC3T]
+[DISPLAY IF 20 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had stomach cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had stomach cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3U
+
+[CHILDCANC3U]
+[DISPLAY IF 21 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had testicular cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had testicular cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3V
+
+[CHILDCANC3V]
+[DISPLAY IF 22 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had thyroid cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had thyroid cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3W
+
+[CHILDCANC3W]
+[DISPLAY IF 23 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had uterine cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had uterine cancer? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3X
+
+[CHILDCANC3X]
+[DISPLAY IF 24 SELECTED AT CHILDCANC2]
+[FILL RESPONSE FROM CHILDCANC2. IF NO TEXT PROVIDED AT CHILDCANC2, FILL “ANOTHER TYPE OF CANCER”]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had [response from CHILDCANC2/another type of cancer]? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had [response from CHILDCANC2/another type of cancer]? |__|__| Age
+
+NO RESPONSE -> GO TO CHILDCANC3Y
+
+[CHILDCANC3Y]
+[DISPLAY IF 25 SELECTED AT CHILDCANC2]
+[If CHILD4=01] What year was your child first told by a doctor or other health professional that they have or had cancer? |__|__|__|__| Year
+Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
+
+[If CHILD4=00, 77, NON-RESPONSE] How old was your child when they were first told by a doctor or other health professional that they had cancer? |__|__| Age
+
+GO TO NEXT CHILD (REPEAT CHILD2 – CHILDCANC3Y) UP TO THE NUMBER OF CHILDREN IN CHILD
+IF ONLY/LAST CHILD, GO TO GENERAL HEALTH SECTION
+
+General Health [SECTION 4]
+[OVERHEALTH] Now we have some questions about your general health.
+[OVERHEALTH] In general, how would you rate your overall health? 
+(1) Excellent
+(2) Very Good
+(3) Good
+(4) Fair 
+(5) Poor
+NO RESPONSE -> GO TO PAIN
+
+Pain
+[PAIN] Over the past three months, have you felt any physical pain on most days?
+(1) Yes 
+(0) No -> GO TO WEIGHT
+NO RESPONSE -> GO TO WEIGHT
+
+[PAIN2] On a scale of 1 to 10, where 1 means a little pain and 10 means a lot of pain, how would you rate your physical pain?
+(1) 1 (a little pain)
+(2) 2
+(3) 3
+(4) 4
+(5) 5
+(6) 6
+(7) 7
+(8) 8
+(9) 9
+(10) 10 (a lot of pain)
+NO RESPONSE -> GO TO PAIN3
+
+[PAIN3] In the past three months, how much did the pain get in the way of your normal work? By work, we mean both housework and work outside of the home.
+(1) Not at all
+(2) A little bit
+(3) A lot
+NO RESPONSE -> GO TO WEIGHT
+Height and weight
+[WEIGHT] How much do you weigh without clothes or shoes on? [DISPLAY ADDITIONAL TEXT IF SEX=02 or 03:] [If you are pregnant, how much did you weigh before your pregnancy?] 
+	|__|__|__| #Pounds
+NO RESPONSE -> GO TO HEIGHTFEET
+
+[HEIGHTFEET] How tall are you with your shoes off? 
+	[HEIGHTFEET] |__| Feet	      [HEIGHTINCH] |__|__| Inches
+NO RESPONSE -> GO TO ADUHEIGHT
+
+[ADUHEIGHT] How old were you when you reached your adult height? If you are not sure, please make your best guess.
+	|__|__| Age
+NO RESPONSE -> GO TO AVEHEIGHT
+
+[AVEHEIGHT] When you were about 10 years old, compared to average, would you describe yourself as…
+[1] Shorter than average
+[2] About average height
+[3] Taller than average
+NO RESPONSE -> GO TO AVEWEIGHT
+
+[AVEWEIGHT] When you were about 10 years old, compared to average, would you describe yourself as…
+[1] Thinner than average
+[2] About average build
+[3] Heavier than average
+NO RESPONSE -> GO TO WEIGHT3Y
+
+[WEIGHT3Y] How much did you weigh three years ago? If you don’t know your exact weight, please make your best guess.  [DISPLAY ADDITIONAL TEXT IF SEX= 02 or 03: If you were pregnant three years ago, how much did you weigh before your pregnancy?]
+	|__|__|__| #Pounds
+NO RESPONSE -> GO TO WEIGHTHIS
+[WEIGHTHIS] The next questions ask about how much you weighed at different times in your life. If you don’t know your exact weight, please make your best guess. [DISPLAY ADDITIONAL TEXT IF SEX=02 or 03: If you were pregnant at the time, how much did you weigh before your pregnancy?] How much did you weigh when you were…
+
+	[DISPLAY ROW IF AGE [= RESPONDENT’S CURRENT AGE]
+
+#POUNDS
+a. [WEIGHTHIS] 18 years old
+|__|__|__|
+b.  [WEIGHTHIS2] 25 years old
+|__|__|__|
+c. [WEIGHTHIS3] 35 years old
+|__|__|__|
+d. [WEIGHTHIS4] 45 years old
+|__|__|__|
+e. [WEIGHTHIS5] 55 years old
+|__|__|__|
+NO RESPONSE -> GO TO SHORTER
+[Calculate percent loss between each interval in WEIGHTHIS]
+[If ]=5% decrease in weight, then ask WTLOSS, WTLOSS2, WTLOSS3 for each interval]
+[If [ 5% decrease in weight, GO TO SHORTER]
+
+
+[WTLOSS1] Did you lose weight on purpose between ages [X] and [Y]?
+(1) Yes
+(0) No 
+NO RESPONSE -> GO TO SHORTER
+[WTLOSS2] How did you lose weight between ages X and Y? Select all that apply.
+[1] Changed diet 
+[2] Exercised
+[3] Skipped meals
+[4] Surgery
+[5] Used diet pills/medications 
+[6] Started to smoke or began to smoke again
+[] Other: Please describe [text box]
+NO RESPONSE
+[ALL LOOPS ARE FINISHED -> GO TO SHORTER]
+
+ [SHORTER] Are you shorter now than when you were in your 20s and 30s?
+(0) No -> GO TO CARWEIGHT
+(1) A little shorter
+(2) A lot shorter
+NO RESPONSE -> GO TO CARWEIGHT
+
+[SHORTER2] How much shorter are you now than when you were in your 20s and 30s? If you are not sure, please make your best guess.
+|__|__| Inches
+NO RESPONSE -> GO TO CARWEIGHT
+
+[CARWEIGHT] Where do you carry most of your weight on your body? Select all that apply.
+[1] Around the chest or shoulders
+[2] Around the waist or stomach
+[3] Around the hips or thighs
+NO RESPONSE -> GO TO HAIRFEM
+
+Hair pattern
+[DISPLAY HAIRFEM IF SEX= 02 and GEN= 02]
+
+[HAIRFEM] Which one of these figures most closely resembles your hair pattern at age 40?
+
+9
+9
+8
+8
+7
+7
+6
+6
+5
+5
+4
+4
+3
+3
+2
+2
+1
+1
+508 Compliance Female
+Figure 1 – Full head of hair without any hair loss.
+Figure 2 – Very slight hair loss or thinning of hair on the crown of the head along the part/midline of the head
+Figure 3 – Slight hair loss on the crown of the head along the part/midline of the head
+Figure 4 – Slight-to-moderate hair loss on the crown of the head along the part/midline of the head
+Figure 5 – Moderate hair loss on the crown of the head along the part/midline of the head
+Figure 6 – Significant hair loss on the crown of the head, hair along the hairline at the forehead is still present.
+Figure 7 - Significant hair loss on the crown of the head, hair along the hairline (at the forehead) is thinning.
+Figure 8 - Significant hair loss on the crown of the head extending as far forward as the forehead and as far backwards to be in line with the back of the ears. This figure represents the most substantial form a hair loss.
+Figure 9 – Moderate hair loss from the temple areas of the side of the head as well as moderate-to-significant hair loss at the crown of the head
+
+(1) Figure 1
+(2) Figure 2
+(3) Figure 3
+(4) Figure 4
+(5) Figure 5
+(6) Figure 6
+(7) Figure 7
+(8) Figure 8
+(9) Figure 9
+NO RESPONSE -> GO TO HAIRMALE
+
+[DISPLAY IF SEX= 01 and GEN= 01]
+
+	•	[HAIRMALE] Which one of these figures most closely resembles your hair pattern at age 40?
+12
+12
+11
+11
+10
+10
+9
+9
+8
+8
+7
+7
+6
+6
+5
+5
+4
+4
+3
+3
+2
+2
+1
+1
+
+508 Compliance Male
+Figure 1 – Full head of hair without any hair loss.
+Figure 2 – Slight hair loss from the temple areas of the sides of the head but not extending as far backwards as the ears.
+Figure 3 – Slight loss of hair across the entire front of the head, but not extending as far backwards as the ears.
+Figure 4 – Moderate hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the start of the ears.
+Figure 5 – Moderate hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the start of the ears and with hair thinning of the crown of the head.
+Figure 6 – Moderate loss of hair across the entire front of the hairline extending as far backwards as to be in line with the middle of the ears.
+Figure 7 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a small area of hair loss on the crown of the head. These two areas of hair loss are separated by a band of moderately dense hair that extends across the top of the head
+Figure 8 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a moderate-sized area of hair loss on the crown of the head. The two areas of hair loss are separated by a thin band of thin hair that extends across the top of the head.
+Figure 9 – Significant loss of hair across the entire front of the hairline extending as far backwards as to be in line with the back of the ears.
+Figure 10 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a large area of hair loss on the crown of the head. These areas of hair loss are continuous across the top of the head.
+Figure 11 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a large area of hair loss on the crown of the head. These areas of hair loss are continuous across the top of the head. This figure represents the most substantial form a hair loss, where only a narrow band of hair remains at around the ears and at the back of the scalp.
+Figure 12 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a large area of hair loss on the crown of the head. These areas of hair loss are continuous across the top of the head.
+
+(1) Figure 1
+(2) Figure 2
+(3) Figure 3
+(4) Figure 4
+(5) Figure 5
+(6) Figure 6
+(7) Figure 7
+(8) Figure 8
+(9) Figure 9
+(10) Figure 10
+(11) Figure 11
+(12) Figure 12
+NO RESPONSE -> GO TO HRMED
+[HRMED] Have you ever used medication to treat thinning hair or hair loss?
+(1) Yes
+(0) No -> GO TO TESTTHER
+NO RESPONSE -> GO TO TESTTHER
+
+[HRMED2] What medication did you use to treat thinning hair or hair loss? Select all that apply.
+[1] Rogaine, Minoxidil, or Ioniten
+[2] [Finasteride] [DISPLAY IF SEX=01 or 03]
+[] Other: Please describe [text box]
+NO RESPONSE -> GO TO HRMED3
+
+[HRMED3] How old were you when you first used medication to treat thinning hair or hair loss?
+	|__|__| Age
+NO RESPONSE -> GO TO HRMED4
+[HRMED4] How old were you when you last used medication to treat thinning hair or hair loss? If you are currently using medication to treat thinning hair or hair loss, enter your current age.
+	|__|__| Age
+NO RESPONSE -> GO TO TESTTHER
+
+Testosterone Therapy
+[TESTTHER] Have you ever used testosterone therapy (e.g., Depo-Testosterone, Androgel, Testim, Fortesta, Axiron, Androderm, Testim, Striant)? 
+(1) Yes
+(0) No -> GO TO ACNE
+NO RESPONSE -> GO TO ACNE
+
+[TESTTHER2] Which forms of the medication(s) have you taken? Select all that apply.
+[1] Gel/cream
+[2] Injection
+[3] Skin patch
+[4] Pills 
+[5] Gum or inner cheek patch
+[6] Slow release implant (testosterone pellets)
+NO RESPONSE -> GO TO TESTTHER3
+
+[TESTTHER3] How old were you when you first used testosterone therapy?
+|__|__| Age
+NO RESPONSE -> GO TO TESTTHER4
+[IF TESTTHER2 = 06 ONLY, DO NOT DISPLAY TESTTHER4. OTHERWISE, DISPLAY TESTTHER4.]
+[TESTTHER4] How often did you or do you currently use testosterone therapy?
+(1) Multiple times a day
+(2) Daily
+(3) Every few days
+(4) Once a week
+(5) Few times a month
+(6) Rarely
+NO RESPONSE -> GO TO TESTTHER5
+
+[TESTTHER5] How old were you when you last used testosterone therapy? If you are currently using testosterone therapy, enter your current age.
+|__|__| Age
+NO RESPONSE -> GO TO ACNE
+Acne
+ [ACNE] Have you ever seen a doctor or other health professional for severe or ongoing acne?
+(1) Yes
+(2) No -> GO TO EDU
+NO RESPONSE -> GO TO EDU
+
+[ACNE2] How old were you when you first saw a doctor or other health professional for severe or ongoing acne? 
+|__|__| Age
+NO RESPONSE -> GO TO ACNEMED
+
+[ACNEMED] Have you ever used prescription medication to treat the severe or ongoing acne? 
+(1) Yes
+(0) No -> GO TO EDU
+NO RESPONSE -> GO TO EDU
+
+[ACNEMED2] How old were you when you first used prescription medication to treat the severe or ongoing acne?
+|__|__| Age
+NO RESPONSE -> GO TO ACNEMED3
+
+[ACNEMED3] How old were you when you last used prescription medication to treat the severe or ongoing acne? If you are currently using this prescription medication, enter your current age.
+|__|__| Age
+NO RESPONSE -> GO TO EDU
+
+Education and Occupation
+[EDU] The next set of questions ask for more background information about you. 
+
+[EDU] What is the highest level of school that you have completed?
+(1) Grade school (grades 1-8)
+(2) Some high school (grades 9-11), no diploma
+(3) High school graduate or GED
+(4) Some college, no degree
+(5) Technical or trade school after high school
+(6) Associate’s degree
+(7) College graduate (Bachelor’s degree)
+(8) Advanced degree (Master’s, Doctorate, etc.)
+() Other: Please describe [text box]
+NO RESPONSE -> GO TO STUDENT
+
+[STUDENT] Are you currently enrolled in school? 
+(0) No
+(1) Yes, full-time student
+(2) Yes, part-time student 
+NO RESPONSE -> GO TO WORK
+[WORK] Do you currently work for pay (full-time or part-time)?   
+(1) Yes  -> GO TO WORK3
+(0) No 
+NO RESPONSE -> GO TO WORK2
+
+[WORK2] Which of these best describes your current employment status?
+(1) Retired ->  GO TO WORK6
+(2) A homemaker ->  GO TO WORK6
+(3) Unemployed ->  GO TO WORK6
+(4) Unable to work (disabled) ->  GO TO WORK6
+(5) Other ->  GO TO WORK6
+() Prefer not to answer ->  GO TO WORK6
+NO RESPONSE -> GO TO WORK6
+
+[WORK3] What is your current occupation?
+|__|
+NO RESPONSE -> GO TO WORK4
+
+[WORK4] How many years have you worked in that occupation [OCCUPATION FROM WORK3]? 
+|__|__| #Years
+NO RESPONSE -> GO TO WORK5
+
+[WORK5] Is this your longest-held occupation? 
+(1) Yes  -> GO TO INCOME
+(0) No  -> GO TO WORK7
+NO RESPONSE -> GO TO WORK7
+[WORK6] Have you ever worked for pay (full-time or part-time)?
+(1) Yes
+(2) No  -> GO TO INCOME
+NO RESPONSE -> GO TO INCOME
+[WORK7] What was your longest-held job? 
+(JOBTITLE)|__|
+NO RESPONSE -> GO TO INCOME
+
+[WORK8] How many years did you work in that job?
+|__|__| #Years
+NO RESPONSE -> GO TO DAYSWORK
+
+[DAYSWORK] During the past 12 months, about how many days per week did you typically work for pay?
+(0) None
+(1) 1 day
+(2) 2 days
+(3) 3 days
+(4) 4 days
+(5) 5 days
+(6) 6 days
+(7) 7 days
+NO RESPONSE  GO TO INCOME
+
+[INCOME] Which of these options best describes your household’s total combined family income for the past 12 months? This should include money earned from all places: job wages, rent from properties, investment income, social security, disability and/or veteran’s benefits, unemployment benefits, workman’s compensation, child support payments, alimony, and so on. Answer with the amount before taxes.
+(1) Less than $10,000/year
+(2) $10,000–$24,999/year
+(3) $25,000–$34,999/year
+(4) $35,000–$49,999/year
+(5) $50,000–$74,999/year
+(6) $75,000–$99,999/year
+(7) $100,000–$149,999/year
+(8) $150,000–$199,999/year
+(9) $200,000 or more/year
+() Don’t know
+() Prefer not to answer
+NO RESPONSE -> GO TO PPLHOUSE
+[PPLHOUSE] How many people currently live in your household? Please include yourself in the total number. (Include students living away at school, deployed military, etc.)
+|__|__| #People living in household
+() Prefer not to answer
+NO RESPONSE -> GO TO MODULE 2
+
