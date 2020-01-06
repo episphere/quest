@@ -23,6 +23,7 @@ Age: |__|__|
 (4) Divorced
 (5) Widowed
 (6) Separated
+(7) Nicks ANswer
 (99) Prefer not to answer
  NO RESPONSE 
 
