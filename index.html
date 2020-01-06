@@ -100,7 +100,8 @@
                 <script>
                     function submitURL(){
                         let url = document.getElementById("url").value
-                        location.search = url
+                        location.hash = url
+                        location.reload()
                     }
                 </script>
                 <script>
@@ -113,6 +114,11 @@
                             ta.onkeyup()
                         }
                         reader.readAsText(file)
+
+                    }
+                </script>
+                <script>
+                    function runCode(){
 
                     }
                 </script>
