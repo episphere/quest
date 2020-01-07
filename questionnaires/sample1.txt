@@ -12,6 +12,7 @@ Please tell us about yourself.
 [AGECOR] Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
 (1) Yes -> MARITAL
 (2) No 
+(3) Nicks Answer
 
 [AGE] How old are you today? 
 Age: |__|__|
