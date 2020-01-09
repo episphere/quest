@@ -24,37 +24,33 @@ Age: |__|__|
 (5) Widowed
 (6) Separated
 (99) Prefer not to answer
- NO RESPONSE 
 
 [RACEETH] Which categories describe you? Select all that apply. Note, you may select more than one group.
-[1] American Indian or Alaska Native 
-[2] Asian 
-[3] Black, African American, or African 
-[4] Hispanic, Latino, or Spanish
-[5] Middle Eastern or North African
-[6] Native Hawaiian or other Pacific Islander
-[7] White 
+[1] American Indian or Alaska Native  -> RACEETH2
+[2] Asian  -> RACEETH3
+[3] Black, African American, or African -> RACEETH4
+[4] Hispanic, Latino, or Spanish -> RACEETH5
+[5] Middle Eastern or North African -> RACEETH6
+[6] Native Hawaiian or other Pacific Islander -> RACEETH7
+[7] White -> RACEETH8
 None of these fully describe me: Please describe [text box:8]
 [99] Prefer not to answer
-NO RESPONSE   -> GO TO LANG
+< NO RESPONSE -> LANG >
 
 
 
 [RACEETH2] Which of these categories describe you best? Select all that apply.
-[1] American Indian
-[2] Alaska Native
-[3] Central or South American Indian
+[1] American Indian -> RACEETH2B
+[2] Alaska Native -> RACEETH2B
+[3] Central or South American Indian -> RACEETH2B
 [4] None of these fully describe me: Please describe [text box: RACEETH2_TB]
 [99] Prefer not to answer
-NO RESPONSE ->  GO TO RACEETH3
-
 
 
 [RACEETH2B] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik ) Inupiat Traditional Government, Nome Eskimo Community, etc.
 
 (TRIBE)|__|
 (98) I’m not sure
-NO RESPONSE
 
 
 [RACEETH3] Which of these categories describe you best? Select all that apply.
@@ -69,7 +65,6 @@ NO RESPONSE
 [9] Vietnamese
 [98] None of these fully describe me: Please describe [text box:RACEETH3_TB]
 [99] Prefer not to answer
-NO RESPONSE ->  GO TO RACEETH4
 
 
 [RACEETH4] Which of these categories describe you best? Select all that apply.
@@ -86,7 +81,6 @@ NO RESPONSE ->  GO TO RACEETH4
 [11] South African
 [98] None of these fully describe me: Please describe [text box:RACEETH4_TB]
 [99] Prefer not to answer
-NO RESPONSE ->  GO TO RACEETH5
 
 
 
@@ -102,7 +96,6 @@ NO RESPONSE ->  GO TO RACEETH5
 [9] Spanish
 [98] None of these fully describe me: Please describe [text box:RACEETH5_TB]
 [99] Prefer not to answer
-NO RESPONSE ->  GO TO RACEETH6
 
 [RACEETH6] Which of these categories describe you best? Select all that apply.
 [1] Afghan
@@ -117,7 +110,6 @@ NO RESPONSE ->  GO TO RACEETH6
 [10] Tunisian
 [98] None of these fully describe me: Please describe [text box: RACEETH6_TB]
 [99] Prefer not to answer
-NO RESPONSE ->  GO TO RACEETH7
 
 [RACEETH7] Which of these categories describe you best? Select all that apply.
 [1] Chamorro
@@ -131,7 +123,7 @@ NO RESPONSE ->  GO TO RACEETH7
 [9] Tongan
 [98] None of these fully describe me: Please describe [text box]
 [99] Prefer not to answer
-NO RESPONSE ->  GO TO RACEETH8
+
 
 [RACEETH8] Which of these categories describe you best? Select all that apply.
 [1] Dutch
@@ -147,7 +139,6 @@ NO RESPONSE ->  GO TO RACEETH8
 [11] Spanish
 [98] None of these fully describe me: Please describe [text box:RACE_ETH8]
 [99] Prefer not to answer
-NO RESPONSE ->  GO TO LANG
 
 [LANG] When you were a child, what language(s) did you first learn at home? Select all that apply.
 [1] English
@@ -169,7 +160,6 @@ NO RESPONSE ->  GO TO LANG
 [17] Japanese
 [18] Arabic
 [98] Other language(s): Please describe [text box:LANG_TB]
-NO RESPONSE -> GO TO SEX
 
 
 [SEX2] Later questions in this survey will ask about surgeries and medical procedures. We want to make sure that you are asked the right questions. 
@@ -191,7 +181,6 @@ Please select the body parts that you were born with.
 (5) Genderqueer, not exclusively male or female
 (6) Additional gender category: Please describe [text box:GEN_TB]
 (99) Prefer not to answer
-NO RESPONSE -> GO TO SEXORIENT
 
 [SEXORIENT] Do you think of yourself as: 
 (1) Straight or heterosexual
@@ -199,7 +188,6 @@ NO RESPONSE -> GO TO SEXORIENT
 (3) Bisexual
 (4) Something else: Please describe [text box:SEXORIENT]
 (99) Prefer not to answer
-NO RESPONSE -> GO TO MEDICAL HISTORY
 
 [SECTION2] Medical History
 
@@ -211,20 +199,20 @@ We also ask about medical procedures you may have had.
 [SKINCANC] Has a doctor or other health professional ever told you that you have non-melanoma skin cancer? 
 (1) Yes
 (0) No -> GO TO MHGROUP1
-NO RESPONSE -> GO TO MHGROUP1
+< NO RESPONSE -> MHGROUP1 >
 
 [SKINCANC2] What type(s) of skin cancer did a doctor or other health professional tell you that you have? Select all that apply.
 [1] Basal cell
 [2]Squamous cell
 [77] Don’t know
-NO RESPONSE -> GO TO SKINCANC3
+< NO RESPONSE -> SKINCANC3 >
 
 [SKINCANC3] How old were you when a doctor or other health professional first told you that you have skin cancer? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year at diagnosis
-NO RESPONSE -> GO TO MHGROUP1
+< NO RESPONSE -> MHGROUP1 >
 
 Cardiovascular disease
 
@@ -241,7 +229,7 @@ Cardiovascular disease
 [10] Blood Clots (Deep Vein Thrombosis, Pulmonary Embolism)
 [11] Stroke
 [12] I have not had any of these conditions -> GO TO MHGROUP2
-NO RESPONSE -> GO TO MHGROUP2
+< NO RESPONSE -> MHGROUP2 >
 
 
 [ANEMIA] How old were you when a doctor or other health professional first told you that you have or had vitamin B-12 deficiency (pernicious anemia)?
@@ -249,7 +237,7 @@ NO RESPONSE -> GO TO MHGROUP2
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CVD
+< NO RESPONSE -> CVD >
 
 
 [CVD] How old were you when a doctor or other health professional first told you that you have coronary artery/coronary heart disease? 
@@ -257,7 +245,7 @@ NO RESPONSE -> GO TO CVD
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CHF
+< NO RESPONSE -> CHF >
 
 
 
@@ -266,7 +254,7 @@ NO RESPONSE -> GO TO CHF
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CHOL
+< NO RESPONSE -> CHOL >
 
 
 
@@ -275,14 +263,14 @@ NO RESPONSE -> GO TO CHOL
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HEARTATT
+< NO RESPONSE -> HEARTATT >
 
 [HEARTATT] How old were you when a doctor or other health professional first told you that you have had a heart attack (myocardial infarction)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO ARRHYT
+< NO RESPONSE -> ARRHYT >
 
 
 [ARRHYT] How old were you when a doctor or other health professional first told you that you have abnormal heart rhythm (arrhythmia)?
@@ -290,7 +278,7 @@ NO RESPONSE -> GO TO ARRHYT
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CHESTPAIN
+< NO RESPONSE -> CHESTPAIN >
 
 
 
@@ -299,7 +287,7 @@ NO RESPONSE -> GO TO CHESTPAIN
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HEARTVALV
+< NO RESPONSE -> HEARTVALV >
 
 
 
@@ -308,7 +296,7 @@ NO RESPONSE -> GO TO HEARTVALV
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HTN
+< NO RESPONSE -> HTN >
 
 
 
@@ -317,14 +305,14 @@ NO RESPONSE -> GO TO HTN
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO BLOODCLOT
+< NO RESPONSE -> BLOODCLOT >
 
 [BLOODCLOT] How old were you when a doctor or other health professional first told you that you have blood clots (deep vein thrombosis, pulmonary embolism)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO STROKE
+< NO RESPONSE -> STROKE >
 
 
 
@@ -333,7 +321,7 @@ NO RESPONSE -> GO TO STROKE
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO MHGROUP2
+< NO RESPONSE -> MHGROUP2 >
 
 Respiratory problems
 [MHGROUP2] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
@@ -341,7 +329,7 @@ Respiratory problems
 [2] Asthma
 [3] Hay Fever (Allergic to pollen or Allergic Rhinitis)
 [] I have not had any of these conditions -> GO TO MHGROUP3
-[] NO RESPONSE -> GO TO MHGROUP3
+< NO RESPONSE -> MHGROUP3 >
 
 
 [COPD] How old were you when you a doctor or other health professional first told you that you have chronic lung disease (emphysema, chronic bronchitis, or chronic obstructive pulmonary disease (COPD))? 
@@ -349,7 +337,7 @@ Respiratory problems
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO ASTHMA
+< NO RESPONSE -> ASTHMA >
 
 
 [ASTHMA] How old were you when a doctor or other health professional first told you that you have asthma?
@@ -357,7 +345,7 @@ NO RESPONSE -> GO TO ASTHMA
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HAYFEVER
+< NO RESPONSE -> HAYFEVER >
 
 
 
@@ -366,7 +354,7 @@ NO RESPONSE -> GO TO HAYFEVER
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO MHGROUP3
+< NO RESPONSE -> MHGROUP3 >
 
 Digestive system problems
 [MHGROUP3] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
@@ -382,7 +370,7 @@ Digestive system problems
 [10] Liver Cirrhosis
 [11] Pancreatitis
 [] I have not had any of these conditions -> GO TO MHGROUP4
-NO RESPONSE -> GO TO MHGROUP4
+< NO RESPONSE -> MHGROUP4 >
 
 
 [GERD] How old were you when a doctor or other health professional first told you that you have esophageal acid reflux (GERD)? 
@@ -390,14 +378,14 @@ NO RESPONSE -> GO TO MHGROUP4
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO BARESO
+< NO RESPONSE -> BARESO >
 
 [BARESO] How old were you when a doctor or other health professional first told you that you have Barrett’s esophagus? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO IBS
+< NO RESPONSE -> IBS >
 
 
 
@@ -406,7 +394,7 @@ NO RESPONSE -> GO TO IBS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO IBD
+< NO RESPONSE -> IBD >
 
 
 
@@ -415,7 +403,7 @@ NO RESPONSE -> GO TO IBD
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO DIVERT
+< NO RESPONSE -> DIVERT >
 
 
 
@@ -424,7 +412,7 @@ NO RESPONSE -> GO TO DIVERT
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO UC
+< NO RESPONSE -> UC >
 
 
 
@@ -433,7 +421,7 @@ NO RESPONSE -> GO TO UC
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CD
+< NO RESPONSE -> CD >
 
 
 [CD] How old were you when a doctor or other health professional first told you that you have Crohn’s disease? 
@@ -441,7 +429,7 @@ NO RESPONSE -> GO TO CD
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CCD
+< NO RESPONSE -> CCD >
 
 
 [CCD] How old were you when a doctor or other health professional first told you that you have celiac disease (also known as gluten-sensitive enteropathy)? 
@@ -449,7 +437,7 @@ NO RESPONSE -> GO TO CCD
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO GALL
+< NO RESPONSE -> GALL >
 
 
 
@@ -458,7 +446,7 @@ NO RESPONSE -> GO TO GALL
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO LIVCIRR
+< NO RESPONSE -> LIVCIRR >
 
 
 [LIVCIRR] How old were you when a doctor or other health professional first told you that you have liver cirrhosis?
@@ -466,7 +454,7 @@ NO RESPONSE -> GO TO LIVCIRR
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO PANCREA
+< NO RESPONSE -> PANCREA >
 
 
 
@@ -475,13 +463,13 @@ NO RESPONSE -> GO TO PANCREA
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO MHGROUP4
+< NO RESPONSE -> MHGROUP4 >
 [MHGROUP4] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Thyroid Disorder (Overactive or Underactive Thyroid)
 [2] Diabetes
 [3] Graves’ Disease
 [] I have not had any of these conditions -> GO TO MHGROUP5
-NO RESPONSE -> GO TO MHGROUP5
+< NO RESPONSE -> MHGROUP5 >
 
 
 [THYROID] How old were you when a doctor or other health professional first told you that you have a thyroid disorder (overactive or underactive thyroid)? 
@@ -489,13 +477,13 @@ NO RESPONSE -> GO TO MHGROUP5
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO DM
+< NO RESPONSE -> DM >
 
 [DM] Which type of diabetes did a doctor or other health professional tell you that you have?
 (1) Type 1
 (2) Type 2
 () Don’t know
-NO RESPONSE -> GO TO DM2
+< NO RESPONSE -> DM2 >
 
 
 [DM2] How old were you when a doctor or other health professional first told you that you have diabetes?
@@ -503,7 +491,7 @@ NO RESPONSE -> GO TO DM2
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO GRAVES
+< NO RESPONSE -> GRAVES >
 
 
 [GRAVES] How old were you when a doctor or other health professional first told you that you have Graves’ disease?
@@ -511,14 +499,14 @@ NO RESPONSE -> GO TO GRAVES
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO MHGROUP5
+< NO RESPONSE -> MHGROUP5 >
 
 Kidney Disease
 [MHGROUP5] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Kidney Stones
 [2] Chronic Kidney Disease (Also Known as Chronic Kidney Failure)
 [] I have not had any of these conditions -> GO TO MHGROUP6
-NO RESPONSE -> GO TO MHGROUP6
+< NO RESPONSE -> MHGROUP6 >
 
 
 [KIDNEY] How old were you when a doctor or other health professional first told you that you had kidney stones?
@@ -526,7 +514,7 @@ NO RESPONSE -> GO TO MHGROUP6
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CKD
+< NO RESPONSE -> CKD >
 
 
 [CKD] How old were you when a doctor or other health professional first told you that you have chronic kidney disease (also known as chronic kidney failure)?
@@ -534,14 +522,14 @@ NO RESPONSE -> GO TO CKD
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO MHGROUP6
+< NO RESPONSE -> MHGROUP6 >
 Systemic and other problems
 [MHGROUP6] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Rheumatoid Arthritis
 [2] Lupus
 [3] Gout
 [] I have not had any of these conditions -> GO TO MHGROUP7
-NO RESPONSE -> GO TO MHGROUP7
+< NO RESPONSE -> MHGROUP7 >
 
 
 [RA] How old were you when a doctor or other health professional first told you that you have rheumatoid arthritis?
@@ -549,14 +537,14 @@ NO RESPONSE -> GO TO MHGROUP7
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO LUPUS
+< NO RESPONSE -> LUPUS >
 
 [LUPUS] How old were you when a doctor or other health professional first told you that you have lupus?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO GOUT
+< NO RESPONSE -> GOUT >
 
 
 [GOUT] How old were you when a doctor or other health professional first told you that you have gout?
@@ -564,7 +552,7 @@ NO RESPONSE -> GO TO GOUT
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO STD/STI SECTION
+< NO RESPONSE -> STD/STI SECTION >
 
 Sexually transmitted diseases and infections
 
@@ -582,7 +570,7 @@ Sexually transmitted diseases and infections
 [9] HPV
 [10] HIV/AIDS
 [] I have not had any of these conditions -> GO TO MHGROUP8
-NO RESPONSE -> GO TO MHGROUP8
+< NO RESPONSE -> MHGROUP8 >
 
 
 [MONO] How old were you when a doctor or other health professional first told you that you have “mono” or “kissing disease” (infectious mononucleosis)?
@@ -590,7 +578,7 @@ NO RESPONSE -> GO TO MHGROUP8
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO SHINGLES
+< NO RESPONSE -> SHINGLES >
 
 
 [SHINGLES] How old were you when a doctor or other health professional first told you that you have shingles (herpes zoster)?
@@ -598,7 +586,7 @@ NO RESPONSE -> GO TO SHINGLES
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HBVHCV
+< NO RESPONSE -> HBVHCV >
 
 
 [HBVHCV] How old were you when a doctor or other health professional first told you that you have chronic hepatitis B or C?
@@ -606,7 +594,7 @@ NO RESPONSE -> GO TO HBVHCV
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO GONORR
+< NO RESPONSE -> GONORR >
 
 
 [GONORR] How old were you when a doctor or other health professional first told you that you have gonorrhea?
@@ -614,7 +602,7 @@ NO RESPONSE -> GO TO GONORR
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO CHLA
+< NO RESPONSE -> CHLA >
 
 
 [CHLA] How old were you when a doctor or other health professional first told you that you have chlamydia?
@@ -622,14 +610,14 @@ NO RESPONSE -> GO TO CHLA
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO TRICH
+< NO RESPONSE -> TRICH >
 
 [TRICH] How old were you when a doctor or other health professional first told you that you have trichomoniasis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO SYPH
+< NO RESPONSE -> SYPH >
 
 
 [SYPH] How old were you when a doctor or other health professional first told you that you have syphilis?
@@ -637,7 +625,7 @@ NO RESPONSE -> GO TO SYPH
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO GENWARTS
+< NO RESPONSE -> GENWARTS >
 
 
 [GENWARTS] How old were you when a doctor or other health professional first told you that you have genital warts?
@@ -645,7 +633,7 @@ NO RESPONSE -> GO TO GENWARTS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HPV
+< NO RESPONSE -> HPV >
 
 
 [HPV] How old were you when a doctor or other health professional first told you that you have human papillomavirus (HPV)?
@@ -653,7 +641,7 @@ NO RESPONSE -> GO TO HPV
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HIVAIDS
+< NO RESPONSE -> HIVAIDS >
 
 
 [HIVAIDS] How old were you when a doctor or other health professional first told you that you have HIV/AIDS?
@@ -661,7 +649,7 @@ NO RESPONSE -> GO TO HIVAIDS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO MHGROUP8
+< NO RESPONSE -> MHGROUP8 >
 Urinary and reproductive system problems
 
 [MHGROUP8] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
@@ -671,7 +659,7 @@ Urinary and reproductive system problems
 [4] Enlarged Prostate 
 [5] Fibrocystic Breast, or other Benign Breast Disease
 [] I have not had any of these conditions -> GO TO DEPRESS
-NO RESPONSE -> GO TO DEPRESS
+< NO RESPONSE -> DEPRESS >
 
 
 [UF] How old were you when a doctor or other health professional first told you that you have uterine fibroids?
@@ -679,7 +667,7 @@ NO RESPONSE -> GO TO DEPRESS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO ENDO
+< NO RESPONSE -> ENDO >
 
 
 [ENDO] How old were you when a doctor or other health professional first told you that you have endometriosis?
@@ -687,14 +675,14 @@ NO RESPONSE -> GO TO ENDO
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO ENDO2
+< NO RESPONSE -> ENDO2 >
 
 
 
 [ENDO2]  Was your endometriosis confirmed by surgery?
 (1) Yes
 (2) No
-NO RESPONSE -> GO TO PCOS
+< NO RESPONSE -> PCOS >
 
 
 [PCOS] How old were you when a doctor or other health professional first told you that you have polycystic ovary syndrome (PCOS)?
@@ -702,7 +690,7 @@ NO RESPONSE -> GO TO PCOS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO ENLGPROS
+< NO RESPONSE -> ENLGPROS >
 
 
 
@@ -711,7 +699,7 @@ NO RESPONSE -> GO TO ENLGPROS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO BREASTDIS
+< NO RESPONSE -> BREASTDIS >
 
 
 [BREASTDIS] How old were you when a doctor or other health professional first told you that you have fibrocystic breasts, or other benign breast disease? 
@@ -719,24 +707,24 @@ NO RESPONSE -> GO TO BREASTDIS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO BREASTDIS2
+< NO RESPONSE -> BREASTDIS2 >
 
 [BREASTDIS2] When you were told that you have fibrocystic breasts, or other benign breast disease, was it confirmed by biopsy?
 (1) Yes
 (0) No
-NO RESPONSE -> GO TO DEPRESS
+< NO RESPONSE -> DEPRESS >
 
  [DEPRESS] Has a doctor or other health professional ever told you that you have clinical depression? 
 (1) Yes
 (0) No -> GO TO INTROSURG
-NO RESPONSE -> GO TO INTROSURG
+< NO RESPONSE -> INTROSURG >
 
 [DEPRESS2] How old were you when a doctor or other health professional first told you that you have clinical depression?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO INTROSURG
+< NO RESPONSE -> INTROSURG >
 Surgical procedures
 [INTROSURG] The next questions ask about certain surgical procedures.
 [MHGROUP9] Have you ever had any of these surgeries? Select all that apply. 
@@ -755,7 +743,7 @@ Surgical procedures
 
 
 [] I have not had any of these surgeries -> GO TO BLDTRANS
-NO RESPONSE -> GO TO BLDTRANS
+< NO RESPONSE -> BLDTRANS >
 
 
 [TONSILS] How old were you when you had your tonsils removed (tonsillectomy)?
@@ -763,7 +751,7 @@ NO RESPONSE -> GO TO BLDTRANS
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO GALLREM
+< NO RESPONSE -> GALLREM >
 
 
 [GALLREM] How old were you when you had your gallbladder removed (cholecystectomy)?
@@ -771,7 +759,7 @@ NO RESPONSE -> GO TO GALLREM
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO APPEND
+< NO RESPONSE -> APPEND >
 
 
 
@@ -780,7 +768,7 @@ NO RESPONSE -> GO TO APPEND
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO LIPOSUCT
+< NO RESPONSE -> LIPOSUCT >
 
 
 [LIPOSUCT] How old were you when you first had liposuction?
@@ -788,7 +776,7 @@ NO RESPONSE -> GO TO LIPOSUCT
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO BARSUR
+< NO RESPONSE -> BARSUR >
 
 
  [BARSUR] How old were you when you had your bariatric surgery (lap band, gastric bypass)?
@@ -796,7 +784,7 @@ NO RESPONSE -> GO TO BARSUR
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO BREASTSUR
+< NO RESPONSE -> BREASTSUR >
 
 
 [BREASTSUR] Which of these breast surgeries have you had? Do not include a biopsy. Select all that apply.
@@ -817,14 +805,14 @@ None of the above -> GO TO HYSTER
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO HYSTER
+< NO RESPONSE -> HYSTER >
 
 [HYSTER] How old were you when you had your uterus removed (hysterectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO TUBLIG
+< NO RESPONSE -> TUBLIG >
 
 
 [TUBLIG] How old were you when you had your tubes tied (tubal ligation)?
@@ -832,21 +820,21 @@ NO RESPONSE -> GO TO TUBLIG
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO OVARYREM
+< NO RESPONSE -> OVARYREM >
 
 
  [OVARYREM] Which of these best describes the type of ovary removal surgery that you had?
 (1) I had surgery to remove one ovary
 (2) I had surgery to remove both ovaries
 () None of the above -> GO TO FTREM
-NO RESPONSE -> GO TO FTREM
+< NO RESPONSE -> FTREM >
 
 [OVARYREM2] How old were you when you had one or both ovaries removed (oophorectomy)? If more than one procedure, at what age did you last have this procedure?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO FTREM
+< NO RESPONSE -> FTREM >
 
 
 
@@ -854,35 +842,35 @@ NO RESPONSE -> GO TO FTREM
 (1) I had surgery to remove one fallopian tube
 (2) I had surgery to remove both fallopian tubes
 () None of the above -> GO TO VASEC
-NO RESPONSE -> GO TO VASEC
+< NO RESPONSE -> VASEC >
 
  [FTREM2] How old were you when you had one or both fallopian tubes removed (salpingectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO VASEC
+< NO RESPONSE -> VASEC >
 
 [VASEC] How old were you when you had a vasectomy?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO TESTREM
+< NO RESPONSE -> TESTREM >
 
 
 [TESTREM] Which of these best describes the type of testicle removal surgery that you had?
 (1) I had surgery to remove one testicle
 (2) I had surgery to remove both testicles
 () None of the above -> GO TO PROSREM
-NO RESPONSE -> GO TO PROSREM
+< NO RESPONSE -> PROSREM >
 
 [TESTREM2] How old were you when you had one or both testicles removed (orchiectomy or orchidectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO PROSREM
+< NO RESPONSE -> PROSREM >
 
 
 
@@ -890,31 +878,31 @@ NO RESPONSE -> GO TO PROSREM
 (1) I had surgery to remove part of my prostate
 (2) I had surgery to remove my whole prostate
 () None of the above -> GO TO PENREM
-NO RESPONSE -> GO TO PENREM
+< NO RESPONSE -> PENREM >
 
  [PROSREM2] How old were you when you had part or all of your prostate removed (prostatectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO PENREM
+< NO RESPONSE -> PENREM >
 
 [PENREM] How old were you when you had your penis removed (penectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-NO RESPONSE -> GO TO BLDTRANS
+< NO RESPONSE -> BLDTRANS >
 
 Blood Transfusion
 [BLDTRANS] Have you ever had a blood transfusion? 
 (1) Yes
 (0) No ->GO TO FAMILY HISTORY SECTION
-NO RESPONSE -> GO TO FAMILY HISTORY SECTION
+< NO RESPONSE -> FAMILY HISTORY SECTION >
 
 [BLDTRANS2] How many blood transfusions have you had in total?  
 |__|__| # of transfusions 
-NO RESPONSE -> GO TO BLDTRANS3
+< NO RESPONSE -> BLDTRANS3 >
 
 
 [BLDTRANS3] How old were you when you had your first blood transfusion?
@@ -922,7 +910,7 @@ NO RESPONSE -> GO TO BLDTRANS3
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year at first transfusion
-NO RESPONSE -> GO TO BLDTRANS4
+< NO RESPONSE -> BLDTRANS4 >
 
 
 [BLDTRANS4] How old were you when you had your last blood transfusion?
@@ -930,43 +918,43 @@ NO RESPONSE -> GO TO BLDTRANS4
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year at last transfusion
-NO RESPONSE -> GO TO FAMILY HISTORY SECTION
+< NO RESPONSE -> FAMILY HISTORY SECTION >
 
 [SECTION3] Family History 
 
 [ADOPTFOST] Were you adopted or a foster child?
 (0) No 
 (1) Yes
-NO RESPONSE -> GO TO MULTBIRTH
+< NO RESPONSE -> MULTBIRTH >
 
 [MULTBIRTH] Were you born a twin, triplet, or other multiple?
 (0) No
 (1) Yes, identical twins
 (2) Yes, fraternal twins (not identical)
 (3) Yes, triplets or higher multiple birth
-NO RESPONSE -> GO TO MOM
+< NO RESPONSE -> MOM >
 [MOM] The next questions ask about your family and if people in your family have had cancer.
 Parents
 [MOM1] Is your biological mother still living?
 (1) Yes -> GO TO MOMAGE
 (0) No -> GO TO MOMDEATH
 () Don’t know -> GO TO MOMCANC
-NO RESPONSE -> GO TO MOMCANC
+< NO RESPONSE -> MOMCANC >
 
 [MOMAGE] How old is she today?
 |__|__|__| Mother’s age -> GO TO MOMCANC
 () Don’t know -> GO TO MOMCANC
-NO RESPONSE -> GO TO MOMCANC
+< NO RESPONSE -> MOMCANC >
 
 [MOMDEATH] How old was she when she died?
 |__|__|__| Mother’s age
 Don’t know 
-NO RESPONSE -> GO TO MOMCANC
+< NO RESPONSE -> MOMCANC >
 
 (1) Yes 
 (0) No-> GO TO DAD
 () Don’t know -> GO TO DAD
-NO RESPONSE -> GO TO DAD
+< NO RESPONSE -> DAD >
 	
 [MOMCANC2] Which type(s) of cancer? Select all that apply.
 [1] Anal
@@ -992,186 +980,186 @@ NO RESPONSE -> GO TO DAD
 [21] Uterine (endometrial)
 [ ] Another type of cancer: Please describe [text box]
 [ ] I know she had cancer, but don’t know what type
-NO RESPONSE -> GO TO DAD
+< NO RESPONSE -> DAD >
 
 [MOMCANC3A]
-
+What year was she first told by a doctor or other health professional that she has or had anal cancer? |__|__|__|__| Year
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3B
+< NO RESPONSE -> MOMCANC3B >
 
 [MOMCANC3B]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3C
+< NO RESPONSE -> MOMCANC3C >
 
 [MOMCANC3C]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3D
+< NO RESPONSE -> MOMCANC3D >
 
 [MOMCANC3D]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
-NO RESPONSE -> GO TO MOMCANC3E
+< NO RESPONSE -> MOMCANC3E >
 
 [MOMCANC3E]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3F
+< NO RESPONSE -> MOMCANC3F >
 
 [MOMCANC3F]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3G
+< NO RESPONSE -> MOMCANC3G >
 
 [MOMCANC3G]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3H
+< NO RESPONSE -> MOMCANC3H >
 
 [MOMCANC3H]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3I
+< NO RESPONSE -> MOMCANC3I >
 
 [MOMCANC3I]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3J
+< NO RESPONSE -> MOMCANC3J >
 
 [MOMCANC3J]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3K
+< NO RESPONSE -> MOMCANC3K >
 
 [MOMCANC3K]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3L
+< NO RESPONSE -> MOMCANC3L >
 
 [MOMCANC3L]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3M
+< NO RESPONSE -> MOMCANC3M >
 
 [MOMCANC3M]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3N
+< NO RESPONSE -> MOMCANC3N >
 
 [MOMCANC3N]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3O
+< NO RESPONSE -> MOMCANC3O >
 
 [MOMCANC3O]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3P
+< NO RESPONSE -> MOMCANC3P >
 
 [MOMCANC3P]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3Q
+< NO RESPONSE -> MOMCANC3Q >
 
 [MOMCANC3Q]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3R
+< NO RESPONSE -> MOMCANC3R >
 
 [MOMCANC3R]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3S
+< NO RESPONSE -> MOMCANC3S >
 
 [MOMCANC3S]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3T
+< NO RESPONSE -> MOMCANC3T >
 
 [MOMCANC3T]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3U
+< NO RESPONSE -> MOMCANC3U >
 
 [MOMCANC3U]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3V
+< NO RESPONSE -> MOMCANC3V >
 
 [MOMCANC3V]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO MOMCANC3W
+< NO RESPONSE -> MOMCANC3W >
 
 [MOMCANC3W]
 
 Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
 
-NO RESPONSE -> GO TO DAD
+< NO RESPONSE -> DAD >
 [DAD] Is your biological father still living? 
 (1) Yes -> GO TO DADAGE 
 (0) No -> GO TO DADDEATH
 () Don’t know -> GO TO DADCANC
-NO RESPONSE -> GO TO DADCANC
+< NO RESPONSE -> DADCANC >
 
 [DADAGE] How old is he today?
 |__|__|__| Father’s age -> GO TO DADCANC
 Don’t know -> GO TO DADCANC
-NO RESPONSE -> GO TO DADCANC
+< NO RESPONSE -> DADCANC >
 
 [DADDEATH] How old was he when he died?
 |__|__|__| Father’s age
 Don’t know
-NO RESPONSE -> GO TO DADCANC
+< NO RESPONSE -> DADCANC >
 
 (1) Yes
 (0) No-> GO TO SIB
 () Don’t know -> GO TO SIB
-NO RESPONSE -> GO TO SIB
+< NO RESPONSE -> SIB >
 
 [DADCANC2] Which type(s) of cancer? Select all that apply.
 [1] Anal
@@ -1196,166 +1184,166 @@ NO RESPONSE -> GO TO SIB
 [20] Thyroid
 [] Another type of cancer: Please describe [text box]
 [] I know he had cancer, but don’t know what type
-NO RESPONSE -> GO TO SIB
+< NO RESPONSE -> SIB >
 
 [DADCANC3A]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3B
+< NO RESPONSE -> DADCANC3B >
 
 [DADCANC3B]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3C
+< NO RESPONSE -> DADCANC3C >
 
 [DADCANC3C]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3D
+< NO RESPONSE -> DADCANC3D >
 
 [DADCANC3D]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3E
+< NO RESPONSE -> DADCANC3E >
 
 [DADCANC3E]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3F
+< NO RESPONSE -> DADCANC3F >
 
 [DADCANC3F]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3G
+< NO RESPONSE -> DADCANC3G >
 
 [DADCANC3G]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3H
+< NO RESPONSE -> DADCANC3H >
 
 [DADCANC3H]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3I
+< NO RESPONSE -> DADCANC3I >
 
 [DADCANC3I]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3J
+< NO RESPONSE -> DADCANC3J >
 
 [DADCANC3J]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3K
+< NO RESPONSE -> DADCANC3K >
 
 [DADCANC3K]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3L
+< NO RESPONSE -> DADCANC3L >
 
 [DADCANC3L]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3M
+< NO RESPONSE -> DADCANC3M >
 
 [DADCANC3M]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3N
+< NO RESPONSE -> DADCANC3N >
 
 [DADCANC3N]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3O
+< NO RESPONSE -> DADCANC3O >
 
 [DADCANC3O]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3P
+< NO RESPONSE -> DADCANC3P >
 
 [DADCANC3P]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
-NO RESPONSE -> GO TO DADCANC3Q
+< NO RESPONSE -> DADCANC3Q >
 
 [DADCANC3Q]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3R
+< NO RESPONSE -> DADCANC3R >
 
 [DADCANC3R]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3S
+< NO RESPONSE -> DADCANC3S >
 
 [DADCANC3S]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3T
+< NO RESPONSE -> DADCANC3T >
 
 [DADCANC3T]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3U
+< NO RESPONSE -> DADCANC3U >
 
 [DADCANC3U]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO DADCANC3V
+< NO RESPONSE -> DADCANC3V >
 
 [DADCANC3V]
 
 Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIB
+< NO RESPONSE -> SIB >
 
 Siblings
 [SIB] The next questions are about your brothers and sisters, whether or not they are currently living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Do not include adopted or step siblings. 
 [SIB] How many siblings do you have, including full and half-siblings?
 |__|__| #Siblings  
-NO RESPONSE -> GO TO SIBCONFIRM
+< NO RESPONSE -> SIBCONFIRM >
 
 
 [SIBCONFIRM] You told us that you have [insert number from SIB] [sibling/siblings], including full and half-siblings. 
@@ -1370,7 +1358,7 @@ If SIB = 1, do not fill [oldest] OR [next oldest]
 (1) Male
 (3) Intersex or other
 () Don’t know
-NO RESPONSE -> GO TO SIB3
+< NO RESPONSE -> SIB3 >
 
 If SIB2 = (01) then fill [he]
 If SIB2 = (02) then fill [she]
@@ -1379,7 +1367,7 @@ If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling]
 (1) Full sibling
 (2) Half sibling, same mother
 (3) Half sibling, same father
-NO RESPONSE -> GO TO SIB4
+< NO RESPONSE -> SIB4 >
 
 If SIB2 = (01) then fill [he]
 If SIB2 = (02) then fill [she]
@@ -1388,7 +1376,7 @@ If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling]
 (1) Yes -> GO TO SIBAGE
 (0) No -> GO TO SIBDEATH
 [] Don’t know -> GO TO SIBCANC
-NO RESPONSE -> GO TO SIBCANC
+< NO RESPONSE -> SIBCANC >
 
 If SIB2 = (01) then fill [he]
 If SIB2 = (02) then fill [she]
@@ -1396,7 +1384,7 @@ If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling]
 [SIBAGE] How old is [he/she/your sibling] today?
 () |__|__|__| Sibling’s age -> GO TO SIBCANC
 () Don’t know -> GO TO SIBCANC 
-NO RESPONSE -> GO TO SIBCANC
+< NO RESPONSE -> SIBCANC >
 
 If SIB2 = (01) then fill [he]
 If SIB2 = (02) then fill [she]
@@ -1404,7 +1392,7 @@ If SIB2 = (03), (77), or NO RESPONSE then fill [your sibling]
 [SIBDEATH] How old was [he/she/your sibling] when [he/she/they] died?
 |__|__|__| Sibling’s age
 ()Don’t know
-NO RESPONSE -> GO TO SIBCANC
+< NO RESPONSE -> SIBCANC >
 (1) Yes
 
 [SIBCANC2] Which type(s) of cancer? Select all that apply.
@@ -1433,171 +1421,171 @@ NO RESPONSE -> GO TO SIBCANC
 
 [] Another type of cancer: Please describe [text box]
 I know my sibling had cancer, but don’t know what type
-NO RESPONSE -> GO TO CHILD
+< NO RESPONSE -> CHILD >
 [SIBCANC3A]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3B
+< NO RESPONSE -> SIBCANC3B >
 
 [SIBCANC3B]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3C
+< NO RESPONSE -> SIBCANC3C >
 
 [SIBCANC3C]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3D
+< NO RESPONSE -> SIBCANC3D >
 
 [SIBCANC3D]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3E
+< NO RESPONSE -> SIBCANC3E >
 
 [SIBCANC3E]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3F
+< NO RESPONSE -> SIBCANC3F >
 
 [SIBCANC3F]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3G
+< NO RESPONSE -> SIBCANC3G >
 
 [SIBCANC3G]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
-NO RESPONSE -> GO TO SIBCANC3H
+< NO RESPONSE -> SIBCANC3H >
 
 [SIBCANC3H]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3I
+< NO RESPONSE -> SIBCANC3I >
 
 [SIBCANC3I]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3J
+< NO RESPONSE -> SIBCANC3J >
 
 [SIBCANC3J]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3K
+< NO RESPONSE -> SIBCANC3K >
 
 [SIBCANC3K]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3L
+< NO RESPONSE -> SIBCANC3L >
 
 [SIBCANC3L]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3M
+< NO RESPONSE -> SIBCANC3M >
 
 [SIBCANC3M]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3N
+< NO RESPONSE -> SIBCANC3N >
 
 [SIBCANC3N]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3O
+< NO RESPONSE -> SIBCANC3O >
 
 [SIBCANC3O]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3P
+< NO RESPONSE -> SIBCANC3P >
 
 [SIBCANC3P]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3Q
+< NO RESPONSE -> SIBCANC3Q >
 
 [SIBCANC3Q]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3R
+< NO RESPONSE -> SIBCANC3R >
 
 [SIBCANC3R]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3S
+< NO RESPONSE -> SIBCANC3S >
 
 [SIBCANC3S]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3T
+< NO RESPONSE -> SIBCANC3T >
 
 [SIBCANC3T]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
-NO RESPONSE -> GO TO SIBCANC3U
+< NO RESPONSE -> SIBCANC3U >
 
 [SIBCANC3U]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3V
+< NO RESPONSE -> SIBCANC3V >
 
 [SIBCANC3V]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3W
+< NO RESPONSE -> SIBCANC3W >
 [SIBCANC3W]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3X
+< NO RESPONSE -> SIBCANC3X >
 
 [SIBCANC3X]
 
 Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO SIBCANC3Y
+< NO RESPONSE -> SIBCANC3Y >
 
 [SIBCANC3Y]
 
@@ -1610,7 +1598,7 @@ Children
 [CHILD] The next questions are about your children, whether or not they are currently living. Please include adopted and step children, as well as your biological children. 
 [CHILD] How many children do you have?
 |__|__| #Children 
-NO RESPONSE -> GO TO CHILDCONFIRM
+< NO RESPONSE -> CHILDCONFIRM >
 
 
 [CHILDCONFIRM] You told us that you have [insert number from CHILD] [child/children], including biological, adopted, and step children. 
@@ -1624,7 +1612,7 @@ If CHILD = 1, do not fill [oldest] OR [next oldest]
 (1) Male
 (3) Intersex or other
 () Don’t know
-NO RESPONSE -> GO TO CHILD3
+< NO RESPONSE -> CHILD3 >
 
 If CHILD2 = (01) then fill [he]
 If CHILD2 = (02) then fill [she]
@@ -1633,7 +1621,7 @@ If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
 (1) Your biological child
 (2) Adopted
 (3) A step child
-NO RESPONSE -> GO TO CHILD4
+< NO RESPONSE -> CHILD4 >
 
 If CHILD2 = (01) then fill [he]
 If CHILD2 = (02) then fill [she]
@@ -1642,7 +1630,7 @@ If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
 (1) Yes -> GO TO CHILDAGE
 (0) No -> GO TO CHILDDEATH
 () Don’t know -> GO TO CHILDCANC
-NO RESPONSE -> GO TO CHILDCANC
+< NO RESPONSE -> CHILDCANC >
 
 If CHILD2 = (01) then fill [he]
 If CHILD2 = (02) then fill [she]
@@ -1651,7 +1639,7 @@ If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
 |__|__|__| Child’s age -> GO TO CHILDCANC
 ()Less than 1 year old -> GO TO CHILDCANC
 ()Don’t know -> GO TO CHILDCANC
-NO RESPONSE -> GO TO CHILDCANC
+< NO RESPONSE -> CHILDCANC >
 
 If CHILD2 = (01) then fill [he]
 If CHILD2 = (02) then fill [she]
@@ -1660,7 +1648,7 @@ If CHILD2 = If CHILD2 = (03), (77), or NO RESPONSE, then fill [your child]
 |__|__|__| Child’s age
 () Less than 1 year old
 () Don’t know
-NO RESPONSE -> GO TO CHILDCANC
+< NO RESPONSE -> CHILDCANC >
 
 Yes 
 
@@ -1690,173 +1678,173 @@ Yes
 
 [] Another type of cancer: Please describe [text box]
 [] I know my child had cancer, but don’t know what type
-NO RESPONSE -> GO TO GENERAL HEALTH SECTION
+< NO RESPONSE -> GENERAL HEALTH SECTION >
 
 [CHILDCANC3A]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3B
+< NO RESPONSE -> CHILDCANC3B >
 
 [CHILDCANC3B]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3C
+< NO RESPONSE -> CHILDCANC3C >
 [CHILDCANC3C]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3D
+< NO RESPONSE -> CHILDCANC3D >
 
 [CHILDCANC3D]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3E
+< NO RESPONSE -> CHILDCANC3E >
 
 [CHILDCANC3E]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3F
+< NO RESPONSE -> CHILDCANC3F >
 
 [CHILDCANC3F]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3G
+< NO RESPONSE -> CHILDCANC3G >
 
 [CHILDCANC3G]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3H
+< NO RESPONSE -> CHILDCANC3H >
 
 [CHILDCANC3H]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3I
+< NO RESPONSE -> CHILDCANC3I >
 
 [CHILDCANC3I]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3J
+< NO RESPONSE -> CHILDCANC3J >
 
 [CHILDCANC3J]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3K
+< NO RESPONSE -> CHILDCANC3K >
 
 [CHILDCANC3K]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3L
+< NO RESPONSE -> CHILDCANC3L >
 
 [CHILDCANC3L]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3M
+< NO RESPONSE -> CHILDCANC3M >
 
 [CHILDCANC3M]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3N
+< NO RESPONSE -> CHILDCANC3N >
 
 [CHILDCANC3N]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3O
+< NO RESPONSE -> CHILDCANC3O >
 
 [CHILDCANC3O]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3P
+< NO RESPONSE -> CHILDCANC3P >
 
 [CHILDCANC3P]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
-NO RESPONSE -> GO TO CHILDCANC3Q
+< NO RESPONSE -> CHILDCANC3Q >
 
 [CHILDCANC3Q]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3R
+< NO RESPONSE -> CHILDCANC3R >
 
 [CHILDCANC3R]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3S
+< NO RESPONSE -> CHILDCANC3S >
 
 [CHILDCANC3S]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3T
+< NO RESPONSE -> CHILDCANC3T >
 
 [CHILDCANC3T]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3U
+< NO RESPONSE -> CHILDCANC3U >
 
 [CHILDCANC3U]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3V
+< NO RESPONSE -> CHILDCANC3V >
 
 [CHILDCANC3V]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3W
+< NO RESPONSE -> CHILDCANC3W >
 
 [CHILDCANC3W]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3X
+< NO RESPONSE -> CHILDCANC3X >
 
 [CHILDCANC3X]
 
 Or, if it is easier to remember your child’s age when they were told this, enter that here. |__|__| Age
 
 
-NO RESPONSE -> GO TO CHILDCANC3Y
+< NO RESPONSE -> CHILDCANC3Y >
 
 [CHILDCANC3Y]
 
@@ -1875,12 +1863,12 @@ GO TO NEXT CHILD (REPEAT CHILD2 – CHILDCANC3Y) UP TO THE NUMBER OF CHILDREN IN
 (3) Good
 (4) Fair 
 (5) Poor
-NO RESPONSE -> GO TO PAIN
+< NO RESPONSE -> PAIN >
 
 [PAIN] Over the past three months, have you felt any physical pain on most days?
 (1) Yes 
 (0) No -> GO TO WEIGHT
-NO RESPONSE -> GO TO WEIGHT
+< NO RESPONSE -> WEIGHT >
 
 [PAIN2] On a scale of 1 to 10, where 1 means a little pain and 10 means a lot of pain, how would you rate your physical pain?
 (1) 1 (a little pain)
@@ -1893,39 +1881,39 @@ NO RESPONSE -> GO TO WEIGHT
 (8) 8
 (9) 9
 (10) 10 (a lot of pain)
-NO RESPONSE -> GO TO PAIN3
+< NO RESPONSE -> PAIN3 >
 
 [PAIN3] In the past three months, how much did the pain get in the way of your normal work? By work, we mean both housework and work outside of the home.
 (1) Not at all
 (2) A little bit
 (3) A lot
-NO RESPONSE -> GO TO WEIGHT
+< NO RESPONSE -> WEIGHT >
 Height and weight
 	|__|__|__| #Pounds
-NO RESPONSE -> GO TO HEIGHTFEET
+< NO RESPONSE -> HEIGHTFEET >
 
 [HEIGHTFEET] How tall are you with your shoes off? 
 	[HEIGHTFEET] |__| Feet	      [HEIGHTINCH] |__|__| Inches
-NO RESPONSE -> GO TO ADUHEIGHT
+< NO RESPONSE -> ADUHEIGHT >
 
 [ADUHEIGHT] How old were you when you reached your adult height? If you are not sure, please make your best guess.
 	|__|__| Age
-NO RESPONSE -> GO TO AVEHEIGHT
+< NO RESPONSE -> AVEHEIGHT >
 
 [AVEHEIGHT] When you were about 10 years old, compared to average, would you describe yourself as…
 [1] Shorter than average
 [2] About average height
 [3] Taller than average
-NO RESPONSE -> GO TO AVEWEIGHT
+< NO RESPONSE -> AVEWEIGHT >
 
 [AVEWEIGHT] When you were about 10 years old, compared to average, would you describe yourself as…
 [1] Thinner than average
 [2] About average build
 [3] Heavier than average
-NO RESPONSE -> GO TO WEIGHT3Y
+< NO RESPONSE -> WEIGHT3Y >
 
 	|__|__|__| #Pounds
-NO RESPONSE -> GO TO WEIGHTHIS
+< NO RESPONSE -> WEIGHTHIS >
 
 
 #POUNDS
@@ -1939,12 +1927,12 @@ d. [WEIGHTHIS4] 45 years old
 |__|__|__|
 e. [WEIGHTHIS5] 55 years old
 |__|__|__|
-NO RESPONSE -> GO TO SHORTER
+< NO RESPONSE -> SHORTER >
 
 [WTLOSS1] Did you lose weight on purpose between ages [X] and [Y]?
 (1) Yes
 (0) No 
-NO RESPONSE -> GO TO SHORTER
+< NO RESPONSE -> SHORTER >
 [WTLOSS2] How did you lose weight between ages X and Y? Select all that apply.
 [1] Changed diet 
 [2] Exercised
@@ -1959,17 +1947,17 @@ NO RESPONSE
 (0) No -> GO TO CARWEIGHT
 (1) A little shorter
 (2) A lot shorter
-NO RESPONSE -> GO TO CARWEIGHT
+< NO RESPONSE -> CARWEIGHT >
 
 [SHORTER2] How much shorter are you now than when you were in your 20s and 30s? If you are not sure, please make your best guess.
 |__|__| Inches
-NO RESPONSE -> GO TO CARWEIGHT
+< NO RESPONSE -> CARWEIGHT >
 
 [CARWEIGHT] Where do you carry most of your weight on your body? Select all that apply.
 [1] Around the chest or shoulders
 [2] Around the waist or stomach
 [3] Around the hips or thighs
-NO RESPONSE -> GO TO HAIRFEM
+< NO RESPONSE -> HAIRFEM >
 
 Hair pattern
 
@@ -2013,7 +2001,7 @@ Figure 9 – Moderate hair loss from the temple areas of the side of the head as
 (7) Figure 7
 (8) Figure 8
 (9) Figure 9
-NO RESPONSE -> GO TO HAIRMALE
+< NO RESPONSE -> HAIRMALE >
 
 
 
@@ -2069,30 +2057,31 @@ Figure 12 – Significant hair loss from the temple areas of the sides of the he
 (10) Figure 10
 (11) Figure 11
 (12) Figure 12
-NO RESPONSE -> GO TO HRMED
+< NO RESPONSE -> HRMED >
+
 [HRMED] Have you ever used medication to treat thinning hair or hair loss?
 (1) Yes
 (0) No -> GO TO TESTTHER
-NO RESPONSE -> GO TO TESTTHER
+< NO RESPONSE -> TESTTHER >
 
 [HRMED2] What medication did you use to treat thinning hair or hair loss? Select all that apply.
 [1] Rogaine, Minoxidil, or Ioniten
 
 [] Other: Please describe [text box]
-NO RESPONSE -> GO TO HRMED3
+< NO RESPONSE -> HRMED3 >
 
 [HRMED3] How old were you when you first used medication to treat thinning hair or hair loss?
 	|__|__| Age
-NO RESPONSE -> GO TO HRMED4
+< NO RESPONSE -> HRMED4 >
 [HRMED4] How old were you when you last used medication to treat thinning hair or hair loss? If you are currently using medication to treat thinning hair or hair loss, enter your current age.
 	|__|__| Age
-NO RESPONSE -> GO TO TESTTHER
+< NO RESPONSE -> TESTTHER >
 
 Testosterone Therapy
 [TESTTHER] Have you ever used testosterone therapy (e.g., Depo-Testosterone, Androgel, Testim, Fortesta, Axiron, Androderm, Testim, Striant)? 
 (1) Yes
 (0) No -> GO TO ACNE
-NO RESPONSE -> GO TO ACNE
+< NO RESPONSE -> ACNE >
 
 [TESTTHER2] Which forms of the medication(s) have you taken? Select all that apply.
 [1] Gel/cream
@@ -2101,11 +2090,12 @@ NO RESPONSE -> GO TO ACNE
 [4] Pills 
 [5] Gum or inner cheek patch
 [6] Slow release implant (testosterone pellets)
-NO RESPONSE -> GO TO TESTTHER3
+< NO RESPONSE -> TESTTHER3 >
 
 [TESTTHER3] How old were you when you first used testosterone therapy?
 |__|__| Age
-NO RESPONSE -> GO TO TESTTHER4
+< NO RESPONSE -> TESTTHER4 >
+
 [TESTTHER4] How often did you or do you currently use testosterone therapy?
 (1) Multiple times a day
 (2) Daily
@@ -2113,33 +2103,33 @@ NO RESPONSE -> GO TO TESTTHER4
 (4) Once a week
 (5) Few times a month
 (6) Rarely
-NO RESPONSE -> GO TO TESTTHER5
+< NO RESPONSE -> TESTTHER5 >
 
 [TESTTHER5] How old were you when you last used testosterone therapy? If you are currently using testosterone therapy, enter your current age.
 |__|__| Age
-NO RESPONSE -> GO TO ACNE
+< NO RESPONSE -> ACNE >
 Acne
  [ACNE] Have you ever seen a doctor or other health professional for severe or ongoing acne?
 (1) Yes
 (2) No -> GO TO EDU
-NO RESPONSE -> GO TO EDU
+< NO RESPONSE -> EDU >
 
 [ACNE2] How old were you when you first saw a doctor or other health professional for severe or ongoing acne? 
 |__|__| Age
-NO RESPONSE -> GO TO ACNEMED
+< NO RESPONSE -> ACNEMED >
 
 [ACNEMED] Have you ever used prescription medication to treat the severe or ongoing acne? 
 (1) Yes
 (0) No -> GO TO EDU
-NO RESPONSE -> GO TO EDU
+< NO RESPONSE -> EDU >
 
 [ACNEMED2] How old were you when you first used prescription medication to treat the severe or ongoing acne?
 |__|__| Age
-NO RESPONSE -> GO TO ACNEMED3
+< NO RESPONSE -> ACNEMED3 >
 
 [ACNEMED3] How old were you when you last used prescription medication to treat the severe or ongoing acne? If you are currently using this prescription medication, enter your current age.
 |__|__| Age
-NO RESPONSE -> GO TO EDU
+< NO RESPONSE -> EDU >
 
 Education and Occupation
 [EDU] The next set of questions ask for more background information about you. 
@@ -2154,17 +2144,18 @@ Education and Occupation
 (7) College graduate (Bachelor’s degree)
 (8) Advanced degree (Master’s, Doctorate, etc.)
 () Other: Please describe [text box]
-NO RESPONSE -> GO TO STUDENT
+< NO RESPONSE -> STUDENT >
 
 [STUDENT] Are you currently enrolled in school? 
 (0) No
 (1) Yes, full-time student
 (2) Yes, part-time student 
-NO RESPONSE -> GO TO WORK
+< NO RESPONSE -> WORK >
+
 [WORK] Do you currently work for pay (full-time or part-time)?   
 (1) Yes  -> GO TO WORK3
 (0) No 
-NO RESPONSE -> GO TO WORK2
+< NO RESPONSE -> WORK2 >
 
 [WORK2] Which of these best describes your current employment status?
 (1) Retired ->  GO TO WORK6
@@ -2173,31 +2164,33 @@ NO RESPONSE -> GO TO WORK2
 (4) Unable to work (disabled) ->  GO TO WORK6
 (5) Other ->  GO TO WORK6
 () Prefer not to answer ->  GO TO WORK6
-NO RESPONSE -> GO TO WORK6
+< NO RESPONSE -> WORK6 >
 
 [WORK3] What is your current occupation?
 |__|
-NO RESPONSE -> GO TO WORK4
+< NO RESPONSE -> WORK4 >
 
 [WORK4] How many years have you worked in that occupation? 
 |__|__| #Years
-NO RESPONSE -> GO TO WORK5
+< NO RESPONSE -> WORK5 >
 
 [WORK5] Is this your longest-held occupation? 
 (1) Yes  -> GO TO INCOME
 (0) No  -> GO TO WORK7
-NO RESPONSE -> GO TO WORK7
+< NO RESPONSE -> WORK7 >
+
 [WORK6] Have you ever worked for pay (full-time or part-time)?
 (1) Yes
 (2) No  -> GO TO INCOME
-NO RESPONSE -> GO TO INCOME
+< NO RESPONSE -> INCOME >
+
 [WORK7] What was your longest-held job? 
 (JOBTITLE)|__|
-NO RESPONSE -> GO TO INCOME
+< NO RESPONSE -> INCOME >
 
 [WORK8] How many years did you work in that job?
 |__|__| #Years
-NO RESPONSE -> GO TO DAYSWORK
+< NO RESPONSE -> DAYSWORK >
 
 [DAYSWORK] During the past 12 months, about how many days per week did you typically work for pay?
 (0) None
@@ -2208,7 +2201,7 @@ NO RESPONSE -> GO TO DAYSWORK
 (5) 5 days
 (6) 6 days
 (7) 7 days
-NO RESPONSE  GO TO INCOME
+< NO RESPONSE -> INCOME >
 
 [INCOME] Which of these options best describes your household’s total combined family income for the past 12 months? This should include money earned from all places: job wages, rent from properties, investment income, social security, disability and/or veteran’s benefits, unemployment benefits, workman’s compensation, child support payments, alimony, and so on. Answer with the amount before taxes.
 (1) Less than $10,000/year
@@ -2222,9 +2215,10 @@ NO RESPONSE  GO TO INCOME
 (9) $200,000 or more/year
 () Don’t know
 () Prefer not to answer
-NO RESPONSE -> GO TO PPLHOUSE
+< NO RESPONSE -> PPLHOUSE >
+
 [PPLHOUSE] How many people currently live in your household? Please include yourself in the total number. (Include students living away at school, deployed military, etc.)
 |__|__| #People living in household
 () Prefer not to answer
-NO RESPONSE -> GO TO MODULE 2
+< NO RESPONSE -> MODULE 2 >
 
