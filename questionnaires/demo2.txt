@@ -49,8 +49,8 @@ None of these fully describe me: Please describe [text box:8]
 
 [RACEETH2B] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik ) Inupiat Traditional Government, Nome Eskimo Community, etc.
 
-(TRIBE)|__|
-(98) I’m not sure
+(01)|__|
+(02) I’m not sure
 
 
 [RACEETH3] Which of these categories describe you best? Select all that apply.
@@ -63,7 +63,7 @@ None of these fully describe me: Please describe [text box:8]
 [7] Korean  
 [8] Pakistani 
 [9] Vietnamese
-[98] None of these fully describe me: Please describe [text box:RACEETH3_TB]
+[10] None of these fully describe me: Please describe [text box:RACEETH3_TB]
 [99] Prefer not to answer
 
 
@@ -79,7 +79,7 @@ None of these fully describe me: Please describe [text box:8]
 [9] Nigerian
 [10] Somali
 [11] South African
-[98] None of these fully describe me: Please describe [text box:RACEETH4_TB]
+[12] None of these fully describe me: Please describe [text box:RACEETH4_TB]
 [99] Prefer not to answer
 
 
@@ -94,7 +94,7 @@ None of these fully describe me: Please describe [text box:8]
 [7] Puerto Rican
 [8] Salvadoran
 [9] Spanish
-[98] None of these fully describe me: Please describe [text box:RACEETH5_TB]
+[10] None of these fully describe me: Please describe [text box:RACEETH5_TB]
 [99] Prefer not to answer
 
 [RACEETH6] Which of these categories describe you best? Select all that apply.
@@ -108,7 +108,7 @@ None of these fully describe me: Please describe [text box:8]
 [8] Moroccan
 [9] Syrian 
 [10] Tunisian
-[98] None of these fully describe me: Please describe [text box: RACEETH6_TB]
+[11] None of these fully describe me: Please describe [text box: RACEETH6_TB]
 [99] Prefer not to answer
 
 [RACEETH7] Which of these categories describe you best? Select all that apply.
@@ -121,7 +121,7 @@ None of these fully describe me: Please describe [text box:8]
 [7] Samoan
 [8] Tahitian
 [9] Tongan
-[98] None of these fully describe me: Please describe [text box]
+[10] None of these fully describe me: Please describe [text box]
 [99] Prefer not to answer
 
 
@@ -137,7 +137,7 @@ None of these fully describe me: Please describe [text box:8]
 [9] Polish
 [10] Scottish
 [11] Spanish
-[98] None of these fully describe me: Please describe [text box:RACE_ETH8]
+[12] None of these fully describe me: Please describe [text box:RACE_ETH8]
 [99] Prefer not to answer
 
 [LANG] When you were a child, what language(s) did you first learn at home? Select all that apply.
@@ -159,10 +159,10 @@ None of these fully describe me: Please describe [text box:8]
 [16] Ilocano
 [17] Japanese
 [18] Arabic
-[98] Other language(s): Please describe [text box:LANG_TB]
+[19] Other language(s): Please describe [text box:LANG_TB]
 
 
-[SEX2] Later questions in this survey will ask about surgeries and medical procedures. We want to make sure that you are asked the right questions. 
+[SEX2!] Later questions in this survey will ask about surgeries and medical procedures. We want to make sure that you are asked the right questions. 
 Please select the body parts that you were born with.
 [1] Penis
 [2] Testes
