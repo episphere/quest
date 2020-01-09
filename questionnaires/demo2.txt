@@ -9,14 +9,14 @@ Please remember that anything you tell us is completely confidential.
 [SECTION1] Background Information 
 Please tell us about yourself.
 
-[AGECOR] Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
+[AGECOR!] Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
 (1) Yes -> MARITAL
 (2) No 
 
-[AGE] How old are you today? 
+[AGE!] How old are you today? 
 Age: |__|__|
 
-[MARITAL] Are you now married, widowed, divorced, separated, never married, or living with a partner?
+[MARITAL?] Are you now married, widowed, divorced, separated, never married, or living with a partner?
 (1) Never Married
 (2) Not married but living with partner
 (3) Married
@@ -25,7 +25,7 @@ Age: |__|__|
 (6) Separated
 (99) Prefer not to answer
 
-[RACEETH] Which categories describe you? Select all that apply. Note, you may select more than one group.
+[RACEETH?] Which categories describe you? Select all that apply. Note, you may select more than one group.
 [1] American Indian or Alaska Native  -> RACEETH2
 [2] Asian  -> RACEETH3
 [3] Black, African American, or African -> RACEETH4
@@ -39,7 +39,7 @@ None of these fully describe me: Please describe [text box:8]
 
 
 
-[RACEETH2] Which of these categories describe you best? Select all that apply.
+[RACEETH2?] Which of these categories describe you best? Select all that apply.
 [1] American Indian -> RACEETH2B
 [2] Alaska Native -> RACEETH2B
 [3] Central or South American Indian -> RACEETH2B
@@ -47,13 +47,13 @@ None of these fully describe me: Please describe [text box:8]
 [99] Prefer not to answer
 
 
-[RACEETH2B] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik ) Inupiat Traditional Government, Nome Eskimo Community, etc.
+[RACEETH2B?] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik ) Inupiat Traditional Government, Nome Eskimo Community, etc.
 
 (01)|__|
 (02) I’m not sure
 
 
-[RACEETH3] Which of these categories describe you best? Select all that apply.
+[RACEETH3?] Which of these categories describe you best? Select all that apply.
 [1] Asian Indian
 [2] Cambodian
 [3] Chinese
@@ -67,7 +67,7 @@ None of these fully describe me: Please describe [text box:8]
 [99] Prefer not to answer
 
 
-[RACEETH4] Which of these categories describe you best? Select all that apply.
+[RACEETH4?] Which of these categories describe you best? Select all that apply.
 [1] African American
 [2] Barbadian
 [3] Caribbean
@@ -84,7 +84,7 @@ None of these fully describe me: Please describe [text box:8]
 
 
 
-[RACEETH5] Which of these categories describe you best? Select all that apply.
+[RACEETH5?] Which of these categories describe you best? Select all that apply.
 [1] Colombian
 [2] Cuban
 [3] Dominican
@@ -97,7 +97,7 @@ None of these fully describe me: Please describe [text box:8]
 [10] None of these fully describe me: Please describe [text box:RACEETH5_TB]
 [99] Prefer not to answer
 
-[RACEETH6] Which of these categories describe you best? Select all that apply.
+[RACEETH6?] Which of these categories describe you best? Select all that apply.
 [1] Afghan
 [2] Algerian
 [3] Egyptian
@@ -111,7 +111,7 @@ None of these fully describe me: Please describe [text box:8]
 [11] None of these fully describe me: Please describe [text box: RACEETH6_TB]
 [99] Prefer not to answer
 
-[RACEETH7] Which of these categories describe you best? Select all that apply.
+[RACEETH7?] Which of these categories describe you best? Select all that apply.
 [1] Chamorro
 [2] Chuukese
 [3] Fijian
@@ -125,7 +125,7 @@ None of these fully describe me: Please describe [text box:8]
 [99] Prefer not to answer
 
 
-[RACEETH8] Which of these categories describe you best? Select all that apply.
+[RACEETH8?] Which of these categories describe you best? Select all that apply.
 [1] Dutch
 [2] English
 [3] European
@@ -173,7 +173,7 @@ Please select the body parts that you were born with.
 [7] Ovaries
 [8] Fallopian Tubes
 
-[GEN] Do you think of yourself as:
+[GEN?] Do you think of yourself as:
 (1) Male
 (2) Female
 (3) Transgender Male/Trans Man/Female-to-Male (FTM)
@@ -182,7 +182,7 @@ Please select the body parts that you were born with.
 (6) Additional gender category: Please describe [text box:GEN_TB]
 (99) Prefer not to answer
 
-[SEXORIENT] Do you think of yourself as: 
+[SEXORIENT?] Do you think of yourself as: 
 (1) Straight or heterosexual
 (2) Lesbian, gay, or homosexual 
 (3) Bisexual
@@ -196,12 +196,12 @@ We also ask about medical procedures you may have had.
 
 [CANCER] Cancer	
 
-[SKINCANC] Has a doctor or other health professional ever told you that you have non-melanoma skin cancer? 
+[SKINCANC?] Has a doctor or other health professional ever told you that you have non-melanoma skin cancer? 
 (1) Yes
 (0) No -> GO TO MHGROUP1
 < NO RESPONSE -> MHGROUP1 >
 
-[SKINCANC2] What type(s) of skin cancer did a doctor or other health professional tell you that you have? Select all that apply.
+[SKINCANC2?] What type(s) of skin cancer did a doctor or other health professional tell you that you have? Select all that apply.
 [1] Basal cell
 [2]Squamous cell
 [77] Don’t know
