@@ -36,11 +36,12 @@ transform.render = contents => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*)\\](.*?)(?=\\[[A-Z])", "msg");
+  let regEx = new RegExp(
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)\\](.*?)(?=\\[[A-Z])",
+    "msg"
+  );
 
   contents = contents.replace(regEx, function(x, y, z) {
-    console.log();
-
     // z = z.replace(/\/\*[\s\S]+\*\//g, "");
     // z = z.replace(/\/\/.*\n/g, "");
 
@@ -49,6 +50,13 @@ transform.render = contents => {
     z = z.replace(/\[_#\]/g, "");
 
     y = y.replace(/\[DISPLAY IF .*\]/g, "");
+
+    // ---------------
+    // z = z.replace(
+    //   /\`\`\`(.*)\`\`\`/gms,
+    //   "<script type='text/javascript'>$1</script>"
+    // );
+    // ----------------
 
     // replace |__|__|__|__|  with a number box...
     z = z
@@ -65,6 +73,10 @@ transform.render = contents => {
         /\|(__\|){2,}/g,
         "<input type='number' name='" + y + "'></input>"
       );
+
+    // -------------
+    // z = z.replace(/\_{4,}/g, "<input name='" + y + "'></input>");
+    // -------------
 
     // replace |__|  with an input box...
     z = z.trim().replace(/\|__\|/g, "<input name='" + y + "'></input>");
@@ -118,6 +130,37 @@ transform.render = contents => {
       "<br>" +
       "<br>" +
       "</div>";
+
+    let hardBool = y.endsWith("!");
+    if (y.endsWith("!")) {
+      rv =
+        "<div class='question' style='font-weight: bold' id='" +
+        y +
+        "' hardEdit='" +
+        hardBool +
+        "'>" +
+        z +
+        "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
+        "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
+        "<br>" +
+        "<br>" +
+        "</div>";
+    }
+    let softBool = y.endsWith("?");
+    if (y.endsWith("?")) {
+      rv =
+        "<div class='question' style='font-weight: bold' id='" +
+        y +
+        "' softEdit='" +
+        softBool +
+        "'>" +
+        z +
+        "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
+        "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
+        "<br>" +
+        "<br>" +
+        "</div>";
+    }
     return rv;
   });
 
