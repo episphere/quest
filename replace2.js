@@ -132,25 +132,14 @@ transform.render = contents => {
       "</div>";
 
     let hardBool = y.endsWith("!");
-    if (y.endsWith("!")) {
+    let softBool = y.endsWith("?");
+    if (hardBool || softBool) {
+      y = y.slice(0, -1);
       rv =
         "<div class='question' style='font-weight: bold' id='" +
         y +
         "' hardEdit='" +
         hardBool +
-        "'>" +
-        z +
-        "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-        "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
-        "<br>" +
-        "<br>" +
-        "</div>";
-    }
-    let softBool = y.endsWith("?");
-    if (y.endsWith("?")) {
-      rv =
-        "<div class='question' style='font-weight: bold' id='" +
-        y +
         "' softEdit='" +
         softBool +
         "'>" +
@@ -161,6 +150,7 @@ transform.render = contents => {
         "<br>" +
         "</div>";
     }
+
     return rv;
   });
 
