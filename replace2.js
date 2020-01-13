@@ -57,69 +57,6 @@ transform.render = contents => {
     //   "<script type='text/javascript'>$1</script>"
     // );
     // ----------------
-
-    // replace |__|__|__|__|  with a number box...
-    z = z
-      .trim()
-      .replace(
-        /\|(__\|){4,}/g,
-        "<input type='number' name='" + y + "'></input>"
-      );
-
-    // replace |__|__|  with a number box...
-    z = z
-      .trim()
-      .replace(
-        /\|(__\|){2,}/g,
-        "<input type='number' name='" + y + "'></input>"
-      );
-
-    // -------------
-    // z = z.replace(/\_{4,}/g, "<input name='" + y + "'></input>");
-    // -------------
-
-    // replace |__|  with an input box...
-    z = z.trim().replace(/\|__\|/g, "<input name='" + y + "'></input>");
-
-    // replace [text box:xxx] with a textbox
-    z = z.replace(
-      /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|___\|/g,
-      "<textarea name='$1'></textarea>"
-    );
-
-    // replace (XX) with a radio button...
-    z = z.replace(
-      /(?<=\W)\((\w+)\)([^<\n]*)|\(\)/g,
-      "<br><input type='radio' name='" +
-        y +
-        "' value='$1' id='" +
-        y +
-        "_$1'></input><label style='font-weight: normal' for='" +
-        y +
-        "_$1'>$2</label>"
-    );
-
-    // replace [a-zXX] with a checkbox box...
-    z = z.replace(
-      /\s*\[(\w*)\]([^<\n]*)|\[\]|\*/g,
-      "<br><input type='checkbox' name='" +
-        y +
-        "' value='$1' id='" +
-        y +
-        "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal' for='" +
-        y +
-        "_$1'>$2</label>"
-    );
-
-    // replace user profile variables...
-    z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
-
-    // handle skips
-    z = z.replace(
-      /<input (.*?)><\/input><label(.*?)>(.*?)\s*->\s*(.*?)<\/label>/g,
-      "<input $1 skipTo='$4'></input><label $2>$3</label>"
-    );
-
     let rv =
       "<div class='question' style='font-weight: bold' id='" +
       y +
@@ -132,25 +69,76 @@ transform.render = contents => {
       "</div>";
 
     let hardBool = y.endsWith("!");
-    if (y.endsWith("!")) {
+    let softBool = y.endsWith("?");
+    if (hardBool || softBool) {
+      y = y.slice(0, -1);
+      // replace |__|__|__|__|  with a number box...
+      z = z
+        .trim()
+        .replace(
+          /\|(__\|){4,}/g,
+          "<input type='number' name='" + y + "'></input>"
+        );
+
+      // replace |__|__|  with a number box...
+      z = z
+        .trim()
+        .replace(
+          /\|(__\|){2,}/g,
+          "<input type='number' name='" + y + "'></input>"
+        );
+
+      // -------------
+      // z = z.replace(/\_{4,}/g, "<input name='" + y + "'></input>");
+      // -------------
+
+      // replace |__|  with an input box...
+      z = z.trim().replace(/\|__\|/g, "<input name='" + y + "'></input>");
+
+      // replace [text box:xxx] with a textbox
+      z = z.replace(
+        /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|___\|/g,
+        "<textarea name='$1'></textarea>"
+      );
+
+      // replace (XX) with a radio button...
+      z = z.replace(
+        /(?<=\W)\((\w+)\)([^<\n]*)|\(\)/g,
+        "<br><input type='radio' name='" +
+          y +
+          "' value='$1' id='" +
+          y +
+          "_$1'></input><label style='font-weight: normal' for='" +
+          y +
+          "_$1'>$2</label>"
+      );
+
+      // replace [a-zXX] with a checkbox box...
+      z = z.replace(
+        /\s*\[(\w*)\]([^<\n]*)|\[\]|\*/g,
+        "<br><input type='checkbox' name='" +
+          y +
+          "' value='$1' id='" +
+          y +
+          "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal' for='" +
+          y +
+          "_$1'>$2</label>"
+      );
+
+      // replace user profile variables...
+      z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
+
+      // handle skips
+      z = z.replace(
+        /<input (.*?)><\/input><label(.*?)>(.*?)\s*->\s*(.*?)<\/label>/g,
+        "<input $1 skipTo='$4'></input><label $2>$3</label>"
+      );
+
       rv =
         "<div class='question' style='font-weight: bold' id='" +
         y +
         "' hardEdit='" +
         hardBool +
-        "'>" +
-        z +
-        "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-        "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
-        "<br>" +
-        "<br>" +
-        "</div>";
-    }
-    let softBool = y.endsWith("?");
-    if (y.endsWith("?")) {
-      rv =
-        "<div class='question' style='font-weight: bold' id='" +
-        y +
         "' softEdit='" +
         softBool +
         "'>" +
@@ -161,6 +149,7 @@ transform.render = contents => {
         "<br>" +
         "</div>";
     }
+
     return rv;
   });
 
