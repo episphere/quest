@@ -70,8 +70,9 @@ transform.render = contents => {
 
     let hardBool = y.endsWith("!");
     let softBool = y.endsWith("?");
-    if (hardBool || softBool) {
+    if(hardBool || softBool){
       y = y.slice(0, -1);
+    }
       // replace |__|__|__|__|  with a number box...
       z = z
         .trim()
@@ -128,6 +129,9 @@ transform.render = contents => {
       // replace user profile variables...
       z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
 
+      // replace next question  < -> > with hidden...
+      z = z.replace(/<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,"<input type='hidden' id='"+y+"_default' name='"+y+"' skipTo=$1 checked>");
+
       // handle skips
       z = z.replace(
         /<input (.*?)><\/input><label(.*?)>(.*?)\s*->\s*(.*?)<\/label>/g,
@@ -148,7 +152,7 @@ transform.render = contents => {
         "<br>" +
         "<br>" +
         "</div>";
-    }
+    
 
     return rv;
   });

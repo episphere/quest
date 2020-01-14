@@ -1,3 +1,137 @@
+class Tree{
+    constructor(){
+        this.prevNode = new TreeNode(null);
+        this.nextNode = new TreeNode(null);
+        this.rootNode = this.prevNode;
+
+        this[Symbol.iterator] = function() { 
+            return this;
+        };
+    }
+
+    addChildren(newChildren){
+        if (newChildren.length==0) return;
+        console.log("in addChildren: ",newChildren)
+
+        // each child has to be a TreeNode...
+        newChildren = newChildren.map( x => new TreeNode(x))
+        this.prevNode.setChildren(newChildren);
+        this.nextNode = this.prevNode.next().value;
+    }
+
+    add(value){
+        this.prevNode.addChild(new TreeNode(value));
+        this.nextNode=this.prevNode.next().value;
+    }
+
+    hasNext() {
+        return !!this.nextNode.value;
+    }
+    next(){
+        if (!this.nextNode.value){
+            return {done: true, value:undefined};
+        }
+
+        let tmp=this.nextNode.next();
+        this.prevNode=this.nextNode;
+        if (!tmp.done){
+            this.nextNode=tmp.value;
+        } else {
+            this.nextNode = new TreeNode(null);
+        }
+
+        return {done: false, value:this.prevNode.value};
+    }
+
+    previous(){
+       //TK
+    }
+}
+
+class TreeNode {
+
+    constructor(value){
+        this.value = value;
+        this.parent = null;
+        this.children = [];
+        this.prev = undefined;
+    }
+
+    setParent(parent){
+        this.parent=parent;
+    }
+
+    addChild(child){
+        child.parent=this;
+        this.children.push(child);
+    }
+
+    setChildren(children){
+        // if you pass an array, it clears out the current children
+        // and set it to the new children...
+        if (Array.isArray(children)){
+            this.children = [];
+            this.children=[...children];
+            children.forEach(x => {
+                x.setParent(this);
+            });
+            this.nextNode = this.next().value;
+            if (this.nextNode){
+                this.nextNode.setPrevious(this);
+            }
+        } else{
+            // BUT IT MUST BE AN ARRAY!!!
+            throw new Error("in Tree::addChildren, newChildren must be an array.")
+        }
+    }
+
+    lookForNext(child){
+        // child asked for the next node ...
+        // lets find his index....
+        let childIndex = this.children.indexOf(child)
+        // not sure how the index could not be found...
+        // unless misused...
+        if (childIndex == -1) {
+            return undefined;
+        }
+
+        // get the next index and if
+        // it is still a valid index
+        if ( ++childIndex < this.children.length){
+            //return this.children[childIndex];
+            this.children[childIndex].prev = this;
+            return {done: false, value: this.children[childIndex]}
+        }
+        // child was the last element of the array,
+        // so ask our parent for the next element...
+        // but if we are the root..  return null...
+        if (this.parent == null){
+            return {done: true, value: undefined};
+        }
+        return this.parent.lookForNext(this);
+    }
+
+    next(){
+        if (this.children.length>0){
+            return {done: false, value: this.children[0]};
+        }
+        if (this.parent == null) return {done: true}; 
+        return this.parent.lookForNext(this);
+    }
+    
+    setPrevious(prev){
+        this.prev = prev;
+    }
+
+    previous(){
+        return {done:(!prev), value:prev};
+    }
+
+   iterator(){
+       return new Tree(this);
+   }
+}
+
 function clearSelection(inputElement) {
     var state = inputElement.checked;
     var cb = inputElement.parentElement.querySelectorAll("input[type='checkbox']");
@@ -18,49 +152,50 @@ function clearSelection(inputElement) {
 
 // The questionQueue is an array which contains
 // the question we should go to next.
-const questionQueue = []
+const questionQueue = new Tree(null)
 
 // norp == next or previous button (which ever is clicked...)
 function next(norp) {
+    // The root is defined as null, so if the question is not the same as the 
+    // current value in the questionQueue. Add it.  Only the root should be effected.
+    // NOTE: if the root has no children, add the current question to the queue
+    // and call next().
+    if (questionQueue.rootNode.children.length == 0){
+        questionQueue.add(norp.parentElement);
+        questionQueue.next();
+    }
 
     // check if we need to add questions to the question queue
     checkForSkips(norp.parentElement);
 
     // get the next question from the questionQueue
     // if it exists... otherwise get the next Element
-    var nextElement = null;
-    if (questionQueue.length > 0){
-        nextElement = questionQueue.shift()
-    } else {
-        nextElement = norp.parentElement.nextElementSibling
-    }
+    let nextQuestion = questionQueue.next();
+    if (nextQuestion.done){
+        // if the next element is a question add the next
+        // question to the queue and set the nextQuestion variable
+        let tmp = norp.parentElement.nextElementSibling;
+        if (tmp.classList.contains("question")){
+            questionQueue.add(norp.parentElement.nextElementSibling)
+            nextQuestion = questionQueue.next();
+        }
+    }    
+    nextElement = nextQuestion.value;
 
 
     // hide the current question and move to the next...
     norp.parentElement.classList.remove("active");
     nextElement.classList.add("active");
 
-    // by the way...  set the next question's previous button's skipTo element...
-    var prevButtonList = nextElement.getElementsByClassName("previous");
-    if (prevButtonList.length>0) {
-        prevButtonList[0].skipTo=norp.parentElement.id;
-    }
-
     return (nextElement)
 }
 
 function prev(norp) {
-    if (norp.hasAttribute("skipTo")){
-        var prevElement = document.getElementById(norp.skipTo);
-        norp.parentElement.classList.remove("active")
-        prevElement.classList.add("active")
-    }
+    // get the previousElement...
+    let prevElement=questionQueue.previous()
+    norp.parentElement.classList.remove("active");
+    nextElement.classList.add("active");
 
-
-    var skipTo = checkForSkips(norp.parentElement);
-    if (skipTo != null) {
-        prevElement = document.getElementById(skipTo);
-    }
     return (prevElement);
 }
 
@@ -74,8 +209,16 @@ function checkForSkips(questionElement) {
     // add the selected responses to the question queue
     selectedElements = selectedElements.filter( x => x.hasAttribute("skipTo")); 
     
+    // make an array of the Elements, not the input elments...
+    var ids = selectedElements.map(x => x.getAttribute("skipTo"));
+    selectedElements = ids.map(x => document.getElementById(x))
+
+    // add all the ids for the selected elements with the skipTo attribute to the question queue
+    //var ids = selectedElements.map(x => x.id);
+    //questionQueue.addChildren(ids);
+
     // add all the selected elements with the skipTo attribute to the question queue
-    questionQueue.unshift(...selectedElements)
+    questionQueue.addChildren(selectedElements);
 
     return (null);
 }
@@ -85,87 +228,10 @@ function getSelected(questionElement) {
     // look for radio boxes, checkboxes, and  hidden elements
     // for checked items.  Return all checked items.
     // If nothing is checked, an empty array should be returned.
-    var cb = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox'],input[type='hidden'")];
-    cb = cb.filter( x => x.checked)
+    var rv = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox'],input[type='hidden'")];
+    rv = rv.filter( x => x.checked)
+    // we may need to guarentee that the hidden comes last.
     return (rv)
-}
-
-class Tree{
-    constructor(root){
-        this.current = root;
-
-        this[Symbol.iterator] = function() { 
-            return this;
-        };
-    }
-
-
-    next(){
-        let tmp = this.current.next();
-        if (!tmp.done){
-            let rv = {done: false, value:this.current}
-            this.current = tmp.value;
-            return(rv);
-        }
-
-        return(tmp);
-    }
-}
-
-class TreeNode {
-
-    constructor(value){
-        this.value = value;
-        this.parent = null;
-        this.children = [];
-
-    }
-
-    setParent(parent){
-        this.parent=parent;
-    }
-
-    addChild(child){
-        child.parent=this;
-        this.children.push(child);
-    }
-
-    lookForNext(child){
-        // child asked for the next node ...
-        // lets find his index....
-        let childIndex = this.children.indexOf(child)
-        // not sure how the index could not be found...
-        // unless misused...
-        if (childIndex == -1) {
-            return undefined;
-        }
-
-        // get the next index and if
-        // it is still a valid index
-        if ( ++childIndex < this.children.length){
-            //return this.children[childIndex];
-            return {done: false, value: this.children[childIndex]}
-        }
-        // child was the last element of the array,
-        // so ask our parent for the next element...
-        // but if we are the root..  return null...
-        if (this.parent == null){
-            return {done: true, value: undefined};
-        }
-        return this.parent.lookForNext(this);
-    }
-
-    next(){
-        if (this.children.length>0){
-            return {done: false, value: this.children[0]};
-        }
-        if (this.parent == null) return {done: true}; 
-        return this.parent.lookForNext(this);
-    }
-    
-   iterator(){
-       return new Tree(this);
-   }
 }
 
 
