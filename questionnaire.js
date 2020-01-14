@@ -28,7 +28,9 @@ class Tree{
         return !!this.nextNode.value;
     }
     next(){
+        console.log("NEXT-A: ",this.prevNode,this.nextNode)
         if (!this.nextNode.value){
+            console.log("NEXT-B': ",this.prevNode,this.nextNode)
             return {done: true, value:undefined};
         }
 
@@ -40,11 +42,17 @@ class Tree{
             this.nextNode = new TreeNode(null);
         }
 
+        console.log("NEXT-B: ",this.prevNode,this.nextNode)
         return {done: false, value:this.prevNode.value};
     }
 
     previous(){
-       //TK
+        console.log("PREVIOUS-A: ",this.prevNode,this.nextNode)
+        this.nextNode=new TreeNode(null)
+        this.prevNode=this.prevNode.prev;
+        this.prevNode.children=[];
+        console.log("PREVIOUS-B: ",this.prevNode,this.nextNode)
+        return this.prevNode;
     }
 }
 
@@ -76,9 +84,6 @@ class TreeNode {
                 x.setParent(this);
             });
             this.nextNode = this.next().value;
-            if (this.nextNode){
-                this.nextNode.setPrevious(this);
-            }
         } else{
             // BUT IT MUST BE AN ARRAY!!!
             throw new Error("in Tree::addChildren, newChildren must be an array.")
@@ -92,7 +97,7 @@ class TreeNode {
         // not sure how the index could not be found...
         // unless misused...
         if (childIndex == -1) {
-            return undefined;
+            return {done: true, value: undefined};
         }
 
         // get the next index and if
@@ -113,18 +118,16 @@ class TreeNode {
 
     next(){
         if (this.children.length>0){
+            this.children[0].prev=this;
             return {done: false, value: this.children[0]};
         }
-        if (this.parent == null) return {done: true}; 
-        return this.parent.lookForNext(this);
-    }
-    
-    setPrevious(prev){
-        this.prev = prev;
-    }
-
-    previous(){
-        return {done:(!prev), value:prev};
+        if (this.parent.value == null) return {done: true}; 
+        let myNext = this.parent.lookForNext(this);
+        if (myNext.done){
+            return {done:true,value:undefined};
+        }
+        myNext.value.prev=this;
+        return myNext;
     }
 
    iterator(){
@@ -194,7 +197,7 @@ function prev(norp) {
     // get the previousElement...
     let prevElement=questionQueue.previous()
     norp.parentElement.classList.remove("active");
-    nextElement.classList.add("active");
+    prevElement.value.classList.add("active");
 
     return (prevElement);
 }
