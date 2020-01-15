@@ -1,243 +1,237 @@
-class Tree{
-    constructor(){
-        this.prevNode = new TreeNode(null);
-        this.nextNode = new TreeNode(null);
-        this.rootNode = this.prevNode;
+class Tree {
+  constructor() {
+    this.prevNode = new TreeNode(null);
+    this.nextNode = new TreeNode(null);
+    this.rootNode = this.prevNode;
 
-        this[Symbol.iterator] = function() { 
-            return this;
-        };
+    this[Symbol.iterator] = function() {
+      return this;
+    };
+  }
+
+  addChildren(newChildren) {
+    if (newChildren.length == 0) return;
+    console.log("in addChildren: ", newChildren);
+
+    // each child has to be a TreeNode...
+    newChildren = newChildren.map(x => new TreeNode(x));
+    this.prevNode.setChildren(newChildren);
+    this.nextNode = this.prevNode.next().value;
+  }
+
+  add(value) {
+    this.prevNode.addChild(new TreeNode(value));
+    this.nextNode = this.prevNode.next().value;
+  }
+
+  hasNext() {
+    return !!this.nextNode.value;
+  }
+  next() {
+    if (!this.nextNode.value) {
+      return { done: true, value: undefined };
     }
 
-    addChildren(newChildren){
-        if (newChildren.length==0) return;
-        console.log("in addChildren: ",newChildren)
-
-        // each child has to be a TreeNode...
-        newChildren = newChildren.map( x => new TreeNode(x))
-        this.prevNode.setChildren(newChildren);
-        this.nextNode = this.prevNode.next().value;
+    let tmp = this.nextNode.next();
+    this.prevNode = this.nextNode;
+    if (!tmp.done) {
+      this.nextNode = tmp.value;
+    } else {
+      this.nextNode = new TreeNode(null);
     }
+    return { done: false, value: this.prevNode.value };
+  }
 
-    add(value){
-        this.prevNode.addChild(new TreeNode(value));
-        this.nextNode=this.prevNode.next().value;
-    }
-
-    hasNext() {
-        return !!this.nextNode.value;
-    }
-    next(){
-        console.log("NEXT-A: ",this.prevNode,this.nextNode)
-        if (!this.nextNode.value){
-            console.log("NEXT-B': ",this.prevNode,this.nextNode)
-            return {done: true, value:undefined};
-        }
-
-        let tmp=this.nextNode.next();
-        this.prevNode=this.nextNode;
-        if (!tmp.done){
-            this.nextNode=tmp.value;
-        } else {
-            this.nextNode = new TreeNode(null);
-        }
-
-        console.log("NEXT-B: ",this.prevNode,this.nextNode)
-        return {done: false, value:this.prevNode.value};
-    }
-
-    previous(){
-        console.log("PREVIOUS-A: ",this.prevNode,this.nextNode)
-        this.nextNode=new TreeNode(null)
-        this.prevNode=this.prevNode.prev;
-        this.prevNode.children=[];
-        console.log("PREVIOUS-B: ",this.prevNode,this.nextNode)
-        return this.prevNode;
-    }
+  previous() {
+    this.nextNode = new TreeNode(null);
+    this.prevNode = this.prevNode.prev;
+    this.prevNode.children = [];
+    return this.prevNode;
+  }
 }
 
 class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.parent = null;
+    this.children = [];
+    this.prev = undefined;
+  }
 
-    constructor(value){
-        this.value = value;
-        this.parent = null;
-        this.children = [];
-        this.prev = undefined;
+  setParent(parent) {
+    this.parent = parent;
+  }
+
+  addChild(child) {
+    child.parent = this;
+    this.children.push(child);
+  }
+
+  setChildren(children) {
+    // if you pass an array, it clears out the current children
+    // and set it to the new children...
+    if (Array.isArray(children)) {
+      this.children = [];
+      this.children = [...children];
+      children.forEach(x => {
+        x.setParent(this);
+      });
+      this.nextNode = this.next().value;
+    } else {
+      // BUT IT MUST BE AN ARRAY!!!
+      throw new Error("in Tree::addChildren, newChildren must be an array.");
+    }
+  }
+
+  lookForNext(child) {
+    // child asked for the next node ...
+    // lets find his index....
+    let childIndex = this.children.indexOf(child);
+    // not sure how the index could not be found...
+    // unless misused...
+    if (childIndex == -1) {
+      return { done: true, value: undefined };
     }
 
-    setParent(parent){
-        this.parent=parent;
+    // get the next index and if
+    // it is still a valid index
+    if (++childIndex < this.children.length) {
+      //return this.children[childIndex];
+      this.children[childIndex].prev = this;
+      return { done: false, value: this.children[childIndex] };
     }
-
-    addChild(child){
-        child.parent=this;
-        this.children.push(child);
+    // child was the last element of the array,
+    // so ask our parent for the next element...
+    // but if we are the root..  return null...
+    if (this.parent == null) {
+      return { done: true, value: undefined };
     }
+    return this.parent.lookForNext(this);
+  }
 
-    setChildren(children){
-        // if you pass an array, it clears out the current children
-        // and set it to the new children...
-        if (Array.isArray(children)){
-            this.children = [];
-            this.children=[...children];
-            children.forEach(x => {
-                x.setParent(this);
-            });
-            this.nextNode = this.next().value;
-        } else{
-            // BUT IT MUST BE AN ARRAY!!!
-            throw new Error("in Tree::addChildren, newChildren must be an array.")
-        }
+  next() {
+    if (this.children.length > 0) {
+      this.children[0].prev = this;
+      return { done: false, value: this.children[0] };
     }
-
-    lookForNext(child){
-        // child asked for the next node ...
-        // lets find his index....
-        let childIndex = this.children.indexOf(child)
-        // not sure how the index could not be found...
-        // unless misused...
-        if (childIndex == -1) {
-            return {done: true, value: undefined};
-        }
-
-        // get the next index and if
-        // it is still a valid index
-        if ( ++childIndex < this.children.length){
-            //return this.children[childIndex];
-            this.children[childIndex].prev = this;
-            return {done: false, value: this.children[childIndex]}
-        }
-        // child was the last element of the array,
-        // so ask our parent for the next element...
-        // but if we are the root..  return null...
-        if (this.parent == null){
-            return {done: true, value: undefined};
-        }
-        return this.parent.lookForNext(this);
+    if (this.parent.value == null) return { done: true };
+    let myNext = this.parent.lookForNext(this);
+    if (myNext.done) {
+      return { done: true, value: undefined };
     }
+    myNext.value.prev = this;
+    return myNext;
+  }
 
-    next(){
-        if (this.children.length>0){
-            this.children[0].prev=this;
-            return {done: false, value: this.children[0]};
-        }
-        if (this.parent.value == null) return {done: true}; 
-        let myNext = this.parent.lookForNext(this);
-        if (myNext.done){
-            return {done:true,value:undefined};
-        }
-        myNext.value.prev=this;
-        return myNext;
-    }
-
-   iterator(){
-       return new Tree(this);
-   }
+  iterator() {
+    return new Tree(this);
+  }
 }
 
 function clearSelection(inputElement) {
-    var state = inputElement.checked;
-    var cb = inputElement.parentElement.querySelectorAll("input[type='checkbox']");
-    if (inputElement.value == 99) {
-        for (var x of cb) {
-            if (x != inputElement) {
-                x.checked = false;
-                x.clear = inputElement.id;
-                x.onclick = function() {
-                    clearElement = document.getElementById(this.clear);
-                    clearElement.checked = false;
-                }
-            }
-        }
+  var state = inputElement.checked;
+  var cb = inputElement.parentElement.querySelectorAll(
+    "input[type='checkbox']"
+  );
+  if (inputElement.value == 99) {
+    for (var x of cb) {
+      if (x != inputElement) {
+        x.checked = false;
+        x.clear = inputElement.id;
+        x.onclick = function() {
+          clearElement = document.getElementById(this.clear);
+          clearElement.checked = false;
+        };
+      }
     }
+  }
 }
-
 
 // The questionQueue is an array which contains
 // the question we should go to next.
-const questionQueue = new Tree(null)
+const questionQueue = new Tree(null);
 
 // norp == next or previous button (which ever is clicked...)
 function next(norp) {
-    // The root is defined as null, so if the question is not the same as the 
-    // current value in the questionQueue. Add it.  Only the root should be effected.
-    // NOTE: if the root has no children, add the current question to the queue
-    // and call next().
-    if (questionQueue.rootNode.children.length == 0){
-        questionQueue.add(norp.parentElement);
-        questionQueue.next();
+  // The root is defined as null, so if the question is not the same as the
+  // current value in the questionQueue. Add it.  Only the root should be effected.
+  // NOTE: if the root has no children, add the current question to the queue
+  // and call next().
+  if (questionQueue.rootNode.children.length == 0) {
+    questionQueue.add(norp.parentElement);
+    questionQueue.next();
+  }
+
+  // check if we need to add questions to the question queue
+  checkForSkips(norp.parentElement);
+
+  // get the next question from the questionQueue
+  // if it exists... otherwise get the next Element
+  let nextQuestion = questionQueue.next();
+  if (nextQuestion.done) {
+    // if the next element is a question add the next
+    // question to the queue and set the nextQuestion variable
+    let tmp = norp.parentElement.nextElementSibling;
+    if (tmp.classList.contains("question")) {
+      questionQueue.add(norp.parentElement.nextElementSibling);
+      nextQuestion = questionQueue.next();
     }
+  }
+  nextElement = nextQuestion.value;
 
-    // check if we need to add questions to the question queue
-    checkForSkips(norp.parentElement);
+  // hide the current question and move to the next...
+  norp.parentElement.classList.remove("active");
+  nextElement.classList.add("active");
 
-    // get the next question from the questionQueue
-    // if it exists... otherwise get the next Element
-    let nextQuestion = questionQueue.next();
-    if (nextQuestion.done){
-        // if the next element is a question add the next
-        // question to the queue and set the nextQuestion variable
-        let tmp = norp.parentElement.nextElementSibling;
-        if (tmp.classList.contains("question")){
-            questionQueue.add(norp.parentElement.nextElementSibling)
-            nextQuestion = questionQueue.next();
-        }
-    }    
-    nextElement = nextQuestion.value;
-
-
-    // hide the current question and move to the next...
-    norp.parentElement.classList.remove("active");
-    nextElement.classList.add("active");
-
-    return (nextElement)
+  return nextElement;
 }
 
 function prev(norp) {
-    // get the previousElement...
-    let prevElement=questionQueue.previous()
-    norp.parentElement.classList.remove("active");
-    prevElement.value.classList.add("active");
+  // get the previousElement...
+  let prevElement = questionQueue.previous();
+  norp.parentElement.classList.remove("active");
+  prevElement.value.classList.add("active");
 
-    return (prevElement);
+  return prevElement;
 }
 
 // this function just adds questions to the
 // question queue.  It always returns null;
 function checkForSkips(questionElement) {
-    // get selected responses
-    selectedElements = getSelected(questionElement);
+  // get selected responses
+  selectedElements = getSelected(questionElement);
 
-    // if there is a skipTo attribute, add them to the beginning of the queue...
-    // add the selected responses to the question queue
-    selectedElements = selectedElements.filter( x => x.hasAttribute("skipTo")); 
-    
-    // make an array of the Elements, not the input elments...
-    var ids = selectedElements.map(x => x.getAttribute("skipTo"));
-    selectedElements = ids.map(x => document.getElementById(x))
+  // if there is a skipTo attribute, add them to the beginning of the queue...
+  // add the selected responses to the question queue
+  selectedElements = selectedElements.filter(x => x.hasAttribute("skipTo"));
 
-    // add all the ids for the selected elements with the skipTo attribute to the question queue
-    //var ids = selectedElements.map(x => x.id);
-    //questionQueue.addChildren(ids);
+  // make an array of the Elements, not the input elments...
+  var ids = selectedElements.map(x => x.getAttribute("skipTo"));
+  selectedElements = ids.map(x => document.getElementById(x));
 
-    // add all the selected elements with the skipTo attribute to the question queue
-    questionQueue.addChildren(selectedElements);
+  // add all the ids for the selected elements with the skipTo attribute to the question queue
+  //var ids = selectedElements.map(x => x.id);
+  //questionQueue.addChildren(ids);
 
-    return (null);
+  // add all the selected elements with the skipTo attribute to the question queue
+  questionQueue.addChildren(selectedElements);
+
+  return null;
 }
 
 function getSelected(questionElement) {
-
-    // look for radio boxes, checkboxes, and  hidden elements
-    // for checked items.  Return all checked items.
-    // If nothing is checked, an empty array should be returned.
-    var rv = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox'],input[type='hidden'")];
-    rv = rv.filter( x => x.checked)
-    // we may need to guarentee that the hidden comes last.
-    return (rv)
+  // look for radio boxes, checkboxes, and  hidden elements
+  // for checked items.  Return all checked items.
+  // If nothing is checked, an empty array should be returned.
+  var rv = [
+    ...questionElement.querySelectorAll(
+      "input[type='radio'],input[type='checkbox'],input[type='hidden'"
+    )
+  ];
+  rv = rv.filter(x => x.checked);
+  // we may need to guarentee that the hidden comes last.
+  return rv;
 }
-
-
 
 // // this is the user profile
 // var userProfile = { firstName: "Daniel", lastName: "Russ", age: "40" };
