@@ -1,3 +1,140 @@
+class Tree{
+    constructor(){
+        this.prevNode = new TreeNode(null);
+        this.nextNode = new TreeNode(null);
+        this.rootNode = this.prevNode;
+
+        this[Symbol.iterator] = function() { 
+            return this;
+        };
+    }
+
+    addChildren(newChildren){
+        if (newChildren.length==0) return;
+        console.log("in addChildren: ",newChildren)
+
+        // each child has to be a TreeNode...
+        newChildren = newChildren.map( x => new TreeNode(x))
+        this.prevNode.setChildren(newChildren);
+        this.nextNode = this.prevNode.next().value;
+    }
+
+    add(value){
+        this.prevNode.addChild(new TreeNode(value));
+        this.nextNode=this.prevNode.next().value;
+    }
+
+    hasNext() {
+        return !!this.nextNode.value;
+    }
+    next(){
+        console.log("NEXT-A: ",this.prevNode,this.nextNode)
+        if (!this.nextNode.value){
+            console.log("NEXT-B': ",this.prevNode,this.nextNode)
+            return {done: true, value:undefined};
+        }
+
+        let tmp=this.nextNode.next();
+        this.prevNode=this.nextNode;
+        if (!tmp.done){
+            this.nextNode=tmp.value;
+        } else {
+            this.nextNode = new TreeNode(null);
+        }
+
+        console.log("NEXT-B: ",this.prevNode,this.nextNode)
+        return {done: false, value:this.prevNode.value};
+    }
+
+    previous(){
+        console.log("PREVIOUS-A: ",this.prevNode,this.nextNode)
+        this.nextNode=new TreeNode(null)
+        this.prevNode=this.prevNode.prev;
+        this.prevNode.children=[];
+        console.log("PREVIOUS-B: ",this.prevNode,this.nextNode)
+        return this.prevNode;
+    }
+}
+
+class TreeNode {
+
+    constructor(value){
+        this.value = value;
+        this.parent = null;
+        this.children = [];
+        this.prev = undefined;
+    }
+
+    setParent(parent){
+        this.parent=parent;
+    }
+
+    addChild(child){
+        child.parent=this;
+        this.children.push(child);
+    }
+
+    setChildren(children){
+        // if you pass an array, it clears out the current children
+        // and set it to the new children...
+        if (Array.isArray(children)){
+            this.children = [];
+            this.children=[...children];
+            children.forEach(x => {
+                x.setParent(this);
+            });
+            this.nextNode = this.next().value;
+        } else{
+            // BUT IT MUST BE AN ARRAY!!!
+            throw new Error("in Tree::addChildren, newChildren must be an array.")
+        }
+    }
+
+    lookForNext(child){
+        // child asked for the next node ...
+        // lets find his index....
+        let childIndex = this.children.indexOf(child)
+        // not sure how the index could not be found...
+        // unless misused...
+        if (childIndex == -1) {
+            return {done: true, value: undefined};
+        }
+
+        // get the next index and if
+        // it is still a valid index
+        if ( ++childIndex < this.children.length){
+            //return this.children[childIndex];
+            this.children[childIndex].prev = this;
+            return {done: false, value: this.children[childIndex]}
+        }
+        // child was the last element of the array,
+        // so ask our parent for the next element...
+        // but if we are the root..  return null...
+        if (this.parent == null){
+            return {done: true, value: undefined};
+        }
+        return this.parent.lookForNext(this);
+    }
+
+    next(){
+        if (this.children.length>0){
+            this.children[0].prev=this;
+            return {done: false, value: this.children[0]};
+        }
+        if (this.parent.value == null) return {done: true}; 
+        let myNext = this.parent.lookForNext(this);
+        if (myNext.done){
+            return {done:true,value:undefined};
+        }
+        myNext.value.prev=this;
+        return myNext;
+    }
+
+   iterator(){
+       return new Tree(this);
+   }
+}
+
 function clearSelection(inputElement) {
     var state = inputElement.checked;
     var cb = inputElement.parentElement.querySelectorAll("input[type='checkbox']");
@@ -15,95 +152,89 @@ function clearSelection(inputElement) {
     }
 }
 
+
+// The questionQueue is an array which contains
+// the question we should go to next.
+const questionQueue = new Tree(null)
+
 // norp == next or previous button (which ever is clicked...)
 function next(norp) {
-
-    // the default next question is ... well next...
-    var nextElement = norp.parentElement.nextElementSibling
-    norp.parentElement.classList.remove("active");
-
-    // does the selected response element have a skip???
-    var skipTo = checkForSkips(norp.parentElement);
-    if (skipTo != null) {
-        nextElement = document.getElementById(skipTo);
+    // The root is defined as null, so if the question is not the same as the 
+    // current value in the questionQueue. Add it.  Only the root should be effected.
+    // NOTE: if the root has no children, add the current question to the queue
+    // and call next().
+    if (questionQueue.rootNode.children.length == 0){
+        questionQueue.add(norp.parentElement);
+        questionQueue.next();
     }
 
-    // should we really display the next element???
-    if (nextElement.hasAttribute("showIfId")) {
-        var acceptableValues = nextElement.getAttribute("values").split(",");
-        var checkValueFromElement = document.getElementById(nextElement.getAttribute("showIfId"));
-        var selectedValues = getSelected(checkValueFromElement);
+    // check if we need to add questions to the question queue
+    checkForSkips(norp.parentElement);
 
-        var intersection = selectedValues.filter(x => acceptableValues.includes(x))
-        if (intersection.length == 0) {
-            console.log("[" + acceptableValues + "] does not contain any of the selectedValues: " + selectedValues + " so I am skipping " + nextElement.id + " and going to " + nextElement.nextElementSibling.id);
-            nextButton = nextElement.querySelector(".next");
-            if (nextButton != null) {
-                nextElement = next(nextButton);
-                return (nextElement);
-            } else {
-                nextElement = nextElement.nextElementSibling;
-            }
-
+    // get the next question from the questionQueue
+    // if it exists... otherwise get the next Element
+    let nextQuestion = questionQueue.next();
+    if (nextQuestion.done){
+        // if the next element is a question add the next
+        // question to the queue and set the nextQuestion variable
+        let tmp = norp.parentElement.nextElementSibling;
+        if (tmp.classList.contains("question")){
+            questionQueue.add(norp.parentElement.nextElementSibling)
+            nextQuestion = questionQueue.next();
         }
-    }
+    }    
+    nextElement = nextQuestion.value;
 
+
+    // hide the current question and move to the next...
+    norp.parentElement.classList.remove("active");
     nextElement.classList.add("active");
+
     return (nextElement)
 }
 
 function prev(norp) {
-    var prevElement = norp.parentElement.previousElementSibling
-    norp.parentElement.classList.remove("active")
-    prevElement.classList.add("active")
+    // get the previousElement...
+    let prevElement=questionQueue.previous()
+    norp.parentElement.classList.remove("active");
+    prevElement.value.classList.add("active");
 
-    var skipTo = checkForSkips(norp.parentElement);
-    if (skipTo != null) {
-        prevElement = document.getElementById(skipTo);
-    }
     return (prevElement);
 }
 
+// this function just adds questions to the
+// question queue.  It always returns null;
 function checkForSkips(questionElement) {
-    selectedElements = getSelected(questionElement, true);
-    // if more than 1 element is selected...
-    // cannot be a skip....
-    if (selectedElements.length == 1) {
-        if (selectedElements[0].hasAttribute("skipTo")) {
-            return selectedElements[0].getAttribute("skipTo");
-        }
-    }
+    // get selected responses
+    selectedElements = getSelected(questionElement);
+
+    // if there is a skipTo attribute, add them to the beginning of the queue...
+    // add the selected responses to the question queue
+    selectedElements = selectedElements.filter( x => x.hasAttribute("skipTo")); 
+    
+    // make an array of the Elements, not the input elments...
+    var ids = selectedElements.map(x => x.getAttribute("skipTo"));
+    selectedElements = ids.map(x => document.getElementById(x))
+
+    // add all the ids for the selected elements with the skipTo attribute to the question queue
+    //var ids = selectedElements.map(x => x.id);
+    //questionQueue.addChildren(ids);
+
+    // add all the selected elements with the skipTo attribute to the question queue
+    questionQueue.addChildren(selectedElements);
+
     return (null);
 }
 
-function getSelected(questionElement, returnElement = false) {
-    // check for checkboxes...
-    var cb = questionElement.querySelectorAll("input[type='checkbox']");
-    if (cb.length > 0) {
-        return (getChecked(cb, returnElement))
-    }
-    // check for radiogroup
-    cb = questionElement.querySelectorAll("input[type='radio']");
-    if (cb.length > 0) {
-        return (getChecked(cb, returnElement))
-    }
+function getSelected(questionElement) {
 
-    var rv = [];
+    // look for radio boxes, checkboxes, and  hidden elements
+    // for checked items.  Return all checked items.
+    // If nothing is checked, an empty array should be returned.
+    var rv = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox'],input[type='hidden'")];
+    rv = rv.filter( x => x.checked)
+    // we may need to guarentee that the hidden comes last.
     return (rv)
-}
-
-function getChecked(elementArray, returnElement) {
-    var values = [];
-    for (var x of elementArray) {
-        if (x.checked) {
-            if (returnElement) {
-                values.push(x)
-            } else {
-                values.push(x.value)
-            }
-        }
-    }
-    return (values)
 }
 
 
