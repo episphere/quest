@@ -37,7 +37,7 @@ Age: |__|__|
 [5] Middle Eastern or North African -> RACEETH6
 [6] Native Hawaiian or other Pacific Islander -> RACEETH7
 [7] White -> RACEETH8
-None of these fully describe me: Please describe [text box:8]
+[8] None of these fully describe me: Please describe [text box:8]
 [99] Prefer not to answer
 < -> LANG >
 

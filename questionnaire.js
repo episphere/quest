@@ -138,6 +138,7 @@ function clearSelection(inputElement) {
       if (x != inputElement) {
         x.checked = false;
         x.clear = inputElement.id;
+        x.nextSibling.nextSibling.value = "";
         x.onclick = function() {
           clearElement = document.getElementById(this.clear);
           clearElement.checked = false;
