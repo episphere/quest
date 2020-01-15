@@ -1,12 +1,16 @@
 [INTROM1] Welcome, {$u:firstName}! This survey will ask you about a wide range of topics, such as your medical conditions, water usage, sleep habits, and more. Our goal is to gather information about your life and behaviors. You can answer all of the questions now, or you can answer some questions now and answer the rest later. Your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.                                                                                                                                                                                                                                       
+
 At a few points in this survey, you may see a word or phrase that appears as a button. Clicking the button will show more information that might help you answer the question. This sentence shows an example. [text that appears when “example” is selected: This is an example of how additional information will be displayed.]                                                                                                                                                                                                                                                 
+
 Let’s get started.
 
 [INTROBAC] Module 1
 First, we are interested in getting some general information about you, your medical history, and your family history. This information will help us better understand your current health status. It will also help us understand how your health may be different from the health of other people.
+
 Please remember that anything you tell us is completely confidential.
 
 [SECTION1] Background Information 
+
 Please tell us about yourself.
 
 [AGECOR!] Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
