@@ -11,7 +11,7 @@ class Tree {
 
   addChildren(newChildren) {
     if (newChildren.length == 0) return;
-    console.log("in addChildren: ", newChildren);
+    // console.log("in addChildren: ", newChildren);
 
     // each child has to be a TreeNode...
     newChildren = newChildren.map(x => new TreeNode(x));
