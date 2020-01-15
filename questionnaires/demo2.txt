@@ -196,6 +196,7 @@ Please select the body parts that you were born with.
 [SECTION2] Medical History
 
 [INTROMH] The next group of questions ask about medical conditions you may have. Please answer “yes” to these questions only if a doctor or other health professional has told you that you have the condition.  You will also be asked how old you were when a doctor or health professional told you that.
+
 We also ask about medical procedures you may have had.  
 
 [CANCER] Cancer	
