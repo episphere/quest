@@ -104,7 +104,7 @@ transform.render = contents => {
 
     // replace (XX) with a radio button...
     z = z.replace(
-      /(?<=\W)\((\w+)\)([^<\n]*)|\(\)/g,
+      /(?<=\W)\((\d+)\)([^<\n]*)|\(\)/g,
       "<br><input type='radio' name='" +
         y +
         "' value='$1' id='" +
