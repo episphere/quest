@@ -51,7 +51,7 @@ None of these fully describe me: Please describe [text box:8]
 [99] Prefer not to answer
 
 
-[RACEETH2B?] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik ) Inupiat Traditional Government, Nome Eskimo Community, etc.
+[RACEETH2B?] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik) Inupiat Traditional Government, Nome Eskimo Community, etc.
 
 (01)|__|
 (02) I’m not sure
