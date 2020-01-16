@@ -110,7 +110,7 @@ transform.render = contents => {
         y +
         "' value='$1' id='" +
         y +
-        "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal' for='" +
+        "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='" +
         y +
         "_$1'>$2</label>"
     );
@@ -122,7 +122,7 @@ transform.render = contents => {
         y +
         "' value='$1' id='" +
         y +
-        "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal' for='" +
+        "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='" +
         y +
         "_$1'>$2</label>"
     );
