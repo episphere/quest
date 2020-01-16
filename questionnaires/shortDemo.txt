@@ -1,0 +1,30 @@
+[AGECOR!] Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
+(1) Yes -> MARITAL
+(2) No 
+
+[AGE!] How old are you today? 
+Age: |__|__|
+
+[MARITAL?] Are you now married, widowed, divorced, separated, never married, or living with a partner?
+(1) Never Married
+(2) Not married but living with partner
+(3) Married
+(4) Divorced
+(5) Widowed
+(6) Separated
+(99) Prefer not to answer
+
+[RACEETH?] Which categories describe you? Select all that apply. Note, you may select more than one group.
+[1] American Indian or Alaska Native  -> RACEETH2
+[2] Asian  -> RACEETH3
+[3] Black, African American, or African -> RACEETH4
+[4] Hispanic, Latino, or Spanish -> RACEETH5
+[5] Middle Eastern or North African -> RACEETH6
+[6] Native Hawaiian or other Pacific Islander -> RACEETH7
+[7] White -> RACEETH8
+[8] None of these fully describe me: Please describe [text box:8]
+[99] Prefer not to answer
+
+
+
+

@@ -73,6 +73,7 @@ transform.render = contents => {
     if (hardBool || softBool) {
       y = y.slice(0, -1);
     }
+
     // replace |__|__|__|__|  with a number box...
     z = z
       .trim()
@@ -184,7 +185,7 @@ transform.render = contents => {
       "'>" +
       z +
       "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-      "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
+      "<input type='button' onclick='nextPage(this)' class='next' value='next'></input>" +
       "<br>" +
       "<br>" +
       "</div>";

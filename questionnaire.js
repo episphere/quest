@@ -152,12 +152,7 @@ function clearSelection(inputElement) {
 // the question we should go to next.
 const questionQueue = new Tree(null);
 
-// norp == next or previous button (which ever is clicked...)
-function next(norp) {
-  // The root is defined as null, so if the question is not the same as the
-  // current value in the questionQueue. Add it.  Only the root should be effected.
-  // NOTE: if the root has no children, add the current question to the queue
-  // and call next().
+function continueQuestion(norp) {
   if (questionQueue.rootNode.children.length == 0) {
     questionQueue.add(norp.parentElement);
     questionQueue.next();
@@ -183,8 +178,131 @@ function next(norp) {
   // hide the current question and move to the next...
   norp.parentElement.classList.remove("active");
   nextElement.classList.add("active");
-
   return nextElement;
+}
+
+// norp == next or previous button (which ever is clicked...)
+function nextPage(norp) {
+  console.log("NextPage Called", norp.parentElement.id);
+  // The root is defined as null, so if the question is not the same as the
+  // current value in the questionQueue. Add it.  Only the root should be effected.
+  // NOTE: if the root has no children, add the current question to the queue
+  // and call next().
+  //   debugger;
+  if (norp.hasAttribute("data-toggle")) {
+    norp.removeAttribute("data-toggle");
+  }
+  if (
+    norp.parentElement.getAttribute("softedit") == "true" &&
+    getSelected(norp.parentElement).length == 0
+  ) {
+    // console.log(norp.parentElement);
+    norp.setAttribute("data-toggle", "modal");
+    norp.setAttribute("data-target", "#softModal");
+    let container = document.createElement("div");
+    container.className = "container";
+    let modalButton = document.createElement("button");
+    modalButton.display = "none";
+    container.innerHTML = `
+                <div class="modal" id="softModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Response Requested</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>There is 1 unanswered question on this page. Would you like to continue?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-dismiss="modal" onclick="alert('Hi')">Continue Without Answering</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Answer the Question</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>`;
+    document.getElementById("tool").appendChild(container);
+
+    return null;
+  } else if (
+    norp.parentElement.getAttribute("hardedit") == "true" &&
+    getSelected(norp.parentElement) == 0
+  ) {
+    norp.setAttribute("data-toggle", "modal");
+    norp.setAttribute("data-target", "#hardModal");
+    let container = document.createElement("div");
+    container.className = "container";
+    let divModal = document.createElement("div");
+    divModal.className = "modal fade";
+    divModal.id = "hardModal";
+    let divDialog = document.createElement("div");
+    divDialog.className = "modal-dialog";
+    let divContent = document.createElement("div");
+    divContent.className = "modal-content";
+    let divHeader = document.createElement("div");
+    divHeader.className = "modal-header";
+    let closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "close";
+    closeButton.setAttribute("data-dismiss", "modal");
+    closeButton.innerHTML = "&times;";
+    let modalTitle = document.createElement("h4");
+    modalTitle.className = "modal-title";
+    modalTitle.innerHTML = "Response Required";
+    let divBody = document.createElement("div");
+    divBody.className = "modal-body";
+    let p = document.createElement("p");
+    p.innerText =
+      "There is 1 unanswered question on this page. Please answer this question.";
+    let divFooter = document.createElement("div");
+    divFooter.className = "modal-footer";
+    let answerButton = document.createElement("button");
+    answerButton.className = "btn btn-danger";
+    answerButton.innerHTML = "Answer the Question";
+    answerButton.setAttribute("data-dismiss", "modal");
+    answerButton.type = "button";
+    divHeader.appendChild(modalTitle);
+    divHeader.appendChild(closeButton);
+    divContent.appendChild(divHeader);
+    divContent.appendChild(divBody);
+    divFooter.appendChild(answerButton);
+    divContent.appendChild(divFooter);
+    divBody.appendChild(p);
+    divDialog.appendChild(divContent);
+    divModal.appendChild(divDialog);
+    container.appendChild(divModal);
+    document.getElementById("tool").appendChild(container);
+    return null;
+  } else {
+    if (questionQueue.rootNode.children.length == 0) {
+      questionQueue.add(norp.parentElement);
+      questionQueue.next();
+    }
+
+    // check if we need to add questions to the question queue
+    checkForSkips(norp.parentElement);
+
+    // get the next question from the questionQueue
+    // if it exists... otherwise get the next Element
+    let nextQuestion = questionQueue.next();
+    if (nextQuestion.done) {
+      // if the next element is a question add the next
+      // question to the queue and set the nextQuestion variable
+      let tmp = norp.parentElement.nextElementSibling;
+      if (tmp.classList.contains("question")) {
+        questionQueue.add(norp.parentElement.nextElementSibling);
+        nextQuestion = questionQueue.next();
+      }
+    }
+    nextElement = nextQuestion.value;
+
+    // hide the current question and move to the next...
+    norp.parentElement.classList.remove("active");
+    nextElement.classList.add("active");
+    return nextElement;
+  }
 }
 
 function prev(norp) {
