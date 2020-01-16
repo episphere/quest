@@ -131,7 +131,7 @@ class TreeNode {
 function clearSelection(inputElement) {
   var state = inputElement.checked;
   var cb = inputElement.parentElement.querySelectorAll(
-    "input[type='checkbox']"
+    "input[type='checkbox'], input[type='radio']"
   );
   if (inputElement.value == 99) {
     for (var x of cb) {
@@ -183,7 +183,6 @@ function continueQuestion(norp) {
 
 // norp == next or previous button (which ever is clicked...)
 function nextPage(norp) {
-  console.log("NextPage Called", norp.parentElement.id);
   // The root is defined as null, so if the question is not the same as the
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
