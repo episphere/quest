@@ -192,9 +192,10 @@ function nextPage(norp) {
   if (norp.hasAttribute("data-toggle")) {
     norp.removeAttribute("data-toggle");
   }
+
   if (
     norp.parentElement.getAttribute("softedit") == "true" &&
-    getSelected(norp.parentElement).length == 0
+    getSelected(norp.parentElement).filter(x => x.type !== "hidden").length == 0
   ) {
     // console.log(norp.parentElement);
     norp.setAttribute("data-toggle", "modal");
