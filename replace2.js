@@ -185,9 +185,7 @@ transform.render = contents => {
       "'>" +
       z +
       "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-      "<input type='button' onclick='nextPage(this)' class='next' value='next'></input>" +
-      "<br>" +
-      "<br>" +
+      "<input type='button' onclick='nextClick(this)' class='next' value='next'></input>" +
       "</div>";
 
     return rv;
