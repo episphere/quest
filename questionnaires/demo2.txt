@@ -494,8 +494,9 @@ Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> MHGROUP5 >
 
-Kidney Disease
-[MHGROUP5] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[MHGROUP5] Kidney Disease
+
+Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Kidney Stones
 [2] Chronic Kidney Disease (Also Known as Chronic Kidney Failure)
 [] I have not had any of these conditions -> GO TO MHGROUP6
