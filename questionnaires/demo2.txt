@@ -317,10 +317,10 @@ Or, if it is easier to remember the year, enter that here:
 
 Respiratory problems
 [MHGROUP2] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
-[1] Chronic lung disease (Emphysema, Chronic Bronchitis, or Chronic Obstructive Pulmonary Disease (COPD))
-[2] Asthma
-[3] Hay Fever (Allergic to pollen or Allergic Rhinitis)
-[] I have not had any of these conditions -> GO TO MHGROUP3
+[1] Chronic lung disease (Emphysema, Chronic Bronchitis, or Chronic Obstructive Pulmonary Disease (COPD)) -> COPD
+[2] Asthma -> ASTHMA
+[3] Hay Fever (Allergic to pollen or Allergic Rhinitis) -> HAYFEVER
+[] I have not had any of these conditions
 < -> MHGROUP3 >
 
 
@@ -350,18 +350,18 @@ Or, if it is easier to remember the year, enter that here:
 
 Digestive system problems
 [MHGROUP3] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
-[1] Esophageal Acid Reflux (GERD)
-[2] Barrett’s Esophagus
-[3] Irritable Bowel Syndrome
-[4] Inflammatory Bowel Disease
-[5] Diverticulitis or Diverticulosis
-[6] Ulcerative Colitis
-[7] Crohn’s Disease
-[8] Celiac Disease (also known as Gluten-Sensitive Enteropathy)
-[9] Gallstones (Biliary Stones)
-[10] Liver Cirrhosis
-[11] Pancreatitis
-[] I have not had any of these conditions -> GO TO MHGROUP4
+[1] Esophageal Acid Reflux (GERD) -> GERD
+[2] Barrett’s Esophagus -> BARESO
+[3] Irritable Bowel Syndrome -> IBS
+[4] Inflammatory Bowel Disease -> IBD
+[5] Diverticulitis or Diverticulosis -> DIVERT
+[6] Ulcerative Colitis -> UC
+[7] Crohn’s Disease -> CD
+[8] Celiac Disease (also known as Gluten-Sensitive Enteropathy) -> CCD
+[9] Gallstones (Biliary Stones) -> GALL
+[10] Liver Cirrhosis -> LIVCIRR
+[11] Pancreatitis -> PANCREA
+[] I have not had any of these conditions
 < -> MHGROUP4 >
 
 
@@ -456,10 +456,11 @@ Or, if it is easier to remember the year, enter that here:
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> MHGROUP4 >
+
 [MHGROUP4] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
-[1] Thyroid Disorder (Overactive or Underactive Thyroid)
-[2] Diabetes
-[3] Graves’ Disease
+[1] Thyroid Disorder (Overactive or Underactive Thyroid) -> THYROID
+[2] Diabetes -> DM
+[3] Graves’ Disease -> GRAVES
 [] I have not had any of these conditions -> GO TO MHGROUP5
 < -> MHGROUP5 >
 

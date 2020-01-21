@@ -89,7 +89,9 @@ transform.render = contents => {
         /\|(__\|){2,}/g,
         "<input type='radio' style='display:none' id='num" +
           y +
-          "'></input><label for='num" +
+          "'></input><label id='input" +
+          y +
+          "' for='num" +
           y +
           "'><input type='number' name='" +
           y +
