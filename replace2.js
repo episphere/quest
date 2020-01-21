@@ -102,7 +102,7 @@ transform.render = contents => {
     // z = z.replace(/\_{4,}/g, "<input name='" + y + "'></input>");
     // -------------
 
-    // replace |__|  with an input box...
+    // replace |__| or [text box:xxx] with an input box...
     z = z
       .trim()
       .replace(
@@ -118,7 +118,7 @@ transform.render = contents => {
           "').checked = this.value.length > 0 \"></input></label>"
       );
 
-    // replace [text box:xxx] with a textbox
+    // replace |___| with a textbox...
     z = z.replace(/\|___\|/g, "<textarea></textarea>");
 
     // replace (XX) with a radio button...
