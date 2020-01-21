@@ -87,7 +87,15 @@ transform.render = contents => {
       .trim()
       .replace(
         /\|(__\|){2,}/g,
-        "<input type='number' name='" + y + "'></input>"
+        "<input type='radio' style='display:none' id='num" +
+          y +
+          "'></input><label for='num" +
+          y +
+          "'><input type='number' name='" +
+          y +
+          "' oninput=\"document.getElementById('num" +
+          y +
+          "').checked = this.value.length > 0 \"></input></label>"
       );
 
     // -------------
@@ -95,13 +103,23 @@ transform.render = contents => {
     // -------------
 
     // replace |__|  with an input box...
-    z = z.trim().replace(/\|__\|/g, "<input name='" + y + "'></input>");
+    z = z
+      .trim()
+      .replace(
+        /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|/g,
+        "<input type='radio' style='display:none' id='rb" +
+          y +
+          "'></input><label for='rb" +
+          y +
+          "'><input name='" +
+          y +
+          "' oninput=\"document.getElementById('rb" +
+          y +
+          "').checked = this.value.length > 0 \"></input></label>"
+      );
 
     // replace [text box:xxx] with a textbox
-    z = z.replace(
-      /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|___\|/g,
-      "<textarea name='$1'></textarea>"
-    );
+    z = z.replace(/\|___\|/g, "<textarea></textarea>");
 
     // replace (XX) with a radio button...
     z = z.replace(

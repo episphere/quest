@@ -23,30 +23,30 @@
             <thead id="legendDiv">
                 <tr>
                     <td>
-                        <div id="legend" style="border: 1px solid black; padding-right: 5px; padding-left:5px; width:500px;" width="250px">
+                        <div class="container" id="legend" style="border: 1px solid black; padding-right: 5px; padding-left:5px; width:500px;">
                             <h3>Legend</h3>
                             <p>To initialize a question, start by typing any capital letters or numbers in brackets i.e. [A-Z 0-9] or by typing a capital letter and a number followed by a period i.e. Q1.</p>
                             <p>Check Box = [] with a value of lower case letters or numbers inside the brackets i.e. [a-z 0-9] or *</p>
                             <p>Radio Button = () with a value of lower case letters or numbers inside the paretheses i.e. (a-z 0-9)</p>
                             <p>Age = |__|__|</p>
                             <p>Year = |__|__|__|__|</p>
-                            <p>Input Box = |__| (two underlines)</p>
-                            <p>Text Box = [text box] or |___| (three underlines)</p>
+                            <p>Input Box = |__| (two underlines) or [text box]</p>
+                            <p>Text Box = |___| (three underlines)</p>
                         </div>
                     </td>
                     <td>
-                        <div id="stylingDiv" style="border: 1px solid black; width:500px; height:369px; padding-left: 5px;">
+                        <div class="container" id="stylingDiv" style="border: 1px solid black; width:500px; height:355px; padding-left: 5px;">
                             <h3>Styling</h3>
-                            <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked>No Style</input>
-                            <input type="radio" id="styling" name="styling" onclick="changeStyle('Style1.css')">With Style 1</input>
+                            <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked> No Style</input>
+                            <input type="radio" id="styling" name="styling" onclick="changeStyle('Style1.css')"> With Style 1</input>
                             <script>
                                 function changeStyle(sheet) {
                                     document.getElementById("pagestyle").setAttribute("href", sheet)
                                 }
                             </script>
                             <h3>Logic</h3>
-                            <input type="radio" id="styling" name="logic" onclick="changeLogic('Default.css')" checked>Not Active</input>
-                            <input type="radio" id="styling" name="logic" onclick="changeLogic('ActiveLogic.css')">Active</input>
+                            <input type="radio" id="styling" name="logic" onclick="changeLogic('Default.css')" checked> Not Active</input>
+                            <input type="radio" id="styling" name="logic" onclick="changeLogic('ActiveLogic.css')"> Active</input>
                             <script>
                                 function changeLogic(sheet) {
                                     document.getElementById("pagelogic").setAttribute("href", sheet)
@@ -87,7 +87,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td id="markup" style="vertical-align:top; position: fixed;">
+                    <td id="markup" style="vertical-align:top;">
                         <textarea id="ta"></textarea>
                         <div id="loadSaveDiv">
                             <input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)">
