@@ -63,8 +63,29 @@ transform.render = contents => {
       y = y.slice(0, -1);
     }
 
+    // replace #YN with Yes No input
+    z = z.replace(
+      /#YN/g,
+      "<br><input type='radio' name='" +
+        y +
+        "' id='" +
+        y +
+        "_yes'></input><label style='font-weight: normal; padding-left:5px' for='" +
+        y +
+        "_yes'>Yes</label><br><input type='radio' name='" +
+        y +
+        "' id='" +
+        y +
+        "_no'></input><label style='font-weight: normal; padding-left:5px' for='" +
+        y +
+        "_no'>No</label>"
+    );
+
     // replace __/__/__ with a date input
-    z = z.replace(/\_\_\/\_\_\/\_\_/g, "<input type='date'></input>");
+    z = z.replace(
+      /\_\_\/\_\_\/\_\_/g,
+      "<input type='date' id='" + y + "_date'></input>"
+    );
 
     // replace (###)-###-#### with phone input
     z = z.replace(
