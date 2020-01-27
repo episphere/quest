@@ -84,7 +84,13 @@ transform.render = contents => {
     // replace __/__/__ with a date input
     z = z.replace(
       /\_\_\/\_\_\/\_\_/g,
-      "<input type='date' id='" + y + "_date'></input>"
+      "<input type='radio' style='display:none' id='date" +
+        y +
+        "'></input><input type='date' id='" +
+        y +
+        "_date' oninput=\"document.getElementById('date" +
+        y +
+        "').checked = this.value.length > 0 \"></input>"
     );
 
     // replace (###)-###-#### with phone input
@@ -102,7 +108,7 @@ transform.render = contents => {
     // replace |state| with state dropdown
     z = z.replace(
       /\|state\|/g,
-      `<select id='state'>
+      `<select id=${y}_state'>
       <option value='AL'>Alabama</option>
       <option value='AK'>Alaska</option>
       <option value='AZ'>Arizona</option>
