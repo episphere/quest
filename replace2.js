@@ -108,7 +108,9 @@ transform.render = contents => {
     // replace |state| with state dropdown
     z = z.replace(
       /\|state\|/g,
-      `<select id=${y}_state'>
+      `<input type='radio' style='display:none' id='state${y}'>
+      </input><select id='${y}_state' oninput=\"document.getElementById('state${y}').checked = this.value.length > 0 \">
+      <option value='' disabled selected>Chose a state: </option>
       <option value='AL'>Alabama</option>
       <option value='AK'>Alaska</option>
       <option value='AZ'>Arizona</option>
