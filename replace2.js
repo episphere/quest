@@ -70,13 +70,13 @@ transform.render = contents => {
         y +
         "' id='" +
         y +
-        "_yes'></input><label style='font-weight: normal; padding-left:5px' for='" +
+        "_yes' value='1'></input><label style='font-weight: normal; padding-left:5px' for='" +
         y +
         "_yes'>Yes</label><br><input type='radio' name='" +
         y +
         "' id='" +
         y +
-        "_no'></input><label style='font-weight: normal; padding-left:5px' for='" +
+        "_no' value='0'></input><label style='font-weight: normal; padding-left:5px' for='" +
         y +
         "_no'>No</label>"
     );
@@ -192,7 +192,7 @@ transform.render = contents => {
       .trim()
       .replace(
         /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|/g,
-        "<input type='radio' style='display:none' id='rb" +
+        "\n <input type='radio' style='display:none' id='rb" +
           y +
           "'></input><label for='rb" +
           y +
@@ -233,35 +233,6 @@ transform.render = contents => {
     // replace user profile variables...
     z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
 
-    // //create modal
-    // z = z.replace(
-    //   /{(\w+)}/gms,
-    //   ` <!-- Button trigger modal -->
-    // <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    //     $1
-    // </button>
-
-    //   <!-- Modal -->
-    //   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    //     <div class="modal-dialog" role="document">
-    //       <div class="modal-content">
-    //         <div class="modal-header">
-    //           <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-    //           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-    //             <span aria-hidden="true">&times;</span>
-    //           </button>
-    //         </div>
-    //         <div class="modal-body">
-    //           ...
-    //         </div>
-    //         <div class="modal-footer">
-    //           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-    //           <button type="button" class="btn btn-primary">Save changes</button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>`
-    // );
     // replace next question  < -> > with hidden...
     z = z.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
