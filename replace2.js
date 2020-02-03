@@ -81,6 +81,9 @@ transform.render = contents => {
         "_no'>No</label>"
     );
 
+    // replace |@| with an email input
+    z = z.replace(/\|@\|/g, "<input type='email id='" + y + "_email'></input>");
+
     // replace __/__/__ with a date input
     z = z.replace(
       /\_\_\/\_\_\/\_\_/g,
