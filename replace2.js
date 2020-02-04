@@ -176,7 +176,7 @@ transform.render = contents => {
       .trim()
       .replace(
         /\|(__\|){2,}((\w+)\|)?/g,
-        "<input type='radio' onchange=\"console.log('hi')\" id='rb" +
+        "<input type='radio' id='rb" +
           "$3" +
           "' name='" +
           y +
@@ -202,7 +202,9 @@ transform.render = contents => {
       .trim()
       .replace(
         /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|/g,
-        "\n <input type='radio' style='display:none' id='rb" +
+        "\n <input type='radio' id='rb" +
+          y +
+          "'name='" +
           y +
           "'></input><label for='rb" +
           y +

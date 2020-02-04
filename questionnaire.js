@@ -248,7 +248,6 @@ function nextPage(norp) {
     }
   }
   nextElement = nextQuestion.value;
-  debugger;
   [...nextElement.getElementsByTagName("span")].map(
     x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
   );
