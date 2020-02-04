@@ -248,6 +248,10 @@ function nextPage(norp) {
     }
   }
   nextElement = nextQuestion.value;
+  debugger;
+  [...nextElement.getElementsByTagName("span")].map(
+    x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
+  );
 
   // hide the current question and move to the next...
   norp.parentElement.classList.remove("active");

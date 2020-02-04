@@ -63,6 +63,9 @@ transform.render = contents => {
       y = y.slice(0, -1);
     }
 
+    // replace {$id} with span tag
+    z = z.replace(/\{\$([A-Z0-9]+)\}/g, `<span forId='$1'>${"$1"}</span>`);
+
     // replace #YN with Yes No input
     z = z.replace(
       /#YN/g,
@@ -168,29 +171,25 @@ transform.render = contents => {
     </select>`
     );
 
-    // replace |__|__|__|__|  with a number box...
-    z = z
-      .trim()
-      .replace(
-        /\|(__\|){4,}/g,
-        "<input type='number' name='" + y + "'></input>"
-      );
-
     // replace |__|__|  with a number box...
     z = z
       .trim()
       .replace(
-        /\|(__\|){2,}/g,
-        "<input type='radio' style='display:none' id='num" +
+        /\|(__\|){2,}((\w+)\|)?/g,
+        "<input type='radio' onchange=\"console.log('hi')\" id='rb" +
+          "$3" +
+          "' name='" +
           y +
           "'></input><label id='input" +
+          "$3" +
+          "' for='" +
+          "$3" +
+          "'><input id='" +
+          "$3" +
+          "' type='number' name='" +
           y +
-          "' for='num" +
-          y +
-          "'><input type='number' name='" +
-          y +
-          "' oninput=\"document.getElementById('num" +
-          y +
+          "' oninput=\"document.getElementById('rb" +
+          "$3" +
           "').checked = this.value.length > 0 \"></input></label>"
       );
 
