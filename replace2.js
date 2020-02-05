@@ -63,8 +63,11 @@ transform.render = contents => {
       y = y.slice(0, -1);
     }
 
+    // replace user profile variables...
+    z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
+
     // replace {$id} with span tag
-    z = z.replace(/\{\$([A-Z0-9]+)\}/g, `<span forId='$1'>${"$1"}</span>`);
+    z = z.replace(/\{\$(\w+)\}/g, `<span forId='$1'>${"$1"}</span>`);
 
     // replace #YN with Yes No input
     z = z.replace(
@@ -85,24 +88,39 @@ transform.render = contents => {
     );
 
     // replace |@| with an email input
-    z = z.replace(/\|@\|/g, "<input type='email id='" + y + "_email'></input>");
+    z = z.replace(
+      /\|@\|((\w+)\|)?/g,
+      `<input type='radio' id='rb${"$2"}' name='${y}'>
+      </input>
+      <input type='email' id='${"$2"}' oninput=\"document.getElementById('rb${"$2"}').checked = this.value.length > 0 \"></input>`
+    );
 
     // replace __/__/__ with a date input
     z = z.replace(
-      /\_\_\/\_\_\/\_\_/g,
-      "<input type='radio' style='display:none' id='date" +
+      /\_\_\/\_\_\/\_\_((\w+)\|)?/g,
+      "<input type='radio' style='display:none' name='" +
         y +
+        "' id='rb" +
+        "$2" +
         "'></input><input type='date' id='" +
-        y +
-        "_date' oninput=\"document.getElementById('date" +
-        y +
+        "$2" +
+        "' oninput=\"document.getElementById('rb" +
+        "$2" +
         "').checked = this.value.length > 0 \"></input>"
     );
 
     // replace (###)-###-#### with phone input
     z = z.replace(
-      /\(###\)-###-####/g,
-      "<input type='tel' name='phone' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required></input>"
+      /\(###\)-###-####((\w+)\|)?/g,
+      "<input type='radio' style='display:none' name='" +
+        y +
+        "' id='rb" +
+        "$2" +
+        "'></input><input type='tel' name='phone' id='" +
+        "$2" +
+        "' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required oninput=\"document.getElementById('rb" +
+        "$2" +
+        "').checked = this.value.length > 0 \"></input>"
     );
 
     // replace (###)-###-#### with SSN input
@@ -113,9 +131,10 @@ transform.render = contents => {
 
     // replace |state| with state dropdown
     z = z.replace(
-      /\|state\|/g,
-      `<input type='radio' style='display:none' id='state${y}'>
-      </input><select id='${y}_state' oninput=\"document.getElementById('state${y}').checked = this.value.length > 0 \">
+      /\|state\|((\w+)\|)?/g,
+      `<input type='radio' id='rb${"$2"}'>
+      </input>
+      <select id='${"$2"}' oninput=\"document.getElementById('rb${"$2"}').checked = this.value.length > 0 \">
       <option value='' disabled selected>Chose a state: </option>
       <option value='AL'>Alabama</option>
       <option value='AK'>Alaska</option>
@@ -201,17 +220,19 @@ transform.render = contents => {
     z = z
       .trim()
       .replace(
-        /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|/g,
+        /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|((\w+)\|)?/g,
         "\n <input type='radio' id='rb" +
-          y +
+          "$3" +
           "'name='" +
           y +
-          "'></input><label for='rb" +
-          y +
-          "'><input name='" +
+          "'></input><label for='" +
+          "$3" +
+          "'><input id='" +
+          "$3" +
+          "' name='" +
           y +
           "' oninput=\"document.getElementById('rb" +
-          y +
+          "$3" +
           "').checked = this.value.length > 0 \"></input></label>"
       );
 
@@ -242,9 +263,6 @@ transform.render = contents => {
         "_$1'>$2</label>"
     );
 
-    // replace user profile variables...
-    z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
-
     // replace next question  < -> > with hidden...
     z = z.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
@@ -270,8 +288,8 @@ transform.render = contents => {
       softBool +
       "'>" +
       z +
-      "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-      "<input type='button' onclick='nextClick(this)' class='next' value='next'></input>" +
+      "<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n" +
+      "<input type='button' onclick='nextClick(this)' class='next' value='Next'></input>" +
       "</div>";
 
     return rv;

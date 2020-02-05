@@ -248,7 +248,7 @@ function nextPage(norp) {
     }
   }
   nextElement = nextQuestion.value;
-  [...nextElement.getElementsByTagName("span")].map(
+  [...nextElement.querySelectorAll("span[forid]")].map(
     x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
   );
 
