@@ -47,7 +47,7 @@ transform.render = contents => {
     // );
     // ----------------
     let rv =
-      "<div class='question' style='font-weight: bold' id='" +
+      "<form class='question' style='font-weight: bold' id='" +
       y +
       "'>" +
       z +
@@ -55,7 +55,7 @@ transform.render = contents => {
       "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
       "<br>" +
       "<br>" +
-      "</div>";
+      "</form>";
 
     let hardBool = y.endsWith("!");
     let softBool = y.endsWith("?");
@@ -280,7 +280,7 @@ transform.render = contents => {
     );
 
     rv =
-      "<div class='question' style='font-weight: bold' id='" +
+      "<form class='question' style='font-weight: bold' id='" +
       y +
       "' hardEdit='" +
       hardBool +
@@ -290,7 +290,7 @@ transform.render = contents => {
       z +
       "<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n" +
       "<input type='button' onclick='nextClick(this)' class='next' value='Next'></input>" +
-      "</div>";
+      "</form>";
 
     return rv;
   });
