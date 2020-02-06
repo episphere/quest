@@ -196,7 +196,7 @@ transform.render = contents => {
       .replace(
         /\|(__\|){2,}((\w+)\|)?/g,
         "<input type='radio' id='rb" +
-          "$3" +
+          y +
           "' name='" +
           y +
           "'></input><label id='input" +
@@ -208,7 +208,7 @@ transform.render = contents => {
           "' type='number' name='" +
           y +
           "' oninput=\"document.getElementById('rb" +
-          "$3" +
+          y +
           "').checked = this.value.length > 0 \"></input></label>"
       );
 
@@ -222,7 +222,7 @@ transform.render = contents => {
       .replace(
         /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|((\w+)\|)?/g,
         "\n <input type='radio' id='rb" +
-          "$3" +
+          y +
           "'name='" +
           y +
           "'></input><label for='" +
@@ -232,7 +232,7 @@ transform.render = contents => {
           "' name='" +
           y +
           "' oninput=\"document.getElementById('rb" +
-          "$3" +
+          y +
           "').checked = this.value.length > 0 \"></input></label>"
       );
 
