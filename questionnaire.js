@@ -295,14 +295,35 @@ function getSelected(questionElement) {
   // look for radio boxes, checkboxes, and  hidden elements
   // for checked items.  Return all checked items.
   // If nothing is checked, an empty array should be returned.
-  var rv = [
+  // var rv = [
+  //   ...questionElement.querySelectorAll(
+  //     "input[type='radio'],input[type='checkbox'],input[type='hidden'],input[type='number']"
+  //   )
+  // ];
+
+  var rv1 = [
     ...questionElement.querySelectorAll(
-      "input[type='radio'],input[type='checkbox'],input[type='hidden'"
+      "input[type='radio'],input[type='checkbox'],input[type='hidden']"
     )
   ];
-  rv = rv.filter(x => x.checked);
+
+  var rv2 = [
+    ...questionElement.querySelectorAll(
+      "input[type='number'], input[type='text'], input[type='date'], input[type='email'], input[type='tel'], textarea"
+    )
+  ];
+
+  rv1 = rv1.filter(x => x.checked);
+  rv2 = rv2.filter(x => x.value.length > 0);
+
+  // rv = rv.filter(x =>
+  //   x.type == "radio" || x.type == "checkbox" || x.type == "hidden"
+  //     ? x.checked
+  //     : x.value.length > 0
+  // );
+
   // we may need to guarentee that the hidden comes last.
-  return rv;
+  return rv1.concat(rv2);
 }
 
 // // this is the user profile

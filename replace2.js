@@ -88,40 +88,50 @@ transform.render = contents => {
     );
 
     // replace |@| with an email input
-    z = z.replace(
-      /\|@\|((\w+)\|)?/g,
-      `<input type='radio' id='rb${"$2"}' name='${y}'>
-      </input>
-      <input type='email' id='${"$2"}' oninput=\"document.getElementById('rb${"$2"}').checked = this.value.length > 0 \"></input>`
-    );
+    z = z.replace(/\|@\|((\w+)\|)?/g, fEmail);
+    function fEmail(x1, y1, z1) {
+      let elId = "";
+      if (z1 == undefined) {
+        elId = y + "_email";
+      } else {
+        elId = z1;
+      }
+      return `<input type='email' id='${elId}'></input>`;
+    }
 
     // replace __/__/__ with a date input
-    z = z.replace(
-      /\_\_\/\_\_\/\_\_((\w+)\|)?/g,
-      "<input type='radio' style='display:none' name='" +
-        y +
-        "' id='rb" +
-        "$2" +
-        "'></input><input type='date' id='" +
-        "$2" +
-        "' oninput=\"document.getElementById('rb" +
-        "$2" +
-        "').checked = this.value.length > 0 \"></input>"
-    );
+    // z = z.replace(
+    //   /\_\_\/\_\_\/\_\_((\w+)\|)?/g,
+    // "<input type='date' id='" + "$2" + "'></input>"
+    // );
+    z = z.replace(/\_\_\/\_\_\/\_\_((\w+)\|)?/g, fDate);
+    function fDate(x1, y1, z1) {
+      let elId = "";
+      if (z1 == undefined) {
+        elId = y + "_date";
+      } else {
+        elId = z1;
+      }
+      return `<input type='date' id='${elId}'></input>`;
+    }
 
     // replace (###)-###-#### with phone input
-    z = z.replace(
-      /\(###\)-###-####((\w+)\|)?/g,
-      "<input type='radio' style='display:none' name='" +
-        y +
-        "' id='rb" +
-        "$2" +
-        "'></input><input type='tel' name='phone' id='" +
-        "$2" +
-        "' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required oninput=\"document.getElementById('rb" +
-        "$2" +
-        "').checked = this.value.length > 0 \"></input>"
-    );
+    // z = z.replace(
+    //   /\(###\)-###-####((\w+)\|)?/g,
+    // "<input type='tel' name='phone' id='" +
+    //   "$2" +
+    //   "' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required></input>"
+    // );
+    z = z.replace(/\(###\)-###-####((\w+)\|)?/g, fPhone);
+    function fPhone(x1, y1, z1) {
+      let elId = "";
+      if (z1 == undefined) {
+        elId = y + "_phone";
+      } else {
+        elId = z1;
+      }
+      return `<input type='tel' name='phone' id='${elId} ' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required></input>`;
+    }
 
     // replace (###)-###-#### with SSN input
     z = z.replace(
@@ -132,9 +142,8 @@ transform.render = contents => {
     // replace |state| with state dropdown
     z = z.replace(
       /\|state\|((\w+)\|)?/g,
-      `<input type='radio' id='rb${"$2"}'>
-      </input>
-      <select id='${"$2"}' oninput=\"document.getElementById('rb${"$2"}').checked = this.value.length > 0 \">
+      `
+      <select id='$2'>
       <option value='' disabled selected>Chose a state: </option>
       <option value='AL'>Alabama</option>
       <option value='AK'>Alaska</option>
@@ -191,53 +200,79 @@ transform.render = contents => {
     );
 
     // replace |__|__|  with a number box...
-    z = z
-      .trim()
-      .replace(
-        /\|(__\|){2,}((\w+)\|)?/g,
-        "<input type='radio' id='rb" +
-          y +
-          "' name='" +
-          y +
-          "'></input><label id='input" +
-          "$3" +
-          "' for='" +
-          "$3" +
-          "'><input id='" +
-          "$3" +
-          "' type='number' name='" +
-          y +
-          "' oninput=\"document.getElementById('rb" +
-          y +
-          "').checked = this.value.length > 0 \"></input></label>"
+    // z = z
+    //   .trim()
+    //   .replace(
+    //     /\|(__\|){2,}((\w+)\|)?/g,
+    // "<label id='input" +
+    //   "$3" +
+    //   "' for='" +
+    //   "$3" +
+    //   "'><input id='" +
+    //   "$3" +
+    //   "' type='number' name='" +
+    //   y +
+    //   "' ></input></label>"
+    //   );
+    z = z.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
+    function fNum(w1, x1, y1, z1) {
+      let elId = "";
+      if (z1 == undefined) {
+        elId = y + "_num";
+      } else {
+        elId = z1;
+      }
+      return (
+        "<label id='input" +
+        elId +
+        "' for='" +
+        elId +
+        "'><input id='" +
+        elId +
+        "' type='number' name='" +
+        y +
+        "' ></input></label>"
       );
+    }
 
     // -------------
     // z = z.replace(/\_{4,}/g, "<input name='" + y + "'></input>");
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    z = z
-      .trim()
-      .replace(
-        /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|((\w+)\|)?/g,
-        "\n <input type='radio' id='rb" +
-          y +
-          "'name='" +
-          y +
-          "'></input><label for='" +
-          "$3" +
-          "'><input id='" +
-          "$3" +
-          "' name='" +
-          y +
-          "' oninput=\"document.getElementById('rb" +
-          y +
-          "').checked = this.value.length > 0 \"></input></label>"
+    z = z.replace(
+      /\[text\s?box\]|\[text\s?box:\s?(\w+)?\]|\|__\|((\w+)\|)?/g,
+      fText
+    );
+    function fText(w1, x1, y1, z1) {
+      let elId = "";
+      if (x1 == undefined && z1 == undefined) {
+        elId = y + "_text";
+      } else {
+        elId = x1 == undefined ? z1 : x1;
+      }
+      return (
+        "\n<label for='" +
+        elId +
+        "'><input type='text' id='" +
+        elId +
+        "' name='" +
+        y +
+        "'></input></label>"
       );
+    }
 
     // replace |___| with a textbox...
-    z = z.replace(/\|___\|/g, "<textarea></textarea>");
+    z = z.replace(/\|___\|((\w+)\|)?/g, fTextArea);
+    function fTextArea(x1, y1, z1) {
+      let elId = "";
+      if (z1 == undefined) {
+        elId = y + "_ta";
+      } else {
+        elId = z1;
+      }
+      return `<textarea id='${elId}'></textarea>`;
+    }
 
     // replace (XX) with a radio button...
     z = z.replace(
