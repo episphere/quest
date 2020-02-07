@@ -326,11 +326,31 @@ function getSelected(questionElement) {
   return rv1.concat(rv2);
 }
 
-// // this is the user profile
-// var userProfile = { firstName: "Daniel", lastName: "Russ", age: "40" };
-// console.log(userProfile)
-// for (var v in userProfile) {
-//     console.log(v + "  " + userProfile[v]);
-//     document.querySelectorAll('[name=' + v + ']').forEach(x => x.innerHTML = userProfile[v]);
-// }
-// document.querySelector(".question").classList.add("active");
+// create a blank object for collecting
+// the questionnaire results...
+const res = {};
+// on submit of the question(a <form> tag)
+// call this function...
+function getResults(element) {
+  // clear old results or create a blank object in the results to
+  // hold these results...
+  res[element.id] = {};
+  // when we add to the tmpRes object, only the correct
+  // object in the results are touched...
+  let tmpRes = res[element.id];
+
+  let allResponses = [...element.querySelectorAll(".response")];
+  // get all the checkboxes
+  cb = allResponses
+    .filter(x => x.type == "checkbox")
+    .map(x => (tmpRes[x.value] = x.checked));
+
+  // get all the text and radio elements...
+  rd = allResponses
+    .filter(
+      x =>
+        (x.type == "radio" && x.checked) ||
+        ["text", "date", "email", "number", "tel"].includes(x.type)
+    )
+    .map(x => (tmpRes[x.name] = x.value));
+}
