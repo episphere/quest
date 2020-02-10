@@ -247,7 +247,6 @@ function nextPage(norp) {
       nextQuestion = questionQueue.next();
     }
   }
-  debugger;
   nextElement = nextQuestion.value;
   [...nextElement.querySelectorAll("span[forid]")].map(
     x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)

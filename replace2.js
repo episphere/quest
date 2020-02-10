@@ -275,28 +275,30 @@ transform.render = contents => {
     }
 
     // replace (XX) with a radio button...
-    z = z.replace(
-      /(?<=\W)\((\d+)\)([^<\n]*)|\(\)/g,
-      "<br><input type='radio' name='" +
-        y +
-        "' value='$1' id='" +
-        y +
-        "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='" +
-        y +
-        "_$1'>$2</label>"
-    );
+    z = z.replace(/(?<=\W)\((\d+)(,(\w+))?\)([^<\n]*)|\(\)/g, fRadio);
+    function fRadio(v1, w1, x1, y1, z1) {
+      let elVar = "";
+      if (y1 == undefined) {
+        elVar = y;
+      } else {
+        elVar = y1;
+      }
+
+      return `<br><input type='radio' name='${elVar}_rb' value='${w1}' id='${elVar}_${w1}' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
+    }
 
     // replace [a-zXX] with a checkbox box...
-    z = z.replace(
-      /\s*\[(\w*)\]([^<\n]*)|\[\]|\*/g,
-      "<br><input type='checkbox' name='" +
-        y +
-        "' value='$1' id='" +
-        y +
-        "_$1' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='" +
-        y +
-        "_$1'>$2</label>"
-    );
+    z = z.replace(/\s*\[(\w*)(,(\w+))?\]([^<\n]*)|\[\]|\*/g, fCheck);
+    function fCheck(v1, w1, x1, y1, z1) {
+      debugger;
+      let elVar = "";
+      if (y1 == undefined) {
+        elVar = y;
+      } else {
+        elVar = y1;
+      }
+      return `<br><input type='checkbox' name='${elVar}_cb' value='${w1}' id='${elVar}_${w1}' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
+    }
 
     // replace next question  < -> > with hidden...
     z = z.replace(
