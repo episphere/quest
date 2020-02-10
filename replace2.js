@@ -130,13 +130,13 @@ transform.render = contents => {
       } else {
         elId = z1;
       }
-      return `<input type='tel' name='phone' id='${elId} ' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required></input>`;
+      return `<input type='tel' name='phone' id='${elId}' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required></input>`;
     }
 
     // replace (###)-###-#### with SSN input
     z = z.replace(
       /\|###-##-####\|/g,
-      "<input pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>"
+      `<input type='text' id='${y}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>`
     );
 
     // replace |state| with state dropdown

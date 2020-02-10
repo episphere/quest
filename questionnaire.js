@@ -247,6 +247,7 @@ function nextPage(norp) {
       nextQuestion = questionQueue.next();
     }
   }
+  debugger;
   nextElement = nextQuestion.value;
   [...nextElement.querySelectorAll("span[forid]")].map(
     x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
@@ -309,7 +310,7 @@ function getSelected(questionElement) {
 
   var rv2 = [
     ...questionElement.querySelectorAll(
-      "input[type='number'], input[type='text'], input[type='date'], input[type='email'], input[type='tel'], textarea"
+      "input[type='number'], input[type='text'], input[type='date'], input[type='email'], input[type='tel'], textarea, option"
     )
   ];
 
