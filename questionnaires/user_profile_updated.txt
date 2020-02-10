@@ -1,0 +1,106 @@
+[INFO]Thank you for joining Connect! First, we need some basic information about you. This information will be kept confidential and only used for study activities. 
+
+FIRST NAME:|__|RCRTUP_FNAME_V1R0|
+
+MIDDLE NAME:|__|RCRTUP_MINITAL_V1R0|
+
+LAST NAME: |__|RCRTUP_LNAME_V1R0|
+
+SUFFIX: |__|RCRTUP_SUFFIX_V1R0|
+
+What is your date of birth? __/__/__RCRTUP_DOB_V1R0|
+
+[RCRTUP_SEX_V1R0!] Later in this survey, we will ask about some health conditions that are related to a person’s biological sex (male or female). We want to make sure that you are asked the right questions.  Later there will be an opportunity to tell us more about your gender. 
+
+At birth, how was your physical sex assigned? 
+(0) Female
+(1) Male
+(2) Intersex or other
+
+[RCRTUP_KPMRN_CO_V1R0?] What is your Kaiser Permanente Medical Record Number (MRN)? Please enter the number exactly how it appears on your Kaiser card, even if it begins with a zero.
+|__|
+
+[RCRTUP_KPMRN_GA_V1R0?] What is your Kaiser Permanente Medical Record Number (MRN)? Please enter the number exactly how it appears on your Kaiser card, even if it begins with a zero.
+|__|
+
+[RCRTUP_KPMRN_HI_V1R0?] What is your Kaiser Permanente Medical Record Number (MRN)? Please enter the number exactly how it appears on your Kaiser card, even if it begins with a zero.
+|__|
+
+[RCRTUP_KPMRN_NW_V1R0?] What is your Kaiser Permanente Medical Record Number (MRN)? Please enter the number exactly how it appears on your Kaiser card, even if it begins with a zero.
+|__|
+
+// Display for Kaiser participants only.  Not required. Soft edit reminder to complete if left blank. Note: because different Kaiser sites have different formats for their MRN each site gets it’s own field.
+
+[INFO_2?] How can we reach you?
+EMAIL address
+EMAIL: |@|RCRTUP_EMAIL1_V1R0|
+EMAIL: |@|RCRTUP_EMAIL2_V1R0|
+EMAIL: |@|RCRTUP_EMAIL3_V1R0|
+// Add + button with an option to allow for up to three email addresses// Verify that it is formatted like an email address. Soft edit if not.
+
+Phone number
+PHONE: (###)-###-####RCRTUP_PHONE1_V1R0|
+PHONE number type
+(1) MOBILE
+(2) HOME
+(3) WORK
+(4) OTHER
+
+PHONE2: (###)-###-####RCRTUP_PHONE2_V1R0|
+Phone number 2 type
+(1) MOBILE
+(2) HOME
+(3) WORK
+(4) OTHER
+
+PHONE3: (###)-###-####RCRTUP_PHONE3_V1R0|
+Phone number 3 type
+(1) MOBILE
+(2) HOME
+(3) WORK
+(4) OTHER
+
+PHONE4: (###)-###-####RCRTUP_PHONE4_V1R0|
+Phone number 4 type
+(1) MOBILE
+(2) HOME
+(3) WORK
+(4) OTHER
+// Add + button with an option to allow for up to four phone numbers// Hard edit: At least one mobile phone OR at least one email address is required
+
+[RCRTUP_PREFMETHOD_V1R0?]What is your preferred method of contact? //(clickable buttons, select one. This list is generated from emails and phone numbers in prior questions but limited to emails and mobile phone numbers)
+[0] EMAIL1: {$RCRTUP_EMAIL1_V1R0}
+[1] EMAIL2: {$RCRTUP_EMAIL2_V1R0}
+[2] MOBILE1: {$RCRTUP_PHONE1_V1R0}
+[3] MOBILE 2: {$RCRTUP_PHONE2_V1R0}
+//ETC...
+
+[ADDRESS!] What is your mailing address?
+LINE 1 (STREET, PO BOX, RURAL ROUTE) |__|RCRTUP_ADDRESSLN1_V1R0|
+
+LINE 2 (APARTMENT, SUITE, UNIT, BUILDING) |__|RCRTUP_ADDRESSLN2_V1R0|
+
+CITY |__|RCRTUP_CITY_V1R0|
+
+STATE |state|RCRTUP_STATE_V1R0|
+
+ZIP |__|__|RCRTUP_ZIP_V1R0|
+
+[RCRTUP_CANCER_V1R0!]Have you ever been diagnosed with cancer (other than non-melanoma skin cancer)?
+(1) Yes  -> CANCER_FOLLOWUP
+(0) No -> RCRTUP_SSN_V1R0
+
+[CANCER_FOLLOWUP!]What year were you diagnosed?
+|__|__|__|__|RCRTUP_CANCERYR_V1R0|
+
+What type of cancer?  
+|__|RCRTUP_CANCERTYPE_V1R0|
+
+Any comments about your cancer diagnosis:
+|___|RCRTUP_CANCERCOMTS_V1R0|
+
+[RCRTUP_SSN_V1R0!] Please enter your Social Security Number:
+|###-##-####|
+
+This is used for identification purposes only. We will keep your Social Security Number confidential.
+
