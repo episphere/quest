@@ -41,31 +41,31 @@ EMAIL: |@|RCRTUP_EMAIL3_V1R0|
 Phone number
 PHONE: (###)-###-####RCRTUP_PHONE1_V1R0|
 PHONE number type
-(1) MOBILE
-(2) HOME
-(3) WORK
-(4) OTHER
+(1,RCRTUP_PHONE1_V1R0) MOBILE
+(2,RCRTUP_PHONE1_V1R0) HOME
+(3,RCRTUP_PHONE1_V1R0) WORK
+(4,RCRTUP_PHONE1_V1R0) OTHER
 
 PHONE2: (###)-###-####RCRTUP_PHONE2_V1R0|
 Phone number 2 type
-(1) MOBILE
-(2) HOME
-(3) WORK
-(4) OTHER
+(1,RCRTUP_PHONE2_V1R0) MOBILE
+(2,RCRTUP_PHONE2_V1R0) HOME
+(3,RCRTUP_PHONE2_V1R0) WORK
+(4,RCRTUP_PHONE2_V1R0) OTHER
 
 PHONE3: (###)-###-####RCRTUP_PHONE3_V1R0|
 Phone number 3 type
-(1) MOBILE
-(2) HOME
-(3) WORK
-(4) OTHER
+(1,RCRTUP_PHONE3_V1R0) MOBILE
+(2,RCRTUP_PHONE3_V1R0) HOME
+(3,RCRTUP_PHONE3_V1R0) WORK
+(4,RCRTUP_PHONE3_V1R0) OTHER
 
 PHONE4: (###)-###-####RCRTUP_PHONE4_V1R0|
 Phone number 4 type
-(1) MOBILE
-(2) HOME
-(3) WORK
-(4) OTHER
+(1,RCRTUP_PHONE4_V1R0) MOBILE
+(2,RCRTUP_PHONE4_V1R0) HOME
+(3,RCRTUP_PHONE4_V1R0) WORK
+(4,RCRTUP_PHONE4_V1R0) OTHER
 // Add + button with an option to allow for up to four phone numbers// Hard edit: At least one mobile phone OR at least one email address is required
 
 [RCRTUP_PREFMETHOD_V1R0?]What is your preferred method of contact? //(clickable buttons, select one. This list is generated from emails and phone numbers in prior questions but limited to emails and mobile phone numbers)
