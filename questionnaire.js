@@ -215,6 +215,15 @@ function nextClick(norp) {
   }
 }
 
+// known boolean functions (Predicates) required for the displayif arguments...
+const knownFunctions = ["lessThan", "greaterThan"];
+function lessThan(a, b) {
+  return a < b;
+}
+function greaterThan(a, b) {
+  return a > b;
+}
+
 // norp == next or previous button (which ever is clicked...)
 function nextPage(norp) {
   // Because next button does not have ID, modal will pass-in ID of question
@@ -251,6 +260,35 @@ function nextPage(norp) {
   [...nextElement.querySelectorAll("span[forid]")].map(
     x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
   );
+
+  // what if we are in a loop and there is a "displayif"...
+  if (nextElement.hasAttribute("displayif")) {
+    let call = nextElement.getAttribute("displayif");
+    let capture = call.match(/^(\w+)\((\w+),(\w+)\)/);
+
+    let functionName = capture[1];
+    let variable = document.getElementById(capture[2]).value;
+    let x = capture[3];
+
+    if (
+      knownFunctions.includes(functionName) &&
+      !isNaN(x) &&
+      !isNaN(variable)
+    ) {
+      let f = Function(
+        "return " + capture[1] + "(" + variable + "," + capture[3] + ")"
+      );
+      console.log("should I display the next question? " + f());
+      // if the displayif is false, skip the current element...
+      if (!f()) {
+        norp.parentElement.classList.remove("active");
+        let nextNorp = nextElement.querySelector("input[value='next']");
+        if (nextNorp) {
+          return next(nextNorp);
+        }
+      }
+    }
+  }
 
   // hide the current question and move to the next...
   norp.parentElement.classList.remove("active");
@@ -353,4 +391,52 @@ function getResults(element) {
         ["text", "date", "email", "number", "tel"].includes(x.type)
     )
     .map(x => (tmpRes[x.name] = x.value));
+}
+
+// x is the questionnaire text
+function unrollLoops(txt) {
+  // all the questions in the loops...
+  let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gms;
+  let res = [...txt.matchAll(loopRegex)].map(function(x) {
+    return { cnt: x[1], txt: x[2], orig: x[0] };
+  });
+
+  let idRegex = /\[(\w+)[?!]?\]/gms;
+  // we have an array of objects holding the text..
+  // get all the ids...
+
+  let cleanedText = res.map(function(x) {
+    let ids = [...x.txt.matchAll(idRegex)].map(x => ({
+      label: x[0],
+      id: x[1]
+    }));
+
+    // goto from 1-> max for human consumption... need <=
+    let loopText = "";
+    for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
+      loopText = loopText + "\n" + x.txt;
+      // replace all instances of the question ids with id_#
+      ids.map(
+        id =>
+          (loopText = loopText.replace(
+            id.label,
+            id.label.replace(id.id, id.id + "_" + loopIndx)
+          ))
+      );
+      // replace all -> Id with -> Id_#
+      ids.map(
+        id =>
+          (loopText = loopText.replace(
+            new RegExp("->\\s*" + id.id + "\\W"),
+            "-> " + id.id + "_" + loopIndx + " "
+          ))
+      );
+    }
+    return loopText;
+  });
+
+  for (var loopIndx = 0; loopIndx < cleanedText.length; loopIndx++) {
+    txt = txt.replace(res[loopIndx].orig, cleanedText[loopIndx]);
+  }
+  return txt;
 }
