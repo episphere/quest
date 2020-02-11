@@ -142,8 +142,7 @@ transform.render = contents => {
     // replace |state| with state dropdown
     z = z.replace(
       /\|state\|((\w+)\|)?/g,
-      `
-      <select id='$2'>
+      `<select id='$2'>
       <option value='' disabled selected>Chose a state: </option>
       <option value='AL'>Alabama</option>
       <option value='AK'>Alaska</option>
@@ -200,20 +199,6 @@ transform.render = contents => {
     );
 
     // replace |__|__|  with a number box...
-    // z = z
-    //   .trim()
-    //   .replace(
-    //     /\|(__\|){2,}((\w+)\|)?/g,
-    // "<label id='input" +
-    //   "$3" +
-    //   "' for='" +
-    //   "$3" +
-    //   "'><input id='" +
-    //   "$3" +
-    //   "' type='number' name='" +
-    //   y +
-    //   "' ></input></label>"
-    //   );
     z = z.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
     function fNum(w1, x1, y1, z1) {
       let elId = "";
@@ -275,7 +260,7 @@ transform.render = contents => {
     }
 
     // replace (XX) with a radio button...
-    z = z.replace(/(?<=\W)\((\d+)(,(\w+))?\)([^<\n]*)|\(\)/g, fRadio);
+    z = z.replace(/(?<=\W)\((\d+)(\:(\w+))?\)([^<\n]*)|\(\)/g, fRadio);
     function fRadio(v1, w1, x1, y1, z1) {
       let elVar = "";
       if (y1 == undefined) {
@@ -288,9 +273,8 @@ transform.render = contents => {
     }
 
     // replace [a-zXX] with a checkbox box...
-    z = z.replace(/\s*\[(\w*)(,(\w+))?\]([^<\n]*)|\[\]|\*/g, fCheck);
+    z = z.replace(/\s*\[(\w*)(\:(\w+))?\]([^<\n]*)|\[\]|\*/g, fCheck);
     function fCheck(v1, w1, x1, y1, z1) {
-      debugger;
       let elVar = "";
       if (y1 == undefined) {
         elVar = y;
