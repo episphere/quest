@@ -10,12 +10,12 @@ SUFFIX: |__|RCRTUP_SUFFIX_V1R0|
 
 What is your date of birth? __/__/__RCRTUP_DOB_V1R0|
 
-[SEX] Later in this survey, we will ask about some health conditions that are related to a person’s biological sex (male or female). We want to make sure that you are asked the right questions.  Later there will be an opportunity to tell us more about your gender. 
+[RCRTUP_SEX_V1R0!] Later in this survey, we will ask about some health conditions that are related to a person’s biological sex (male or female). We want to make sure that you are asked the right questions.  Later there will be an opportunity to tell us more about your gender. 
 
 At birth, how was your physical sex assigned? 
-(2) Female
+(0) Female
 (1) Male
-(3) Intersex or other
+(2) Intersex or other
 
 [RCRTUP_KPMRN_CO_V1R0?] What is your Kaiser Permanente Medical Record Number (MRN)? Please enter the number exactly how it appears on your Kaiser card, even if it begins with a zero.
 |__|
@@ -41,31 +41,31 @@ EMAIL: |@|RCRTUP_EMAIL3_V1R0|
 Phone number
 PHONE: (###)-###-####RCRTUP_PHONE1_V1R0|
 PHONE number type
-(1,RCRTUP_PHONE1_V1R0) MOBILE
-(2,RCRTUP_PHONE1_V1R0) HOME
-(3,RCRTUP_PHONE1_V1R0) WORK
-(4,RCRTUP_PHONE1_V1R0) OTHER
+(1:RCRTUP_PHONE1_V1R0) MOBILE
+(2:RCRTUP_PHONE1_V1R0) HOME
+(3:RCRTUP_PHONE1_V1R0) WORK
+(4:RCRTUP_PHONE1_V1R0) OTHER
 
 PHONE2: (###)-###-####RCRTUP_PHONE2_V1R0|
 Phone number 2 type
-(1,RCRTUP_PHONE2_V1R0) MOBILE
-(2,RCRTUP_PHONE2_V1R0) HOME
-(3,RCRTUP_PHONE2_V1R0) WORK
-(4,RCRTUP_PHONE2_V1R0) OTHER
+(1:RCRTUP_PHONE2_V1R0) MOBILE
+(2:RCRTUP_PHONE2_V1R0) HOME
+(3:RCRTUP_PHONE2_V1R0) WORK
+(4:RCRTUP_PHONE2_V1R0) OTHER
 
 PHONE3: (###)-###-####RCRTUP_PHONE3_V1R0|
 Phone number 3 type
-(1,RCRTUP_PHONE3_V1R0) MOBILE
-(2,RCRTUP_PHONE3_V1R0) HOME
-(3,RCRTUP_PHONE3_V1R0) WORK
-(4,RCRTUP_PHONE3_V1R0) OTHER
+(1:RCRTUP_PHONE3_V1R0) MOBILE
+(2:RCRTUP_PHONE3_V1R0) HOME
+(3:RCRTUP_PHONE3_V1R0) WORK
+(4:RCRTUP_PHONE3_V1R0) OTHER
 
 PHONE4: (###)-###-####RCRTUP_PHONE4_V1R0|
 Phone number 4 type
-(1,RCRTUP_PHONE4_V1R0) MOBILE
-(2,RCRTUP_PHONE4_V1R0) HOME
-(3,RCRTUP_PHONE4_V1R0) WORK
-(4,RCRTUP_PHONE4_V1R0) OTHER
+(1:RCRTUP_PHONE4_V1R0) MOBILE
+(2:RCRTUP_PHONE4_V1R0) HOME
+(3:RCRTUP_PHONE4_V1R0) WORK
+(4:RCRTUP_PHONE4_V1R0) OTHER
 // Add + button with an option to allow for up to four phone numbers// Hard edit: At least one mobile phone OR at least one email address is required
 
 [RCRTUP_PREFMETHOD_V1R0?]What is your preferred method of contact? //(clickable buttons, select one. This list is generated from emails and phone numbers in prior questions but limited to emails and mobile phone numbers)
