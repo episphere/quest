@@ -41,8 +41,6 @@ Age: |__|__|
 [99] Prefer not to answer
 < -> LANG >
 
-
-
 [RACEETH2?] Which of these categories describe you best? Select all that apply.
 [1] American Indian -> RACEETH2B
 [2] Alaska Native -> RACEETH2B
@@ -50,12 +48,10 @@ Age: |__|__|
 [4] None of these fully describe me: Please describe [text box: RACEETH2_TB]
 [99] Prefer not to answer
 
-
 [RACEETH2B?] Provide the name of the tribe in which you are enrolled or affiliated or your tribal descent. For example, Navajo Nation, Blackfeet Tribe, Mayan, Aztec, Native Village of Barrow (Utqiagvik) Inupiat Traditional Government, Nome Eskimo Community, etc.
 
 (01)|__|
 (02) I’m not sure
-
 
 [RACEETH3?] Which of these categories describe you best? Select all that apply.
 [1] Asian Indian
@@ -69,7 +65,6 @@ Age: |__|__|
 [9] Vietnamese
 [10] None of these fully describe me: Please describe [text box:RACEETH3_TB]
 [99] Prefer not to answer
-
 
 [RACEETH4?] Which of these categories describe you best? Select all that apply.
 [1] African American
@@ -85,8 +80,6 @@ Age: |__|__|
 [11] South African
 [12] None of these fully describe me: Please describe [text box:RACEETH4_TB]
 [99] Prefer not to answer
-
-
 
 [RACEETH5?] Which of these categories describe you best? Select all that apply.
 [1] Colombian
@@ -128,7 +121,6 @@ Age: |__|__|
 [10] None of these fully describe me: Please describe [text box]
 [99] Prefer not to answer
 
-
 [RACEETH8?] Which of these categories describe you best? Select all that apply.
 [1] Dutch
 [2] English
@@ -164,7 +156,6 @@ Age: |__|__|
 [17] Japanese
 [18] Arabic
 [19] Other language(s): Please describe [text box:LANG_TB]
-
 
 [SEX2!] Later questions in this survey will ask about surgeries and medical procedures. We want to make sure that you are asked the right questions. 
 Please select the body parts that you were born with.
@@ -212,14 +203,12 @@ We also ask about medical procedures you may have had.
 [77] Don’t know
 < -> SKINCANC3 >
 
-[SKINCANC3] How old were you when a doctor or other health professional first told you that you have skin cancer? 
+[SKINCANC3?] How old were you when a doctor or other health professional first told you that you have skin cancer? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year at diagnosis
 < -> MHGROUP1 >
-
-
 
 [MHGROUP1] 
 Cardiovascular disease
@@ -240,108 +229,97 @@ Has a doctor or other health professional ever told you that you have or had any
 [99] I have not had any of these conditions 
 < -> MHGROUP2 >
 
+[ANEMIA?] How old were you when a doctor or other health professional first told you that you have or had vitamin B-12 deficiency (pernicious anemia)?
+|__|__| Age at diagnosis
 
-[ANEMIA] How old were you when a doctor or other health professional first told you that you have or had vitamin B-12 deficiency (pernicious anemia)?
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[CVD?] How old were you when a doctor or other health professional first told you that you have coronary artery/coronary heart disease? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[CHF?] How old were you when a doctor or other health professional first told you that you have congestive heart failure? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[CHOL?] How old were you when a doctor or other health professional first told you that you have high cholesterol? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[HEARTATT?] How old were you when a doctor or other health professional first told you that you have had a heart attack (myocardial infarction)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
 
-[CVD] How old were you when a doctor or other health professional first told you that you have coronary artery/coronary heart disease? 
+[ARRHYT?] How old were you when a doctor or other health professional first told you that you have abnormal heart rhythm (arrhythmia)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[CHESTPAIN?] How old were you when a doctor or other health professional first told you that you have chest pain (angina)?
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[HEARTVALV?] How old were you when a doctor or other health professional first told you that you have heart valve problems? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[HTN?] How old were you when a doctor or other health professional first told you that you have high blood pressure (hypertension)? 
+|__|__| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__| Year of diagnosis
+
+[BLOODCLOT?] How old were you when a doctor or other health professional first told you that you have blood clots (deep vein thrombosis, pulmonary embolism)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
 
-
-[CHF] How old were you when a doctor or other health professional first told you that you have congestive heart failure? 
+[STROKE?] How old were you when a doctor or other health professional first told you that you have had a stroke? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-
-
-
-[CHOL] How old were you when a doctor or other health professional first told you that you have high cholesterol? 
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
-[HEARTATT] How old were you when a doctor or other health professional first told you that you have had a heart attack (myocardial infarction)? 
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
-
-[ARRHYT] How old were you when a doctor or other health professional first told you that you have abnormal heart rhythm (arrhythmia)?
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
-[CHESTPAIN] How old were you when a doctor or other health professional first told you that you have chest pain (angina)?
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
-[HEARTVALV] How old were you when a doctor or other health professional first told you that you have heart valve problems? 
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
-[HTN] How old were you when a doctor or other health professional first told you that you have high blood pressure (hypertension)? 
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
-[BLOODCLOT] How old were you when a doctor or other health professional first told you that you have blood clots (deep vein thrombosis, pulmonary embolism)? 
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
-
-[STROKE] How old were you when a doctor or other health professional first told you that you have had a stroke? 
-|__|__| Age at diagnosis
-
-Or, if it is easier to remember the year, enter that here:
-|__|__|__|__| Year of diagnosis
-
 
 Respiratory problems
-[MHGROUP2] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[MHGROUP2?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Chronic lung disease (Emphysema, Chronic Bronchitis, or Chronic Obstructive Pulmonary Disease (COPD)) -> COPD
 [2] Asthma -> ASTHMA
 [3] Hay Fever (Allergic to pollen or Allergic Rhinitis) -> HAYFEVER
-[] I have not had any of these conditions
+[99] I have not had any of these conditions
 < -> MHGROUP3 >
 
-
-[COPD] How old were you when you a doctor or other health professional first told you that you have chronic lung disease (emphysema, chronic bronchitis, or chronic obstructive pulmonary disease (COPD))? 
+[COPD?] How old were you when you a doctor or other health professional first told you that you have chronic lung disease (emphysema, chronic bronchitis, or chronic obstructive pulmonary disease (COPD))? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> ASTHMA >
 
-
-[ASTHMA] How old were you when a doctor or other health professional first told you that you have asthma?
+[ASTHMA?] How old were you when a doctor or other health professional first told you that you have asthma?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> HAYFEVER >
 
-
-
-[HAYFEVER] How old were you when a doctor or other health professional first told you that you have hay fever (allergic rhinitis) or are allergic to pollen?
+[HAYFEVER?] How old were you when a doctor or other health professional first told you that you have hay fever (allergic rhinitis) or are allergic to pollen?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
@@ -349,7 +327,7 @@ Or, if it is easier to remember the year, enter that here:
 < -> MHGROUP3 >
 
 Digestive system problems
-[MHGROUP3] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[MHGROUP3?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Esophageal Acid Reflux (GERD) -> GERD
 [2] Barrett’s Esophagus -> BARESO
 [3] Irritable Bowel Syndrome -> IBS
@@ -364,76 +342,63 @@ Digestive system problems
 [] I have not had any of these conditions
 < -> MHGROUP4 >
 
-
-[GERD] How old were you when a doctor or other health professional first told you that you have esophageal acid reflux (GERD)? 
+[GERD?] How old were you when a doctor or other health professional first told you that you have esophageal acid reflux (GERD)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> BARESO >
 
-[BARESO] How old were you when a doctor or other health professional first told you that you have Barrett’s esophagus? 
+[BARESO?] How old were you when a doctor or other health professional first told you that you have Barrett’s esophagus? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> IBS >
 
-
-
-[IBS] How old were you when a doctor or other health professional first told you that you have irritable bowel syndrome? 
+[IBS?] How old were you when a doctor or other health professional first told you that you have irritable bowel syndrome? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> IBD >
 
-
-
-[IBD] How old were you when a doctor or other health professional first told you that you have inflammatory bowel disease? 
+[IBD?] How old were you when a doctor or other health professional first told you that you have inflammatory bowel disease? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> DIVERT >
 
-
-
-[DIVERT] How old were you when a doctor or other health professional first told you that you have diverticulitis or diverticulosis? 
+[DIVERT?] How old were you when a doctor or other health professional first told you that you have diverticulitis or diverticulosis? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> UC >
 
-
-
-[UC] How old were you when a doctor or other health professional first told you that you have ulcerative colitis? 
+[UC?] How old were you when a doctor or other health professional first told you that you have ulcerative colitis? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> CD >
 
-
-[CD] How old were you when a doctor or other health professional first told you that you have Crohn’s disease? 
+[CD?] How old were you when a doctor or other health professional first told you that you have Crohn’s disease? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> CCD >
 
-
-[CCD] How old were you when a doctor or other health professional first told you that you have celiac disease (also known as gluten-sensitive enteropathy)? 
+[CCD?] How old were you when a doctor or other health professional first told you that you have celiac disease (also known as gluten-sensitive enteropathy)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> GALL >
 
-
-
-[GALL] How old were you when a doctor or other health professional first told you that you have gallstones (biliary stones)?
+[GALL?] How old were you when a doctor or other health professional first told you that you have gallstones (biliary stones)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
@@ -441,53 +406,48 @@ Or, if it is easier to remember the year, enter that here:
 < -> LIVCIRR >
 
 
-[LIVCIRR] How old were you when a doctor or other health professional first told you that you have liver cirrhosis?
+[LIVCIRR?] How old were you when a doctor or other health professional first told you that you have liver cirrhosis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> PANCREA >
 
-
-
-[PANCREA] How old were you when a doctor or other health professional first told you that you have pancreatitis?
+[PANCREA?] How old were you when a doctor or other health professional first told you that you have pancreatitis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> MHGROUP4 >
 
-[MHGROUP4] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[MHGROUP4?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Thyroid Disorder (Overactive or Underactive Thyroid) -> THYROID
 [2] Diabetes -> DM
 [3] Graves’ Disease -> GRAVES
-[] I have not had any of these conditions -> GO TO MHGROUP5
+[99] I have not had any of these conditions -> MHGROUP5
 < -> MHGROUP5 >
 
-
-[THYROID] How old were you when a doctor or other health professional first told you that you have a thyroid disorder (overactive or underactive thyroid)? 
+[THYROID?] How old were you when a doctor or other health professional first told you that you have a thyroid disorder (overactive or underactive thyroid)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> DM >
 
-[DM] Which type of diabetes did a doctor or other health professional tell you that you have?
+[DM?] Which type of diabetes did a doctor or other health professional tell you that you have?
 (1) Type 1
 (2) Type 2
-() Don’t know
+(77) Don’t know
 < -> DM2 >
 
-
-[DM2] How old were you when a doctor or other health professional first told you that you have diabetes?
+[DM2?] How old were you when a doctor or other health professional first told you that you have diabetes?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> GRAVES >
 
-
-[GRAVES] How old were you when a doctor or other health professional first told you that you have Graves’ disease?
+[GRAVES?] How old were you when a doctor or other health professional first told you that you have Graves’ disease?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
