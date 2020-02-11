@@ -297,8 +297,10 @@ Or, if it is easier to remember the year, enter that here:
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
+[MHGROUP2?]
 Respiratory problems
-[MHGROUP2?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+
+Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Chronic lung disease (Emphysema, Chronic Bronchitis, or Chronic Obstructive Pulmonary Disease (COPD)) -> COPD
 [2] Asthma -> ASTHMA
 [3] Hay Fever (Allergic to pollen or Allergic Rhinitis) -> HAYFEVER
@@ -454,221 +456,202 @@ Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> MHGROUP5 >
 
-[MHGROUP5] Kidney Disease
-
+[MHGROUP5?] Kidney Disease
 Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
-[1] Kidney Stones
-[2] Chronic Kidney Disease (Also Known as Chronic Kidney Failure)
-[] I have not had any of these conditions -> GO TO MHGROUP6
+[1] Kidney Stones -> KIDNEY
+[2] Chronic Kidney Disease (Also Known as Chronic Kidney Failure) -> KIDNEY
+[99] I have not had any of these conditions -> MHGROUP6
 < -> MHGROUP6 >
 
-
-[KIDNEY] How old were you when a doctor or other health professional first told you that you had kidney stones?
+[KIDNEY?] How old were you when a doctor or other health professional first told you that you had kidney stones?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> CKD >
 
-
-[CKD] How old were you when a doctor or other health professional first told you that you have chronic kidney disease (also known as chronic kidney failure)?
+[CKD?] How old were you when a doctor or other health professional first told you that you have chronic kidney disease (also known as chronic kidney failure)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> MHGROUP6 >
+
+[MHGROUP6?]
 Systemic and other problems
-[MHGROUP6] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
-[1] Rheumatoid Arthritis
-[2] Lupus
-[3] Gout
-[] I have not had any of these conditions -> GO TO MHGROUP7
+ Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Rheumatoid Arthritis -> RA
+[2] Lupus -> LUPUS
+[3] Gout -> GOUT
+[99] I have not had any of these conditions -> MHGROUP7
 < -> MHGROUP7 >
 
-
-[RA] How old were you when a doctor or other health professional first told you that you have rheumatoid arthritis?
+[RA?] How old were you when a doctor or other health professional first told you that you have rheumatoid arthritis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> LUPUS >
 
-[LUPUS] How old were you when a doctor or other health professional first told you that you have lupus?
+[LUPUS?] How old were you when a doctor or other health professional first told you that you have lupus?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> GOUT >
 
-
-[GOUT] How old were you when a doctor or other health professional first told you that you have gout?
+[GOUT?] How old were you when a doctor or other health professional first told you that you have gout?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> STD/STI SECTION >
+< -> INTROSTD >
 
-Sexually transmitted diseases and infections
+[INTROSTD]Sexually transmitted diseases and infections
 
-[INTROSTD] The next questions ask about conditions that may affect your reproductive system. Some questions ask about sexually transmitted diseases (STDs), which are infections that are spread by sexual contact. Please remember that anything you tell us is completely confidential.
+The next questions ask about conditions that may affect your reproductive system. Some questions ask about sexually transmitted diseases (STDs), which are infections that are spread by sexual contact. Please remember that anything you tell us is completely confidential.
 
-[MHGROUP7] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
-[1] Infectious Mononucleosis (“Mono” or “Kissing Disease”)
-[2] Shingles (Herpes Zoster)
-[3] Chronic Hepatitis B or C
-[4] Gonorrhea
-[5] Chlamydia
-[6] Trichomoniasis
-[7] Syphilis
-[8] Genital Warts
-[9] HPV
-[10] HIV/AIDS
-[] I have not had any of these conditions -> GO TO MHGROUP8
+[MHGROUP7?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Infectious Mononucleosis (“Mono” or “Kissing Disease”) -> MONO
+[2] Shingles (Herpes Zoster) -> SHINGLES
+[3] Chronic Hepatitis B or C -> HBVHCV
+[4] Gonorrhea -> GONORR
+[5] Chlamydia -> CHLA
+[6] Trichomoniasis  -> TRICH
+[7] Syphilis -> SYPH
+[8] Genital Warts -> GENWARTS
+[9] HPV -> HPV
+[10] HIV/AIDS -> HIVAIDS
+[99] I have not had any of these conditions -> MHGROUP8
 < -> MHGROUP8 >
 
-
-[MONO] How old were you when a doctor or other health professional first told you that you have “mono” or “kissing disease” (infectious mononucleosis)?
+[MONO?] How old were you when a doctor or other health professional first told you that you have “mono” or “kissing disease” (infectious mononucleosis)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> SHINGLES >
 
-
-[SHINGLES] How old were you when a doctor or other health professional first told you that you have shingles (herpes zoster)?
+[SHINGLES?] How old were you when a doctor or other health professional first told you that you have shingles (herpes zoster)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> HBVHCV >
 
-
-[HBVHCV] How old were you when a doctor or other health professional first told you that you have chronic hepatitis B or C?
+[HBVHCV?] How old were you when a doctor or other health professional first told you that you have chronic hepatitis B or C?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> GONORR >
 
-
-[GONORR] How old were you when a doctor or other health professional first told you that you have gonorrhea?
+[GONORR?] How old were you when a doctor or other health professional first told you that you have gonorrhea?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> CHLA >
 
-
-[CHLA] How old were you when a doctor or other health professional first told you that you have chlamydia?
+[CHLA?] How old were you when a doctor or other health professional first told you that you have chlamydia?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> TRICH >
 
-[TRICH] How old were you when a doctor or other health professional first told you that you have trichomoniasis?
+[TRICH?] How old were you when a doctor or other health professional first told you that you have trichomoniasis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> SYPH >
 
-
-[SYPH] How old were you when a doctor or other health professional first told you that you have syphilis?
+[SYPH?] How old were you when a doctor or other health professional first told you that you have syphilis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> GENWARTS >
 
-
-[GENWARTS] How old were you when a doctor or other health professional first told you that you have genital warts?
+[GENWARTS?] How old were you when a doctor or other health professional first told you that you have genital warts?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> HPV >
 
-
-[HPV] How old were you when a doctor or other health professional first told you that you have human papillomavirus (HPV)?
+[HPV?] How old were you when a doctor or other health professional first told you that you have human papillomavirus (HPV)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> HIVAIDS >
 
-
-[HIVAIDS] How old were you when a doctor or other health professional first told you that you have HIV/AIDS?
+[HIVAIDS?] How old were you when a doctor or other health professional first told you that you have HIV/AIDS?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> MHGROUP8 >
-Urinary and reproductive system problems
 
-[MHGROUP8] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
-[1] Uterine Fibroids
-[2] Endometriosis
-[3] Polycystic Ovary Syndrome (PCOS)
-[4] Enlarged Prostate 
-[5] Fibrocystic Breast, or other Benign Breast Disease
-[] I have not had any of these conditions -> GO TO DEPRESS
+[MHGROUP8?]Urinary and reproductive system problems
+
+Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[1] Uterine Fibroids -> UF
+[2] Endometriosis -> ENDO
+[3] Polycystic Ovary Syndrome (PCOS) -> PCOS
+[4] Enlarged Prostate -> ENLGPROS
+[5] Fibrocystic Breast, or other Benign Breast Disease -> BREASTDIS
+[99] I have not had any of these conditions -> DEPRESS
 < -> DEPRESS >
 
-
-[UF] How old were you when a doctor or other health professional first told you that you have uterine fibroids?
+[UF?] How old were you when a doctor or other health professional first told you that you have uterine fibroids?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> ENDO >
 
-
-[ENDO] How old were you when a doctor or other health professional first told you that you have endometriosis?
+[ENDO?] How old were you when a doctor or other health professional first told you that you have endometriosis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> ENDO2 >
 
-
-
-[ENDO2]  Was your endometriosis confirmed by surgery?
+[ENDO2?]  Was your endometriosis confirmed by surgery?
 (1) Yes
 (2) No
 < -> PCOS >
 
-
-[PCOS] How old were you when a doctor or other health professional first told you that you have polycystic ovary syndrome (PCOS)?
+[PCOS?] How old were you when a doctor or other health professional first told you that you have polycystic ovary syndrome (PCOS)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> ENLGPROS >
 
-
-
-[ENLGPROS] How old were you when a doctor or other health professional first told you that you have an enlarged prostate (benign prostatic hyperplasia (BPH))?
+[ENLGPROS?] How old were you when a doctor or other health professional first told you that you have an enlarged prostate (benign prostatic hyperplasia (BPH))?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> BREASTDIS >
 
-
-[BREASTDIS] How old were you when a doctor or other health professional first told you that you have fibrocystic breasts, or other benign breast disease? 
+[BREASTDIS?] How old were you when a doctor or other health professional first told you that you have fibrocystic breasts, or other benign breast disease? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> BREASTDIS2 >
 
-[BREASTDIS2] When you were told that you have fibrocystic breasts, or other benign breast disease, was it confirmed by biopsy?
+[BREASTDIS2?] When you were told that you have fibrocystic breasts, or other benign breast disease, was it confirmed by biopsy?
 (1) Yes
 (0) No
 < -> DEPRESS >
 
- [DEPRESS] Has a doctor or other health professional ever told you that you have clinical depression? 
+[DEPRESS] Has a doctor or other health professional ever told you that you have clinical depression? 
 (1) Yes
 (0) No -> GO TO INTROSURG
 < -> INTROSURG >
