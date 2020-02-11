@@ -651,37 +651,31 @@ Or, if it is easier to remember the year, enter that here:
 (0) No
 < -> DEPRESS >
 
-[DEPRESS] Has a doctor or other health professional ever told you that you have clinical depression? 
-(1) Yes
-(0) No -> GO TO INTROSURG
+[DEPRESS?] Has a doctor or other health professional ever told you that you have clinical depression? 
+(1) Yes -> DEPRESS2
+(0) No -> INTROSURG
 < -> INTROSURG >
 
-[DEPRESS2] How old were you when a doctor or other health professional first told you that you have clinical depression?
+[DEPRESS2?] How old were you when a doctor or other health professional first told you that you have clinical depression?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
+
 < -> INTROSURG >
-Surgical procedures
-[INTROSURG] The next questions ask about certain surgical procedures.
-[MHGROUP9] Have you ever had any of these surgeries? Select all that apply. 
-[1] Tonsils removed (tonsillectomy)
+
+[INTROSURG] Surgical procedures
+The next questions ask about certain surgical procedures.
+
+[MHGROUP9?] Have you ever had any of these surgeries? Select all that apply. 
+[1] Tonsils removed (tonsillectomy) -> TONSILS
 [2] Gallbladder removed (cholecystectomy)
 [3] Appendix removed (appendectomy)
 [4] Liposuction
 [5] Bariatric surgery (lap band, gastric bypass)
 [6] Breast surgery
-
-
-
-
-
-
-
-
-[] I have not had any of these surgeries -> GO TO BLDTRANS
+[99] I have not had any of these surgeries -> BLDTRANS
 < -> BLDTRANS >
-
 
 [TONSILS] How old were you when you had your tonsils removed (tonsillectomy)?
 |__|__| Age at diagnosis
