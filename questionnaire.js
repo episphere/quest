@@ -181,6 +181,8 @@ function continueQuestion(norp) {
   return nextElement;
 }
 
+// hello
+
 function nextClick(norp) {
   if (norp.hasAttribute("data-toggle")) {
     norp.removeAttribute("data-toggle");
