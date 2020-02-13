@@ -1,14 +1,14 @@
 [INFO]Thank you for joining Connect! First, we need some basic information about you. This information will be kept confidential and only used for study activities. 
 
-FIRST NAME:|__|RCRTUP_FNAME_V1R0|
+FIRST NAME:|__|RCRTUP_FNAME_V1R0!|
 
 MIDDLE NAME:|__|RCRTUP_MINITAL_V1R0|
 
-LAST NAME: |__|RCRTUP_LNAME_V1R0|
+LAST NAME: |__|RCRTUP_LNAME_V1R0!|
 
 SUFFIX: |__|RCRTUP_SUFFIX_V1R0|
 
-What is your date of birth? __/__/__RCRTUP_DOB_V1R0|
+What is your date of birth? __/__/__RCRTUP_DOB_V1R0!|
 
 [RCRTUP_SEX_V1R0!] Later in this survey, we will ask about some health conditions that are related to a person’s biological sex (male or female). We want to make sure that you are asked the right questions.  Later there will be an opportunity to tell us more about your gender. 
 
