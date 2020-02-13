@@ -129,7 +129,6 @@ class TreeNode {
 }
 
 function clearSelection(inputElement) {
-  debugger;
   var state = inputElement.checked;
   var cb = inputElement.form.querySelectorAll(
     "input[type='checkbox'], input[type='radio']"
