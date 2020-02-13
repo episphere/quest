@@ -312,21 +312,21 @@ Has a doctor or other health professional ever told you that you have or had any
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> ASTHMA >
+
 
 [ASTHMA?] How old were you when a doctor or other health professional first told you that you have asthma?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> HAYFEVER >
+
 
 [HAYFEVER?] How old were you when a doctor or other health professional first told you that you have hay fever (allergic rhinitis) or are allergic to pollen?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> MHGROUP3 >
+
 
 Digestive system problems
 [MHGROUP3?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
@@ -349,63 +349,63 @@ Digestive system problems
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> BARESO >
+
 
 [BARESO?] How old were you when a doctor or other health professional first told you that you have Barrett’s esophagus? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> IBS >
+
 
 [IBS?] How old were you when a doctor or other health professional first told you that you have irritable bowel syndrome? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> IBD >
+
 
 [IBD?] How old were you when a doctor or other health professional first told you that you have inflammatory bowel disease? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> DIVERT >
+
 
 [DIVERT?] How old were you when a doctor or other health professional first told you that you have diverticulitis or diverticulosis? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> UC >
+
 
 [UC?] How old were you when a doctor or other health professional first told you that you have ulcerative colitis? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> CD >
+
 
 [CD?] How old were you when a doctor or other health professional first told you that you have Crohn’s disease? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> CCD >
+
 
 [CCD?] How old were you when a doctor or other health professional first told you that you have celiac disease (also known as gluten-sensitive enteropathy)? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> GALL >
+
 
 [GALL?] How old were you when a doctor or other health professional first told you that you have gallstones (biliary stones)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> LIVCIRR >
+
 
 
 [LIVCIRR?] How old were you when a doctor or other health professional first told you that you have liver cirrhosis?
@@ -413,14 +413,14 @@ Or, if it is easier to remember the year, enter that here:
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> PANCREA >
+
 
 [PANCREA?] How old were you when a doctor or other health professional first told you that you have pancreatitis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> MHGROUP4 >
+
 
 [MHGROUP4?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Thyroid Disorder (Overactive or Underactive Thyroid) -> THYROID
@@ -434,7 +434,7 @@ Or, if it is easier to remember the year, enter that here:
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> DM >
+
 
 [DM?] Which type of diabetes did a doctor or other health professional tell you that you have?
 (1) Type 1
@@ -447,14 +447,14 @@ Or, if it is easier to remember the year, enter that here:
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> GRAVES >
+
 
 [GRAVES?] How old were you when a doctor or other health professional first told you that you have Graves’ disease?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> MHGROUP5 >
+
 
 [MHGROUP5?] Kidney Disease
 Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
@@ -468,14 +468,14 @@ Has a doctor or other health professional ever told you that you have or had any
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> CKD >
+
 
 [CKD?] How old were you when a doctor or other health professional first told you that you have chronic kidney disease (also known as chronic kidney failure)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> MHGROUP6 >
+
 
 [MHGROUP6?]
 Systemic and other problems
@@ -491,21 +491,21 @@ Systemic and other problems
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> LUPUS >
+
 
 [LUPUS?] How old were you when a doctor or other health professional first told you that you have lupus?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> GOUT >
+
 
 [GOUT?] How old were you when a doctor or other health professional first told you that you have gout?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> INTROSTD >
+
 
 [INTROSTD]Sexually transmitted diseases and infections
 
@@ -530,70 +530,70 @@ The next questions ask about conditions that may affect your reproductive system
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> SHINGLES >
+
 
 [SHINGLES?] How old were you when a doctor or other health professional first told you that you have shingles (herpes zoster)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> HBVHCV >
+
 
 [HBVHCV?] How old were you when a doctor or other health professional first told you that you have chronic hepatitis B or C?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> GONORR >
+
 
 [GONORR?] How old were you when a doctor or other health professional first told you that you have gonorrhea?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> CHLA >
+
 
 [CHLA?] How old were you when a doctor or other health professional first told you that you have chlamydia?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> TRICH >
+
 
 [TRICH?] How old were you when a doctor or other health professional first told you that you have trichomoniasis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> SYPH >
+
 
 [SYPH?] How old were you when a doctor or other health professional first told you that you have syphilis?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> GENWARTS >
+
 
 [GENWARTS?] How old were you when a doctor or other health professional first told you that you have genital warts?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> HPV >
+
 
 [HPV?] How old were you when a doctor or other health professional first told you that you have human papillomavirus (HPV)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> HIVAIDS >
+
 
 [HIVAIDS?] How old were you when a doctor or other health professional first told you that you have HIV/AIDS?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> MHGROUP8 >
+
 
 [MHGROUP8?]Urinary and reproductive system problems
 
@@ -611,7 +611,7 @@ Has a doctor or other health professional ever told you that you have or had any
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> ENDO >
+
 
 [ENDO?] How old were you when a doctor or other health professional first told you that you have endometriosis?
 |__|__| Age at diagnosis
@@ -623,21 +623,21 @@ Or, if it is easier to remember the year, enter that here:
 [ENDO2?]  Was your endometriosis confirmed by surgery?
 (1) Yes
 (2) No
-< -> PCOS >
+
 
 [PCOS?] How old were you when a doctor or other health professional first told you that you have polycystic ovary syndrome (PCOS)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> ENLGPROS >
+
 
 [ENLGPROS?] How old were you when a doctor or other health professional first told you that you have an enlarged prostate (benign prostatic hyperplasia (BPH))?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> BREASTDIS >
+
 
 [BREASTDIS?] How old were you when a doctor or other health professional first told you that you have fibrocystic breasts, or other benign breast disease? 
 |__|__| Age at diagnosis
@@ -649,12 +649,12 @@ Or, if it is easier to remember the year, enter that here:
 [BREASTDIS2?] When you were told that you have fibrocystic breasts, or other benign breast disease, was it confirmed by biopsy?
 (1) Yes
 (0) No
-< -> DEPRESS >
+
 
 [DEPRESS?] Has a doctor or other health professional ever told you that you have clinical depression? 
 (1) Yes -> DEPRESS2
 (0) No -> INTROSURG
-< -> INTROSURG >
+
 
 [DEPRESS2?] How old were you when a doctor or other health professional first told you that you have clinical depression?
 |__|__| Age at diagnosis
@@ -662,7 +662,7 @@ Or, if it is easier to remember the year, enter that here:
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
-< -> INTROSURG >
+
 
 [INTROSURG] Surgical procedures
 The next questions ask about certain surgical procedures.
@@ -682,7 +682,6 @@ The next questions ask about certain surgical procedures.
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> GALLREM >
 
 
 [GALLREM] How old were you when you had your gallbladder removed (cholecystectomy)?
@@ -690,33 +689,24 @@ Or, if it is easier to remember the year, enter that here:
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> APPEND >
-
-
 
 [APPEND] How old were you when you had your appendix removed (appendectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> LIPOSUCT >
-
 
 [LIPOSUCT] How old were you when you first had liposuction?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> BARSUR >
 
-
- [BARSUR] How old were you when you had your bariatric surgery (lap band, gastric bypass)?
+[BARSUR] How old were you when you had your bariatric surgery (lap band, gastric bypass)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> BREASTSUR >
-
 
 [BREASTSUR] Which of these breast surgeries have you had? Do not include a biopsy. Select all that apply.
 [1] Breast implants (augmentation surgery)
