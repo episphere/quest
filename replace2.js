@@ -3,6 +3,9 @@ transform = function() {
 };
 
 transform.render = contents => {
+  // first thing we must do is unroll the loops...
+  contents = unrollLoops(contents);
+
   // hey, lets de-lint the contents..
   // convert (^|\n{2,}Q1. to [Q1]
   // note:  the first question wont have the
