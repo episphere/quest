@@ -29,11 +29,13 @@ transform.render = contents => {
   //       otherwise it would match the first and last square bracket
 
   let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)\\](.*?)(?=\\[[A-Z])",
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*)?\\](.*?)(?=\\[[A-Z])",
     "msg"
   );
 
-  contents = contents.replace(regEx, function(x, y, z) {
+  contents = contents.replace(regEx, function(x, y, d, z) {
+    //    console.log("x: ", x, "\nd: ", d, "\ny: ", y, "\nz: ", z);
+
     // z = z.replace(/\/\*[\s\S]+\*\//g, "");
     // z = z.replace(/\/\/.*\n/g, "");
 
