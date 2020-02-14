@@ -421,7 +421,7 @@ function unrollLoops(txt) {
           ))
       );
       ids.map(
-        id => (currentText = currentText.replace("#loop", "" + loopIndx))
+        id => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
       );
       loopText = loopText + "\n" + currentText;
     }
