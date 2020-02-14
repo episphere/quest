@@ -29,12 +29,12 @@ transform.render = contents => {
   //       otherwise it would match the first and last square bracket
 
   let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*)?\\](.*?)(?=\\[[A-Z])",
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=\\[[A-Z])",
     "msg"
   );
 
   contents = contents.replace(regEx, function(x, y, d, z) {
-    //    console.log("x: ", x, "\nd: ", d, "\ny: ", y, "\nz: ", z);
+    //  console.log("x: ", x, "\nd: ", d, "\ny: ", y, "\nz: ", z);
 
     // z = z.replace(/\/\*[\s\S]+\*\//g, "");
     // z = z.replace(/\/\/.*\n/g, "");
@@ -45,22 +45,34 @@ transform.render = contents => {
 
     y = y.replace(/\[DISPLAY IF .*\]/g, "");
 
+    // handle displayif on the question...
+    // if d is undefined set it to blank.
+    d = d ? d : "";
+
+    // make sure that this is a "displayif"
+    var displayifMatch = d.match(/,\s*(displayif\s*=\s*.*)/);
+    // if so, remove the comma and go.  if not, set d to blank...
+    d = displayifMatch ? displayifMatch[1] : "";
     // ---------------
     // z = z.replace(
     //   /\`\`\`(.*)\`\`\`/gms,
     //   "<script type='text/javascript'>$1</script>"
     // );
     // ----------------
-    let rv =
-      "<form class='question' style='font-weight: bold' id='" +
-      y +
-      "'>" +
-      z +
-      "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-      "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
-      "<br>" +
-      "<br>" +
-      "</form>";
+
+    // not sure why rv was defined here! is was overwritten later in the function...
+    // let rv =
+    //   "<form class='question' style='font-weight: bold' id='" +
+    //   y +
+    //   "' " +
+    //   d +
+    //   ">" +
+    //   z +
+    //   "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
+    //   "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
+    //   "<br>" +
+    //   "<br>" +
+    //   "</form>";
 
     let hardBool = y.endsWith("!");
     let softBool = y.endsWith("?");
@@ -325,7 +337,9 @@ transform.render = contents => {
     rv =
       "<form class='question' style='font-weight: bold' id='" +
       y +
-      "' hardEdit='" +
+      "' " +
+      d +
+      " hardEdit='" +
       hardBool +
       "' softEdit='" +
       softBool +

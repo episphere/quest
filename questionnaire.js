@@ -255,14 +255,17 @@ function nextPage(norp) {
 
   // what if we are in a loop and there is a "displayif"...
   if (nextElement.hasAttribute("displayif")) {
-    parse(nextElement.getAttribute("displayif").value);
-    console.log("should I display the next question? " + f());
+    f = parse(nextElement.getAttribute("displayif"));
+    //console.log("should I display the next question? " + f);
+
     // if the displayif is false, skip the current element...
-    if (!f()) {
+    if (!f) {
       norp.parentElement.classList.remove("active");
-      let nextNorp = nextElement.querySelector("input[value='next']");
+      // this should remove the "nextQuestion from the questionQueue"
+      questionQueue.previous();
+      let nextNorp = nextElement.querySelector("input[value='Next']");
       if (nextNorp) {
-        return next(nextNorp);
+        return nextClick(nextNorp);
       }
     }
   }
@@ -387,7 +390,6 @@ function unrollLoops(txt) {
       label: x[0],
       id: x[1]
     }));
-    debugger;
 
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
@@ -443,16 +445,16 @@ const knownFunctions = {
     return x == y;
   },
   lessThan: function(x, y) {
-    return x < y;
+    return parseFloat(x) < parseFloat(y);
   },
   lessThanOrEqual: function(x, y) {
-    return x <= y;
+    return parseFloat(x) <= parseFloat(y);
   },
   greaterThan: function(x, y) {
-    return x > y;
+    return parseFloat(x) > parseFloat(y);
   },
   greaterThanOrEqual: function(x, y) {
-    return x >= y;
+    return parseFloat(x) >= parseFloat(y);
   }
 };
 
@@ -461,6 +463,7 @@ function parse(txt) {
   var re = /[\(\),]/g;
   var stack = [];
   var lastMatch = 0;
+
   for (const match of txt.matchAll(re)) {
     stack.push(match.input.substr(lastMatch, match.index - lastMatch));
     stack.push(match.input.charAt(match.index));
@@ -490,16 +493,12 @@ function parse(txt) {
         arg1 = document.getElementById(arg1).value;
       }
       arg2 = stack[callEnd - 1];
-      console.log(
-        fun + "(" + arg1 + "," + arg2 + ") =",
-        knownFunctions[fun](arg1, arg2)
-      );
       var tmpValue = knownFunctions[fun](arg1, arg2);
       // replace from callEnd-5 to callEnd with  the results...
       // splice start at callEnd-5, remove 6, add the calculated value...
       stack.splice(callEnd - 5, 6, tmpValue);
     } else {
-      return console.log("problem!!!");
+      return console.log(stack);
     }
   }
   return stack[0];
