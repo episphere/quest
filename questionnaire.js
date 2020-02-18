@@ -216,15 +216,6 @@ function nextClick(norp) {
   }
 }
 
-// known boolean functions (Predicates) required for the displayif arguments...
-const knownFunctions = ["lessThan", "greaterThan"];
-function lessThan(a, b) {
-  return a < b;
-}
-function greaterThan(a, b) {
-  return a > b;
-}
-
 // norp == next or previous button (which ever is clicked...)
 function nextPage(norp) {
   // Because next button does not have ID, modal will pass-in ID of question
@@ -264,29 +255,17 @@ function nextPage(norp) {
 
   // what if we are in a loop and there is a "displayif"...
   if (nextElement.hasAttribute("displayif")) {
-    let call = nextElement.getAttribute("displayif");
-    let capture = call.match(/^(\w+)\((\w+),(\w+)\)/);
+    f = parse(nextElement.getAttribute("displayif"));
+    //console.log("should I display the next question? " + f);
 
-    let functionName = capture[1];
-    let variable = document.getElementById(capture[2]).value;
-    let x = capture[3];
-
-    if (
-      knownFunctions.includes(functionName) &&
-      !isNaN(x) &&
-      !isNaN(variable)
-    ) {
-      let f = Function(
-        "return " + capture[1] + "(" + variable + "," + capture[3] + ")"
-      );
-      console.log("should I display the next question? " + f());
-      // if the displayif is false, skip the current element...
-      if (!f()) {
-        norp.parentElement.classList.remove("active");
-        let nextNorp = nextElement.querySelector("input[value='next']");
-        if (nextNorp) {
-          return next(nextNorp);
-        }
+    // if the displayif is false, skip the current element...
+    if (!f) {
+      norp.parentElement.classList.remove("active");
+      // this should remove the "nextQuestion from the questionQueue"
+      questionQueue.previous();
+      let nextNorp = nextElement.querySelector("input[value='Next']");
+      if (nextNorp) {
+        return nextClick(nextNorp);
       }
     }
   }
@@ -397,15 +376,15 @@ function getResults(element) {
 // x is the questionnaire text
 function unrollLoops(txt) {
   // all the questions in the loops...
+  // each element in res is a loop in the questionnaire...
   let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gms;
   let res = [...txt.matchAll(loopRegex)].map(function(x) {
     return { cnt: x[1], txt: x[2], orig: x[0] };
   });
 
-  let idRegex = /\[(\w+)[?!]?\]/gms;
+  let idRegex = /\[([A-Z_][A-Z0-9_#]*)(,.*?)?[?!]?\]/gms;
   // we have an array of objects holding the text..
   // get all the ids...
-
   let cleanedText = res.map(function(x) {
     let ids = [...x.txt.matchAll(idRegex)].map(x => ({
       label: x[0],
@@ -415,11 +394,12 @@ function unrollLoops(txt) {
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
-      loopText = loopText + "\n" + x.txt;
+      var currentText = x.txt;
+
       // replace all instances of the question ids with id_#
       ids.map(
         id =>
-          (loopText = loopText.replace(
+          (currentText = currentText.replace(
             id.label,
             id.label.replace(id.id, id.id + "_" + loopIndx)
           ))
@@ -427,11 +407,23 @@ function unrollLoops(txt) {
       // replace all -> Id with -> Id_#
       ids.map(
         id =>
-          (loopText = loopText.replace(
+          (currentText = currentText.replace(
             new RegExp("->\\s*" + id.id + "\\W"),
             "-> " + id.id + "_" + loopIndx + " "
           ))
       );
+      // replace all |__(|__)|ID with |__(|__)|ID_#
+      ids.map(
+        id =>
+          (currentText = currentText.replace(
+            /(\|__(\|__)*\|)(\w+)\|/,
+            "$1$3_" + loopIndx + "|"
+          ))
+      );
+      ids.map(
+        id => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
+      );
+      loopText = loopText + "\n" + currentText;
     }
     return loopText;
   });
@@ -440,4 +432,74 @@ function unrollLoops(txt) {
     txt = txt.replace(res[loopIndx].orig, cleanedText[loopIndx]);
   }
   return txt;
+}
+
+const knownFunctions = {
+  and: function(x, y) {
+    return x && y;
+  },
+  or: function(x, y) {
+    return x || y;
+  },
+  equals: function(x, y) {
+    return x == y;
+  },
+  lessThan: function(x, y) {
+    return parseFloat(x) < parseFloat(y);
+  },
+  lessThanOrEqual: function(x, y) {
+    return parseFloat(x) <= parseFloat(y);
+  },
+  greaterThan: function(x, y) {
+    return parseFloat(x) > parseFloat(y);
+  },
+  greaterThanOrEqual: function(x, y) {
+    return parseFloat(x) >= parseFloat(y);
+  }
+};
+
+function parse(txt) {
+  //https://stackoverflow.com/questions/6323417/regex-to-extract-all-matches-from-string-using-regexp-exec
+  var re = /[\(\),]/g;
+  var stack = [];
+  var lastMatch = 0;
+
+  for (const match of txt.matchAll(re)) {
+    stack.push(match.input.substr(lastMatch, match.index - lastMatch));
+    stack.push(match.input.charAt(match.index));
+    lastMatch = match.index + 1;
+  }
+  // remove all blanks...
+  stack = stack.filter(x => x != "");
+
+  while (stack.indexOf(")") > 0) {
+    var callEnd = stack.indexOf(")");
+    if (
+      stack[callEnd - 4] == "(" &&
+      stack[callEnd - 2] == "," &&
+      stack[callEnd - 5] in knownFunctions
+    ) {
+      // it might hurt performance, but for debugging
+      // expliciting setting the variables are helpful...
+      fun = stack[callEnd - 5];
+      arg1 = stack[callEnd - 3];
+      // arg1 one should be a id or a boolean...
+      // either from a element in the document or
+      // from the currently undefined last module...
+      if (typeof arg1 === "string") {
+        var element = document.getElementById(arg1);
+        // if element is null, look it up in the
+        // previous module...
+        arg1 = document.getElementById(arg1).value;
+      }
+      arg2 = stack[callEnd - 1];
+      var tmpValue = knownFunctions[fun](arg1, arg2);
+      // replace from callEnd-5 to callEnd with  the results...
+      // splice start at callEnd-5, remove 6, add the calculated value...
+      stack.splice(callEnd - 5, 6, tmpValue);
+    } else {
+      return console.log(stack);
+    }
+  }
+  return stack[0];
 }
