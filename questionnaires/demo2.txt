@@ -1015,7 +1015,7 @@ Or, if it is easier to remember her age when she was told this, enter that here.
 |__|__|__|__| Year
 
 Or, if it is easier to remember her age when she was told this, enter that here. 
-__|__| Age
+|__|__| Age
 
 [MOMCANC3U?] What year was she first told by a doctor or other health professional that she has or had uterine cancer? 
 |__|__|__|__| Year
