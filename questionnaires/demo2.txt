@@ -853,27 +853,28 @@ Or, if it is easier to remember the year, enter that here:
 < -> MOM >
 
 [MOM] The next questions ask about your family and if people in your family have had cancer.
+
 Parents
 [MOM1?] Is your biological mother still living?
 (1) Yes -> MOMAGE
 (0) No -> MOMDEATH
-() Don’t know -> MOMCANC
+(77) Don’t know -> MOMCANC
 < -> MOMCANC >
 
 [MOMAGE?] How old is she today?
 |__|__|__| Mother’s age
-() Don’t know
+(77) Don’t know
 < -> MOMCANC >
 
 [MOMDEATH?] How old was she when she died?
 |__|__|__| Mother’s age
-() Don’t know 
+(77) Don’t know 
 < -> MOMCANC >
 
 [MOMCANC?] Has a doctor or other health professional ever told her that she has or had any type of cancer? Did a doctor or other health professional ever tell her that she had any type of cancer?
 (1) Yes -> MOMCANC2
 (0) No -> DAD
-() Don’t know -> DAD
+(77) Don’t know -> DAD
 < -> DAD >
 	
 [MOMCANC2?] Which type(s) of cancer? Select all that apply.
@@ -899,122 +900,145 @@ Parents
 [20] Thyroid -> MOMCANC3T
 [21] Uterine (endometrial) -> MOMCANC3U
 [22] Another type of cancer: Please describe [text box: MOMCANC3V_TB] -> MOMCANC3V
-[ ] I know she had cancer, but don’t know what type
+[77] I know she had cancer, but don’t know what type
 < -> DAD >
 
 [MOMCANC3A?] What year was she first told by a doctor or other health professional that she has or had anal cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 
 [MOMCANC3B?] What year was she first told by a doctor or other health professional that she has or had bladder cancer?
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3C?] What year was she first told by a doctor or other health professional that she has or had brain cancer?
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3D?] What year was she first told by a doctor or other health professional that she has or had breast cancer?
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3E?] What year was she firsttold by a doctor or other health professional that she has or had cervical cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3F?] What year was she firsttold by a doctor or other health professional that she has or had colon/rectal cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3G?] What year was she firsttold by a doctor or other health professional that she has or had esophageal cancer? 
  |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3H?] What year was she firsttold by a doctor or other health professional that she has or had head and neck cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3I?] What year was she firsttold by a doctor or other health professional that she has or had kidney cancer?
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3J?] What year was she firsttold by a doctor or other health professional that she has or had leukemia? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3K?] What year was she firsttold by a doctor or other health professional that she has or had liver cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3L?] What year was she firsttold by a doctor or other health professional that she has or had lung or bronchial cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3M?] What year was she firsttold by a doctor or other health professional that she has or had non-Hodgkin’s lymphoma?
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here.
 |__|__| Age
 
 [MOMCANC3N?] What year was she firsttold by a doctor or other health professional that she has or had lymphoma?
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3O?] What year was she firsttold by a doctor or other health professional that she has or had melanoma? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3P?] What year was she firsttold by a doctor or other health professional that she has or had non-melanoma skin cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3Q?] What year was she first told by a doctor or other health professional that she has or had ovarian cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3R?] What year was she first told by a doctor or otherhealth professional that she has or had pancreatic cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3S?] What year was she first told by a doctor or other health professional that shehas or had stomach cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3T?] What year was she first told by a doctor or other health professional that she has or had thyroid cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 __|__| Age
 
 [MOMCANC3U?] What year was she first told by a doctor or other health professional that she has or had uterine cancer? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here. 
 |__|__| Age
 
 [MOMCANC3V?] What year was she first told by a doctor or other health professional that she has or had {$MOMCANC3V_TB}? 
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here.
 |__|__| Age
 
 [MOMCANC3W?] What year was she first told by a doctor or other health professional that she has or had cancer?
 |__|__|__|__| Year
+
 Or, if it is easier to remember her age when she was told this, enter that here.
 |__|__| Age
 
@@ -1041,188 +1065,166 @@ Or, if it is easier to remember her age when she was told this, enter that here.
 < -> SIB >
 
 [DADCANC2?] Which type(s) of cancer? Select all that apply.
-[1] Anal
-[2] Bladder
-[3] Brain
-[4] Breast
-[5] Colon/rectal
-[6] Esophageal
-[7] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.)
-[8] Kidney
-[9] Leukemia (blood and bone marrow)
-[10] Liver
-[11] Lung or bronchial
-[12] Non-Hodgkin’s lymphoma
-[13] Lymphoma
-[14] Melanoma (skin)
-[15] Non-melanoma skin (basal or squamous)
-[16] Pancreatic
-[17] Prostate
-[18] Stomach
-[19] Testicular
-[20] Thyroid
-[] Another type of cancer: Please describe [text box]
-[] I know he had cancer, but don’t know what type
+[1] Anal -> DADCANC3A
+[2] Bladder -> DADCANC3B
+[3] Brain -> DADCANC3C
+[4] Breast -> DADCANC3D
+[5] Colon/rectal -> DADCANC3E
+[6] Esophageal -> DADCANC3F
+[7] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.) -> DADCANC3G
+[8] Kidney -> DADCANC3H
+[9] Leukemia (blood and bone marrow) -> DADCANC3I
+[10] Liver -> DADCANC3J
+[11] Lung or bronchial -> DADCANC3K
+[12] Non-Hodgkin’s lymphoma -> DADCANC3L
+[13] Lymphoma -> DADCANC3M
+[14] Melanoma (skin) -> DADCANC3N
+[15] Non-melanoma skin (basal or squamous) -> DADCANC3O
+[16] Pancreatic -> DADCANC3P
+[17] Prostate -> DADCANC3Q
+[18] Stomach -> DADCANC3R
+[19] Testicular -> DADCANC3S
+[20] Thyroid -> DADCANC3T
+[21] Another type of cancer: Please describe [text box: DADCANC3U_TB] -> DADCANC3U
+[22] I know he had cancer, but don’t know what type -> DADCANC3V]
 < -> SIB >
 
-[DADCANC3A] What year was he firsttold by a doctor or other health professional that he has or had anal cancer? 
+[DADCANC3A?] What year was he first told by a doctor or other health professional that he has or had anal cancer? 
 |__|__|__|__| Year
 
 Or, if it is easier to remember his age when he was told this, enter that here. 
 |__|__| Age
 
+[DADCANC3B?] What year was he first told by a doctor or other health professional that he has or had bladder cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3B >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3B]
+[DADCANC3C?] What year was he first told by a doctor or other health professional that he has or had brain cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3D?] What year was he first told by a doctor or other health professional that he has or had breast cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3C >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3C]
+[DADCANC3E?] What year was he first told by a doctor or other health professional that he has or had colon/rectal cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3F?] What year was he first told by a doctor or other health professional that he has or had esophageal cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3D >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3D]
+[DADCANC3G?] What year was he first told by a doctor or other health professional that he has or had head and neck cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3H?] What year was he first told by a doctor or other health professional that he has or had kidney cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3E >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3E]
+[DADCANC3I?] What year was he first told by a doctor or other health professional that he has or had leukemia? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3J?] What year was he first told by a doctor or other health professional that he has or had liver cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3F >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3F]
+[DADCANC3K?] What year was he first told by a doctor or other health professional that he has or had lung or bronchial cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3L?] What year was he first told by a doctor or other health professional that he has or had non-Hodgkin’s lymphoma? 
+|__|__|__|__| Year
 
-< -> DADCANC3G >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3G]
+[DADCANC3M?] What year was he first told by a doctor or other health professional that he has or had lymphoma? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3N?] What year was he first told by a doctor or other health professional that he has or had melanoma? 
+|__|__|__|__| Year
 
-< -> DADCANC3H >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3H]
+[DADCANC3O?] What year was he first told by a doctor or other health professional that he has or had non-melanoma skin cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3P?] What year was he first told by a doctor or other health professional that he has or had pancreatic cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3I >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3I]
+[DADCANC3Q?] What year was he first told by a doctor or other health professional that he has or had prostate cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3R?] What year was he first told by a doctor or other health professional that he has or had stomach cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3J >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3J]
+[DADCANC3S?] What year was he first told by a doctor or other health professional that he has or had testicular cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3T?] What year was he first told by a doctor or other health professional that he has or had thyroid cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3K >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3K]
+[DADCANC3U] What year was he first told by a doctor or other health professional that he has or had {$DADCANC3U_TB}? 
+ |__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
+[DADCANC3V] What year was he first told by a doctor or other health professional that he has or had cancer? 
+|__|__|__|__| Year
 
-< -> DADCANC3L >
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
-[DADCANC3L]
+[SIB] Siblings
+The next questions are about your brothers and sisters, whether or not they are currently living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Do not include adopted or step siblings. 
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3M >
-
-[DADCANC3M]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3N >
-
-[DADCANC3N]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3O >
-
-[DADCANC3O]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3P >
-
-[DADCANC3P]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-< -> DADCANC3Q >
-
-[DADCANC3Q]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3R >
-
-[DADCANC3R]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3S >
-
-[DADCANC3S]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3T >
-
-[DADCANC3T]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3U >
-
-[DADCANC3U]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> DADCANC3V >
-
-[DADCANC3V]
-
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
-
-
-< -> SIB >
-
-Siblings
-[SIB] The next questions are about your brothers and sisters, whether or not they are currently living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Do not include adopted or step siblings. 
-[SIB] How many siblings do you have, including full and half-siblings?
+[SIB1] How many siblings do you have, including full and half-siblings?
 |__|__| #Siblings  
 < -> SIBCONFIRM >
 
