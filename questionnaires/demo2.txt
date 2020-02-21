@@ -1218,11 +1218,10 @@ Or, if it is easier to remember his age when he was told this, enter that here.
 The next questions are about your brothers and sisters, whether or not they are currently living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Do not include adopted or step siblings. 
 
 [SIB1] How many siblings do you have, including full and half-siblings?
-|__|__| #Siblings  
+|__|__|NUMSIB| #Siblings  
 < -> SIBCONFIRM >
 
-
-[SIBCONFIRM] You told us that you have [insert number from SIB] [sibling/siblings], including full and half-siblings. 
+[SIBCONFIRM] You told us that you have {$NUMSIB} sibling/siblings, including full and half-siblings. 
 
 If this is not correct, please select the “Back” button to update your response. If this is correct, please select the “Next” button to move forward.
 
