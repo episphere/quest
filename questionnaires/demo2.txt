@@ -661,54 +661,55 @@ Or, if it is easier to remember the year, enter that here:
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-
+< -> INTROSURG >
 
 
 [INTROSURG] Surgical procedures
 The next questions ask about certain surgical procedures.
+< -> MHGROUP9 >
 
 [MHGROUP9?] Have you ever had any of these surgeries? Select all that apply. 
 [1] Tonsils removed (tonsillectomy) -> TONSILS
-[2] Gallbladder removed (cholecystectomy)
-[3] Appendix removed (appendectomy)
-[4] Liposuction
-[5] Bariatric surgery (lap band, gastric bypass)
-[6] Breast surgery
+[2] Gallbladder removed (cholecystectomy) -> GALLREM
+[3] Appendix removed (appendectomy) -> APPEND
+[4] Liposuction -> LIPOSUCT
+[5] Bariatric surgery (lap band, gastric bypass) -> BARSUR
+[6] Breast surgery -> BREASTSUR
 [99] I have not had any of these surgeries -> BLDTRANS
 < -> BLDTRANS >
 
-[TONSILS] How old were you when you had your tonsils removed (tonsillectomy)?
+[TONSILS?] How old were you when you had your tonsils removed (tonsillectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
 
-[GALLREM] How old were you when you had your gallbladder removed (cholecystectomy)?
+[GALLREM?] How old were you when you had your gallbladder removed (cholecystectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
-[APPEND] How old were you when you had your appendix removed (appendectomy)?
+[APPEND?] How old were you when you had your appendix removed (appendectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
-[LIPOSUCT] How old were you when you first had liposuction?
+[LIPOSUCT?] How old were you when you first had liposuction?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
-[BARSUR] How old were you when you had your bariatric surgery (lap band, gastric bypass)?
+[BARSUR?] How old were you when you had your bariatric surgery (lap band, gastric bypass)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
-[BREASTSUR] Which of these breast surgeries have you had? Do not include a biopsy. Select all that apply.
+[BREASTSUR?] Which of these breast surgeries have you had? Do not include a biopsy. Select all that apply.
 [1] Breast implants (augmentation surgery)
 [2] Breast lift surgery (mastopexy)
 [3] Breast reconstruction surgery
@@ -718,17 +719,18 @@ Or, if it is easier to remember the year, enter that here:
 [7] Removal of both breasts (double or bilateral mastectomy)
 [8] Surgery for a breast abscess (such as incision and draining)
 [9] Removal of a lactiferous or milk duct (microdochectomy) 
-[] Other: Please describe [text box]
-None of the above -> GO TO HYSTER
+[10] Other: Please describe [text box]
+[99] None of the above -> HYSTER
+< -> BREASTSUR2 >
 
- [BREASTSUR2] How old were you when you had breast surgery? If more than once, at what age did you last have this procedure? 
+[BREASTSUR2?] How old were you when you had breast surgery? If more than once, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> HYSTER >
 
-[HYSTER] How old were you when you had your uterus removed (hysterectomy)?
+[HYSTER?] How old were you when you had your uterus removed (hysterectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
@@ -736,7 +738,7 @@ Or, if it is easier to remember the year, enter that here:
 < -> TUBLIG >
 
 
-[TUBLIG] How old were you when you had your tubes tied (tubal ligation)?
+[TUBLIG?] How old were you when you had your tubes tied (tubal ligation)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
@@ -744,13 +746,13 @@ Or, if it is easier to remember the year, enter that here:
 < -> OVARYREM >
 
 
- [OVARYREM] Which of these best describes the type of ovary removal surgery that you had?
+[OVARYREM?] Which of these best describes the type of ovary removal surgery that you had?
 (1) I had surgery to remove one ovary
 (2) I had surgery to remove both ovaries
 () None of the above -> GO TO FTREM
 < -> FTREM >
 
-[OVARYREM2] How old were you when you had one or both ovaries removed (oophorectomy)? If more than one procedure, at what age did you last have this procedure?
+[OVARYREM2?] How old were you when you had one or both ovaries removed (oophorectomy)? If more than one procedure, at what age did you last have this procedure?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
@@ -759,330 +761,286 @@ Or, if it is easier to remember the year, enter that here:
 
 
 
-[FTREM] Which of these best describes the type of fallopian tube removal surgery that you had?
+[FTREM?] Which of these best describes the type of fallopian tube removal surgery that you had?
 (1) I had surgery to remove one fallopian tube
 (2) I had surgery to remove both fallopian tubes
 () None of the above -> GO TO VASEC
 < -> VASEC >
 
- [FTREM2] How old were you when you had one or both fallopian tubes removed (salpingectomy)? If more than one procedure, at what age did you last have this procedure? 
+[FTREM2?] How old were you when you had one or both fallopian tubes removed (salpingectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> VASEC >
 
-[VASEC] How old were you when you had a vasectomy?
+[VASEC?] How old were you when you had a vasectomy?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> TESTREM >
 
-
-[TESTREM] Which of these best describes the type of testicle removal surgery that you had?
+[TESTREM?] Which of these best describes the type of testicle removal surgery that you had?
 (1) I had surgery to remove one testicle
 (2) I had surgery to remove both testicles
 () None of the above -> GO TO PROSREM
 < -> PROSREM >
 
-[TESTREM2] How old were you when you had one or both testicles removed (orchiectomy or orchidectomy)? If more than one procedure, at what age did you last have this procedure? 
+[TESTREM2?] How old were you when you had one or both testicles removed (orchiectomy or orchidectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> PROSREM >
 
-
-
-[PROSREM] Which of these best describes the type of prostate removal surgery that you had? 
+[PROSREM?] Which of these best describes the type of prostate removal surgery that you had? 
 (1) I had surgery to remove part of my prostate
 (2) I had surgery to remove my whole prostate
 () None of the above -> GO TO PENREM
 < -> PENREM >
 
- [PROSREM2] How old were you when you had part or all of your prostate removed (prostatectomy)? If more than one procedure, at what age did you last have this procedure? 
+[PROSREM2?] How old were you when you had part or all of your prostate removed (prostatectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> PENREM >
 
-[PENREM] How old were you when you had your penis removed (penectomy)?
+[PENREM?] How old were you when you had your penis removed (penectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 < -> BLDTRANS >
 
-Blood Transfusion
-[BLDTRANS] Have you ever had a blood transfusion? 
-(1) Yes
-(0) No ->GO TO FAMILY HISTORY SECTION
-< -> FAMILY HISTORY SECTION >
+[BLDTRANS?] Blood Transfusion
+Have you ever had a blood transfusion? 
+(1) Yes -> BLDTRANS2
+(0) No -> SECTION3
+< -> SECTION3 >
 
-[BLDTRANS2] How many blood transfusions have you had in total?  
+[BLDTRANS2?] How many blood transfusions have you had in total?  
 |__|__| # of transfusions 
 < -> BLDTRANS3 >
 
-
-[BLDTRANS3] How old were you when you had your first blood transfusion?
+[BLDTRANS3?] How old were you when you had your first blood transfusion?
 |__|__| Age at first transfusion
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year at first transfusion
 < -> BLDTRANS4 >
 
-
-[BLDTRANS4] How old were you when you had your last blood transfusion?
+[BLDTRANS4?] How old were you when you had your last blood transfusion?
 |__|__| Age at last transfusion
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year at last transfusion
-< -> FAMILY HISTORY SECTION >
+< -> SECTION3 >
 
 [SECTION3] Family History 
 
-[ADOPTFOST] Were you adopted or a foster child?
+[ADOPTFOST?] Were you adopted or a foster child?
 (0) No 
 (1) Yes
 < -> MULTBIRTH >
 
-[MULTBIRTH] Were you born a twin, triplet, or other multiple?
+[MULTBIRTH?] Were you born a twin, triplet, or other multiple?
 (0) No
 (1) Yes, identical twins
 (2) Yes, fraternal twins (not identical)
 (3) Yes, triplets or higher multiple birth
 < -> MOM >
+
 [MOM] The next questions ask about your family and if people in your family have had cancer.
 Parents
-[MOM1] Is your biological mother still living?
-(1) Yes -> GO TO MOMAGE
-(0) No -> GO TO MOMDEATH
-() Don’t know -> GO TO MOMCANC
+[MOM1?] Is your biological mother still living?
+(1) Yes -> MOMAGE
+(0) No -> MOMDEATH
+() Don’t know -> MOMCANC
 < -> MOMCANC >
 
-[MOMAGE] How old is she today?
-|__|__|__| Mother’s age -> GO TO MOMCANC
-() Don’t know -> GO TO MOMCANC
-< -> MOMCANC >
-
-[MOMDEATH] How old was she when she died?
+[MOMAGE?] How old is she today?
 |__|__|__| Mother’s age
-Don’t know 
+() Don’t know
 < -> MOMCANC >
 
-(1) Yes 
-(0) No-> GO TO DAD
-() Don’t know -> GO TO DAD
+[MOMDEATH?] How old was she when she died?
+|__|__|__| Mother’s age
+() Don’t know 
+< -> MOMCANC >
+
+[MOMCANC?] Has a doctor or other health professional ever told her that she has or had any type of cancer? Did a doctor or other health professional ever tell her that she had any type of cancer?
+(1) Yes -> MOMCANC2
+(0) No -> DAD
+() Don’t know -> DAD
 < -> DAD >
 	
-[MOMCANC2] Which type(s) of cancer? Select all that apply.
-[1] Anal
-[2] Bladder
-[3] Brain
-[4] Breast
-[5] Cervical
-[6] Colon/rectal
-[7] Esophageal
-[8] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.)
-[9] Kidney
-[10] Leukemia (blood and bone marrow)
-[11] Liver
-[12] Lung or bronchial
-[13] Non-Hodgkin’s lymphoma
-[14] Lymphoma
-[15] Melanoma (skin)
-[16] Non-melanoma skin (basal or squamous)
-[17] Ovarian
-[18] Pancreatic
-[19] Stomach
-[20] Thyroid
-[21] Uterine (endometrial)
-[ ] Another type of cancer: Please describe [text box]
+[MOMCANC2?] Which type(s) of cancer? Select all that apply.
+[1] Anal -> MOMCANC3A
+[2] Bladder -> MOMCANC3B
+[3] Brain -> MOMCANC3C
+[4] Breast -> MOMCANC3D
+[5] Cervical -> MOMCANC3E
+[6] Colon/rectal -> MOMCANC3F
+[7] Esophageal -> MOMCANC3G
+[8] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.) -> MOMCANC3H
+[9] Kidney -> MOMCANC3I
+[10] Leukemia (blood and bone marrow) -> MOMCANC3J
+[11] Liver -> MOMCANC3K
+[12] Lung or bronchial -> MOMCANC3L
+[13] Non-Hodgkin’s lymphoma -> MOMCANC3M
+[14] Lymphoma -> MOMCANC3N
+[15] Melanoma (skin) -> MOMCANC3O
+[16] Non-melanoma skin (basal or squamous) -> MOMCANC3P
+[17] Ovarian -> MOMCANC3Q
+[18] Pancreatic -> MOMCANC3R
+[19] Stomach -> MOMCANC3S
+[20] Thyroid -> MOMCANC3T
+[21] Uterine (endometrial) -> MOMCANC3U
+[22] Another type of cancer: Please describe [text box: MOMCANC3V_TB] -> MOMCANC3V
 [ ] I know she had cancer, but don’t know what type
 < -> DAD >
 
-[MOMCANC3A]
-What year was she first told by a doctor or other health professional that she has or had anal cancer? |__|__|__|__| Year
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3B >
-
-[MOMCANC3B]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3C >
-
-[MOMCANC3C]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3D >
-
-[MOMCANC3D]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-< -> MOMCANC3E >
-
-[MOMCANC3E]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3F >
-
-[MOMCANC3F]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3G >
-
-[MOMCANC3G]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3H >
-
-[MOMCANC3H]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3I >
-
-[MOMCANC3I]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3J >
-
-[MOMCANC3J]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3K >
-
-[MOMCANC3K]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3L >
-
-[MOMCANC3L]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3M >
-
-[MOMCANC3M]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3N >
-
-[MOMCANC3N]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3O >
-
-[MOMCANC3O]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3P >
-
-[MOMCANC3P]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3Q >
-
-[MOMCANC3Q]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3R >
-
-[MOMCANC3R]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3S >
-
-[MOMCANC3S]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3T >
-
-[MOMCANC3T]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3U >
-
-[MOMCANC3U]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3V >
-
-[MOMCANC3V]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-
-< -> MOMCANC3W >
-
-[MOMCANC3W]
-
-Or, if it is easier to remember her age when she was told this, enter that here. |__|__| Age
-
-< -> DAD >
-[DAD] Is your biological father still living? 
-(1) Yes -> GO TO DADAGE 
-(0) No -> GO TO DADDEATH
-() Don’t know -> GO TO DADCANC
+[MOMCANC3A?] What year was she first told by a doctor or other health professional that she has or had anal cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+
+[MOMCANC3B?] What year was she first told by a doctor or other health professional that she has or had bladder cancer?
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3C?] What year was she first told by a doctor or other health professional that she has or had brain cancer?
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3D?] What year was she first told by a doctor or other health professional that she has or had breast cancer?
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3E?] What year was she firsttold by a doctor or other health professional that she has or had cervical cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3F?] What year was she firsttold by a doctor or other health professional that she has or had colon/rectal cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3G?] What year was she firsttold by a doctor or other health professional that she has or had esophageal cancer? 
+ |__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3H?] What year was she firsttold by a doctor or other health professional that she has or had head and neck cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3I?] What year was she firsttold by a doctor or other health professional that she has or had kidney cancer?
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3J?] What year was she firsttold by a doctor or other health professional that she has or had leukemia? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3K?] What year was she firsttold by a doctor or other health professional that she has or had liver cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3L?] What year was she firsttold by a doctor or other health professional that she has or had lung or bronchial cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3M?] What year was she firsttold by a doctor or other health professional that she has or had non-Hodgkin’s lymphoma?
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here.
+|__|__| Age
+
+[MOMCANC3N?] What year was she firsttold by a doctor or other health professional that she has or had lymphoma?
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3O?] What year was she firsttold by a doctor or other health professional that she has or had melanoma? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3P?] What year was she firsttold by a doctor or other health professional that she has or had non-melanoma skin cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3Q?] What year was she first told by a doctor or other health professional that she has or had ovarian cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3R?] What year was she first told by a doctor or otherhealth professional that she has or had pancreatic cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3S?] What year was she first told by a doctor or other health professional that shehas or had stomach cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3T?] What year was she first told by a doctor or other health professional that she has or had thyroid cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+__|__| Age
+
+[MOMCANC3U?] What year was she first told by a doctor or other health professional that she has or had uterine cancer? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here. 
+|__|__| Age
+
+[MOMCANC3V?] What year was she first told by a doctor or other health professional that she has or had {$MOMCANC3V_TB}? 
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here.
+|__|__| Age
+
+[MOMCANC3W?] What year was she first told by a doctor or other health professional that she has or had cancer?
+|__|__|__|__| Year
+Or, if it is easier to remember her age when she was told this, enter that here.
+|__|__| Age
+
+[DAD?] Is your biological father still living? 
+(1) Yes -> DADAGE 
+(0) No -> DADDEATH
+(77) Don’t know -> DADCANC
 < -> DADCANC >
 
-[DADAGE] How old is he today?
-|__|__|__| Father’s age -> GO TO DADCANC
-Don’t know -> GO TO DADCANC
-< -> DADCANC >
-
-[DADDEATH] How old was he when he died?
+[DADAGE?] How old is he today?
 |__|__|__| Father’s age
-Don’t know
+(77) Don’t know -> DADCANC
 < -> DADCANC >
 
-(1) Yes
-(0) No-> GO TO SIB
-() Don’t know -> GO TO SIB
+[DADDEATH?] How old was he when he died?
+|__|__|__| Father’s age
+(77) Don’t know
+< -> DADCANC >
+
+[DADCANC?] Has a doctor or other health professional ever told him that he has or had any type of cancer?
+(1) Yes -> DADCANC2
+(0) No -> SIB
+(77) Don’t know -> SIB
 < -> SIB >
 
-[DADCANC2] Which type(s) of cancer? Select all that apply.
+[DADCANC2?] Which type(s) of cancer? Select all that apply.
 [1] Anal
 [2] Bladder
 [3] Brain
@@ -1107,9 +1065,11 @@ Don’t know
 [] I know he had cancer, but don’t know what type
 < -> SIB >
 
-[DADCANC3A]
+[DADCANC3A] What year was he firsttold by a doctor or other health professional that he has or had anal cancer? 
+|__|__|__|__| Year
 
-Or, if it is easier to remember his age when he was told this, enter that here. |__|__| Age
+Or, if it is easier to remember his age when he was told this, enter that here. 
+|__|__| Age
 
 
 < -> DADCANC3B >
