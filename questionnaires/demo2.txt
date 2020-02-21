@@ -675,6 +675,14 @@ The next questions ask about certain surgical procedures.
 [4] Liposuction -> LIPOSUCT
 [5] Bariatric surgery (lap band, gastric bypass) -> BARSUR
 [6] Breast surgery -> BREASTSUR
+[7] UTERUS REMOVED (A HYSTERECTOMY) -> HYSTER
+[8] TUBES TIED (TUBAL LIGATION) -> TUBLIG
+[9] REMOVAL OF ONE OR BOTH OVARIES (OOPHORECTOMY) -> OVARYREM
+[10] REMOVAL OF ONE OR BOTH FALLOPIAN TUBES (SALPINGECTOMY) -> FTREM
+[11] VASECTOMY -> VASEC
+[12] REMOVAL OF ONE OR BOTH TESTICLES (ORCHIECTOMY OR ORCHIDECTOMY) -> TESTREM
+[13] PROSTATE REMOVED (PROSTATECTOMY) -> PROSREM
+[14] PENIS REMOVED (PENECTOMY) -> PENREM
 [99] I have not had any of these surgeries -> BLDTRANS
 < -> BLDTRANS >
 
@@ -683,7 +691,6 @@ The next questions ask about certain surgical procedures.
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-
 
 [GALLREM?] How old were you when you had your gallbladder removed (cholecystectomy)?
 |__|__| Age at diagnosis
@@ -728,91 +735,77 @@ Or, if it is easier to remember the year, enter that here:
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> HYSTER >
 
 [HYSTER?] How old were you when you had your uterus removed (hysterectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> TUBLIG >
-
 
 [TUBLIG?] How old were you when you had your tubes tied (tubal ligation)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> OVARYREM >
-
 
 [OVARYREM?] Which of these best describes the type of ovary removal surgery that you had?
 (1) I had surgery to remove one ovary
 (2) I had surgery to remove both ovaries
-() None of the above -> GO TO FTREM
-< -> FTREM >
+(0) None of the above
+< -> OVARYREM2 >
 
 [OVARYREM2?] How old were you when you had one or both ovaries removed (oophorectomy)? If more than one procedure, at what age did you last have this procedure?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> FTREM >
-
-
 
 [FTREM?] Which of these best describes the type of fallopian tube removal surgery that you had?
 (1) I had surgery to remove one fallopian tube
 (2) I had surgery to remove both fallopian tubes
-() None of the above -> GO TO VASEC
-< -> VASEC >
+(0) None of the above
+< -> FTREM2 >
 
 [FTREM2?] How old were you when you had one or both fallopian tubes removed (salpingectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> VASEC >
 
 [VASEC?] How old were you when you had a vasectomy?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> TESTREM >
 
 [TESTREM?] Which of these best describes the type of testicle removal surgery that you had?
 (1) I had surgery to remove one testicle
 (2) I had surgery to remove both testicles
-() None of the above -> GO TO PROSREM
-< -> PROSREM >
+(0) None of the above
+< -> TESTREM2 >
 
 [TESTREM2?] How old were you when you had one or both testicles removed (orchiectomy or orchidectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> PROSREM >
 
 [PROSREM?] Which of these best describes the type of prostate removal surgery that you had? 
 (1) I had surgery to remove part of my prostate
 (2) I had surgery to remove my whole prostate
-() None of the above -> GO TO PENREM
-< -> PENREM >
+(0) None of the above
 
 [PROSREM2?] How old were you when you had part or all of your prostate removed (prostatectomy)? If more than one procedure, at what age did you last have this procedure? 
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> PENREM >
 
 [PENREM?] How old were you when you had your penis removed (penectomy)?
 |__|__| Age at diagnosis
 
 Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
-< -> BLDTRANS >
 
 [BLDTRANS?] Blood Transfusion
 Have you ever had a blood transfusion? 
