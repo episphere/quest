@@ -675,14 +675,14 @@ The next questions ask about certain surgical procedures.
 [4] Liposuction -> LIPOSUCT
 [5] Bariatric surgery (lap band, gastric bypass) -> BARSUR
 [6] Breast surgery -> BREASTSUR
-[7] UTERUS REMOVED (A HYSTERECTOMY) -> HYSTER
-[8] TUBES TIED (TUBAL LIGATION) -> TUBLIG
-[9] REMOVAL OF ONE OR BOTH OVARIES (OOPHORECTOMY) -> OVARYREM
-[10] REMOVAL OF ONE OR BOTH FALLOPIAN TUBES (SALPINGECTOMY) -> FTREM
-[11] VASECTOMY -> VASEC
-[12] REMOVAL OF ONE OR BOTH TESTICLES (ORCHIECTOMY OR ORCHIDECTOMY) -> TESTREM
-[13] PROSTATE REMOVED (PROSTATECTOMY) -> PROSREM
-[14] PENIS REMOVED (PENECTOMY) -> PENREM
+[7] Uterus removed (a hysterectomy) -> HYSTER
+[8] Tubes tied (tubal ligation) -> TUBLIG
+[9] Removal of one or both ovaries (oophorectomy) -> OVARYREM
+[10] Removal of one or both fallopian tubes (salpingectomy) -> FTREM
+[11] Vasectomy -> VASEC
+[12] Removal of one or both testicles (orchiectomy or orchidectomy) -> TESTREM
+[13] Prostate removed (prostatectomy) -> PROSREM
+[14] Penis removed (penectomy) -> PENREM
 [99] I have not had any of these surgeries -> BLDTRANS
 < -> BLDTRANS >
 
