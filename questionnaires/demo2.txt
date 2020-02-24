@@ -328,8 +328,9 @@ Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year of diagnosis
 
 
-Digestive system problems
-[MHGROUP3?] Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
+[MHGROUP3?] Digestive system problems
+
+Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply. 
 [1] Esophageal Acid Reflux (GERD) -> GERD
 [2] Barrett’s Esophagus -> BARESO
 [3] Irritable Bowel Syndrome -> IBS
@@ -810,7 +811,7 @@ Or, if it is easier to remember the year, enter that here:
 [BLDTRANS?] Blood Transfusion
 Have you ever had a blood transfusion? 
 (1) Yes -> BLDTRANS2
-(0) No -> SECTION3
+(0) No < -> SECTION3 >
 < -> SECTION3 >
 
 [BLDTRANS2?] How many blood transfusions have you had in total?  
@@ -831,7 +832,8 @@ Or, if it is easier to remember the year, enter that here:
 |__|__|__|__| Year at last transfusion
 < -> SECTION3 >
 
-[SECTION3] Family History 
+[SECTION3] Family History
+< -> ADOPTFOST>
 
 [ADOPTFOST?] Were you adopted or a foster child?
 (0) No 
@@ -846,9 +848,11 @@ Or, if it is easier to remember the year, enter that here:
 < -> MOM >
 
 [MOM] The next questions ask about your family and if people in your family have had cancer.
+< -> MOM1>
 
-Parents
-[MOM1?] Is your biological mother still living?
+[MOM1?] Parents
+
+Is your biological mother still living?
 (1) Yes -> MOMAGE
 (0) No -> MOMDEATH
 (77) Don’t know -> MOMCANC
@@ -1036,7 +1040,7 @@ Or, if it is easier to remember her age when she was told this, enter that here.
 |__|__| Age
 
 [DAD?] Is your biological father still living? 
-(1) Yes -> DADAGE 
+(1) Yes -> DADAGE
 (0) No -> DADDEATH
 (77) Don’t know -> DADCANC
 < -> DADCANC >
@@ -1079,7 +1083,7 @@ Or, if it is easier to remember her age when she was told this, enter that here.
 [19] Testicular -> DADCANC3S
 [20] Thyroid -> DADCANC3T
 [21] Another type of cancer: Please describe [text box: DADCANC3U_TB] -> DADCANC3U
-[22] I know he had cancer, but don’t know what type -> DADCANC3V]
+[22] I know he had cancer, but don’t know what type -> DADCANC3V
 < -> SIB >
 
 [DADCANC3A?] What year was he first told by a doctor or other health professional that he has or had anal cancer? 
@@ -1216,6 +1220,7 @@ Or, if it is easier to remember his age when he was told this, enter that here.
 
 [SIB] Siblings
 The next questions are about your brothers and sisters, whether or not they are currently living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Do not include adopted or step siblings. 
+< -> SIB1>
 
 [SIB1] How many siblings do you have, including full and half-siblings?
 |__|__|NUMSIB| #Siblings  
