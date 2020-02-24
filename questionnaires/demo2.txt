@@ -1206,13 +1206,13 @@ Or, if it is easier to remember his age when he was told this, enter that here.
 Or, if it is easier to remember his age when he was told this, enter that here. 
 |__|__| Age
 
-[DADCANC3U] What year was he first told by a doctor or other health professional that he has or had {$DADCANC3U_TB}? 
+[DADCANC3U?] What year was he first told by a doctor or other health professional that he has or had {$DADCANC3U_TB}? 
  |__|__|__|__| Year
 
 Or, if it is easier to remember his age when he was told this, enter that here. 
 |__|__| Age
 
-[DADCANC3V] What year was he first told by a doctor or other health professional that he has or had cancer? 
+[DADCANC3V?] What year was he first told by a doctor or other health professional that he has or had cancer? 
 |__|__|__|__| Year
 
 Or, if it is easier to remember his age when he was told this, enter that here. 
