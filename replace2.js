@@ -219,7 +219,7 @@ transform.render = contents => {
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    z = z.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|))(?:(.*?)(?:<br>))/, fText);
+    z = z.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/, fText);
     function fText(w1, x1, y1, z1) {
       let elId = "";
       if (x1 == undefined && y1 == undefined) {
