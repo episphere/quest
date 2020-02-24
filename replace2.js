@@ -114,10 +114,6 @@ transform.render = contents => {
     }
 
     // replace __/__/__ with a date input
-    // z = z.replace(
-    //   /\_\_\/\_\_\/\_\_((\w+)\|)?/g,
-    // "<input type='date' id='" + "$2" + "'></input>"
-    // );
     z = z.replace(/\_\_\/\_\_\/\_\_((\w+)\|)?/g, fDate);
     function fDate(x1, y1, z1) {
       let elId = "";
@@ -130,12 +126,7 @@ transform.render = contents => {
     }
 
     // replace (###)-###-#### with phone input
-    // z = z.replace(
-    //   /\(###\)-###-####((\w+)\|)?/g,
-    // "<input type='tel' name='phone' id='" +
-    //   "$2" +
-    //   "' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required></input>"
-    // );
+
     z = z.replace(/\(###\)-###-####((\w+)\|)?/g, fPhone);
     function fPhone(x1, y1, z1) {
       let elId = "";
@@ -228,7 +219,6 @@ transform.render = contents => {
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    debugger;
     z = z.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|))(?:(.*?)(?:<br>))/, fText);
     function fText(w1, x1, y1, z1) {
       let elId = "";
