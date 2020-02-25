@@ -321,7 +321,7 @@ function getSelected(questionElement) {
 
   var rv1 = [
     ...questionElement.querySelectorAll(
-      "input[type='radio'],input[type='checkbox'],input[type='hidden']"
+      "input[type='radio'],input[type='checkbox']"
     )
   ];
 
@@ -331,8 +331,11 @@ function getSelected(questionElement) {
     )
   ];
 
+  var rv3 = [...questionElement.querySelectorAll("input[type='hidden']")];
+
   rv1 = rv1.filter(x => x.checked);
   rv2 = rv2.filter(x => x.value.length > 0);
+  rv3 = rv3.filter(x => x.checked);
 
   // rv = rv.filter(x =>
   //   x.type == "radio" || x.type == "checkbox" || x.type == "hidden"
@@ -341,7 +344,8 @@ function getSelected(questionElement) {
   // );
 
   // we may need to guarentee that the hidden comes last.
-  return rv1.concat(rv2);
+  rv1 = rv1.concat(rv2);
+  return rv1.concat(rv3);
 }
 
 // create a blank object for collecting
