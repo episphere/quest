@@ -270,6 +270,15 @@ function nextPage(norp) {
     }
   }
 
+  // check all responses for next question
+  [...nextElement.children]
+    .filter(x => x.hasAttribute("displayif"))
+    .map(elm => {
+      f = parse(elm.getAttribute("displayif"));
+
+      elm.style.display = f ? "block" : "none";
+    });
+
   // hide the current question and move to the next...
   norp.parentElement.classList.remove("active");
   nextElement.classList.add("active");
@@ -492,9 +501,16 @@ function parse(txt) {
       // from the currently undefined last module...
       if (typeof arg1 === "string") {
         var element = document.getElementById(arg1);
-        // if element is null, look it up in the
-        // previous module...
-        arg1 = document.getElementById(arg1).value;
+        if (element != null) {
+          arg1 = document.getElementById(arg1).value;
+        } else {
+          //look up by name
+          temp1 = [...document.getElementsByName(arg1)].filter(
+            x => x.checked
+          )[0];
+          arg1 = temp1 ? temp1.value : arg1;
+          // ***** if it's neither... look in the previous module *****
+        }
       }
       arg2 = stack[callEnd - 1];
       var tmpValue = knownFunctions[fun](arg1, arg2);
