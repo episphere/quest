@@ -408,9 +408,7 @@ function unrollLoops(txt) {
     let loopText = "";
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
       var currentText = x.txt;
-      // debugger;
       // replace all instances of the question ids with id_#
-      // debugger;
       ids.map(
         id =>
           (currentText = currentText.replace(
@@ -418,24 +416,21 @@ function unrollLoops(txt) {
             id.label.replace(id.id, id.id + "_" + loopIndx)
           ))
       );
+
       // replace all -> Id with -> Id_#
-      // ********************************************************************************************************************************
-      // ********************************************************************************************************************************
-      // NEED FIX REGEX
       ids.map(
         id =>
           (currentText = currentText.replace(
-            new RegExp("->\\s*" + id.id, "g"),
+            new RegExp("->\\s*" + id.id + "\\b", "g"),
             "-> " + id.id + "_" + loopIndx
           ))
       );
-      // ********************************************************************************************************************************
-      // ********************************************************************************************************************************
+
       // replace all |__(|__)|ID with |__(|__)|ID_#
       ids.map(
         id =>
           (currentText = currentText.replace(
-            /(\|__(\|__)*\|)(\w+)\|/g,
+            /(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g,
             "$1$3_" + loopIndx + "|"
           ))
       );
