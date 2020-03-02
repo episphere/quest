@@ -395,7 +395,7 @@ function unrollLoops(txt) {
     return { cnt: x[1], txt: x[2], orig: x[0] };
   });
 
-  let idRegex = /\[([A-Z_][A-Z0-9_#]*)(,.*?)?[?!]?\]/gms;
+  let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(,.*?)?\]/gms;
   // we have an array of objects holding the text..
   // get all the ids...
   let cleanedText = res.map(function(x) {
@@ -408,8 +408,9 @@ function unrollLoops(txt) {
     let loopText = "";
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
       var currentText = x.txt;
-
+      // debugger;
       // replace all instances of the question ids with id_#
+      // debugger;
       ids.map(
         id =>
           (currentText = currentText.replace(
@@ -418,18 +419,23 @@ function unrollLoops(txt) {
           ))
       );
       // replace all -> Id with -> Id_#
+      // ********************************************************************************************************************************
+      // ********************************************************************************************************************************
+      // NEED FIX REGEX
       ids.map(
         id =>
           (currentText = currentText.replace(
-            new RegExp("->\\s*" + id.id + "\\W"),
-            "-> " + id.id + "_" + loopIndx + " "
+            new RegExp("->\\s*" + id.id, "g"),
+            "-> " + id.id + "_" + loopIndx
           ))
       );
+      // ********************************************************************************************************************************
+      // ********************************************************************************************************************************
       // replace all |__(|__)|ID with |__(|__)|ID_#
       ids.map(
         id =>
           (currentText = currentText.replace(
-            /(\|__(\|__)*\|)(\w+)\|/,
+            /(\|__(\|__)*\|)(\w+)\|/g,
             "$1$3_" + loopIndx + "|"
           ))
       );
