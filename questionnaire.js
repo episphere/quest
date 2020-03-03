@@ -434,9 +434,28 @@ function unrollLoops(txt) {
             "$1$3_" + loopIndx + "|"
           ))
       );
+
       ids.map(
         id => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
       );
+
+      if (currentText.search(/->\s*_continue/g) >= 0) {
+        if (loopIndx < x.cnt) {
+          debugger;
+          currentText = currentText.replace(
+            /->\s*_continue\s*/g,
+            "->" + ids[0].id + "_" + (loopIndx + 1)
+          );
+        } else {
+          currentText = currentText.replace(
+            /->\s*_continue\s*/g,
+            "->" +
+              document.getElementById(ids.slice(-1)[0].id + "_" + loopIndx)
+                .nextElementSibling.id
+          );
+        }
+      }
+
       loopText = loopText + "\n" + currentText;
     }
     return loopText;
