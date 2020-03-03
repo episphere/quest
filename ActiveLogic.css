@@ -1,51 +1,53 @@
 #questionnaire {
-    font-family: Ariel, sans-serif;
-    height: 70%;
-    border: solid 2px black;
-    padding: 20px
+  font-family: Ariel, sans-serif;
+  height: 70%;
+  border: solid 2px black;
+  padding: 20px;
 }
 
 #welcome {
-    margin: 10px 0px;
+  margin: 10px 0px;
 }
 
 #thankYou,
 .question {
-    margin: 10px 0px;
-    display: none;
+  margin: 10px 0px;
+  display: none;
 }
 
 #thankYou.active,
 .question.active {
-    display: block;
+  display: block;
 }
 
 .previous {
-    float: left;
+  float: left;
 }
 
 .next {
-    float: right;
+  float: right;
 }
 
+.submit {
+  float: right;
+}
 
 /* this is an answer with a text area...*/
 
 .freeresponse {
-    display: flex;
-    width: 80%;
+  display: flex;
+  width: 80%;
 }
-
 
 /* select labels inside freesponses */
 
 .freeresponse label {
-    flex-grow: 1;
-    text-align: left;
-    width: auto;
+  flex-grow: 1;
+  text-align: left;
+  width: auto;
 }
 
 .freeresponse textarea,
 input[type="text"] {
-    flex-grow: 1;
+  flex-grow: 1;
 }

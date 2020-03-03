@@ -323,7 +323,7 @@ transform.render = contents => {
 
     // handle skips
     z = z.replace(
-      /<input (.*?)><\/input><label(.*?)>(.*?)\s*->\s*(.*?)<\/label>/g,
+      /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
 
