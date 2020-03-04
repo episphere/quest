@@ -382,7 +382,7 @@ function unrollLoops(txt) {
   // we have an array of objects holding the text..
   // get all the ids...
   let cleanedText = res.map(function(x) {
-    x.txt += "\n[_CONTINUE" + x.indx + ",displayif=setFalse(-1,#loop)]";
+    x.txt += "[_CONTINUE" + x.indx + ",displayif=setFalse(-1,#loop)]";
     x.txt = x.txt.replace(/->\s*_CONTINUE\b/g, "-> _CONTINUE" + x.indx);
     let ids = [...x.txt.matchAll(idRegex)].map(y => ({
       label: y[0],

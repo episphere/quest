@@ -11,7 +11,7 @@ transform.render = contents => {
   // \n\n so we need to look at start of string(^)
   //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
   contents = contents.replace(/(?<=\n{2,})(\w+)\./gms, "[$1]");
-  contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
+  //contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
   contents = contents.replace(/\/\*.*\*\//gms, "");
   contents = contents.replace(/\/\/.*/gm, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
@@ -27,10 +27,7 @@ transform.render = contents => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=\\[[A-Z])",
-    "msg"
-  );
+  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=\\[[_A-Z])", "msg");
 
   contents = contents.replace(regEx, function(x, y, d, z) {
     //  console.log("x: ", x, "\nd: ", d, "\ny: ", y, "\nz: ", z);
@@ -141,10 +138,7 @@ transform.render = contents => {
     }
 
     // replace (###)-###-#### with SSN input
-    z = z.replace(
-      /\|###-##-####\|/g,
-      `<input type='text' id='${y}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>`
-    );
+    z = z.replace(/\|###-##-####\|/g, `<input type='text' id='${y}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>`);
 
     // replace |state| with state dropdown
     z = z.replace(
@@ -215,15 +209,7 @@ transform.render = contents => {
         elId = z1;
       }
       return (
-        "<label id='input" +
-        elId +
-        "' for='" +
-        elId +
-        "'><input id='" +
-        elId +
-        "' type='number' name='" +
-        y +
-        "' ></input></label>"
+        "<label id='input" + elId + "' for='" + elId + "'><input id='" + elId + "' type='number' name='" + y + "' ></input></label>"
       );
     }
 
@@ -232,10 +218,7 @@ transform.render = contents => {
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    z = z.replace(
-      /(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g,
-      fText
-    );
+    z = z.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
     function fText(w1, x1, y1, z1) {
       let elId = "";
       if (x1 == undefined && y1 == undefined) {
@@ -244,17 +227,7 @@ transform.render = contents => {
         elId = x1 == undefined ? y1 : x1;
       }
       let lbl = z1 == undefined ? "" : z1;
-      return (
-        "\n<input type='text' id='" +
-        elId +
-        "' name='" +
-        y +
-        "'></input><label for='" +
-        elId +
-        "'>" +
-        lbl +
-        "</label>"
-      );
+      return "\n<input type='text' id='" + elId + "' name='" + y + "'></input><label for='" + elId + "'>" + lbl + "</label>";
     }
 
     // replace |___| with a textbox...
@@ -283,19 +256,8 @@ transform.render = contents => {
     }
 
     // replace [a-zXX] with a checkbox box...
-    z = z.replace(
-      /\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g,
-      fCheck
-    );
-    function fCheck(
-      containsGroup,
-      value,
-      containsName,
-      name,
-      containsDisIf,
-      condition,
-      label
-    ) {
+    z = z.replace(/\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
+    function fCheck(containsGroup, value, containsName, name, containsDisIf, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
         displayIf = "";
@@ -314,11 +276,7 @@ transform.render = contents => {
     // replace next question  < -> > with hidden...
     z = z.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" +
-        y +
-        "_default' name='" +
-        y +
-        "' skipTo=$1 checked>"
+      "<input type='hidden' id='" + y + "_default' name='" + y + "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -352,10 +310,7 @@ transform.render = contents => {
   );
 
   // remove the first previous button...
-  contents = contents.replace(
-    /<input type='button'.*?class='previous'.*?\n/,
-    ""
-  );
+  contents = contents.replace(/<input type='button'.*?class='previous'.*?\n/, "");
   // remove the last next button...
   contents = contents.replace(
     /<input type='button'.*class='next'.*?><\/input><\/form>\[END\]/,
@@ -366,10 +321,7 @@ transform.render = contents => {
   contents = contents.replace("[END]", "");
 
   // add the HTML/HEAD/BODY tags...
-  return (contents =
-    "<html><head></head><body>" +
-    contents +
-    '\n<script src="questionnaire.js"></script></body>');
+  return (contents = "<html><head></head><body>" + contents + '\n<script src="questionnaire.js"></script></body>');
 
   console.log("\n\n\n" + contents);
 };
