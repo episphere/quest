@@ -437,7 +437,7 @@ const knownFunctions = {
     return x || y;
   },
   equals: function(x, y) {
-    return x == y;
+    return Array.isArray(x) ? x.includes(y) : x == y;
   },
   lessThan: function(x, y) {
     return parseFloat(x) < parseFloat(y);
