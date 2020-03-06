@@ -27,7 +27,10 @@ transform.render = contents => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "gs");
+  let regEx = new RegExp(
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])",
+    "gs"
+  );
 
   contents = contents.replace(regEx, function(x, y, d, z) {
     //  console.log("x: ", x, "\nd: ", d, "\ny: ", y, "\nz: ", z);
@@ -138,7 +141,10 @@ transform.render = contents => {
     }
 
     // replace (###)-###-#### with SSN input
-    z = z.replace(/\|###-##-####\|/g, `<input type='text' id='${y}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>`);
+    z = z.replace(
+      /\|###-##-####\|/g,
+      `<input type='text' id='${y}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>`
+    );
 
     // replace |state| with state dropdown
     z = z.replace(
@@ -209,7 +215,15 @@ transform.render = contents => {
         elId = z1;
       }
       return (
-        "<label id='input" + elId + "' for='" + elId + "'><input id='" + elId + "' type='number' name='" + y + "' ></input></label>"
+        "<label id='input" +
+        elId +
+        "' for='" +
+        elId +
+        "'><input id='" +
+        elId +
+        "' type='number' name='" +
+        y +
+        "' ></input></label>"
       );
     }
 
@@ -218,7 +232,10 @@ transform.render = contents => {
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    z = z.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
+    z = z.replace(
+      /(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g,
+      fText
+    );
     function fText(w1, x1, y1, z1) {
       let elId = "";
       if (x1 == undefined && y1 == undefined) {
@@ -227,7 +244,17 @@ transform.render = contents => {
         elId = x1 == undefined ? y1 : x1;
       }
       let lbl = z1 == undefined ? "" : z1;
-      return "\n<input type='text' id='" + elId + "' name='" + y + "'></input><label for='" + elId + "'>" + lbl + "</label>";
+      return (
+        "\n<input type='text' id='" +
+        elId +
+        "' name='" +
+        y +
+        "'></input><label for='" +
+        elId +
+        "'>" +
+        lbl +
+        "</label>"
+      );
     }
 
     // replace |___| with a textbox...
@@ -252,12 +279,23 @@ transform.render = contents => {
         elVar = y1;
       }
 
-      return `<br><input type='radio' name='${elVar}_rb' value='${w1}' id='${elVar}_${w1}' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
+      return `<br><input type='radio' name='${elVar}_rb' value='${w1}' id='${elVar}_${w1}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
     }
 
     // replace [a-zXX] with a checkbox box...
-    z = z.replace(/\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
-    function fCheck(containsGroup, value, containsName, name, containsDisIf, condition, label) {
+    z = z.replace(
+      /\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g,
+      fCheck
+    );
+    function fCheck(
+      containsGroup,
+      value,
+      containsName,
+      name,
+      containsDisIf,
+      condition,
+      label
+    ) {
       let displayIf = "";
       if (condition == undefined) {
         displayIf = "";
@@ -270,13 +308,17 @@ transform.render = contents => {
       } else {
         elVar = name;
       }
-      return `<br><div class='response' ${displayIf}><input type='checkbox' name='${elVar}_cb' value='${value}' id='${elVar}_${value}' onclick='clearSelection(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<br><div class='response' ${displayIf}><input type='checkbox' name='${elVar}_cb' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace next question  < -> > with hidden...
     z = z.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" + y + "_default' name='" + y + "' skipTo=$1 checked>"
+      "<input type='hidden' id='" +
+        y +
+        "_default' name='" +
+        y +
+        "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -310,7 +352,10 @@ transform.render = contents => {
   );
 
   // remove the first previous button...
-  contents = contents.replace(/<input type='button'.*?class='previous'.*?\n/, "");
+  contents = contents.replace(
+    /<input type='button'.*?class='previous'.*?\n/,
+    ""
+  );
   // remove the last next button...
   contents = contents.replace(
     /<input type='button'.*class='next'.*?><\/input><\/form>\[END\]/,
@@ -321,7 +366,10 @@ transform.render = contents => {
   contents = contents.replace("[END]", "");
 
   // add the HTML/HEAD/BODY tags...
-  return (contents = "<html><head></head><body>" + contents + '\n<script src="questionnaire.js"></script></body>');
+  return (contents =
+    "<html><head></head><body>" +
+    contents +
+    '\n<script src="questionnaire.js"></script></body>');
 
   console.log("\n\n\n" + contents);
 };

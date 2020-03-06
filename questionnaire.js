@@ -128,9 +128,27 @@ class TreeNode {
   }
 }
 
+function rbAndCbClick(inputElement) {
+  clearSelection(inputElement);
+  debugger;
+  if (inputElement.type == "checkbox") {
+    inputElement.parentElement.parentElement.value = [
+      ...inputElement.parentElement.parentElement.querySelectorAll(
+        "input[type='checkbox']"
+      )
+    ]
+      .filter(x => x.checked)
+      .map(x => x.value);
+  } else {
+    inputElement.parentElement.value = [...inputElement.value];
+  }
+}
+
 function clearSelection(inputElement) {
   var state = inputElement.checked;
-  var cb = inputElement.form.querySelectorAll("input[type='checkbox'], input[type='radio']");
+  var cb = inputElement.form.querySelectorAll(
+    "input[type='checkbox'], input[type='radio']"
+  );
   if (inputElement.value == 99) {
     for (var x of cb) {
       if (x != inputElement) {
@@ -184,7 +202,6 @@ function nextClick(norp) {
   if (norp.hasAttribute("data-toggle")) {
     norp.removeAttribute("data-toggle");
   }
-  //   debugger;
   if (norp.parentElement.lastChild.id == "softModalContainer") {
     norp.parentElement.removeChild(norp.parentElement.lastChild);
   }
@@ -203,7 +220,10 @@ function nextClick(norp) {
       "softModalFooter"
     ).innerHTML = `<button type="button" class="btn btn-light" data-dismiss="modal" onclick="nextPage('${norp.parentElement.id}')">Continue Without Answering</button>
      <button type="button" class="btn btn-light" data-dismiss="modal">Answer the Question</button>`;
-  } else if (norp.parentElement.getAttribute("hardedit") == "true" && getSelected(norp.parentElement) == 0) {
+  } else if (
+    norp.parentElement.getAttribute("hardedit") == "true" &&
+    getSelected(norp.parentElement) == 0
+  ) {
     norp.setAttribute("data-toggle", "modal");
     norp.setAttribute("data-target", "#hardModal");
   } else {
@@ -244,7 +264,9 @@ function nextPage(norp) {
     }
   }
   nextElement = nextQuestion.value;
-  [...nextElement.querySelectorAll("span[forid]")].map(x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value));
+  [...nextElement.querySelectorAll("span[forid]")].map(
+    x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
+  );
 
   // what if we are in a loop and there is a "displayif"...
   if (nextElement.hasAttribute("displayif")) {
@@ -321,7 +343,11 @@ function getSelected(questionElement) {
   //   )
   // ];
 
-  var rv1 = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox']")];
+  var rv1 = [
+    ...questionElement.querySelectorAll(
+      "input[type='radio'],input[type='checkbox']"
+    )
+  ];
 
   var rv2 = [
     ...questionElement.querySelectorAll(
@@ -361,11 +387,17 @@ function getResults(element) {
 
   let allResponses = [...element.querySelectorAll(".response")];
   // get all the checkboxes
-  cb = allResponses.filter(x => x.type == "checkbox").map(x => (tmpRes[x.value] = x.checked));
+  cb = allResponses
+    .filter(x => x.type == "checkbox")
+    .map(x => (tmpRes[x.value] = x.checked));
 
   // get all the text and radio elements...
   rd = allResponses
-    .filter(x => (x.type == "radio" && x.checked) || ["text", "date", "email", "number", "tel"].includes(x.type))
+    .filter(
+      x =>
+        (x.type == "radio" && x.checked) ||
+        ["text", "date", "email", "number", "tel"].includes(x.type)
+    )
     .map(x => (tmpRes[x.name] = x.value));
 }
 
@@ -390,21 +422,40 @@ function unrollLoops(txt) {
       indx: x.indx
     }));
 
-    debugger;
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
       var currentText = x.txt;
       // replace all instances of the question ids with id_#
-      ids.map(id => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
+      ids.map(
+        id =>
+          (currentText = currentText.replace(
+            id.label,
+            id.label.replace(id.id, id.id + "_" + loopIndx)
+          ))
+      );
 
       // replace all -> Id with -> Id_#
-      ids.map(id => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx)));
+      ids.map(
+        id =>
+          (currentText = currentText.replace(
+            new RegExp("->\\s*" + id.id + "\\b", "g"),
+            "-> " + id.id + "_" + loopIndx
+          ))
+      );
 
       // replace all |__(|__)|ID with |__(|__)|ID_#
-      ids.map(id => (currentText = currentText.replace(/(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g, "$1$3_" + loopIndx + "|")));
+      ids.map(
+        id =>
+          (currentText = currentText.replace(
+            /(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g,
+            "$1$3_" + loopIndx + "|"
+          ))
+      );
 
-      ids.map(id => (currentText = currentText.replace(/#loop/g, "" + loopIndx)));
+      ids.map(
+        id => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
+      );
 
       // if (currentText.search(/->\s*_continue/g) >= 0) {
       //   debugger;
@@ -472,7 +523,11 @@ function parse(txt) {
 
   while (stack.indexOf(")") > 0) {
     var callEnd = stack.indexOf(")");
-    if (stack[callEnd - 4] == "(" && stack[callEnd - 2] == "," && stack[callEnd - 5] in knownFunctions) {
+    if (
+      stack[callEnd - 4] == "(" &&
+      stack[callEnd - 2] == "," &&
+      stack[callEnd - 5] in knownFunctions
+    ) {
       // it might hurt performance, but for debugging
       // expliciting setting the variables are helpful...
       fun = stack[callEnd - 5];
@@ -486,7 +541,9 @@ function parse(txt) {
           arg1 = document.getElementById(arg1).value;
         } else {
           //look up by name
-          temp1 = [...document.getElementsByName(arg1)].filter(x => x.checked)[0];
+          temp1 = [...document.getElementsByName(arg1)].filter(
+            x => x.checked
+          )[0];
           arg1 = temp1 ? temp1.value : arg1;
           // ***** if it's neither... look in the previous module *****
         }
