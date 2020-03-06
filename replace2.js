@@ -27,7 +27,7 @@ transform.render = contents => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=\\[[_A-Z])", "msg");
+  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "gs");
 
   contents = contents.replace(regEx, function(x, y, d, z) {
     //  console.log("x: ", x, "\nd: ", d, "\ny: ", y, "\nz: ", z);
