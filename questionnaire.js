@@ -130,7 +130,6 @@ class TreeNode {
 
 function rbAndCbClick(inputElement) {
   clearSelection(inputElement);
-  debugger;
   if (inputElement.type == "checkbox") {
     inputElement.parentElement.parentElement.value = [
       ...inputElement.parentElement.parentElement.querySelectorAll(
