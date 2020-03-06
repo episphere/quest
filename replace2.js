@@ -245,7 +245,7 @@ transform.render = contents => {
       }
       let lbl = z1 == undefined ? "" : z1;
       return (
-        "\n<input type='text' id='" +
+        "\n<input oninput='textBoxInput(this)' type='text' id='" +
         elId +
         "' name='" +
         y +

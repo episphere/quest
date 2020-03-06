@@ -128,6 +128,20 @@ class TreeNode {
   }
 }
 
+function textBoxInput(inputElement) {
+  if (inputElement.previousElementSibling.firstElementChild != null) {
+    if (
+      inputElement.previousElementSibling.firstElementChild.type == "checkbox"
+    ) {
+      inputElement.previousElementSibling.firstElementChild.checked =
+        inputElement.value.length > 0;
+    }
+  } else {
+    inputElement.previousElementSibling.previousElementSibling.checked =
+      inputElement.value.length > 0;
+  }
+}
+
 function rbAndCbClick(inputElement) {
   clearSelection(inputElement);
   if (inputElement.type == "checkbox") {
