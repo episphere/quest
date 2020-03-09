@@ -279,7 +279,7 @@ transform.render = contents => {
         elVar = y1;
       }
 
-      return `<br><input type='radio' name='${elVar}_rb' value='${w1}' id='${elVar}_${w1}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
+      return `<br><input type='radio' name='${y}_rb' value='${w1}' id='${elVar}_${w1}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
     }
 
     // replace [a-zXX] with a checkbox box...

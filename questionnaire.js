@@ -135,10 +135,12 @@ function textBoxInput(inputElement) {
     ) {
       inputElement.previousElementSibling.firstElementChild.checked =
         inputElement.value.length > 0;
+      rbAndCbClick(inputElement.previousElementSibling.firstElementChild);
     }
   } else {
     inputElement.previousElementSibling.previousElementSibling.checked =
       inputElement.value.length > 0;
+    rbAndCbClick(inputElement.previousElementSibling.previousElementSibling);
   }
 }
 
