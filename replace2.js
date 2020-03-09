@@ -32,17 +32,17 @@ transform.render = contents => {
     "gs"
   );
 
-  contents = contents.replace(regEx, function(x, y, d, z) {
-    //  console.log("x: ", x, "\nd: ", d, "\ny: ", y, "\nz: ", z);
+  contents = contents.replace(regEx, function(page, questID, d, questText) {
+    //  console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
-    // z = z.replace(/\/\*[\s\S]+\*\//g, "");
-    // z = z.replace(/\/\/.*\n/g, "");
+    // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
+    // questText = questText.replace(/\/\/.*\n/g, "");
 
-    z = z.replace(/\n/g, "<br>");
+    questText = questText.replace(/\n/g, "<br>");
 
-    z = z.replace(/\[_#\]/g, "");
+    questText = questText.replace(/\[_#\]/g, "");
 
-    y = y.replace(/\[DISPLAY IF .*\]/g, "");
+    questID = questID.replace(/\[DISPLAY IF .*\]/g, "");
 
     // handle displayif on the question...
     // if d is undefined set it to blank.
@@ -53,7 +53,7 @@ transform.render = contents => {
     // if so, remove the comma and go.  if not, set d to blank...
     d = displayifMatch ? displayifMatch[1] : "";
     // ---------------
-    // z = z.replace(
+    // questText = questText.replace(
     //   /\`\`\`(.*)\`\`\`/gms,
     //   "<script type='text/javascript'>$1</script>"
     // );
@@ -62,53 +62,56 @@ transform.render = contents => {
     // not sure why rv was defined here! is was overwritten later in the function...
     // let rv =
     //   "<form class='question' style='font-weight: bold' id='" +
-    //   y +
+    //   questID +
     //   "' " +
     //   d +
     //   ">" +
-    //   z +
+    //   questText +
     //   "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
     //   "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
     //   "<br>" +
     //   "<br>" +
     //   "</form>";
 
-    let hardBool = y.endsWith("!");
-    let softBool = y.endsWith("?");
+    let hardBool = questID.endsWith("!");
+    let softBool = questID.endsWith("?");
     if (hardBool || softBool) {
-      y = y.slice(0, -1);
+      questID = questID.slice(0, -1);
     }
 
     // replace user profile variables...
-    z = z.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
+    questText = questText.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
 
     // replace {$id} with span tag
-    z = z.replace(/\{\$(\w+)\}/g, `<span forId='$1'>${"$1"}</span>`);
+    questText = questText.replace(
+      /\{\$(\w+)\}/g,
+      `<span forId='$1'>${"$1"}</span>`
+    );
 
     // replace #YN with Yes No input
-    z = z.replace(
+    questText = questText.replace(
       /#YN/g,
       "<br><input type='radio' name='" +
-        y +
+        questID +
         "' id='" +
-        y +
+        questID +
         "_yes' value='1'></input><label style='font-weight: normal; padding-left:5px' for='" +
-        y +
+        questID +
         "_yes'>Yes</label><br><input type='radio' name='" +
-        y +
+        questID +
         "' id='" +
-        y +
+        questID +
         "_no' value='0'></input><label style='font-weight: normal; padding-left:5px' for='" +
-        y +
+        questID +
         "_no'>No</label>"
     );
 
     // replace |@| with an email input
-    z = z.replace(/\|@\|((\w+)\|)?/g, fEmail);
+    questText = questText.replace(/\|@\|((\w+)\|)?/g, fEmail);
     function fEmail(x1, y1, z1) {
       let elId = "";
       if (z1 == undefined) {
-        elId = y + "_email";
+        elId = questID + "_email";
       } else {
         elId = z1;
       }
@@ -116,11 +119,11 @@ transform.render = contents => {
     }
 
     // replace __/__/__ with a date input
-    z = z.replace(/\_\_\/\_\_\/\_\_((\w+)\|)?/g, fDate);
+    questText = questText.replace(/\_\_\/\_\_\/\_\_((\w+)\|)?/g, fDate);
     function fDate(x1, y1, z1) {
       let elId = "";
       if (z1 == undefined) {
-        elId = y + "_date";
+        elId = questID + "_date";
       } else {
         elId = z1;
       }
@@ -129,11 +132,11 @@ transform.render = contents => {
 
     // replace (###)-###-#### with phone input
 
-    z = z.replace(/\(###\)-###-####((\w+)\|)?/g, fPhone);
+    questText = questText.replace(/\(###\)-###-####((\w+)\|)?/g, fPhone);
     function fPhone(x1, y1, z1) {
       let elId = "";
       if (z1 == undefined) {
-        elId = y + "_phone";
+        elId = questID + "_phone";
       } else {
         elId = z1;
       }
@@ -141,13 +144,13 @@ transform.render = contents => {
     }
 
     // replace (###)-###-#### with SSN input
-    z = z.replace(
+    questText = questText.replace(
       /\|###-##-####\|/g,
-      `<input type='text' id='${y}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>`
+      `<input type='text' id='${questID}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}' required></input>`
     );
 
     // replace |state| with state dropdown
-    z = z.replace(
+    questText = questText.replace(
       /\|state\|((\w+)\|)?/g,
       `<select id='$2'>
       <option value='' disabled selected>Chose a state: </option>
@@ -206,11 +209,11 @@ transform.render = contents => {
     );
 
     // replace |__|__|  with a number box...
-    z = z.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
+    questText = questText.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
     function fNum(w1, x1, y1, z1) {
       let elId = "";
       if (z1 == undefined) {
-        elId = y + "_num";
+        elId = questID + "_num";
       } else {
         elId = z1;
       }
@@ -222,24 +225,24 @@ transform.render = contents => {
         "'><input id='" +
         elId +
         "' type='number' name='" +
-        y +
+        questID +
         "' ></input></label>"
       );
     }
 
     // -------------
-    // z = z.replace(/\_{4,}/g, "<input name='" + y + "'></input>");
+    // questText = questText.replace(/\_{4,}/g, "<input name='" + questID + "'></input>");
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    z = z.replace(
+    questText = questText.replace(
       /(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g,
       fText
     );
     function fText(w1, x1, y1, z1) {
       let elId = "";
       if (x1 == undefined && y1 == undefined) {
-        elId = y + "_text";
+        elId = questID + "_text";
       } else {
         elId = x1 == undefined ? y1 : x1;
       }
@@ -248,7 +251,7 @@ transform.render = contents => {
         "\n<input oninput='textBoxInput(this)' type='text' id='" +
         elId +
         "' name='" +
-        y +
+        questID +
         "'></input><label for='" +
         elId +
         "'>" +
@@ -258,11 +261,11 @@ transform.render = contents => {
     }
 
     // replace |___| with a textbox...
-    z = z.replace(/\|___\|((\w+)\|)?/g, fTextArea);
+    questText = questText.replace(/\|___\|((\w+)\|)?/g, fTextArea);
     function fTextArea(x1, y1, z1) {
       let elId = "";
       if (z1 == undefined) {
-        elId = y + "_ta";
+        elId = questID + "_ta";
       } else {
         elId = z1;
       }
@@ -270,11 +273,14 @@ transform.render = contents => {
     }
 
     // replace (XX) with a radio button...
-    z = z.replace(/(?<=\W)\((\d+)(\:(\w+))?\)([^<\n]*)|\(\)/g, fRadio);
+    questText = questText.replace(
+      /(?<=\W)\((\d+)(\:(\w+))?\)([^<\n]*)|\(\)/g,
+      fRadio
+    );
     function fRadio(v1, w1, x1, y1, z1) {
       let elVar = "";
       if (y1 == undefined) {
-        elVar = y;
+        elVar = questID;
       } else {
         elVar = y1;
       }
@@ -283,7 +289,7 @@ transform.render = contents => {
     }
 
     // replace [a-zXX] with a checkbox box...
-    z = z.replace(
+    questText = questText.replace(
       /\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g,
       fCheck
     );
@@ -304,7 +310,7 @@ transform.render = contents => {
       }
       let elVar = "";
       if (name == undefined) {
-        elVar = y;
+        elVar = questID;
       } else {
         elVar = name;
       }
@@ -312,24 +318,24 @@ transform.render = contents => {
     }
 
     // replace next question  < -> > with hidden...
-    z = z.replace(
+    questText = questText.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
       "<input type='hidden' id='" +
-        y +
+        questID +
         "_default' name='" +
-        y +
+        questID +
         "' skipTo=$1 checked>"
     );
 
     // handle skips
-    z = z.replace(
+    questText = questText.replace(
       /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
 
     rv =
       "<form class='question' style='font-weight: bold' id='" +
-      y +
+      questID +
       "' " +
       d +
       " hardEdit='" +
@@ -337,7 +343,7 @@ transform.render = contents => {
       "' softEdit='" +
       softBool +
       "'>" +
-      z +
+      questText +
       "<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n" +
       "<input type='button' onclick='nextClick(this)' class='next' value='Next'></input>" +
       "</form>";

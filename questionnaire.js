@@ -263,6 +263,8 @@ function nextPage(norp) {
     questionQueue.next();
   }
 
+  localforage.setItem(norp.parentElement.id, norp.parentElement.value);
+
   // check if we need to add questions to the question queue
   checkForSkips(norp.parentElement);
 
@@ -320,6 +322,8 @@ function prev(norp) {
   let prevElement = questionQueue.previous();
   norp.parentElement.classList.remove("active");
   prevElement.value.classList.add("active");
+
+  localforage.removeItem(norp.parentElement.id);
 
   return prevElement;
 }
