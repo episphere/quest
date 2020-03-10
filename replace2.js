@@ -218,15 +218,15 @@ transform.render = contents => {
         elId = z1;
       }
       return (
-        "<label id='input" +
-        elId +
-        "' for='" +
-        elId +
-        "'><input id='" +
+        "<input oninput='numberInput(this)' id='" +
         elId +
         "' type='number' name='" +
         questID +
-        "' ></input></label>"
+        "' ></input><label id='input" +
+        elId +
+        "' for='" +
+        elId +
+        "'></label>"
       );
     }
 

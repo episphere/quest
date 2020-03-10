@@ -144,6 +144,19 @@ function textBoxInput(inputElement) {
   }
 }
 
+function numberInput(inputElement) {
+  if (
+    [
+      ...inputElement.parentElement.querySelectorAll("input[type=number]")
+    ].filter(x => x != inputElement).length >= 1
+  ) {
+    [...inputElement.parentElement.querySelectorAll("input[type=number]")]
+      .filter(x => x != inputElement)
+      .map(x => (x.value = ""));
+  }
+  inputElement.parentElement.value = inputElement.value;
+}
+
 function rbAndCbClick(inputElement) {
   clearSelection(inputElement);
   if (inputElement.type == "checkbox") {
@@ -314,6 +327,11 @@ function nextPage(norp) {
   // hide the current question and move to the next...
   norp.parentElement.classList.remove("active");
   nextElement.classList.add("active");
+
+  localforage.setItem("_tree", {
+    prevNode: norp.parentElement.id,
+    currentNode: nextElement.id
+  });
   return nextElement;
 }
 
@@ -324,6 +342,10 @@ function prev(norp) {
   prevElement.value.classList.add("active");
 
   localforage.removeItem(norp.parentElement.id);
+  localforage.setItem("_tree", {
+    prevNode: questionQueue.prevNode.prev.value.id,
+    currentNode: questionQueue.prevNode.value.id
+  });
 
   return prevElement;
 }
