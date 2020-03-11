@@ -310,7 +310,7 @@ function nextPage(norp) {
       questionQueue.previous();
       let nextNorp = nextElement.querySelector("input[value='Next']");
       if (nextNorp) {
-        return nextClick(nextNorp);
+        return nextPage(nextNorp);
       }
     }
   }
