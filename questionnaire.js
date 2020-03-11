@@ -452,6 +452,7 @@ function unrollLoops(txt) {
   });
 
   let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(,.*?)?\]/gms;
+  let disIfRegex = /displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\)/g;
   // we have an array of objects holding the text..
   // get all the ids...
   let cleanedText = res.map(function(x) {
@@ -462,6 +463,12 @@ function unrollLoops(txt) {
       id: y[1],
       indx: x.indx
     }));
+    let disIfIDs = [...x.txt.matchAll(disIfRegex)].map(disIfID => ({
+      label: disIfID[0],
+      id: disIfID[1]
+    }));
+    disIfIDs = disIfIDs.map(x => x.id);
+    let newIds = ids.map(x => x.id);
 
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
@@ -473,6 +480,15 @@ function unrollLoops(txt) {
           (currentText = currentText.replace(
             id.label,
             id.label.replace(id.id, id.id + "_" + loopIndx)
+          ))
+      );
+
+      disIfIDs = disIfIDs.filter(x => newIds.includes(x));
+      disIfIDs.map(
+        id =>
+          (currentText = currentText.replace(
+            new RegExp(id + "\\b", "g"),
+            id + "_" + loopIndx
           ))
       );
 
