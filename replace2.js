@@ -208,6 +208,7 @@ transform.render = contents => {
     </select>`
     );
 
+    // replace |image|URL|height,width| with a html img tag...
     questText = questText.replace(
       /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
       "<img src=https://$1 height=$2 width=$3>"
