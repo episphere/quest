@@ -208,6 +208,11 @@ transform.render = contents => {
     </select>`
     );
 
+    questText = questText.replace(
+      /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
+      "<img src=https://$1 height=$2 width=$3>"
+    );
+
     // replace |__|__|  with a number box...
     questText = questText.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
     function fNum(w1, x1, y1, z1) {
