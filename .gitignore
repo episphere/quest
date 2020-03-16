@@ -1,0 +1,2 @@
+# VS code puts some file in the directory. ignore them
+.vscode/**
