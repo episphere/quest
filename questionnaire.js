@@ -556,6 +556,7 @@ const knownFunctions = {
     return x || y;
   },
   equals: function(x, y) {
+    debugger;
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
   lessThan: function(x, y) {
@@ -572,6 +573,14 @@ const knownFunctions = {
   },
   setFalse: function(x, y) {
     return false;
+  },
+  difference: function(x, y) {
+    debugger;
+    return x - y;
+  },
+  percentDiff: function(x, y) {
+    debugger;
+    return difference(x, y) / x;
   }
 };
 
