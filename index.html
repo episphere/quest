@@ -209,9 +209,9 @@
             ta.style.color = "navy";
 
             ta.onkeyup = ev => {
-                transform.tout(async () => {
-                    rendering.innerHTML = await transform.render({text: ta.value + "[END]"}) // <-- this is where quest.js is engaged
-                    // rendering.innerHTML = await transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}) // <-- this is where quest.js is engaged
+                transform.tout(() => {
+                    transform.render({text: ta.value + "[END]"}, 'rendering') // <-- this is where quest.js is engaged
+                    // transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}, 'rendering') // <-- this is where quest.js is engaged
                     if (document.querySelector(".question") != null) {
                         document.querySelector(".question").classList.add("active")
                     }
