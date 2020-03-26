@@ -153,7 +153,6 @@
                             document.getElementById('legendDiv').style.display = 'none'
                             document.getElementById('markup').style.display = 'none'
                             changeLogic("ActiveLogic.css")
-
                         }
                     </script>
                     <td id="rendering" style="vertical-align:top; width:650px; padding-left: 15px;"></td>
@@ -210,8 +209,9 @@
             ta.style.color = "navy";
 
             ta.onkeyup = ev => {
-                transform.tout(() => {
-                    rendering.innerHTML = transform.render(ta.value + "[END]") // <-- this is where quest.js is engaged
+                transform.tout(async () => {
+                    rendering.innerHTML = await transform.render({text: ta.value + "[END]"}) // <-- this is where quest.js is engaged
+                    // rendering.innerHTML = await transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}) // <-- this is where quest.js is engaged
                     if (document.querySelector(".question") != null) {
                         document.querySelector(".question").classList.add("active")
                     }

@@ -1,8 +1,21 @@
 transform = function() {
   // ini
 };
-
-transform.render = contents => {
+function changeLogic(sheet) {
+  document.getElementById("pagelogic").setAttribute("href", sheet)
+}
+transform.render = async (obj) => {
+  let contents = '';
+  if(obj.text) contents = obj.text;
+  if(obj.url) {
+    contents = await (await fetch(obj.url.split('&')[0])).text();
+    if(obj.url.split('&').includes('run')){
+      document.getElementById('navBar').style.display = 'none'
+      document.getElementById('legendDiv').style.display = 'none'
+      document.getElementById('markup').style.display = 'none'
+      changeLogic("ActiveLogic.css")
+    }
+  }
   // first thing we must do is unroll the loops...
   contents = unrollLoops(contents);
   // hey, lets de-lint the contents..
