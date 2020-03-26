@@ -1,19 +1,17 @@
 transform = function() {
   // ini
 };
-function changeLogic(sheet) {
-  document.getElementById("pagelogic").setAttribute("href", sheet)
-}
-transform.render = async (obj) => {
+
+transform.render = async (obj, id) => {
   let contents = '';
   if(obj.text) contents = obj.text;
   if(obj.url) {
     contents = await (await fetch(obj.url.split('&')[0])).text();
     if(obj.url.split('&').includes('run')){
-      document.getElementById('navBar').style.display = 'none'
-      document.getElementById('legendDiv').style.display = 'none'
-      document.getElementById('markup').style.display = 'none'
-      changeLogic("ActiveLogic.css")
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://episphere.github.io/quest/ActiveLogic.css';
+      document.head.appendChild(link);
     }
   }
   // first thing we must do is unroll the loops...
@@ -401,12 +399,12 @@ transform.render = async (obj) => {
   contents = contents.replace("[END]", "");
 
   // add the HTML/HEAD/BODY tags...
-  return (contents =
-    "<html><head></head><body>" +
-    contents +
-    '\n<script src="questionnaire.js"></script></body>');
-
-  console.log("\n\n\n" + contents);
+  document.getElementById(id).innerHTML = contents +'\n<script src="questionnaire.js"></script>';
+  if(obj.url && obj.url.split('&').includes('run')){
+    if (document.querySelector(".question") != null) {
+      document.querySelector(".question").classList.add("active")
+    }
+  }
 };
 
 transform.tout = function(fun, tt = 500) {
