@@ -333,6 +333,16 @@ transform.render = contents => {
         "' skipTo=$1 checked>"
     );
 
+    // replace next question  < #NR -> > with hidden...
+    questText = questText.replace(
+      /<\s*#NR\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
+      "<input type='hidden' class='noresponse' id='" +
+        questID +
+        "_default' name='" +
+        questID +
+        "' skipTo=$1 checked>"
+    );
+
     // handle skips
     questText = questText.replace(
       /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,

@@ -337,10 +337,6 @@ function nextPage(norp) {
   norp.parentElement.classList.remove("active");
   nextElement.classList.add("active");
 
-  localforage.setItem("_tree", {
-    prevNode: norp.parentElement.id,
-    currentNode: nextElement.id
-  });
   return nextElement;
 }
 
@@ -351,12 +347,6 @@ function prev(norp) {
   prevElement.value.classList.add("active");
 
   localforage.removeItem(norp.parentElement.id);
-  localforage.setItem("_tree", {
-    // better make sure your not the first question or
-    // the questionQueue.prevNode.prev is undefined
-    prevNode: questionQueue.prevNode.prev.value.id,
-    currentNode: questionQueue.prevNode.value.id
-  });
 
   return prevElement;
 }
@@ -366,6 +356,25 @@ function prev(norp) {
 function checkForSkips(questionElement) {
   // get selected responses
   selectedElements = getSelected(questionElement);
+
+  let numSelected = selectedElements.filter(x => x.type != "hidden").length;
+  // if there are NO non-hidden responses ...
+  if (numSelected == 0) {
+    // there may be either a noResponse, a default response
+    // or both or neither...
+
+    // sort array so that noResponse comes first..
+    // noResponse has a classlist length of 1/default =0
+    let classSort = function(a, b) {
+      return b.length - a.length;
+    };
+    selectedElements.sort(classSort);
+  } else {
+    // something was selected... remove the no response hidden tag..
+    selectedElements = selectedElements.filter(
+      x => !x.classList.contains("noresponse")
+    );
+  }
 
   // if there is a skipTo attribute, add them to the beginning of the queue...
   // add the selected responses to the question queue
