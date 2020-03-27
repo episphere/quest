@@ -3,14 +3,14 @@ transform = function() {
 };
 
 transform.render = async (obj, id) => {
-  let contents = '';
-  if(obj.text) contents = obj.text;
-  if(obj.url) {
-    contents = await (await fetch(obj.url.split('&')[0])).text();
-    if(obj.url.split('&').includes('run')){
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://episphere.github.io/quest/ActiveLogic.css';
+  let contents = "";
+  if (obj.text) contents = obj.text;
+  if (obj.url) {
+    contents = await (await fetch(obj.url.split("&")[0])).text();
+    if (obj.url.split("&").includes("run")) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://episphere.github.io/quest/ActiveLogic.css";
       document.head.appendChild(link);
     }
   }
@@ -399,10 +399,50 @@ transform.render = async (obj, id) => {
   contents = contents.replace("[END]", "");
 
   // add the HTML/HEAD/BODY tags...
-  document.getElementById(id).innerHTML = contents +'\n<script src="questionnaire.js"></script>';
-  if(obj.url && obj.url.split('&').includes('run')){
+  document.getElementById(id).innerHTML =
+    contents +
+    '\n<script src="questionnaire.js"></script>' +
+    `
+  <div class="modal" id="softModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Response Requested</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <p>There is 1 unanswered question on this page. Would you like to continue?</p>
+          </div>
+          <div id="softModalFooter" class="modal-footer">
+              <button type="button" class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
+              <button type="button" class="btn btn-light" data-dismiss="modal">Answer the Question</button>
+          </div>
+          </div>
+      </div>
+  </div>
+  <div class="modal" id="hardModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Response Required</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <p>There is 1 unanswered question on this page. Please answer this question.</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Answer the Question</button>
+          </div>
+          </div>
+      </div>
+  </div>`;
+  if (obj.url && obj.url.split("&").includes("run")) {
     if (document.querySelector(".question") != null) {
-      document.querySelector(".question").classList.add("active")
+      document.querySelector(".question").classList.add("active");
     }
   }
 };
