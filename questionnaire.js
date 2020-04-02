@@ -259,6 +259,9 @@ function nextClick(norp) {
   }
 }
 
+let questRes = {};
+let tempObj = {};
+
 // norp == next or previous button (which ever is clicked...)
 function nextPage(norp) {
   // Because next button does not have ID, modal will pass-in ID of question
@@ -276,7 +279,9 @@ function nextPage(norp) {
     questionQueue.next();
   }
 
-  localforage.setItem(norp.parentElement.id, norp.parentElement.value);
+  tempObj[norp.parentElement.id] = norp.parentElement.value;
+  questRes = tempObj;
+  localforage.setItem("module1", questRes);
 
   // check if we need to add questions to the question queue
   checkForSkips(norp.parentElement);
