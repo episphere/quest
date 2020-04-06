@@ -359,7 +359,6 @@ transform.render = async (obj, id) => {
       /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
-
     rv =
       "<form class='question' style='font-weight: bold' id='" +
       questID +
@@ -371,10 +370,9 @@ transform.render = async (obj, id) => {
       softBool +
       "'>" +
       questText +
-      "<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n" +
-      "<input type='button' onclick='nextClick(this)' class='next' value='Next'></input>" +
-      "</form>";
-
+      `<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n
+      <input type='button' onclick='nextClick(this, ${obj.store})' class='next' value='Next'></input>
+      </form>`;
     return rv;
   });
 
