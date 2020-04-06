@@ -21,10 +21,11 @@ transform.render = async (obj, id) => {
   // note:  the first question wont have the
   // \n\n so we need to look at start of string(^)
   //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
-  contents = contents.replace(/(?<=\n{2,})(\w+)\./gms, "[$1]");
+  debugger;
+  // contents = contents.replace(/(?<=\n{2,})(\w+)\./gms, "[$1]");
   //contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
-  contents = contents.replace(/\/\*.*\*\//gms, "");
-  contents = contents.replace(/\/\/.*/gm, "");
+  // contents = contents.replace(/\/\*.*\*\//g, "");
+  contents = contents.replace(/\/\/.*/g, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
 
   //console.log(contents)
@@ -380,7 +381,7 @@ transform.render = async (obj, id) => {
 
   // handle the display if case...
   contents = contents.replace(
-    /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/gms,
+    /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,
     "<div $3 showIfId='$1' values='$2'>"
   );
 
