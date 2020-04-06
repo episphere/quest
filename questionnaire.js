@@ -226,7 +226,7 @@ function continueQuestion(norp) {
 
 // hello
 
-function nextClick(norp) {
+function nextClick(norp, store) {
   if (norp.hasAttribute("data-toggle")) {
     norp.removeAttribute("data-toggle");
   }
@@ -246,7 +246,7 @@ function nextClick(norp) {
     norp.setAttribute("data-target", "#softModal");
     document.getElementById(
       "softModalFooter"
-    ).innerHTML = `<button type="button" class="btn btn-light" data-dismiss="modal" onclick="nextPage('${norp.parentElement.id}')">Continue Without Answering</button>
+    ).innerHTML = `<button type="button" class="btn btn-light" data-dismiss="modal" onclick="nextPage('${norp.parentElement.id}', ${store})">Continue Without Answering</button>
      <button type="button" class="btn btn-light" data-dismiss="modal">Answer the Question</button>`;
   } else if (
     norp.parentElement.getAttribute("hardedit") == "true" &&
@@ -255,7 +255,7 @@ function nextClick(norp) {
     norp.setAttribute("data-toggle", "modal");
     norp.setAttribute("data-target", "#hardModal");
   } else {
-    nextPage(norp);
+    nextPage(norp, store);
   }
 }
 
@@ -263,7 +263,7 @@ let questRes = {};
 let tempObj = {};
 
 // norp == next or previous button (which ever is clicked...)
-function nextPage(norp) {
+function nextPage(norp, store) {
   // Because next button does not have ID, modal will pass-in ID of question
   // norp needs to be next button element
 
@@ -281,7 +281,12 @@ function nextPage(norp) {
 
   tempObj[norp.parentElement.id] = norp.parentElement.value;
   questRes = tempObj;
-  localforage.setItem("module1", questRes);
+  if(store && norp.parentElement.value){
+    let formData = {};
+    formData[`module1.${norp.parentElement.id}`] = norp.parentElement.value;
+    store(formData);
+  }
+  else localforage.setItem("module1", questRes);
 
   // check if we need to add questions to the question queue
   checkForSkips(norp.parentElement);
@@ -345,13 +350,17 @@ function nextPage(norp) {
   return nextElement;
 }
 
-function prev(norp) {
+async function prev(norp, retrieve) {
   // get the previousElement...
   let prevElement = questionQueue.previous();
   norp.parentElement.classList.remove("active");
   prevElement.value.classList.add("active");
 
-  localforage.removeItem(norp.parentElement.id);
+  if(retrieve){
+    const response = await retrieve();  
+    console.log(response)
+  }
+  else localforage.removeItem(norp.parentElement.id);
 
   return prevElement;
 }
