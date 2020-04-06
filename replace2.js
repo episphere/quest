@@ -21,10 +21,10 @@ transform.render = async (obj, id) => {
   // note:  the first question wont have the
   // \n\n so we need to look at start of string(^)
   //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
-  debugger;
+
   // contents = contents.replace(/(?<=\n{2,})(\w+)\./gms, "[$1]");
   //contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
-  // contents = contents.replace(/\/\*.*\*\//g, "");
+  contents = contents.replace(/\/\*.*\*\//g, "");
   contents = contents.replace(/\/\/.*/g, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
 
@@ -360,6 +360,7 @@ transform.render = async (obj, id) => {
       /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
+
     rv =
       "<form class='question' style='font-weight: bold' id='" +
       questID +
@@ -371,9 +372,10 @@ transform.render = async (obj, id) => {
       softBool +
       "'>" +
       questText +
-      `<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n
-      <input type='button' onclick='nextClick(this, ${obj.store})' class='next' value='Next'></input>
-      </form>`;
+      "<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n" +
+      "<input type='button' onclick='nextClick(this)' class='next' value='Next'></input>" +
+      "</form>";
+
     return rv;
   });
 

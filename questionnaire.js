@@ -281,12 +281,11 @@ function nextPage(norp, store) {
 
   tempObj[norp.parentElement.id] = norp.parentElement.value;
   questRes = tempObj;
-  if(store && norp.parentElement.value){
+  if (store && norp.parentElement.value) {
     let formData = {};
     formData[`module1.${norp.parentElement.id}`] = norp.parentElement.value;
     store(formData);
-  }
-  else localforage.setItem("module1", questRes);
+  } else localforage.setItem("module1", questRes);
 
   // check if we need to add questions to the question queue
   checkForSkips(norp.parentElement);
@@ -311,6 +310,7 @@ function nextPage(norp, store) {
   // at this point the we have have the next question from the question queue...
   // get the actual element.
   nextElement = nextQuestionNode.value;
+  debugger;
   [...nextElement.querySelectorAll("span[forid]")].map(
     x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
   );
@@ -356,11 +356,10 @@ async function prev(norp, retrieve) {
   norp.parentElement.classList.remove("active");
   prevElement.value.classList.add("active");
 
-  if(retrieve){
-    const response = await retrieve();  
-    console.log(response)
-  }
-  else localforage.removeItem(norp.parentElement.id);
+  if (retrieve) {
+    const response = await retrieve();
+    console.log(response);
+  } else localforage.removeItem(norp.parentElement.id);
 
   return prevElement;
 }
@@ -480,12 +479,14 @@ function getResults(element) {
 function unrollLoops(txt) {
   // all the questions in the loops...
   // each element in res is a loop in the questionnaire...
-  let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gms;
+  let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gm;
+  txt = txt.replace(/\n/g, "\xa9");
+  debugger;
   let res = [...txt.matchAll(loopRegex)].map(function(x, indx) {
     return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
   });
 
-  let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(,.*?)?\]/gms;
+  let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(,.*?)?\]/gm;
   let disIfRegex = /displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\)/g;
   // we have an array of objects holding the text..
   // get all the ids...
@@ -568,6 +569,7 @@ function unrollLoops(txt) {
   for (var loopIndx = 0; loopIndx < cleanedText.length; loopIndx++) {
     txt = txt.replace(res[loopIndx].orig, cleanedText[loopIndx]);
   }
+  txt = txt.replace(/\xa9/g, "\n");
   return txt;
 }
 
