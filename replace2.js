@@ -15,6 +15,7 @@ transform.render = async (obj, id) => {
       const link2 = document.createElement("link");
       link2.rel = "stylesheet";
       link2.href = "https://episphere.github.io/quest/Style1.css";
+      document.head.appendChild(link2);
     }
   }
   // first thing we must do is unroll the loops...
