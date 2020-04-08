@@ -12,6 +12,9 @@ transform.render = async (obj, id) => {
       link.rel = "stylesheet";
       link.href = "https://episphere.github.io/quest/ActiveLogic.css";
       document.head.appendChild(link);
+      const link2 = document.createElement("link");
+      link2.rel = "stylesheet";
+      link2.href = "https://episphere.github.io/quest/Style1.css";
     }
   }
   // first thing we must do is unroll the loops...
@@ -372,8 +375,8 @@ transform.render = async (obj, id) => {
       softBool +
       "'>" +
       questText +
-      "<input type='button' onclick='prev(this)' class='previous' value='Previous'></input>\n" +
-      "<input type='button' onclick='nextClick(this)' class='next' value='Next'></input>" +
+      "<input type='button' onclick='prev(this)' class='previous' value='BACK'></input>\n" +
+      "<input type='button' onclick='nextClick(this)' class='next' value='NEXT'></input>" +
       "</form>";
 
     return rv;

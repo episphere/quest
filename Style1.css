@@ -1,112 +1,123 @@
 #questionnaire {
-    font-family: Ariel, sans-serif;
-    height: 70%;
-    border: solid 2px black;
-    padding: 20px
+  font-family: Ariel, sans-serif;
+  height: 70%;
+  border: solid 2px black;
+  padding: 20px;
 }
 
 #welcome {
-    margin: 10px 0px;
+  margin: 10px 0px;
 }
-
-
-/* #thankYou,
-.question {
-    margin: 10px 0px;
-    display: none;
-} */
 
 #thankYou.active,
 .question.active {
-    display: block;
+  display: block;
 }
 
 .previous {
-    float: left;
+  float: left;
 }
 
 .next {
-    float: right;
+  float: right;
 }
-
 
 /* this is an answer with a text area...*/
 
 .freeresponse {
-    display: flex;
-    width: 80%;
+  display: flex;
+  width: 80%;
 }
-
 
 /* select labels inside freesponses */
 
 .freeresponse label {
-    flex-grow: 1;
-    text-align: left;
-    width: auto;
+  flex-grow: 1;
+  text-align: left;
+  width: auto;
 }
 
 .freeresponse textarea,
 input[type="text"] {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 input#styling[type="radio"] {
-    display: inline;
+  display: inline;
 }
 
 input[type="radio"] {
-    display: none;
+  display: none;
 }
 
 input[type="checkbox"] {
-    display: none;
+  display: none;
 }
 
 label {
-    display: block;
-    border-radius: 15px;
-    background-color: rgb(106, 186, 244);
-    border: solid 2px blue;
-    height: 40px;
-    width: 80%;
-    padding: 10px;
-    margin: 5px;
-    font-family: "Arial", "sans-serif";
-    font-size: 1.5em;
-    text-align: center;
-    /* vertical-align: middle; */
-    display: block;
+  display: block;
+  border-radius: 6px;
+  background-color: rgb(240, 240, 240);
+  height: 100%;
+  width: 80%;
+  padding-left: 20px !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  font-family: "Arial", "sans-serif";
+  font-size: 1.5em;
+  text-align: left;
+  text-transform: uppercase;
+  /* vertical-align: middle; */
+  display: block;
+}
+
+label:styling {
+  padding-left: 10px;
+  padding-top: 10px;
 }
 
 label:hover {
-    background-color: white;
+  background-color: rgb(230, 230, 230);
 }
-
 
 /* select all textareas immediately before a label*/
 
-
 /* label~textarea {} */
-
 
 /* select all labels immediately after a textarea */
 
-textarea+label {
-    float: right;
+textarea + label {
+  float: right;
 }
-
 
 /* select all labels immediatle after a checked radio box */
 
-input[type="radio"]:checked+label {
-    border: solid 2px blue;
-    background-color: blue;
-    color: white;
+input[type="radio"]:checked + label {
+  border: solid 3px rgb(130, 193, 230);
+  background-color: rgb(60, 145, 222);
+  color: white;
 }
 
-input[type="checkbox"]:checked+label {
-    border: solid 2px blue;
-    background-color: blue;
-    color: white;
+input[type="checkbox"]:checked + label {
+  border: solid 2px blue;
+  background-color: blue;
+  color: white;
+}
+
+.next,
+.previous {
+  background-color: rgb(50, 122, 187);
+  color: white;
+  border: solid 3px rgb(50, 122, 187);
+  border-radius: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.next:hover,
+.previous:hover {
+  background-color: rgb(55, 133, 203);
+  border: solid 3px rgb(55, 133, 203);
 }

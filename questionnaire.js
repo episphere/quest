@@ -310,7 +310,6 @@ function nextPage(norp, store) {
   // at this point the we have have the next question from the question queue...
   // get the actual element.
   nextElement = nextQuestionNode.value;
-  debugger;
   [...nextElement.querySelectorAll("span[forid]")].map(
     x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
   );
@@ -481,7 +480,6 @@ function unrollLoops(txt) {
   // each element in res is a loop in the questionnaire...
   let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gm;
   txt = txt.replace(/\n/g, "\xa9");
-  debugger;
   let res = [...txt.matchAll(loopRegex)].map(function(x, indx) {
     return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
   });
@@ -550,7 +548,7 @@ function unrollLoops(txt) {
       );
 
       // if (currentText.search(/->\s*_continue/g) >= 0) {
-      //   debugger;
+      //   ;
       //   if (loopIndx < x.cnt) {
       //     currentText = currentText.replace(/->\s*_continue\s*/g, "-> " + ids[0].id + "_" + (loopIndx + 1));
       //   } else {
@@ -581,7 +579,6 @@ const knownFunctions = {
     return x || y;
   },
   equals: function(x, y) {
-    debugger;
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
   lessThan: function(x, y) {
