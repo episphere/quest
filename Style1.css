@@ -99,8 +99,8 @@ input[type="radio"]:checked + label {
 }
 
 input[type="checkbox"]:checked + label {
-  border: solid 2px blue;
-  background-color: blue;
+  border: solid 3px rgb(130, 193, 230);
+  background-color: rgb(60, 145, 222);
   color: white;
 }
 
@@ -120,4 +120,8 @@ input[type="checkbox"]:checked + label {
 .previous:hover {
   background-color: rgb(55, 133, 203);
   border: solid 3px rgb(55, 133, 203);
+}
+
+form {
+  padding-top: 30px;
 }
