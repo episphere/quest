@@ -90,6 +90,31 @@ textarea + label {
   float: right;
 }
 
+input[type="number"] {
+  display: block;
+  margin-top: 10px;
+}
+
+input[type="number"] + label {
+  display: none;
+}
+
+input[type="text"] {
+  display: block;
+}
+
+input[type="text"] + label {
+  display: none;
+}
+
+textarea {
+  display: block;
+}
+
+textarea + label {
+  display: none;
+}
+
 /* select all labels immediatle after a checked radio box */
 
 input[type="radio"]:checked + label {
