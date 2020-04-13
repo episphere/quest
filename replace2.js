@@ -366,7 +366,7 @@ transform.render = async (obj, id) => {
     );
 
     rv =
-      "<form class='question' style='font-weight: bold' id='" +
+      "<form class='question' onsubmit='stopSubmit(event)' style='font-weight: bold' id='" +
       questID +
       "' " +
       d +

@@ -474,6 +474,10 @@ function getResults(element) {
     .map(x => (tmpRes[x.name] = x.value));
 }
 
+function stopSubmit(event) {
+  event.preventDefault();
+}
+
 // x is the questionnaire text
 function unrollLoops(txt) {
   // all the questions in the loops...
