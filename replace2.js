@@ -477,9 +477,13 @@ transform.render = async (obj, id) => {
               });
           });
         } else {
+          if (Array.isArray(value)) {
+            if (value.length == 1) inputElements[0].value = value[0];
+          } else {
+            inputElements[0].value = value;
+          }
           // we have something else...
           // set the value...
-          if (value.length == 1) inputElements[0].value = value[0];
         }
       }
     });
