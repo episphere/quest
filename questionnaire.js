@@ -325,7 +325,7 @@ function nextPage(norp, store) {
         norp.parentElement.classList.remove("active");
         // this should remove the "nextQuestion from the questionQueue"
         questionQueue.previous();
-        let nextNorp = nextElement.querySelector("input[value='Next']");
+        let nextNorp = nextElement.querySelector("input[value='NEXT']");
         if (nextNorp) {
           return nextPage(nextNorp);
         }

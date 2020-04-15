@@ -307,7 +307,7 @@ transform.render = async (obj, id) => {
         elVar = y1;
       }
 
-      return `<br><input type='radio' name='${elVar}_rb' value='${w1}' id='${elVar}_${w1}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
+      return `<br><input type='radio' name='${elVar}' value='${w1}' id='${elVar}_${w1}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
     }
 
     // replace [a-zXX] with a checkbox box...
@@ -336,7 +336,7 @@ transform.render = async (obj, id) => {
       } else {
         elVar = name;
       }
-      return `<br><div class='response' ${displayIf}><input type='checkbox' name='${elVar}_cb' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<br><div class='response' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace next question  < -> > with hidden...
@@ -450,6 +450,41 @@ transform.render = async (obj, id) => {
       document.querySelector(".question").classList.add("active");
     }
   }
+
+  let questObj = {};
+  async function fillForm() {
+    await localforage.iterate(obj => (questObj = obj));
+    // go through the form and fill in all the values...
+    Object.getOwnPropertyNames(questObj).forEach(element => {
+      let formElement = document.getElementById(element);
+      // get input elements with name="element"
+      let selector = "input[name='" + element + "']";
+      let inputElements = [...formElement.querySelectorAll(selector)];
+      if (questObj[element] == undefined) {
+        return null;
+      } else {
+        let value = questObj[element];
+        console.log(inputElements);
+        if (inputElements.length > 1) {
+          // we have either a radio button or checkbox...
+          console.log("rb or cb");
+          value.forEach(v => {
+            selector = "input[value='" + v + "']";
+            inputElements
+              .filter(x => x.value == v)
+              .forEach(x => {
+                x.checked = true;
+              });
+          });
+        } else {
+          // we have something else...
+          // set the value...
+          if (value.length == 1) inputElements[0].value = value[0];
+        }
+      }
+    });
+  }
+  window.onload = fillForm();
 };
 
 transform.tout = function(fun, tt = 500) {
