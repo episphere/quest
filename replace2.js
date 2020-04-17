@@ -474,6 +474,15 @@ transform.render = async (obj, id) => {
               .filter(x => x.value == v)
               .forEach(x => {
                 x.checked = true;
+                if (
+                  [...document.querySelectorAll("form")].includes(
+                    x.parentElement.parentElement
+                  )
+                ) {
+                  x.parentElement.parentElement.value = value;
+                } else {
+                  x.parentElement.value = value;
+                }
               });
           });
         } else {
@@ -481,6 +490,7 @@ transform.render = async (obj, id) => {
             if (value.length == 1) inputElements[0].value = value[0];
           } else {
             inputElements[0].value = value;
+            debugger;
           }
           // we have something else...
           // set the value...
