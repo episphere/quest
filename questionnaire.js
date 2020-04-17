@@ -168,7 +168,7 @@ function rbAndCbClick(inputElement) {
       .filter(x => x.checked)
       .map(x => x.value);
   } else {
-    inputElement.parentElement.value = [...inputElement.value];
+    inputElement.parentElement.parentElement.value = [...inputElement.value];
   }
 }
 
@@ -358,7 +358,6 @@ async function prev(norp, retrieve) {
   if (retrieve) {
     const response = await retrieve();
     console.log(response);
-    debugger;
   } else localforage.removeItem(norp.parentElement.id);
 
   return prevElement;

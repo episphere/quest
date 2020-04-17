@@ -296,18 +296,31 @@ transform.render = async (obj, id) => {
 
     // replace (XX) with a radio button...
     questText = questText.replace(
-      /(?<=\W)\((\d+)(\:(\w+))?\)([^<\n]*)|\(\)/g,
+      /(?<=\W)\((\d+)(\:(\w+))?(,displayif=(.*?\)))?\)([^<\n]*)|\(\)/g,
       fRadio
     );
-    function fRadio(v1, w1, x1, y1, z1) {
+    function fRadio(
+      containsGroup,
+      value,
+      containsName,
+      name,
+      containsDisIf,
+      condition,
+      label
+    ) {
+      let displayIf = "";
+      if (condition == undefined) {
+        displayIf = "";
+      } else {
+        displayIf = `displayif=${condition}`;
+      }
       let elVar = "";
-      if (y1 == undefined) {
+      if (name == undefined) {
         elVar = questID;
       } else {
-        elVar = y1;
+        elVar = name;
       }
-
-      return `<br><input type='radio' name='${elVar}' value='${w1}' id='${elVar}_${w1}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
+      return `<br><div class='response' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace [a-zXX] with a checkbox box...
