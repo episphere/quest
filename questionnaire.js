@@ -315,11 +315,25 @@ function nextPage(norp, store) {
     // get the actual element.
     nextElement = nextQuestionNode.value;
     [...nextElement.querySelectorAll("span[forid]")].map(
-      x => x.innerHTML = document.getElementById(x.getAttribute("forid")).value
+      x =>
+        (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
     );
-    Array.from(nextElement.querySelectorAll('input[data-max-validation-dependency]')).map(
-      x => x.max = document.getElementById(x.dataset.maxValidationDependency).value
-    )
+    Array.from(
+      nextElement.querySelectorAll("input[data-max-validation-dependency]")
+    ).map(
+      x =>
+        (x.max = document.getElementById(
+          x.dataset.maxValidationDependency
+        ).value)
+    );
+    Array.from(
+      nextElement.querySelectorAll("input[data-min-validation-dependency]")
+    ).map(
+      x =>
+        (x.min = document.getElementById(
+          x.dataset.minValidationDependency
+        ).value)
+    );
     // what if there is a "displayif"...
     let doNotDisplay = false;
     do {

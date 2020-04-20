@@ -232,7 +232,10 @@ transform.render = async (obj, id) => {
       "<img src=https://$1 height=$2 width=$3>"
     );
     // replace |__|__|  with a number box...
-    questText = questText.replace(/\|(__\|){2,}((\w+)\|)?(((\d+|\w+),(\d+|\w+))\|)?/g,fNum);
+    questText = questText.replace(
+      /\|(__\|){2,}((\w+)\|)?(((\d+|\w+),(\d+|\w+))\|)?/g,
+      fNum
+    );
     function fNum(
       numBox,
       numBoxGroup,
@@ -255,10 +258,10 @@ transform.render = async (obj, id) => {
       if (max == undefined) {
         max = "";
       }
-      return (`
-      <input oninput='numberInput(this)' id='${elId}' type='number' ${max.match(/[A-Za-z]+/g) != null ? `data-max-validation-dependency='${max}'` : ''} name='${questID}' min='${min}' max='${max}'></input>
+      return `
+      <input oninput='numberInput(this)' id='${elId}' type='number' ${max.match(/[A-Za-z]+/g) != null ? `data-max-validation-dependency='${max}'` : ""} ${min.match(/[A-Za-z]+/g) != null ? `data-min-validation-dependency='${min}'` : ""}name='${questID}' min='${min}' max='${max}'></input>
       <label id='input${elId}' for='${elId}'></label>
-      `);
+      `;
     }
 
     // -------------
