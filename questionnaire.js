@@ -289,64 +289,70 @@ function nextPage(norp, store) {
 
   // check if we need to add questions to the question queue
   checkForSkips(norp.parentElement);
+  checkValid(norp.parentElement);
 
-  // get the next question from the questionQueue
-  // if it exists... otherwise get the next look at the
-  // markdown and get the question follows.
-  let nextQuestionNode = questionQueue.next();
-  if (nextQuestionNode.done) {
-    // We are at the end of the question queue...
-    //
-    // if the next element is a question add the next
-    // question to the queue and set the nextQuestion variable
-    // not sure what to do if it is not...
-    let tmp = norp.parentElement.nextElementSibling;
-    if (tmp.classList.contains("question")) {
-      questionQueue.add(norp.parentElement.nextElementSibling);
-      nextQuestionNode = questionQueue.next();
-    }
-  }
-
-  // at this point the we have have the next question from the question queue...
-  // get the actual element.
-  nextElement = nextQuestionNode.value;
-  [...nextElement.querySelectorAll("span[forid]")].map(
-    x => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
-  );
-
-  // what if there is a "displayif"...
-  let doNotDisplay = false;
-  do {
-    if (nextElement.hasAttribute("displayif")) {
-      // if the displayif is false, do not display....
-      doNotDisplay = !parse(nextElement.getAttribute("displayif"));
-
-      if (doNotDisplay) {
-        norp.parentElement.classList.remove("active");
-        // this should remove the "nextQuestion from the questionQueue"
-        questionQueue.previous();
-        let nextNorp = nextElement.querySelector("input[value='NEXT']");
-        if (nextNorp) {
-          return nextPage(nextNorp);
-        }
+  if (checkValid(norp.parentElement) == false) {
+    return null;
+  } else {
+    // get the next question from the questionQueue
+    // if it exists... otherwise get the next look at the
+    // markdown and get the question follows.
+    let nextQuestionNode = questionQueue.next();
+    if (nextQuestionNode.done) {
+      // We are at the end of the question queue...
+      //
+      // if the next element is a question add the next
+      // question to the queue and set the nextQuestion variable
+      // not sure what to do if it is not...
+      let tmp = norp.parentElement.nextElementSibling;
+      if (tmp.classList.contains("question")) {
+        questionQueue.add(norp.parentElement.nextElementSibling);
+        nextQuestionNode = questionQueue.next();
       }
     }
-  } while (doNotDisplay);
 
-  // check all responses for next question
-  [...nextElement.children]
-    .filter(x => x.hasAttribute("displayif"))
-    .map(elm => {
-      f = parse(elm.getAttribute("displayif"));
+    // at this point the we have have the next question from the question queue...
+    // get the actual element.
+    nextElement = nextQuestionNode.value;
+    [...nextElement.querySelectorAll("span[forid]")].map(
+      x =>
+        (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
+    );
 
-      elm.style.display = f ? "block" : "none";
-    });
+    // what if there is a "displayif"...
+    let doNotDisplay = false;
+    do {
+      if (nextElement.hasAttribute("displayif")) {
+        // if the displayif is false, do not display....
+        doNotDisplay = !parse(nextElement.getAttribute("displayif"));
 
-  // hide the current question and move to the next...
-  norp.parentElement.classList.remove("active");
-  nextElement.classList.add("active");
+        if (doNotDisplay) {
+          norp.parentElement.classList.remove("active");
+          // this should remove the "nextQuestion from the questionQueue"
+          questionQueue.previous();
+          let nextNorp = nextElement.querySelector("input[value='NEXT']");
+          if (nextNorp) {
+            return nextPage(nextNorp);
+          }
+        }
+      }
+    } while (doNotDisplay);
 
-  return nextElement;
+    // check all responses for next question
+    [...nextElement.children]
+      .filter(x => x.hasAttribute("displayif"))
+      .map(elm => {
+        f = parse(elm.getAttribute("displayif"));
+
+        elm.style.display = f ? "block" : "none";
+      });
+
+    // hide the current question and move to the next...
+    norp.parentElement.classList.remove("active");
+    nextElement.classList.add("active");
+
+    return nextElement;
+  }
 }
 
 async function prev(norp, retrieve) {
@@ -404,6 +410,15 @@ function checkForSkips(questionElement) {
   questionQueue.addChildren(selectedElements);
 
   return null;
+}
+
+function checkValid(questionElement) {
+  debugger;
+  if (questionElement.checkValidity() == false) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 function getSelected(questionElement) {

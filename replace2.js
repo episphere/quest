@@ -231,20 +231,42 @@ transform.render = async (obj, id) => {
     );
 
     // replace |__|__|  with a number box...
-    questText = questText.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
-    function fNum(w1, x1, y1, z1) {
+    questText = questText.replace(
+      /\|(__\|){2,}((\w+)\|)?(((\d+),(\d+))\|)?/g,
+      fNum
+    );
+    function fNum(
+      numBox,
+      numBoxGroup,
+      varNameGroup,
+      varName,
+      containsRangeGroup,
+      rangeGroup,
+      min,
+      max
+    ) {
       let elId = "";
-      if (z1 == undefined) {
+      if (varName == undefined) {
         elId = questID + "_num";
       } else {
-        elId = z1;
+        elId = varName;
+      }
+      if (min == undefined) {
+        min = "";
+      }
+      if (max == undefined) {
+        max = "";
       }
       return (
         "<input oninput='numberInput(this)' id='" +
         elId +
         "' type='number' name='" +
         questID +
-        "' ></input><label id='input" +
+        "' min='" +
+        min +
+        "' max='" +
+        max +
+        "'></input><label id='input" +
         elId +
         "' for='" +
         elId +
@@ -503,7 +525,6 @@ transform.render = async (obj, id) => {
             if (value.length == 1) inputElements[0].value = value[0];
           } else {
             inputElements[0].value = value;
-            debugger;
           }
           // we have something else...
           // set the value...
