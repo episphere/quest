@@ -232,7 +232,7 @@ transform.render = async (obj, id) => {
 
     // replace |__|__|  with a number box...
     questText = questText.replace(
-      /\|(__\|){2,}((\w+)\|)?(((\d+),(\d+))\|)?/g,
+      /\|(__\|){2,}((\w+)\|)?(((\d+|\w+),(\d+|\w+))\|)?/g,
       fNum
     );
     function fNum(
@@ -256,6 +256,14 @@ transform.render = async (obj, id) => {
       }
       if (max == undefined) {
         max = "";
+      }
+      if (max.match(/[A-Za-z]+/g) != null) {
+        debugger;
+        if (document.getElementById(max) == null) {
+          max = "";
+        } else {
+          max = parseInt(document.getElementById(max).max);
+        }
       }
       return (
         "<input oninput='numberInput(this)' id='" +

@@ -413,7 +413,6 @@ function checkForSkips(questionElement) {
 }
 
 function checkValid(questionElement) {
-  debugger;
   if (questionElement.checkValidity() == false) {
     return false;
   } else {
