@@ -255,34 +255,10 @@ transform.render = async (obj, id) => {
       if (max == undefined) {
         max = "";
       }
-      if (max.match(/[A-Za-z]+/g) != null) {
-        if (validation[max] == null) {
-          max = "";
-        } else {
-          max = parseInt(validation[max].max);
-        }
-      }
-      if(validation[elId] === undefined){
-        validation[elId] = {};
-        validation[elId].min = min;
-        validation[elId].max = max;
-
-      }
-      return (
-        "<input oninput='numberInput(this)' id='" +
-        elId +
-        "' type='number' name='" +
-        questID +
-        "' min='" +
-        min +
-        "' max='" +
-        max +
-        "'></input><label id='input" +
-        elId +
-        "' for='" +
-        elId +
-        "'></label>"
-      );
+      return (`
+      <input oninput='numberInput(this)' id='${elId}' type='number' ${max.match(/[A-Za-z]+/g) != null ? `data-max-validation-dependency='${max}'` : ''} name='${questID}' min='${min}' max='${max}'></input>
+      <label id='input${elId}' for='${elId}'></label>
+      `);
     }
 
     // -------------
