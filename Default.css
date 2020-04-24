@@ -1,3 +1,8 @@
 input:invalid {
   border: 3px solid red;
 }
+
+input[type="checkbox"] + label {
+  /* padding: 10px; */
+  margin: 5px;
+}

@@ -332,7 +332,7 @@ transform.render = async (obj, id) => {
       } else {
         elVar = name;
       }
-      return `<br><div class='response' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace [a-zXX] with a checkbox box...
@@ -361,7 +361,7 @@ transform.render = async (obj, id) => {
       } else {
         elVar = name;
       }
-      return `<br><div class='response' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace next question  < -> > with hidden...
@@ -484,40 +484,44 @@ transform.render = async (obj, id) => {
       let formElement = document.getElementById(element);
       // get input elements with name="element"
       let selector = "input[name='" + element + "']";
-      let inputElements = [...formElement.querySelectorAll(selector)];
-      if (questObj[element] == undefined) {
+      if (formElement == null) {
         return null;
       } else {
-        let value = questObj[element];
-        console.log(inputElements);
-        if (inputElements.length > 1) {
-          // we have either a radio button or checkbox...
-          console.log("rb or cb");
-          value.forEach(v => {
-            selector = "input[value='" + v + "']";
-            inputElements
-              .filter(x => x.value == v)
-              .forEach(x => {
-                x.checked = true;
-                if (
-                  [...document.querySelectorAll("form")].includes(
-                    x.parentElement.parentElement
-                  )
-                ) {
-                  x.parentElement.parentElement.value = value;
-                } else {
-                  x.parentElement.value = value;
-                }
-              });
-          });
+        let inputElements = [...formElement.querySelectorAll(selector)];
+        if (questObj[element] == undefined) {
+          return null;
         } else {
-          if (Array.isArray(value)) {
-            if (value.length == 1) inputElements[0].value = value[0];
+          let value = questObj[element];
+          console.log(inputElements);
+          if (inputElements.length > 1) {
+            // we have either a radio button or checkbox...
+            console.log("rb or cb");
+            value.forEach(v => {
+              selector = "input[value='" + v + "']";
+              inputElements
+                .filter(x => x.value == v)
+                .forEach(x => {
+                  x.checked = true;
+                  if (
+                    [...document.querySelectorAll("form")].includes(
+                      x.parentElement.parentElement
+                    )
+                  ) {
+                    x.parentElement.parentElement.value = value;
+                  } else {
+                    x.parentElement.value = value;
+                  }
+                });
+            });
           } else {
-            inputElements[0].value = value;
+            if (Array.isArray(value)) {
+              if (value.length == 1) inputElements[0].value = value[0];
+            } else {
+              inputElements[0].value = value;
+            }
+            // we have something else...
+            // set the value...
           }
-          // we have something else...
-          // set the value...
         }
       }
     });
