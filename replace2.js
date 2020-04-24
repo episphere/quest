@@ -308,23 +308,15 @@ transform.render = async (obj, id) => {
 
     // replace (XX) with a radio button...
     questText = questText.replace(
-      /(?<=\W)\((\d+)(\:(\w+))?(,displayif=(.*?\)))?\)([^<\n]*)|\(\)/g,
+      /(?<=\W)\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
       fRadio
     );
-    function fRadio(
-      containsGroup,
-      value,
-      containsName,
-      name,
-      containsDisIf,
-      condition,
-      label
-    ) {
+    function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
         displayIf = "";
       } else {
-        displayIf = `displayif=${condition}`;
+        displayIf = `${condition}`;
       }
       let elVar = "";
       if (name == undefined) {
@@ -332,28 +324,23 @@ transform.render = async (obj, id) => {
       } else {
         elVar = name;
       }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+      if (labelID == undefined) {
+        labelID = `${elVar}_${value}_label`;
+      }
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}' onchange='rbAndCbClick(this)'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace [a-zXX] with a checkbox box...
     questText = questText.replace(
-      /\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g,
+      /\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g,
       fCheck
     );
-    function fCheck(
-      containsGroup,
-      value,
-      containsName,
-      name,
-      containsDisIf,
-      condition,
-      label
-    ) {
+    function fCheck(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
         displayIf = "";
       } else {
-        displayIf = `displayif=${condition}`;
+        displayIf = `${condition}`;
       }
       let elVar = "";
       if (name == undefined) {
@@ -361,7 +348,10 @@ transform.render = async (obj, id) => {
       } else {
         elVar = name;
       }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+      if (labelID == undefined) {
+        labelID = `${elVar}_${value}_label`;
+      }
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace next question  < -> > with hidden...

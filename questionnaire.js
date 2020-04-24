@@ -314,10 +314,10 @@ function nextPage(norp, store) {
     // at this point the we have have the next question from the question queue...
     // get the actual element.
     nextElement = nextQuestionNode.value;
-    [...nextElement.querySelectorAll("span[forid]")].map(
-      x =>
-        (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
-    );
+    [...nextElement.querySelectorAll("span[forid]")].map(x => {
+      let elm = document.getElementById(x.getAttribute("forid"));
+      x.innerHTML = elm.value != undefined ? elm.value : elm.innerText;
+    });
     Array.from(
       nextElement.querySelectorAll("input[data-max-validation-dependency]")
     ).map(
