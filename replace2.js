@@ -1,4 +1,4 @@
-transform = function() {
+transform = function () {
   // ini
 };
 
@@ -43,12 +43,9 @@ transform.render = async (obj, id) => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])",
-    "gs"
-  );
+  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "gs");
 
-  contents = contents.replace(regEx, function(page, questID, d, questText) {
+  contents = contents.replace(regEx, function (page, questID, d, questText) {
     //  console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
@@ -96,13 +93,14 @@ transform.render = async (obj, id) => {
     }
 
     // replace user profile variables...
-    questText = questText.replace(/{\$u:(\w+)}/, "<span name='$1'>$1</span>");
+    questText = questText.replace(/\{\$u:(\w+)}/, (all, varid) => {
+      console.log(varid);
+      console.log(prevRes[varid]);
+      return `<span name='${varid}'>${prevRes[varid]}</span>`;
+    });
 
     // replace {$id} with span tag
-    questText = questText.replace(
-      /\{\$(\w+)\}/g,
-      `<span forId='$1'>${"$1"}</span>`
-    );
+    questText = questText.replace(/\{\$(\w+)\}/g, `<span forId='$1'>${"$1"}</span>`);
 
     // replace #YN with Yes No input
     questText = questText.replace(
@@ -225,10 +223,7 @@ transform.render = async (obj, id) => {
     );
 
     // replace |image|URL|height,width| with a html img tag...
-    questText = questText.replace(
-      /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
-      "<img src=https://$1 height=$2 width=$3>"
-    );
+    questText = questText.replace(/\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g, "<img src=https://$1 height=$2 width=$3>");
 
     // replace |__|__|  with a number box...
     questText = questText.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
@@ -257,10 +252,7 @@ transform.render = async (obj, id) => {
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    questText = questText.replace(
-      /(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g,
-      fText
-    );
+    questText = questText.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
     function fText(w1, x1, y1, z1) {
       let elId = "";
       if (x1 == undefined && y1 == undefined) {
@@ -295,10 +287,7 @@ transform.render = async (obj, id) => {
     }
 
     // replace (XX) with a radio button...
-    questText = questText.replace(
-      /(?<=\W)\((\d+)(\:(\w+))?\)([^<\n]*)|\(\)/g,
-      fRadio
-    );
+    questText = questText.replace(/(?<=\W)\((\d+)(\:(\w+))?\)([^<\n]*)|\(\)/g, fRadio);
     function fRadio(v1, w1, x1, y1, z1) {
       let elVar = "";
       if (y1 == undefined) {
@@ -311,19 +300,8 @@ transform.render = async (obj, id) => {
     }
 
     // replace [a-zXX] with a checkbox box...
-    questText = questText.replace(
-      /\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g,
-      fCheck
-    );
-    function fCheck(
-      containsGroup,
-      value,
-      containsName,
-      name,
-      containsDisIf,
-      condition,
-      label
-    ) {
+    questText = questText.replace(/\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
+    function fCheck(containsGroup, value, containsName, name, containsDisIf, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
         displayIf = "";
@@ -342,21 +320,13 @@ transform.render = async (obj, id) => {
     // replace next question  < -> > with hidden...
     questText = questText.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" +
-        questID +
-        "_default' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      "<input type='hidden' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
     );
 
     // replace next question  < #NR -> > with hidden...
     questText = questText.replace(
       /<\s*#NR\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' class='noresponse' id='" +
-        questID +
-        "_default' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      "<input type='hidden' class='noresponse' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -390,10 +360,7 @@ transform.render = async (obj, id) => {
   );
 
   // remove the first previous button...
-  contents = contents.replace(
-    /<input type='button'.*?class='previous'.*?\n/,
-    ""
-  );
+  contents = contents.replace(/<input type='button'.*?class='previous'.*?\n/, "");
   // remove the last next button...
   contents = contents.replace(
     /<input type='button'.*class='next'.*?><\/input><\/form>\[END\]/,
@@ -452,7 +419,7 @@ transform.render = async (obj, id) => {
   }
 };
 
-transform.tout = function(fun, tt = 500) {
+transform.tout = function (fun, tt = 500) {
   if (transform.tout.t) {
     clearTimeout(transform.tout.t);
   }

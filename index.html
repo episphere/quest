@@ -53,7 +53,27 @@
                                     document.getElementById("pagelogic").setAttribute("href", sheet)
                                 }
                             </script>
-                            
+                             <h3>Previous Results</h3>
+                             <textarea id="json_input"></textarea>
+                             <input type="button" id="updater" value="add JSON to memory" />
+                             <div id="loaddisplay" style="height: 20px;"></div>
+                             <script>
+                               let prevRes={}
+                               json_input.cols=40;
+                               json_input.rows=8;
+                               updater.onclick = function (event) {
+                                 console.log(event);
+                                 let txt = "";
+                                 try {
+                                   prevRes = JSON.parse(json_input.value);
+                                   console.log(prevRes);
+                                   txt = "added json... ";
+                                 } catch (err) {
+                                   txt = "caught error: " + err;
+                                 }
+                                 loaddisplay.innerText = txt;
+                               };
+                             </script>
                         </div>
                     
                     </td>
@@ -164,7 +184,7 @@
     <script>
         (async function() {
             console.log("local anonymous");
-            var ta = document.querySelector("textarea");
+            var ta = document.querySelector("#ta");
             ta.style.height = 600;
             ta.style.width = 500;
             //ta.style.position='fixed'
