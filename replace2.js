@@ -483,39 +483,72 @@ transform.render = async (obj, id) => {
         } else {
           let value = questObj[element];
           console.log(inputElements);
-          if (inputElements.length > 1) {
-            // we have either a radio button or checkbox...
-            console.log("rb or cb");
-            value.forEach(v => {
-              selector = "input[value='" + v + "']";
-              inputElements
-                .filter(x => x.value == v)
-                .forEach(x => {
-                  x.checked = true;
-                  if (
-                    [...document.querySelectorAll("form")].includes(
-                      x.parentElement.parentElement
-                    )
-                  ) {
-                    x.parentElement.parentElement.value = value;
-                  } else {
-                    x.parentElement.value = value;
-                  }
-                });
-            });
-          } else {
-            if (Array.isArray(value)) {
-              if (value.length == 1) inputElements[0].value = value[0];
+          if (Array.isArray(questObj[element]) == true) {
+            if (inputElements.length > 1) {
+              // we have either a radio button or checkbox...
+              console.log("rb or cb");
+              value.forEach(v => {
+                selector = "input[value='" + v + "']";
+                inputElements
+                  .filter(x => x.value == v)
+                  .forEach(x => {
+                    x.checked = true;
+                    if (
+                      [...document.querySelectorAll("form")].includes(
+                        x.parentElement.parentElement
+                      )
+                    ) {
+                      x.parentElement.parentElement.value = value;
+                    } else {
+                      x.parentElement.value = value;
+                    }
+                  });
+              });
             } else {
-              inputElements[0].value = value;
+              if (Array.isArray(value)) {
+                if (value.length == 1) inputElements[0].value = value[0];
+              } else {
+                inputElements[0].value = value;
+              }
+              // we have something else...
+              // set the value...
             }
-            // we have something else...
-            // set the value...
+          } else {
+            selector = "input[value='" + questObj[element] + "']";
+            inputElements
+              .filter(elm => elm.type == "number")
+              .forEach(elm => {
+                elm.value = value;
+                if (
+                  [...document.querySelectorAll("form")].includes(
+                    elm.parentElement.parentElement
+                  )
+                ) {
+                  elm.parentElement.parentElement.value = value;
+                } else {
+                  elm.parentElement.value = value;
+                }
+              });
           }
         }
       }
     });
+    if (
+      Object.entries(questObj)
+        .map(([key, value]) => document.getElementById(key))
+        .slice(-1)[0] != null
+    ) {
+      Object.entries(questObj)
+        .map(([key, value]) => document.getElementById(key))
+        .slice(-1)[0]
+        .classList.add("active");
+    } else {
+      if (document.querySelector(".question") != null) {
+        document.querySelector(".question").classList.add("active");
+      }
+    }
   }
+
   window.onload = fillForm();
 };
 
