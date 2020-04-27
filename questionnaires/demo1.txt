@@ -1,0 +1,223 @@
+[SIB] Siblings
+The next questions are about your brothers and sisters, whether or not they are currently living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Do not include adopted or step siblings. 
+
+[SIB1?] How many siblings do you have, including full and half-siblings?
+|__|__|NUMSIB| #Siblings  
+
+[SIBCONFIRM] You told us that you have {$NUMSIB} sibling/siblings, including full and half-siblings. 
+
+If this is not correct, please select the “Back” button to update your response. If this is correct, please select the “Next” button to move forward.
+
+<loop max=25>
+[SIB2?,displayif=greaterThanOrEqual(NUMSIB,#loop)] Thinking of your [oldest/next oldest] sibling, what physical sex was this sibling assigned at birth?
+(2) Female
+(1) Male
+(3) Intersex or other
+(77) Don’t know
+
+[SIB3?,displayif=greaterThanOrEqual(NUMSIB,#loop)] Is [he/she/your sibling] a…
+(1) Full sibling
+(2) Half sibling, same mother
+(3) Half sibling, same father
+
+[SIB4?,displayif=greaterThanOrEqual(NUMSIB,#loop)] Is [he/she/your sibling] still living? 
+(1) Yes -> SIBAGE
+(0) No -> SIBDEATH
+(77) Don’t know
+< -> SIBCANC >
+
+[SIBAGE?,displayif=greaterThanOrEqual(NUMSIB,#loop)] How old is [he/she/your sibling] today?
+|__|__|__| Sibling’s age
+(77) Don’t know
+
+[SIBDEATH?,displayif=greaterThanOrEqual(NUMSIB,#loop)] How old was [he/she/your sibling] when [he/she/they] died?
+|__|__|__| Sibling’s age
+(77)Don’t know
+
+[SIBCANC?,displayif=greaterThanOrEqual(NUMSIB,#loop)] Has a doctor or other health professional ever told your sibling that they have or had any type of cancer?
+(0) No -> _CONTINUE
+(1) Yes -> SIBCANC2
+(77) Don't know -> _CONTINUE
+
+[SIBCANC2,displayif=greaterThanOrEqual(NUMSIB,#loop)] Which type(s) of cancer? Select all that apply.
+[1] Anal -> SIBCANC3A
+[2] Bladder -> SIBCANC3B
+[3] Brain -> SIBCANC3C
+[4] Breast -> SIBCANC3D
+[5,displayif=equals(SIB2,2)] Cervical -> SIBCANC3E
+[6] Colon/rectal -> SIBCANC3F
+[7] Esophageal -> SIBCANC3G
+[8] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.) -> SIBCANC3H
+[9] Kidney -> SIBCANC3I
+[10] Leukemia (blood and bone marrow) -> SIBCANC3J
+[11] Liver -> SIBCANC3K
+[12] Lung or bronchial -> SIBCANC3L
+[13] Non-Hodgkin’s lymphoma -> SIBCANC3M
+[14] Lymphoma -> SIBCANC3N
+[15] Melanoma (skin) -> SIBCANC3O
+[16] Non-melanoma skin (basal or squamous) -> SIBCANC3P
+[17,displayif=equals(SIB2,2)] Ovarian -> SIBCANC3Q
+[18] Pancreatic -> SIBCANC3R
+[19,displayif=equals(SIB2,1)] Prostate -> SIBCANC3S
+[20] Stomach -> SIBCANC3T
+[21,displayif=equals(SIB2,1)] Testicular -> SIBCANC3U
+[22] Thyroid -> SIBCANC3V
+[23,displayif=equals(SIB2,2)] Uterine (endometrial) -> SIBCANC3W
+[24] Another type of cancer: Please describe [text box: SIBCANC2_TB] -> SIBCANC3X
+[25] I know my sibling had cancer, but don’t know what type -> SIBCANC3Y
+< -> _CONTINUE >
+
+[SIBCANC3A?] What year was your sibling first told by a doctor or other health professional that they have or had anal cancer?
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3B?] What year was your sibling first told by a doctor or other health professional that they have or had bladder cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3C?] What year was your sibling first told by a doctor or other health professional that they have or had brain cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3D?] What year was your sibling first told by a doctor or other health professional that they have or had breast cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3E?] What year was your sibling first told by a doctor or other health professional that they have or had cervical cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3F?] What year was your sibling first told by a doctor or other health professional that they have or had colon/rectal cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3G?] What year was your sibling first told by a doctor or other health professional that they have or had esophageal cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3H?] What year was your sibling first told by a doctor or other health professional that they have or had head and neck cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3I?] What year was your sibling first told by a doctor or other health professional that they have or had kidney cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3J?] What year was your sibling first told by a doctor or other health professional that they have or had leukemia? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3K?] What year was your sibling first told by a doctor or other health professional that they have or had liver cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3L?] What year was your sibling first told by a doctor or other health professional that they have or had lung or bronchial cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3M?] What year was your sibling first told by a doctor or other health professional that they have or had non-Hodgkin’s lymphoma? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3N?] What year was your sibling first told by a doctor or other health professional that they have or had lymphoma? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3O?] What year was your sibling first told by a doctor or other health professional that they have or had melanoma? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3P?] What year was your sibling first told by a doctor or other health professional that they have or had non-melanoma skin cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3Q?] What year was your sibling first told by a doctor or other health professional that they have or had ovarian cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3R?] What year was your sibling first told by a doctor or other health professional that they have or had pancreatic cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3S?] What year was your sibling first told by a doctor or other health professional that they have or had prostate cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3T?] What year was your sibling first told by a doctor or other health professional that they have or had stomach cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. |__|__| Age
+
+[SIBCANC3U?] What year was your sibling first told by a doctor or other health professional that they have or had testicular cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3V?] What year was your sibling first told by a doctor or other health professional that they have or had thyroid cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3W?] What year was your sibling first told by a doctor or other health professional that they have or had uterine cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3X?] What year was your sibling first told by a doctor or other health professional that they have or had {$SIBCANC2_TB}?
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+[SIBCANC3Y?] What year was your sibling first told by a doctor or other health professional that they have or had cancer? 
+|__|__|__|__| Year
+
+Or, if it is easier to remember your sibling’s age when they were told this, enter that here. 
+|__|__| Age
+
+</loop>
+
+[CHILD] Children
+
+The next questions are about your children, whether or not they are currently living. Please include adopted and step children, as well as your biological children. 

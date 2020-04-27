@@ -2,6 +2,8 @@ transform = function () {
   // ini
 };
 
+const validation = {};
+
 transform.render = async (obj, id) => {
   let contents = "";
   if (obj.text) contents = obj.text;
@@ -223,28 +225,41 @@ transform.render = async (obj, id) => {
     );
 
     // replace |image|URL|height,width| with a html img tag...
-    questText = questText.replace(/\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g, "<img src=https://$1 height=$2 width=$3>");
-
+    questText = questText.replace(
+      /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
+      "<img src=https://$1 height=$2 width=$3>"
+    );
     // replace |__|__|  with a number box...
-    questText = questText.replace(/\|(__\|){2,}((\w+)\|)?/g, fNum);
-    function fNum(w1, x1, y1, z1) {
+    questText = questText.replace(
+      /\|(__\|){2,}((\w+)\|)?(((\d+|\w+),(\d+|\w+))\|)?/g,
+      fNum
+    );
+    function fNum(
+      numBox,
+      numBoxGroup,
+      varNameGroup,
+      varName,
+      containsRangeGroup,
+      rangeGroup,
+      min,
+      max
+    ) {
       let elId = "";
-      if (z1 == undefined) {
+      if (varName == undefined) {
         elId = questID + "_num";
       } else {
-        elId = z1;
+        elId = varName;
       }
-      return (
-        "<input oninput='numberInput(this)' id='" +
-        elId +
-        "' type='number' name='" +
-        questID +
-        "' ></input><label id='input" +
-        elId +
-        "' for='" +
-        elId +
-        "'></label>"
-      );
+      if (min == undefined) {
+        min = "";
+      }
+      if (max == undefined) {
+        max = "";
+      }
+      return `
+      <input oninput='numberInput(this)' id='${elId}' type='number' ${max.match(/[A-Za-z]+/g) != null ? `data-max-validation-dependency='${max}'` : ""} ${min.match(/[A-Za-z]+/g) != null ? `data-min-validation-dependency='${min}'` : ""}name='${questID}' min='${min}' max='${max}'></input>
+      <label id='input${elId}' for='${elId}'></label>
+      `;
     }
 
     // -------------
@@ -287,26 +302,16 @@ transform.render = async (obj, id) => {
     }
 
     // replace (XX) with a radio button...
-    questText = questText.replace(/(?<=\W)\((\d+)(\:(\w+))?\)([^<\n]*)|\(\)/g, fRadio);
-    function fRadio(v1, w1, x1, y1, z1) {
-      let elVar = "";
-      if (y1 == undefined) {
-        elVar = questID;
-      } else {
-        elVar = y1;
-      }
-
-      return `<br><input type='radio' name='${elVar}_rb' value='${w1}' id='${elVar}_${w1}' onchange='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${w1}'>${z1}</label>`;
-    }
-
-    // replace [a-zXX] with a checkbox box...
-    questText = questText.replace(/\s*\[(\w*)(\:(\w+))?(,displayif=(.*?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
-    function fCheck(containsGroup, value, containsName, name, containsDisIf, condition, label) {
+    questText = questText.replace(
+      /(?<=\W)\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
+      fRadio
+    );
+    function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
         displayIf = "";
       } else {
-        displayIf = `displayif=${condition}`;
+        displayIf = `${condition}`;
       }
       let elVar = "";
       if (name == undefined) {
@@ -314,7 +319,34 @@ transform.render = async (obj, id) => {
       } else {
         elVar = name;
       }
-      return `<br><div class='response' ${displayIf}><input type='checkbox' name='${elVar}_cb' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+      if (labelID == undefined) {
+        labelID = `${elVar}_${value}_label`;
+      }
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}' onchange='rbAndCbClick(this)'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
+    }
+
+    // replace [a-zXX] with a checkbox box...
+    questText = questText.replace(
+      /\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g,
+      fCheck
+    );
+    function fCheck(containsGroup, value, name, labelID, condition, label) {
+      let displayIf = "";
+      if (condition == undefined) {
+        displayIf = "";
+      } else {
+        displayIf = `${condition}`;
+      }
+      let elVar = "";
+      if (name == undefined) {
+        elVar = questID;
+      } else {
+        elVar = name;
+      }
+      if (labelID == undefined) {
+        labelID = `${elVar}_${value}_label`;
+      }
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' onclick='rbAndCbClick(this)'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace next question  < -> > with hidden...
@@ -417,6 +449,91 @@ transform.render = async (obj, id) => {
       document.querySelector(".question").classList.add("active");
     }
   }
+
+  let questObj = {};
+  async function fillForm() {
+    await localforage.iterate(obj => (questObj = obj));
+    // go through the form and fill in all the values...
+    Object.getOwnPropertyNames(questObj).forEach(element => {
+      let formElement = document.getElementById(element);
+      // get input elements with name="element"
+      let selector = "input[name='" + element + "']";
+      if (formElement == null) {
+        return null;
+      } else {
+        let inputElements = [...formElement.querySelectorAll(selector)];
+        if (questObj[element] == undefined) {
+          return null;
+        } else {
+          let value = questObj[element];
+          console.log(inputElements);
+          if (Array.isArray(questObj[element]) == true) {
+            if (inputElements.length > 1) {
+              // we have either a radio button or checkbox...
+              console.log("rb or cb");
+              value.forEach(v => {
+                selector = "input[value='" + v + "']";
+                inputElements
+                  .filter(x => x.value == v)
+                  .forEach(x => {
+                    x.checked = true;
+                    if (
+                      [...document.querySelectorAll("form")].includes(
+                        x.parentElement.parentElement
+                      )
+                    ) {
+                      x.parentElement.parentElement.value = value;
+                    } else {
+                      x.parentElement.value = value;
+                    }
+                  });
+              });
+            } else {
+              if (Array.isArray(value)) {
+                if (value.length == 1) inputElements[0].value = value[0];
+              } else {
+                inputElements[0].value = value;
+              }
+              // we have something else...
+              // set the value...
+            }
+          } else {
+            selector = "input[value='" + questObj[element] + "']";
+            inputElements
+              .filter(elm => elm.type == "number")
+              .forEach(elm => {
+                elm.value = value;
+                if (
+                  [...document.querySelectorAll("form")].includes(
+                    elm.parentElement.parentElement
+                  )
+                ) {
+                  elm.parentElement.parentElement.value = value;
+                } else {
+                  elm.parentElement.value = value;
+                }
+              });
+          }
+        }
+      }
+    });
+    if (
+      Object.entries(questObj)
+        .map(([key, value]) => document.getElementById(key))
+        .slice(-1)[0] != null
+    ) {
+      Object.entries(questObj)
+        .map(([key, value]) => document.getElementById(key))
+        .slice(-1)[0]
+        .classList.add("active");
+    } else {
+      if (document.querySelector(".question") != null) {
+        document.querySelector(".question").classList.add("active");
+      }
+    }
+  }
+
+  window.onload = fillForm();
 };
 
 transform.tout = function (fun, tt = 500) {

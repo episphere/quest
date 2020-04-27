@@ -18,6 +18,8 @@
             | <a href="https://github.com/episphere/quest" target="_blank">quest.js</a> 
             | <a href="https://github.com/episphere/quest/wiki" target="_blank">wiki</a> |
             <a href="https://github.com/episphere/quest/issues" target="_blank">issues</a> |
+            <a href="https://gitter.im/episphere/quest" target="_blank">gitter</a> |
+            
     </div>
     <div class="container" id="tool">
         <table>
@@ -195,12 +197,11 @@
                 transform.tout(() => {
                     transform.render({text: ta.value + "[END]"}, 'rendering') // <-- this is where quest.js is engaged
                     // transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}, 'rendering') // <-- this is where quest.js is engaged
-                    if (document.querySelector(".question") != null) {
-                        document.querySelector(".question").classList.add("active")
-                    }
+                    // if (document.querySelector(".question") != null) {
+                    //     document.querySelector(".question").classList.add("active")
+                    // }
                 })
             }
-
 
             ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
 

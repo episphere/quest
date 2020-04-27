@@ -4,7 +4,7 @@ class Tree {
     this.nextNode = new TreeNode(null);
     this.rootNode = this.prevNode;
 
-    this[Symbol.iterator] = function () {
+    this[Symbol.iterator] = function() {
       return this;
     };
   }
@@ -14,7 +14,7 @@ class Tree {
     // console.log("in addChildren: ", newChildren);
 
     // each child has to be a TreeNode...
-    newChildren = newChildren.map((x) => new TreeNode(x));
+    newChildren = newChildren.map(x => new TreeNode(x));
     this.prevNode.setChildren(newChildren);
     this.nextNode = this.prevNode.next().value;
   }
@@ -73,7 +73,7 @@ class TreeNode {
     if (Array.isArray(children)) {
       this.children = [];
       this.children = [...children];
-      children.forEach((x) => {
+      children.forEach(x => {
         x.setParent(this);
       });
       this.nextNode = this.next().value;
@@ -130,21 +130,29 @@ class TreeNode {
 
 function textBoxInput(inputElement) {
   if (inputElement.previousElementSibling.firstElementChild != null) {
-    if (inputElement.previousElementSibling.firstElementChild.type == "checkbox") {
-      inputElement.previousElementSibling.firstElementChild.checked = inputElement.value.length > 0;
+    if (
+      inputElement.previousElementSibling.firstElementChild.type == "checkbox"
+    ) {
+      inputElement.previousElementSibling.firstElementChild.checked =
+        inputElement.value.length > 0;
       rbAndCbClick(inputElement.previousElementSibling.firstElementChild);
     }
   } else {
-    inputElement.previousElementSibling.previousElementSibling.checked = inputElement.value.length > 0;
+    inputElement.previousElementSibling.previousElementSibling.checked =
+      inputElement.value.length > 0;
     rbAndCbClick(inputElement.previousElementSibling.previousElementSibling);
   }
 }
 
 function numberInput(inputElement) {
-  if ([...inputElement.parentElement.querySelectorAll("input[type=number]")].filter((x) => x != inputElement).length >= 1) {
+  if (
+    [
+      ...inputElement.parentElement.querySelectorAll("input[type=number]")
+    ].filter(x => x != inputElement).length >= 1
+  ) {
     [...inputElement.parentElement.querySelectorAll("input[type=number]")]
-      .filter((x) => x != inputElement)
-      .map((x) => (x.value = ""));
+      .filter(x => x != inputElement)
+      .map(x => (x.value = ""));
   }
   inputElement.parentElement.value = inputElement.value;
 }
@@ -153,24 +161,28 @@ function rbAndCbClick(inputElement) {
   clearSelection(inputElement);
   if (inputElement.type == "checkbox") {
     inputElement.parentElement.parentElement.value = [
-      ...inputElement.parentElement.parentElement.querySelectorAll("input[type='checkbox']"),
+      ...inputElement.parentElement.parentElement.querySelectorAll(
+        "input[type='checkbox']"
+      )
     ]
-      .filter((x) => x.checked)
-      .map((x) => x.value);
+      .filter(x => x.checked)
+      .map(x => x.value);
   } else {
-    inputElement.parentElement.value = [...inputElement.value];
+    inputElement.parentElement.parentElement.value = [...inputElement.value];
   }
 }
 
 function clearSelection(inputElement) {
   var state = inputElement.checked;
-  var cb = inputElement.form.querySelectorAll("input[type='checkbox'], input[type='radio']");
+  var cb = inputElement.form.querySelectorAll(
+    "input[type='checkbox'], input[type='radio']"
+  );
   if (inputElement.value == 99) {
     for (var x of cb) {
       if (x != inputElement) {
         x.checked = false;
         x.clear = inputElement.id;
-        x.onclick = function () {
+        x.onclick = function() {
           clearElement = document.getElementById(this.clear);
           clearElement.checked = false;
         };
@@ -227,7 +239,7 @@ function nextClick(norp, store) {
 
   if (
     norp.parentElement.getAttribute("softedit") == "true" &&
-    getSelected(norp.parentElement).filter((x) => x.type !== "hidden").length == 0
+    getSelected(norp.parentElement).filter(x => x.type !== "hidden").length == 0
   ) {
     // console.log(norp.parentElement);
     norp.setAttribute("data-toggle", "modal");
@@ -236,7 +248,10 @@ function nextClick(norp, store) {
       "softModalFooter"
     ).innerHTML = `<button type="button" class="btn btn-light" data-dismiss="modal" onclick="nextPage('${norp.parentElement.id}', ${store})">Continue Without Answering</button>
      <button type="button" class="btn btn-light" data-dismiss="modal">Answer the Question</button>`;
-  } else if (norp.parentElement.getAttribute("hardedit") == "true" && getSelected(norp.parentElement) == 0) {
+  } else if (
+    norp.parentElement.getAttribute("hardedit") == "true" &&
+    getSelected(norp.parentElement) == 0
+  ) {
     norp.setAttribute("data-toggle", "modal");
     norp.setAttribute("data-target", "#hardModal");
   } else {
@@ -248,7 +263,7 @@ let questRes = {};
 let tempObj = {};
 
 // norp == next or previous button (which ever is clicked...)
-function nextPage(norp, store) {
+async function nextPage(norp, store) {
   // Because next button does not have ID, modal will pass-in ID of question
   // norp needs to be next button element
 
@@ -270,68 +285,103 @@ function nextPage(norp, store) {
     let formData = {};
     formData[`module1.${norp.parentElement.id}`] = norp.parentElement.value;
     store(formData);
-  } else localforage.setItem("module1", questRes);
-
-  // check if we need to add questions to the question queue
-  checkForSkips(norp.parentElement);
-
-  // get the next question from the questionQueue
-  // if it exists... otherwise get the next look at the
-  // markdown and get the question follows.
-  let nextQuestionNode = questionQueue.next();
-  if (nextQuestionNode.done) {
-    // We are at the end of the question queue...
-    //
-    // if the next element is a question add the next
-    // question to the queue and set the nextQuestion variable
-    // not sure what to do if it is not...
-    let tmp = norp.parentElement.nextElementSibling;
-    if (tmp.classList.contains("question")) {
-      questionQueue.add(norp.parentElement.nextElementSibling);
-      nextQuestionNode = questionQueue.next();
+  } else {
+    if (await localforage.getItem("module1")) {
+      let tempObj = {};
+      tempObj = await localforage.getItem("module1");
+      if (tempObj[norp.parentElement.id]) {
+        tempObj[norp.parentElement.id] = norp.parentElement.value;
+      } else {
+        tempObj[norp.parentElement.id] = {};
+        tempObj[norp.parentElement.id] = norp.parentElement.value;
+      }
+      localforage.setItem("module1", tempObj);
+    } else {
+      localforage.setItem("module1", questRes);
     }
   }
 
-  // at this point the we have have the next question from the question queue...
-  // get the actual element.
-  nextElement = nextQuestionNode.value;
-  [...nextElement.querySelectorAll("span[forid]")].map(
-    (x) => (x.innerHTML = document.getElementById(x.getAttribute("forid")).value)
-  );
+  // check if we need to add questions to the question queue
+  checkForSkips(norp.parentElement);
+  checkValid(norp.parentElement);
 
-  // what if there is a "displayif"...
-  let doNotDisplay = false;
-  do {
-    if (nextElement.hasAttribute("displayif")) {
-      // if the displayif is false, do not display....
-      doNotDisplay = !parse(nextElement.getAttribute("displayif"));
-
-      if (doNotDisplay) {
-        norp.parentElement.classList.remove("active");
-        // this should remove the "nextQuestion from the questionQueue"
-        questionQueue.previous();
-        let nextNorp = nextElement.querySelector("input[value='NEXT']");
-        if (nextNorp) {
-          return nextPage(nextNorp);
-        }
+  if (checkValid(norp.parentElement) == false) {
+    return null;
+  } else {
+    // get the next question from the questionQueue
+    // if it exists... otherwise get the next look at the
+    // markdown and get the question follows.
+    let nextQuestionNode = questionQueue.next();
+    if (nextQuestionNode.done) {
+      // We are at the end of the question queue...
+      //
+      // if the next element is a question add the next
+      // question to the queue and set the nextQuestion variable
+      // not sure what to do if it is not...
+      let tmp = norp.parentElement.nextElementSibling;
+      if (tmp.classList.contains("question")) {
+        questionQueue.add(norp.parentElement.nextElementSibling);
+        nextQuestionNode = questionQueue.next();
       }
     }
-  } while (doNotDisplay);
 
-  // check all responses for next question
-  [...nextElement.children]
-    .filter((x) => x.hasAttribute("displayif"))
-    .map((elm) => {
-      f = parse(elm.getAttribute("displayif"));
-
-      elm.style.display = f ? "block" : "none";
+    // at this point the we have have the next question from the question queue...
+    // get the actual element.
+    nextElement = nextQuestionNode.value;
+    [...nextElement.querySelectorAll("span[forid]")].map(x => {
+      let elm = document.getElementById(x.getAttribute("forid"));
+      x.innerHTML = elm.value != undefined ? elm.value : elm.innerText;
     });
+    Array.from(
+      nextElement.querySelectorAll("input[data-max-validation-dependency]")
+    ).map(
+      x =>
+        (x.max = document.getElementById(
+          x.dataset.maxValidationDependency
+        ).value)
+    );
+    Array.from(
+      nextElement.querySelectorAll("input[data-min-validation-dependency]")
+    ).map(
+      x =>
+        (x.min = document.getElementById(
+          x.dataset.minValidationDependency
+        ).value)
+    );
+    // what if there is a "displayif"...
+    let doNotDisplay = false;
+    do {
+      if (nextElement.hasAttribute("displayif")) {
+        // if the displayif is false, do not display....
+        doNotDisplay = !parse(nextElement.getAttribute("displayif"));
 
-  // hide the current question and move to the next...
-  norp.parentElement.classList.remove("active");
-  nextElement.classList.add("active");
+        if (doNotDisplay) {
+          norp.parentElement.classList.remove("active");
+          // this should remove the "nextQuestion from the questionQueue"
+          questionQueue.previous();
+          let nextNorp = nextElement.querySelector("input[value='NEXT']");
+          if (nextNorp) {
+            return nextPage(nextNorp);
+          }
+        }
+      }
+    } while (doNotDisplay);
 
-  return nextElement;
+    // check all responses for next question
+    [...nextElement.children]
+      .filter(x => x.hasAttribute("displayif"))
+      .map(elm => {
+        f = parse(elm.getAttribute("displayif"));
+
+        elm.style.display = f ? "block" : "none";
+      });
+
+    // hide the current question and move to the next...
+    norp.parentElement.classList.remove("active");
+    nextElement.classList.add("active");
+
+    return nextElement;
+  }
 }
 
 async function prev(norp, retrieve) {
@@ -354,7 +404,7 @@ function checkForSkips(questionElement) {
   // get selected responses
   selectedElements = getSelected(questionElement);
 
-  let numSelected = selectedElements.filter((x) => x.type != "hidden").length;
+  let numSelected = selectedElements.filter(x => x.type != "hidden").length;
   // if there are NO non-hidden responses ...
   if (numSelected == 0) {
     // there may be either a noResponse, a default response
@@ -362,22 +412,24 @@ function checkForSkips(questionElement) {
 
     // sort array so that noResponse comes first..
     // noResponse has a classlist length of 1/default =0
-    let classSort = function (a, b) {
+    let classSort = function(a, b) {
       return b.length - a.length;
     };
     selectedElements.sort(classSort);
   } else {
     // something was selected... remove the no response hidden tag..
-    selectedElements = selectedElements.filter((x) => !x.classList.contains("noresponse"));
+    selectedElements = selectedElements.filter(
+      x => !x.classList.contains("noresponse")
+    );
   }
 
   // if there is a skipTo attribute, add them to the beginning of the queue...
   // add the selected responses to the question queue
-  selectedElements = selectedElements.filter((x) => x.hasAttribute("skipTo"));
+  selectedElements = selectedElements.filter(x => x.hasAttribute("skipTo"));
 
   // make an array of the Elements, not the input elments...
-  var ids = selectedElements.map((x) => x.getAttribute("skipTo"));
-  selectedElements = ids.map((x) => document.getElementById(x));
+  var ids = selectedElements.map(x => x.getAttribute("skipTo"));
+  selectedElements = ids.map(x => document.getElementById(x));
 
   // add all the ids for the selected elements with the skipTo attribute to the question queue
   //var ids = selectedElements.map(x => x.id);
@@ -387,6 +439,14 @@ function checkForSkips(questionElement) {
   questionQueue.addChildren(selectedElements);
 
   return null;
+}
+
+function checkValid(questionElement) {
+  if (questionElement.checkValidity() == false) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 function getSelected(questionElement) {
@@ -399,19 +459,23 @@ function getSelected(questionElement) {
   //   )
   // ];
 
-  var rv1 = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox']")];
+  var rv1 = [
+    ...questionElement.querySelectorAll(
+      "input[type='radio'],input[type='checkbox']"
+    )
+  ];
 
   var rv2 = [
     ...questionElement.querySelectorAll(
       "input[type='number'], input[type='text'], input[type='date'], input[type='email'], input[type='tel'], textarea, option"
-    ),
+    )
   ];
 
   var rv3 = [...questionElement.querySelectorAll("input[type='hidden']")];
 
-  rv1 = rv1.filter((x) => x.checked);
-  rv2 = rv2.filter((x) => x.value.length > 0);
-  rv3 = rv3.filter((x) => x.checked);
+  rv1 = rv1.filter(x => x.checked);
+  rv2 = rv2.filter(x => x.value.length > 0);
+  rv3 = rv3.filter(x => x.checked);
 
   // rv = rv.filter(x =>
   //   x.type == "radio" || x.type == "checkbox" || x.type == "hidden"
@@ -439,12 +503,18 @@ function getResults(element) {
 
   let allResponses = [...element.querySelectorAll(".response")];
   // get all the checkboxes
-  cb = allResponses.filter((x) => x.type == "checkbox").map((x) => (tmpRes[x.value] = x.checked));
+  cb = allResponses
+    .filter(x => x.type == "checkbox")
+    .map(x => (tmpRes[x.value] = x.checked));
 
   // get all the text and radio elements...
   rd = allResponses
-    .filter((x) => (x.type == "radio" && x.checked) || ["text", "date", "email", "number", "tel"].includes(x.type))
-    .map((x) => (tmpRes[x.name] = x.value));
+    .filter(
+      x =>
+        (x.type == "radio" && x.checked) ||
+        ["text", "date", "email", "number", "tel"].includes(x.type)
+    )
+    .map(x => (tmpRes[x.name] = x.value));
 }
 
 function stopSubmit(event) {
@@ -457,7 +527,7 @@ function unrollLoops(txt) {
   // each element in res is a loop in the questionnaire...
   let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gm;
   txt = txt.replace(/\n/g, "\xa9");
-  let res = [...txt.matchAll(loopRegex)].map(function (x, indx) {
+  let res = [...txt.matchAll(loopRegex)].map(function(x, indx) {
     return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
   });
 
@@ -465,40 +535,64 @@ function unrollLoops(txt) {
   let disIfRegex = /displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\)/g;
   // we have an array of objects holding the text..
   // get all the ids...
-  let cleanedText = res.map(function (x) {
+  let cleanedText = res.map(function(x) {
     x.txt += "[_CONTINUE" + x.indx + ",displayif=setFalse(-1,#loop)]";
     x.txt = x.txt.replace(/->\s*_CONTINUE\b/g, "-> _CONTINUE" + x.indx);
-    let ids = [...x.txt.matchAll(idRegex)].map((y) => ({
+    let ids = [...x.txt.matchAll(idRegex)].map(y => ({
       label: y[0],
       id: y[1],
-      indx: x.indx,
+      indx: x.indx
     }));
-    let disIfIDs = [...x.txt.matchAll(disIfRegex)].map((disIfID) => ({
+    let disIfIDs = [...x.txt.matchAll(disIfRegex)].map(disIfID => ({
       label: disIfID[0],
-      id: disIfID[1],
+      id: disIfID[1]
     }));
-    disIfIDs = disIfIDs.map((x) => x.id);
-    let newIds = ids.map((x) => x.id);
+    disIfIDs = disIfIDs.map(x => x.id);
+    let newIds = ids.map(x => x.id);
 
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
       var currentText = x.txt;
       // replace all instances of the question ids with id_#
-      ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
+      ids.map(
+        id =>
+          (currentText = currentText.replace(
+            id.label,
+            id.label.replace(id.id, id.id + "_" + loopIndx)
+          ))
+      );
 
-      disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
-      disIfIDs.map((id) => (currentText = currentText.replace(new RegExp(id + "\\b", "g"), id + "_" + loopIndx)));
+      disIfIDs = disIfIDs.filter(x => newIds.includes(x));
+      disIfIDs.map(
+        id =>
+          (currentText = currentText.replace(
+            new RegExp(id + "\\b", "g"),
+            id + "_" + loopIndx
+          ))
+      );
 
       // replace all -> Id with -> Id_#
       ids.map(
-        (id) => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx))
+        id =>
+          (currentText = currentText.replace(
+            new RegExp("->\\s*" + id.id + "\\b", "g"),
+            "-> " + id.id + "_" + loopIndx
+          ))
       );
 
       // replace all |__(|__)|ID with |__(|__)|ID_#
-      ids.map((id) => (currentText = currentText.replace(/(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g, "$1$3_" + loopIndx + "|")));
+      ids.map(
+        id =>
+          (currentText = currentText.replace(
+            /(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g,
+            "$1$3_" + loopIndx + "|"
+          ))
+      );
 
-      ids.map((id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx)));
+      ids.map(
+        id => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
+      );
 
       // if (currentText.search(/->\s*_continue/g) >= 0) {
       //   ;
@@ -525,42 +619,45 @@ function unrollLoops(txt) {
 }
 
 const knownFunctions = {
-  and: function (x, y) {
+  and: function(x, y) {
     return x && y;
   },
-  or: function (x, y) {
+  or: function(x, y) {
     return x || y;
   },
-  equals: function (x, y) {
+  equals: function(x, y) {
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
-  lessThan: function (x, y) {
+  doesNotEqual: function(x, y) {
+    return Array.isArray(x) ? !x.includes(y) : x != y;
+  },
+  lessThan: function(x, y) {
     return parseFloat(x) < parseFloat(y);
   },
-  lessThanOrEqual: function (x, y) {
+  lessThanOrEqual: function(x, y) {
     return parseFloat(x) <= parseFloat(y);
   },
-  greaterThan: function (x, y) {
+  greaterThan: function(x, y) {
     return parseFloat(x) > parseFloat(y);
   },
-  greaterThanOrEqual: function (x, y) {
+  greaterThanOrEqual: function(x, y) {
     return parseFloat(x) >= parseFloat(y);
   },
-  setFalse: function (x, y) {
+  setFalse: function(x, y) {
     return false;
   },
-  difference: function (x, y) {
+  difference: function(x, y) {
     if (typeof y == "string" && document.getElementById(y)) {
       y = document.getElementById(y).value;
     }
     return x - y;
   },
-  percentDiff: function (x, y) {
+  percentDiff: function(x, y) {
     if (typeof y == "string" && document.getElementById(y)) {
       y = document.getElementById(y).value;
     }
     return knownFunctions.difference(x, y) / x;
-  },
+  }
 };
 
 function parse(txt) {
@@ -575,11 +672,15 @@ function parse(txt) {
     lastMatch = match.index + 1;
   }
   // remove all blanks...
-  stack = stack.filter((x) => x != "");
+  stack = stack.filter(x => x != "");
 
   while (stack.indexOf(")") > 0) {
     var callEnd = stack.indexOf(")");
-    if (stack[callEnd - 4] == "(" && stack[callEnd - 2] == "," && stack[callEnd - 5] in knownFunctions) {
+    if (
+      stack[callEnd - 4] == "(" &&
+      stack[callEnd - 2] == "," &&
+      stack[callEnd - 5] in knownFunctions
+    ) {
       // it might hurt performance, but for debugging
       // expliciting setting the variables are helpful...
       fun = stack[callEnd - 5];
@@ -593,7 +694,9 @@ function parse(txt) {
           arg1 = document.getElementById(arg1).value;
         } else {
           //look up by name
-          temp1 = [...document.getElementsByName(arg1)].filter((x) => x.checked)[0];
+          temp1 = [...document.getElementsByName(arg1)].filter(
+            x => x.checked
+          )[0];
           arg1 = temp1 ? temp1.value : arg1;
           // ***** if it's neither... look in the previous module *****
         }

@@ -150,3 +150,7 @@ input[type="checkbox"]:checked + label {
 form {
   padding-top: 30px;
 }
+
+input:invalid {
+  border: 3px solid red;
+}
