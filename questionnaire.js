@@ -283,12 +283,10 @@ async function nextPage(norp, store) {
   questRes = tempObj;
   if (store && norp.parentElement.value) {
     let formData = {};
-    debugger;
     formData[`${questName}.${norp.parentElement.id}`] =
       norp.parentElement.value;
     store(formData);
   } else {
-    debugger;
     if (await localforage.getItem(questName)) {
       let tempObj = {};
       tempObj = await localforage.getItem(questName);
@@ -300,7 +298,6 @@ async function nextPage(norp, store) {
       }
       localforage.setItem(questName, tempObj);
     } else {
-      debugger;
       localforage.setItem(questName, questRes);
     }
   }

@@ -6,7 +6,6 @@ const validation = {};
 let questName = "Questionnaire";
 
 transform.render = async (obj, id, previousResults = {}) => {
-  debugger;
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -56,16 +55,21 @@ transform.render = async (obj, id, previousResults = {}) => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
+  debugger;
   let regEx = new RegExp(
     "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])",
-    "gs"
+    "g"
   );
+
+  contents = contents.replace(/\n/g, "\u001f");
 
   contents = contents.replace(regEx, function(page, questID, d, questText) {
     //  console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
+
+    questText = questText.replace(/\u001f/g, "\n");
 
     questText = questText.replace(/\n/g, "<br>");
 
@@ -323,7 +327,7 @@ transform.render = async (obj, id, previousResults = {}) => {
 
     // replace (XX) with a radio button...
     questText = questText.replace(
-      /(?<=\W)\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
+      /\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
       fRadio
     );
     function fRadio(containsGroup, value, name, labelID, condition, label) {
