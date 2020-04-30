@@ -284,7 +284,8 @@ async function nextPage(norp, store) {
   if (store && norp.parentElement.value) {
     let formData = {};
     debugger;
-    formData[`module1.${norp.parentElement.id}`] = norp.parentElement.value;
+    formData[`${questName}.${norp.parentElement.id}`] =
+      norp.parentElement.value;
     store(formData);
   } else {
     debugger;
