@@ -1,8 +1,9 @@
-transform = function () {
+transform = function() {
   // ini
 };
 
 const validation = {};
+let questName = "Questionnaire";
 
 transform.render = async (obj, id) => {
   let contents = "";
@@ -34,6 +35,11 @@ transform.render = async (obj, id) => {
   contents = contents.replace(/\/\/.*/g, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
 
+  contents = contents.replace(/{"name":"(\w*)"}/, fQuestName);
+  function fQuestName(group, name) {
+    questName = name;
+    return "";
+  }
   //console.log(contents)
   // first let's deal with breaking up questions..
   // a question starts with the [ID1] regex pattern
@@ -45,9 +51,12 @@ transform.render = async (obj, id) => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "gs");
+  let regEx = new RegExp(
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])",
+    "gs"
+  );
 
-  contents = contents.replace(regEx, function (page, questID, d, questText) {
+  contents = contents.replace(regEx, function(page, questID, d, questText) {
     //  console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
@@ -102,7 +111,10 @@ transform.render = async (obj, id) => {
     });
 
     // replace {$id} with span tag
-    questText = questText.replace(/\{\$(\w+)\}/g, `<span forId='$1'>${"$1"}</span>`);
+    questText = questText.replace(
+      /\{\$(\w+)\}/g,
+      `<span forId='$1'>${"$1"}</span>`
+    );
 
     // replace #YN with Yes No input
     questText = questText.replace(
@@ -267,7 +279,10 @@ transform.render = async (obj, id) => {
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    questText = questText.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
+    questText = questText.replace(
+      /(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g,
+      fText
+    );
     function fText(w1, x1, y1, z1) {
       let elId = "";
       if (x1 == undefined && y1 == undefined) {
@@ -352,13 +367,21 @@ transform.render = async (obj, id) => {
     // replace next question  < -> > with hidden...
     questText = questText.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
+      "<input type='hidden' id='" +
+        questID +
+        "_default' name='" +
+        questID +
+        "' skipTo=$1 checked>"
     );
 
     // replace next question  < #NR -> > with hidden...
     questText = questText.replace(
       /<\s*#NR\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' class='noresponse' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
+      "<input type='hidden' class='noresponse' id='" +
+        questID +
+        "_default' name='" +
+        questID +
+        "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -392,7 +415,10 @@ transform.render = async (obj, id) => {
   );
 
   // remove the first previous button...
-  contents = contents.replace(/<input type='button'.*?class='previous'.*?\n/, "");
+  contents = contents.replace(
+    /<input type='button'.*?class='previous'.*?\n/,
+    ""
+  );
   // remove the last next button...
   contents = contents.replace(
     /<input type='button'.*class='next'.*?><\/input><\/form>\[END\]/,
@@ -452,7 +478,11 @@ transform.render = async (obj, id) => {
 
   let questObj = {};
   async function fillForm() {
-    await localforage.iterate(obj => (questObj = obj));
+    if (await localforage.keys().then(res => res.includes(questName))) {
+      await localforage.iterate(obj => {
+        questObj = obj;
+      });
+    }
     // go through the form and fill in all the values...
     Object.getOwnPropertyNames(questObj).forEach(element => {
       let formElement = document.getElementById(element);
@@ -536,7 +566,7 @@ transform.render = async (obj, id) => {
   window.onload = fillForm();
 };
 
-transform.tout = function (fun, tt = 500) {
+transform.tout = function(fun, tt = 500) {
   if (transform.tout.t) {
     clearTimeout(transform.tout.t);
   }
