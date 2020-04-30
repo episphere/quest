@@ -5,7 +5,8 @@ transform = function() {
 const validation = {};
 let questName = "Questionnaire";
 
-transform.render = async (obj, id) => {
+transform.render = async (obj, id, previousResults = {}) => {
+  debugger;
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -34,11 +35,15 @@ transform.render = async (obj, id) => {
   contents = contents.replace(/\/\*.*\*\//g, "");
   contents = contents.replace(/\/\/.*/g, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
-
-  contents = contents.replace(/{"name":"(\w*)"}/, fQuestName);
-  function fQuestName(group, name) {
-    questName = name;
-    return "";
+  let nameRegex = new RegExp(/{"name":"(\w*)"}/);
+  if (nameRegex.test(contents)) {
+    contents = contents.replace(/{"name":"(\w*)"}/, fQuestName);
+    function fQuestName(group, name) {
+      questName = name;
+      return "";
+    }
+  } else {
+    questName = "Questionnaire";
   }
   //console.log(contents)
   // first let's deal with breaking up questions..
@@ -106,8 +111,8 @@ transform.render = async (obj, id) => {
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/, (all, varid) => {
       console.log(varid);
-      console.log(prevRes[varid]);
-      return `<span name='${varid}'>${prevRes[varid]}</span>`;
+      console.log(previousResults[varid]);
+      return `<span name='${varid}'>${previousResults[varid]}</span>`;
     });
 
     // replace {$id} with span tag
@@ -478,87 +483,97 @@ transform.render = async (obj, id) => {
 
   let questObj = {};
   async function fillForm() {
-    if (await localforage.keys().then(res => res.includes(questName))) {
-      await localforage.iterate(obj => {
-        questObj = obj;
+    let tempObj = {};
+    if (
+      localforage.keys().then(res => {
+        res.includes(questName);
+      })
+    ) {
+      await localforage.keys().then(res => {
+        tempObj = res.filter(key => key == questName)[0];
       });
-    }
-    // go through the form and fill in all the values...
-    Object.getOwnPropertyNames(questObj).forEach(element => {
-      let formElement = document.getElementById(element);
-      // get input elements with name="element"
-      let selector = "input[name='" + element + "']";
-      if (formElement == null) {
-        return null;
-      } else {
-        let inputElements = [...formElement.querySelectorAll(selector)];
-        if (questObj[element] == undefined) {
-          return null;
-        } else {
-          let value = questObj[element];
-          console.log(inputElements);
-          if (Array.isArray(questObj[element]) == true) {
-            if (inputElements.length > 1) {
-              // we have either a radio button or checkbox...
-              console.log("rb or cb");
-              value.forEach(v => {
-                selector = "input[value='" + v + "']";
+      await localforage.getItem(tempObj).then(res => {
+        questObj = res;
+      });
+      // go through the form and fill in all the values...
+      if (questObj != null) {
+        Object.getOwnPropertyNames(questObj).forEach(element => {
+          let formElement = document.getElementById(element);
+          // get input elements with name="element"
+          let selector = "input[name='" + element + "']";
+          if (formElement == null) {
+            return null;
+          } else {
+            let inputElements = [...formElement.querySelectorAll(selector)];
+            if (questObj[element] == undefined) {
+              return null;
+            } else {
+              let value = questObj[element];
+              console.log(inputElements);
+              if (Array.isArray(questObj[element]) == true) {
+                if (inputElements.length > 1) {
+                  // we have either a radio button or checkbox...
+                  console.log("rb or cb");
+                  value.forEach(v => {
+                    selector = "input[value='" + v + "']";
+                    inputElements
+                      .filter(x => x.value == v)
+                      .forEach(x => {
+                        x.checked = true;
+                        if (
+                          [...document.querySelectorAll("form")].includes(
+                            x.parentElement.parentElement
+                          )
+                        ) {
+                          x.parentElement.parentElement.value = value;
+                        } else {
+                          x.parentElement.value = value;
+                        }
+                      });
+                  });
+                } else {
+                  if (Array.isArray(value)) {
+                    if (value.length == 1) inputElements[0].value = value[0];
+                  } else {
+                    inputElements[0].value = value;
+                  }
+                  // we have something else...
+                  // set the value...
+                }
+              } else {
+                selector = "input[value='" + questObj[element] + "']";
                 inputElements
-                  .filter(x => x.value == v)
-                  .forEach(x => {
-                    x.checked = true;
+                  .filter(elm => elm.type == "number")
+                  .forEach(elm => {
+                    elm.value = value;
                     if (
                       [...document.querySelectorAll("form")].includes(
-                        x.parentElement.parentElement
+                        elm.parentElement.parentElement
                       )
                     ) {
-                      x.parentElement.parentElement.value = value;
+                      elm.parentElement.parentElement.value = value;
                     } else {
-                      x.parentElement.value = value;
+                      elm.parentElement.value = value;
                     }
                   });
-              });
-            } else {
-              if (Array.isArray(value)) {
-                if (value.length == 1) inputElements[0].value = value[0];
-              } else {
-                inputElements[0].value = value;
               }
-              // we have something else...
-              // set the value...
             }
-          } else {
-            selector = "input[value='" + questObj[element] + "']";
-            inputElements
-              .filter(elm => elm.type == "number")
-              .forEach(elm => {
-                elm.value = value;
-                if (
-                  [...document.querySelectorAll("form")].includes(
-                    elm.parentElement.parentElement
-                  )
-                ) {
-                  elm.parentElement.parentElement.value = value;
-                } else {
-                  elm.parentElement.value = value;
-                }
-              });
           }
+        });
+        if (
+          Object.entries(questObj)
+            .map(([key, value]) => document.getElementById(key))
+            .slice(-1)[0] != null
+        ) {
+          Object.entries(questObj)
+            .map(([key, value]) => document.getElementById(key))
+            .slice(-1)[0]
+            .classList.add("active");
         }
-      }
-    });
-    if (
-      Object.entries(questObj)
-        .map(([key, value]) => document.getElementById(key))
-        .slice(-1)[0] != null
-    ) {
-      Object.entries(questObj)
-        .map(([key, value]) => document.getElementById(key))
-        .slice(-1)[0]
-        .classList.add("active");
-    } else {
-      if (document.querySelector(".question") != null) {
-        document.querySelector(".question").classList.add("active");
+      } else {
+        if (document.querySelector(".question") != null) {
+          document.querySelector(".question").classList.add("active");
+        }
       }
     }
   }

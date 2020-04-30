@@ -299,6 +299,7 @@ async function nextPage(norp, store) {
       }
       localforage.setItem(questName, tempObj);
     } else {
+      debugger;
       localforage.setItem(questName, questRes);
     }
   }
