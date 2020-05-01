@@ -5,7 +5,7 @@ transform = function() {
 const validation = {};
 let questName = "Questionnaire";
 
-transform.render = async (obj, id, previousResults = {}) => {
+transform.render = async (obj, divId, previousResults = {}) => {
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -410,7 +410,7 @@ transform.render = async (obj, id, previousResults = {}) => {
       "'>" +
       questText +
       "<input type='button' onclick='prev(this)' class='previous' value='BACK'></input>\n" +
-      "<input type='button' onclick='nextClick(this)' class='next' value='NEXT'></input>" +
+      `<input type='button' onclick='nextClick(this, ${obj.store})' class='next' value='NEXT'></input>` +
       "</form>";
 
     return rv;
@@ -437,7 +437,7 @@ transform.render = async (obj, id, previousResults = {}) => {
   contents = contents.replace("[END]", "");
 
   // add the HTML/HEAD/BODY tags...
-  document.getElementById(id).innerHTML =
+  document.getElementById(divId).innerHTML =
     contents +
     '\n<script src="questionnaire.js"></script>' +
     `
@@ -485,19 +485,32 @@ transform.render = async (obj, id, previousResults = {}) => {
   }
 
   let questObj = {};
-  async function fillForm() {
+  async function fillForm(retrieve) {
     let tempObj = {};
     if (
       localforage.keys().then(res => {
         res.includes(questName);
       })
     ) {
-      await localforage.keys().then(res => {
-        tempObj = res.filter(key => key == questName)[0];
-      });
-      await localforage.getItem(tempObj).then(res => {
-        questObj = res;
-      });
+      if(retrieve){
+        const response = await retrieve();
+        if(response.code === 200){
+          const userData = response.data;
+          console.log(userData)
+          if(userData[questName]){
+            questObj = userData[questName]
+          }
+        }
+      }
+      else {
+        await localforage.keys().then(res => {
+          tempObj = res.filter(key => key == questName)[0];
+        });
+        await localforage.getItem(tempObj).then(res => {
+          questObj = res;
+        });
+      }
+      
       // go through the form and fill in all the values...
       if (questObj != null) {
         Object.getOwnPropertyNames(questObj).forEach(element => {
@@ -568,6 +581,7 @@ transform.render = async (obj, id, previousResults = {}) => {
             .map(([key, value]) => document.getElementById(key))
             .slice(-1)[0] != null
         ) {
+          Array.from(document.getElementsByClassName('active')).forEach(element => element.classList.remove('active'));
           Object.entries(questObj)
             .map(([key, value]) => document.getElementById(key))
             .slice(-1)[0]
@@ -580,8 +594,7 @@ transform.render = async (obj, id, previousResults = {}) => {
       }
     }
   }
-
-  window.onload = fillForm();
+  fillForm(obj.retrieve);
 };
 
 transform.tout = function(fun, tt = 500) {
