@@ -129,7 +129,8 @@ class TreeNode {
 }
 
 function textBoxInput(inputElement) {
-  if (inputElement.previousElementSibling) {
+  // check if the text box should check a radio/checkbox...
+  if (inputElement.previousElementSibling && inputElement.previousElementSibling.firstElementChild) {
     if (inputElement.previousElementSibling.firstElementChild != null) {
       if (inputElement.previousElementSibling.firstElementChild.type == "checkbox") {
         inputElement.previousElementSibling.firstElementChild.checked = inputElement.value.length > 0;
@@ -496,10 +497,10 @@ function getResults(element) {
     .map((x) => (tmpRes[x.name] = x.value));
 }
 
-function stopSubmit(event) {
+function stopSubmit(event, storeFunction) {
   event.preventDefault();
   console.log(event.target.id);
-  nextClick(event.target.id);
+  nextClick(event.target.id, storeFunction);
 }
 
 // x is the questionnaire text
