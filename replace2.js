@@ -439,14 +439,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
         res.includes(questName);
       })
     ) {
-<<<<<<< HEAD
-      await localforage.keys().then((res) => {
-        tempObj = res.filter((key) => key == questName)[0];
-      });
-      await localforage.getItem(tempObj).then((res) => {
-        questObj = res;
-      });
-=======
       if(retrieve){
         const response = await retrieve();
         if(response.code === 200){
@@ -466,7 +458,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
         });
       }
       
->>>>>>> 5f2eb42bd459f3c2607e285d4df79c968efc1ba6
       // go through the form and fill in all the values...
       if (questObj != null) {
         Object.getOwnPropertyNames(questObj).forEach((element) => {
