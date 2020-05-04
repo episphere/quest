@@ -5,7 +5,7 @@ transform = function () {
 const validation = {};
 let questName = "Questionnaire";
 
-transform.render = async (obj, id, previousResults = {}) => {
+transform.render = async (obj, divId, previousResults = {}) => {
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -97,24 +97,6 @@ transform.render = async (obj, id, previousResults = {}) => {
 
     // replace {$id} with span tag
     questText = questText.replace(/\{\$(\w+)\}/g, `<span forId='$1'>${"$1"}</span>`);
-
-    // replace #YN with Yes No input
-    questText = questText.replace(
-      /#YN/g,
-      "<br><input type='radio' name='" +
-        questID +
-        "' id='" +
-        questID +
-        "_yes' value='1'></input><label style='font-weight: normal; padding-left:5px' for='" +
-        questID +
-        "_yes'>Yes</label><br><input type='radio' name='" +
-        questID +
-        "' id='" +
-        questID +
-        "_no' value='0'></input><label style='font-weight: normal; padding-left:5px' for='" +
-        questID +
-        "_no'>No</label>"
-    );
 
     // replace |@| with an email input
     questText = questText.replace(/\|@\|((\w+)\|)?/g, fEmail);
@@ -274,6 +256,12 @@ transform.render = async (obj, id, previousResults = {}) => {
       }
       return `<textarea id='${elId}'></textarea>`;
     }
+    // replace #YN with Yes No input
+    questText = questText.replace(
+      /#YN/g,
+      `(1) Yes
+       (0) No`
+    );
 
     // replace (XX) with a radio button...
     questText = questText.replace(/\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g, fRadio);
@@ -371,7 +359,7 @@ transform.render = async (obj, id, previousResults = {}) => {
   contents = contents.replace("[END]", "");
 
   // add the HTML/HEAD/BODY tags...
-  document.getElementById(id).innerHTML =
+  document.getElementById(divId).innerHTML =
     contents +
     '\n<script src="questionnaire.js"></script>' +
     `
@@ -419,7 +407,8 @@ transform.render = async (obj, id, previousResults = {}) => {
   }
 
   let questObj = {};
-  async function fillForm() {
+
+  async function fillForm(retrieve) {
     let tempObj = {};
     if (
       localforage.keys().then((res) => {
@@ -494,6 +483,7 @@ transform.render = async (obj, id, previousResults = {}) => {
             .map(([key, value]) => document.getElementById(key))
             .slice(-1)[0] != null
         ) {
+          Array.from(document.getElementsByClassName("active")).forEach((element) => element.classList.remove("active"));
           Object.entries(questObj)
             .map(([key, value]) => document.getElementById(key))
             .slice(-1)[0]
@@ -506,8 +496,7 @@ transform.render = async (obj, id, previousResults = {}) => {
       }
     }
   }
-
-  window.onload = fillForm();
+  fillForm(obj.retrieve);
 };
 
 transform.tout = function (fun, tt = 500) {
