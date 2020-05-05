@@ -28,7 +28,11 @@ body {
   font-family: monospace;
   color: navy;
   height: 600px;
-  width: 550px;
+  width: 100%;
+}
+
+#rendering {
+  width: 100%;
 }
 
 @media only screen and (max-width: 768px) {
@@ -37,5 +41,9 @@ body {
   }
   [id="markup"] {
     position: sticky;
+  }
+
+  [id="navLinks"] {
+    background-color: #24305e;
   }
 }
