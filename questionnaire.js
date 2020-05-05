@@ -11,6 +11,8 @@ function textBoxInput(inputElement) {
     inputElement.previousElementSibling.previousElementSibling.checked = inputElement.value.length > 0;
     rbAndCbClick(inputElement.previousElementSibling.previousElementSibling);
   }
+  handleXOR(inputElement);
+  inputElement.parentElement.value = inputElement.value;
 }
 
 function numberInput(inputElement) {
@@ -20,6 +22,16 @@ function numberInput(inputElement) {
       .map((x) => (x.value = ""));
   }
   inputElement.parentElement.value = inputElement.value;
+}
+function handleXOR(inputElement) {
+  console.log("inhandleXOR");
+  let sibs = [...inputElement.parentElement.querySelectorAll("input")];
+  sibs = sibs.filter(
+    (x) => x.hasAttribute("xor") && x.getAttribute("xor") == inputElement.getAttribute("xor") && x.id != inputElement.id
+  );
+  sibs.forEach((x) => {
+    x.value = "";
+  });
 }
 
 function rbAndCbClick(inputElement) {
@@ -86,6 +98,12 @@ function continueQuestion(norp) {
 }
 
 function nextClick(norp, store) {
+  // Because next button does not have ID, modal will pass-in ID of question
+  // norp needs to be next button element
+  if (typeof norp == "string") {
+    norp = document.getElementById(norp).querySelector(".next");
+  }
+
   if (norp.hasAttribute("data-toggle")) {
     norp.removeAttribute("data-toggle");
   }
@@ -120,16 +138,10 @@ let tempObj = {};
 
 // norp == next or previous button (which ever is clicked...)
 async function nextPage(norp, store) {
-  // Because next button does not have ID, modal will pass-in ID of question
-  // norp needs to be next button element
-
   // The root is defined as null, so if the question is not the same as the
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
   // and call next().
-  if (typeof norp == "string") {
-    norp = document.getElementById(norp).querySelector(".next");
-  }
   if (questionQueue.rootNode.children.length == 0) {
     questionQueue.add(norp.parentElement);
     questionQueue.next();
@@ -138,6 +150,7 @@ async function nextPage(norp, store) {
   tempObj[norp.parentElement.id] = norp.parentElement.value;
   questRes = tempObj;
   if (store && norp.parentElement.value) {
+    debugger;
     let formData = {};
     formData[`${questName}.${norp.parentElement.id}`] = norp.parentElement.value;
     store(formData);
@@ -351,8 +364,10 @@ function getResults(element) {
     .map((x) => (tmpRes[x.name] = x.value));
 }
 
-function stopSubmit(event) {
+function stopSubmit(event, storeFunction) {
   event.preventDefault();
+  console.log(event.target.id);
+  nextClick(event.target.id, storeFunction);
 }
 
 // x is the questionnaire text

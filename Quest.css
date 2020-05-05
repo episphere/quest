@@ -1,0 +1,49 @@
+#navBar {
+  background-color: rgb(53 58 64);
+  color: rgb(197 199 202);
+  border-bottom: 5px solid rgb(154 160 173);
+  border-top: 5px solid rgb(154 160 173);
+  background: linear-gradient(to right, #24305e, lightblue);
+  font-family: "Archivo";
+  width: 100%;
+  /* font-weight: bold; */
+}
+
+#navLinks {
+  padding-left: 50px;
+  /* background-color: rgb(53 58 64); */
+}
+
+#navLinks a {
+  color: rgb(154 160 173);
+  font-size: 20px;
+}
+
+body {
+  background-color: #a8d0e6;
+}
+
+#ta {
+  background-color: #f7f9fb;
+  font-family: monospace;
+  color: navy;
+  height: 600px;
+  width: 100%;
+}
+
+#rendering {
+  width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+  [id="ta"] {
+    width: 350px !important;
+  }
+  [id="markup"] {
+    position: sticky;
+  }
+
+  [id="navLinks"] {
+    background-color: #24305e;
+  }
+}

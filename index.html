@@ -6,200 +6,183 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script href="https://fonts.googleapis.com/css?family=Archivo&display=swap" rel="stylesheet"></script>
     <link id="pagestyle" href="Default.css" rel="stylesheet" type="text/css">
     <link id="pagelogic" href="Default.css" rel="stylesheet" type="text/css"> 
+    <link href="Quest.css" rel="stylesheet" type="text/css"> 
     <script src="replace2.js"></script>
     <script src="questionnaire.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min.js"></script>
 </head>
 
     <div id="navBar" style="margin-bottom: 10px;">
-            <h3>questionnaire markup demo</h3>
-            | <a href="https://github.com/episphere/quest" target="_blank">quest.js</a> 
-            | <a href="https://github.com/episphere/quest/wiki" target="_blank">wiki</a> |
-            <a href="https://github.com/episphere/quest/issues" target="_blank">issues</a> |
-            <a href="https://gitter.im/episphere/quest" target="_blank">gitter</a> |
-            
+            <h1 style="padding-left: 50px;">Quest</h1>
+            <div id="navLinks">
+                | <a href="https://github.com/episphere/quest" target="_blank">Quest.js</a> 
+                | <a href="https://github.com/episphere/quest/wiki" target="_blank">Wiki</a> |
+                <a href="https://github.com/episphere/quest/issues" target="_blank">Issues</a> |
+                <a href="https://gitter.im/episphere/quest" target="_blank">Gitter</a> |
+            </div>
     </div>
-    <div class="container" id="tool">
-        <table>
-            <thead id="legendDiv">
-                <tr>
-                    <td>
-                        <div class="container" id="legend" style="border: 1px solid black; padding-right: 5px; padding-left:5px; width:500px; height: 375px;">
-                            <h3>Legend</h3>
-                            <p>To initialize a question, start by typing any capital letters or numbers in brackets i.e. [A-Z 0-9] or by typing a capital letter and a number followed by a period i.e. Q1.</p>
-                            <p>Check Box = [] with a value of lower case letters or numbers inside the brackets i.e. [a-z 0-9] or *</p>
-                            <p>Radio Button = () with a value of lower case letters or numbers inside the paretheses i.e. (a-z 0-9)</p>
-                            <p>Age = |__|__|</p>
-                            <p>Year = |__|__|__|__|</p>
-                            <p>Input Box = |__| (two underlines) or [text box]</p>
-                            <p>Text Area = |___| (three underlines)</p>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="container" id="stylingDiv" style="border: 1px solid black; width:500px; height:375px; padding-left: 5px;">
-                            <h3>Styling</h3>
-                            <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked> No Style</input>
-                            <input type="radio" id="styling" name="styling" onclick="changeStyle('Style1.css')"> With Style 1</input>
-                            <script>
-                                function changeStyle(sheet) {
-                                    document.getElementById("pagestyle").setAttribute("href", sheet)
-                                }
-                            </script>
-                            <h3>Logic</h3>
-                            <input type="radio" id="styling" name="logic" onclick="changeLogic('Default.css')" checked> Not Active</input>
-                            <input type="radio" id="styling" name="logic" onclick="changeLogic('ActiveLogic.css')"> Active</input>
-                            <script>
-                                function changeLogic(sheet) {
-                                    document.getElementById("pagelogic").setAttribute("href", sheet)
-                                }
-                            </script>
-                             <h3>Previous Results</h3>
-                             <textarea id="json_input"></textarea>
-                             <input type="button" id="updater" value="add JSON to memory" />
-                             <div id="loaddisplay" style="height: 20px;"></div>
-                             <script>
-                               let prevRes={}
-                               json_input.cols=40;
-                               json_input.rows=8;
-                               updater.onclick = function (event) {
-                                 console.log(event);
-                                 let txt = "";
-                                 try {
-                                   prevRes = JSON.parse(json_input.value);
-                                   console.log(prevRes);
-                                   txt = "added json... ";
-                                 } catch (err) {
-                                   txt = "caught error: " + err;
-                                 }
-                                 loaddisplay.innerText = txt;
-                               };
-                             </script>
-                        </div>
+
+    <div class="container-fluid" id="tool">
+        <div class="row">
+            <div class="col-sm-6 my-2" id="loadSaveDiv" style="border: 1px solid black;">
+                <h3>Questionnaire Options</h3>
+                <input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)">
+                <br>
+                <span>Enter URL:</span>
+                <input id="url" style="margin-top: 10px;" onchange="submitURL()">
+                <input type="submit" onclick="submitURL()"></input>
+                <br>
+                <span>File Name:</span>
+                <input id="tb" style="margin-top: 10px;">
+                <span>.txt</span>
+                <button onclick="saveDoc()">Save</button>
+                <br>
+                <span>Upload Questionnaire:</span>
+                <button style="margin-top: 10px;" onclick="goToLink()">Upload</button>
+            </div>
+            <div class="col-sm-3 my-2" id="stylingDiv" style="border: 1px solid black; border-right:0;">
+                    <h3>Styling</h3>
+                    <input type="radio" id="styling" name="styling" onclick="changeStyle('Default.css')" checked> No Style</input>
+                    <input type="radio" id="styling" name="styling" onclick="changeStyle('Style1.css')"> With Style 1</input>
                     
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h3>markup (<a href="?questionnaires/demo.txt" id="demo">demo</a>)</h3>
-                        <!-- <div id="lint" style="border: 1px solid black; padding-right: 5px; padding-left:5px; width:500px">
-                            <h3>Linting</h3>
-                            <input type="checkbox" id="sherlock" onclick="changeLint('Sherlock.js')">Sherlock</button>
-                            <input type="checkbox" id="demo5" onclick="changeLint('demo5.js')">Demo</button>
-                        </div>
-                        <script>
-                            function changeLint(file){
-                                let script = document.createElement('script')
-                                script.src = file
-                                script.id = "script_" + file
-                                if(event.target.checked == true){
-                                    document.getElementsByTagName('head')[0].appendChild(script)
-                                }
-                                else{
-                                    document.getElementsByTagName('head')[0].removeChild(document.getElementById('script_'+ `${file}`))
-                                }
-                                
-                            }
-                        </script> -->
-                    </td>
-                    <td style="color: navy; padding-left: 15px;">
-                        <h3>quest.js rendering</h3>
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="markup" style="vertical-align:top;">
-                        <textarea id="ta"></textarea>
-                        <div id="loadSaveDiv">
-                            <input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)">
-                            <br>
-                            <span>Enter URL:</span>
-                            <input id="url" style="margin-top: 10px;" onchange="submitURL()">
-                            <input type="submit" onclick="submitURL()"></input>
-                            <br>
-                            <span>File Name:</span>
-                            <input id="tb" style="margin-top: 10px;">
-                            <span>.txt</span>
-                            <button onclick="saveDoc()">Save</button>
-                            <br>
-                            <span>Upload Questionnaire:</span>
-                            <button style="margin-top: 10px;" onclick="goToLink()">Upload</button>
-                        </div>
-                    </td>
-                    <script>
-                        function goToLink(){
-                            let a = document.createElement('a')
-                            a.href = "https://github.com/episphere/quest/upload/master/questionnaires"
-                            a.target = "_blank"
-                            a.click()
-                        }
-                    </script>
-                    <script>
-                        function saveDoc() {
-                            let bb = new Blob([ta.value])
-                            let url = URL.createObjectURL(bb);
-                            let a = document.createElement('a');
-                            a.href = url;
-                            let tb = document.getElementById('tb')
-                            if(tb.value == 0){tb.value = "demo"}
-                            a.download = tb.value;
-                            a.click() // then download it automatically 
-                            return a
-                        }
-                    </script>
-                    <script>
-                        function submitURL(){
-                            let url = document.getElementById("url").value
-                            location.hash = url
-                            location.reload()
-                        }
-                    </script>
-                    <script>
-                        function onFileSelected(event){
-                            let file = event.target.files[0]
-                            let reader = new FileReader()
-                            reader.onload = function(event){
-                                let ta = document.getElementById("ta")
-                                ta.value = event.target.result
-                                ta.onkeyup()
-                            }
-                            reader.readAsText(file)
-
-                        }
-                    </script>
-                    <script>
-                        if(location.hash.split('&').includes('run')){
-                            document.getElementById('navBar').style.display = 'none'
-                            document.getElementById('legendDiv').style.display = 'none'
-                            document.getElementById('markup').style.display = 'none'
-                            changeLogic("ActiveLogic.css")
-                        }
-                    </script>
-                    <td id="rendering" style="vertical-align:top; width:650px; padding-left: 15px;"></td>
-                </tr>
-            </tbody>
-        </table>    
+                    <h3>Logic</h3>
+                <input type="radio" id="styling" name="logic" onclick="changeLogic('Default.css')" checked> Not Active</input>
+                <input type="radio" id="styling" name="logic" onclick="changeLogic('ActiveLogic.css')"> Active</input>
+            </div>
+            <div class="col-sm-3 my-2" id="prevResDiv" style="border: 1px solid black;border-left:0">
+                <h3>Previous Results</h3>
+                <textarea id="json_input" style="width: 100%; height:200px"></textarea>
+                <div class="col" style="margin-top: 10px;">
+                    <input type="button" id="updater" value="add JSON to memory" />
+                    <input type="button" id="clearMem" value="Clear Memory" />
+                    <div id="loaddisplay" style="height: 20px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" id="markup">
+                <h3>Markup (<a href="?questionnaires/demo.txt" id="demo">Demo</a>)</h3>
+                <textarea id="ta"></textarea>
+            </div>
+            <!-- <div id="lint" style="border: 1px solid black; padding-right: 5px; padding-left:5px; width:500px">
+                <h3>Linting</h3>
+                <input type="checkbox" id="sherlock" onclick="changeLint('Sherlock.js')">Sherlock</button>
+                <input type="checkbox" id="demo5" onclick="changeLint('demo5.js')">Demo</button>
+            </div>
+            <script>
+                function changeLint(file){
+                    let script = document.createElement('script')
+                    script.src = file
+                    script.id = "script_" + file
+                    if(event.target.checked == true){
+                        document.getElementsByTagName('head')[0].appendChild(script)
+                    }
+                    else{
+                        document.getElementsByTagName('head')[0].removeChild(document.getElementById('script_'+ `${file}`))
+                    }
+                    
+                }
+            </script> -->
+            <div class="col">
+                <h3 style="color: navy;">Rendering</h3>
+                <div id="rendering" ></div>
+            </div>
+        </div>
     </div>
 
+    <script>
+        function changeStyle(sheet) {
+            document.getElementById("pagestyle").setAttribute("href", sheet)
+        }
+    </script>
+
+    <script>
+        function changeLogic(sheet) {
+            document.getElementById("pagelogic").setAttribute("href", sheet)
+        }
+    </script>
+
+    <script>
+        let prevRes={}
+        updater.onclick = function (event) {
+          console.log(event);
+          let txt = "";
+          try {
+            prevRes = JSON.parse(json_input.value);
+            console.log(prevRes);
+            txt = "added json... ";
+          } catch (err) {
+            txt = "caught error: " + err;
+          }
+          loaddisplay.innerText = txt;
+        };
+      </script>
+
+    <script>
+        function goToLink(){
+            let a = document.createElement('a')
+            a.href = "https://github.com/episphere/quest/upload/master/questionnaires"
+            a.target = "_blank"
+            a.click()
+        }
+    </script>
+    <script>
+        function saveDoc() {
+            let bb = new Blob([ta.value])
+            let url = URL.createObjectURL(bb);
+            let a = document.createElement('a');
+            a.href = url;
+            let tb = document.getElementById('tb')
+            if(tb.value == 0){tb.value = "demo"}
+            a.download = tb.value;
+            a.click() // then download it automatically 
+            return a
+        }
+    </script>
+    <script>
+        function submitURL(){
+            let url = document.getElementById("url").value
+            location.hash = url
+            location.reload()
+        }
+    </script>
+    <script>
+        function onFileSelected(event){
+            let file = event.target.files[0]
+            let reader = new FileReader()
+            reader.onload = function(event){
+                let ta = document.getElementById("ta")
+                ta.value = event.target.result
+                ta.onkeyup()
+            }
+            reader.readAsText(file)
+
+        }
+    </script>
+    <script>
+        if(location.hash.split('&').includes('run')){
+            document.getElementById('navBar').style.display = 'none'
+            document.getElementById('loadSaveDiv').style.display ='none'
+            document.getElementById('stylingDiv').style.display ='none'
+            document.getElementById('prevResDiv').style.display ='none'
+            document.getElementById('markup').style.display = 'none'
+            changeLogic("ActiveLogic.css")
+        }
+    </script>
     <script>
         (async function() {
             console.log("local anonymous");
             var ta = document.querySelector("#ta");
-            ta.style.height = 600;
-            ta.style.width = 500;
-            //ta.style.position='fixed'
-            ta.style.backgroundColor = "#FAE5D3";
-            ta.style.color = "navy";
-
             ta.onkeyup = ev => {
                 transform.tout(() => {
                     transform.render({text: ta.value + "[END]"}, 'rendering', prevRes) // <-- this is where quest.js is engaged
                     // transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}, 'rendering') // <-- this is where quest.js is engaged
-                    // if (document.querySelector(".question") != null) {
-                    //     document.querySelector(".question").classList.add("active")
-                    // }
+                    if (document.querySelector(".question") != null) {
+                        document.querySelector(".question").classList.add("active")
+                    }
                 })
             }
 
@@ -214,4 +197,16 @@
             ta.style.width =
                 parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
         })();
+
+        function clearLocalForage(){
+            localforage.clear().then(()=>{
+                loaddisplay.innerHTML="local forage cleared"
+                console.log("lf cleared")
+            }).catch((err)=>{
+                loaddisplay.innerHTML="caught error"+err;
+                console.log("error while clearing lf.  ",err)
+            })
+        }
+        console.log("localForage",localforage)
+        clearMem.onclick = clearLocalForage;
     </script>
