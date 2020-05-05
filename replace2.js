@@ -1,4 +1,4 @@
-transform = function () {
+transform = function() {
   // ini
 };
 
@@ -55,11 +55,16 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "g");
+  let regEx = new RegExp(
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])",
+    "g"
+  );
 
+  // because firefox cannot handle the "s" tag, encode all newlines
+  // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/\n/g, "\u001f");
 
-  contents = contents.replace(regEx, function (page, questID, d, questText) {
+  contents = contents.replace(regEx, function(page, questID, d, questText) {
     //  console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
@@ -81,26 +86,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     var displayifMatch = d.match(/,\s*(displayif\s*=\s*.*)/);
     // if so, remove the comma and go.  if not, set d to blank...
     d = displayifMatch ? displayifMatch[1] : "";
-    // ---------------
-    // questText = questText.replace(
-    //   /\`\`\`(.*)\`\`\`/gms,
-    //   "<script type='text/javascript'>$1</script>"
-    // );
-    // ----------------
-
-    // not sure why rv was defined here! is was overwritten later in the function...
-    // let rv =
-    //   "<form class='question' style='font-weight: bold' id='" +
-    //   questID +
-    //   "' " +
-    //   d +
-    //   ">" +
-    //   questText +
-    //   "<input type='button' onclick='prev(this)' class='previous' value='previous'></input>\n" +
-    //   "<input type='button' onclick='next(this)' class='next' value='next'></input>" +
-    //   "<br>" +
-    //   "<br>" +
-    //   "</form>";
 
     let hardBool = questID.endsWith("!");
     let softBool = questID.endsWith("?");
@@ -110,13 +95,14 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/, (all, varid) => {
-      console.log(varid);
-      console.log(previousResults[varid]);
       return `<span name='${varid}'>${previousResults[varid]}</span>`;
     });
 
     // replace {$id} with span tag
-    questText = questText.replace(/\{\$(\w+)\}/g, `<span forId='$1'>${"$1"}</span>`);
+    questText = questText.replace(
+      /\{\$(\w+)\}/g,
+      `<span forId='$1'>${"$1"}</span>`
+    );
 
     // replace |@| with an email input
     questText = questText.replace(/\|@\|((\w+)\|)?/g, fEmail);
@@ -220,27 +206,37 @@ transform.render = async (obj, divId, previousResults = {}) => {
     </select>`
     );
 
-    // replace |image|URL|height,width| with a html img tag...
-    questText = questText.replace(/\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g, "<img src=https://$1 height=$2 width=$3>");
-    // replace |__|__|  with a number box...
-    questText = questText.replace(/\|(__\|){2,}((\w+)\|)?(((\d+|\w+),(\d+|\w+))\|)?/g, fNum);
-    function fNum(numBox, numBoxGroup, varNameGroup, varName, containsRangeGroup, rangeGroup, min, max) {
-      let elId = "";
-      if (varName == undefined) {
-        elId = questID + "_num";
+    function guaranteeIdSet(options, inputType = "inp") {
+      if (options == undefined) {
+        options = "";
+      }
+      options = options.trim();
+      let elementId = options.match(/id=([^\s]+)/);
+      if (!elementId) {
+        elementId = `${questID}_${inputType}`;
+        options = `${options} id=${elementId}`;
       } else {
-        elId = varName;
+        elementId = elementId[1];
       }
-      if (min == undefined) {
-        min = "";
-      }
-      if (max == undefined) {
-        max = "";
-      }
-      return `
-      <input oninput='numberInput(this)' id='${elId}' type='number' ${max.match(/[A-Za-z]+/g) != null ? `data-max-validation-dependency='${max}'` : ""} ${min.match(/[A-Za-z]+/g) != null ? `data-min-validation-dependency='${min}'` : ""}name='${questID}' min='${min}' max='${max}'></input>
-      <label id='input${elId}' for='${elId}'></label>
-      `;
+      return { options: options, elementId: elementId };
+    }
+
+    // replace |image|URL|height,width| with a html img tag...
+    questText = questText.replace(
+      /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
+      "<img src=https://$1 height=$2 width=$3>"
+    );
+    // replace |__|__|  with a number box...
+    questText = questText.replace(/\|(?:__\|){2,}(?:([^|]+)\|)?/g, fNum);
+    function fNum(fullmatch, opts) {
+      // make sure that the element id is set...
+      const { options, elementId } = guaranteeIdSet(opts, "num");
+      console.log(`
+      <input oninput='numberInput(this)' name='${questID}' ${options}></input>
+      <label id='${elementId}_label' for='${elementId}'></label>
+      `);
+
+      return `<input type='number' oninput='numberInput(this)' name='${questID}' ${options}></input>`;
     }
 
     // -------------
@@ -248,29 +244,22 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // -------------
 
     // replace |__| or [text box:xxx] with an input box...
-    questText = questText.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
-    function fText(w1, x1, y1, z1) {
-      let elId = "";
-      if (x1 == undefined && y1 == undefined) {
-        elId = questID + "_text";
-      } else {
-        elId = x1 == undefined ? y1 : x1;
+    //questText = questText.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
+    questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
+    function fTextBox(fullmatch, option) {
+      let elementId = `${questID}_text`;
+      if (option != undefined) {
+        elementIdId = option;
       }
-      let lbl = z1 == undefined ? "" : z1;
-      return (
-        "\n<input oninput='textBoxInput(this)' type='text' id='" +
-        elId +
-        "' name='" +
-        questID +
-        "'></input><label for='" +
-        elId +
-        "'>" +
-        lbl +
-        "</label>"
-      );
+      return `<input type='text' oninput='textBoxInput(this)' name='${questID}' id=${elementId}></input>`;
+    }
+    questText = questText.replace(/\|(?:__\|)(?:([^|]+)\|)?/g, fText);
+    function fText(fullmatch, opts) {
+      const { options, elementId } = guaranteeIdSet(opts, "txt");
+      return `<input type='text' oninput='textBoxInput(this)' name='${questID}' ${options}></input>`;
     }
 
-    // replace |___| with a textbox...
+    // replace |___| with a textarea...
     questText = questText.replace(/\|___\|((\w+)\|)?/g, fTextArea);
     function fTextArea(x1, y1, z1) {
       let elId = "";
@@ -289,7 +278,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
 
     // replace (XX) with a radio button...
-    questText = questText.replace(/\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g, fRadio);
+    questText = questText.replace(
+      /\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
+      fRadio
+    );
     function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
@@ -310,7 +302,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace [a-zXX] with a checkbox box...
-    questText = questText.replace(/\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
+    questText = questText.replace(
+      /\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g,
+      fCheck
+    );
     function fCheck(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
@@ -333,13 +328,21 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace next question  < -> > with hidden...
     questText = questText.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
+      "<input type='hidden' id='" +
+        questID +
+        "_default' name='" +
+        questID +
+        "' skipTo=$1 checked>"
     );
 
     // replace next question  < #NR -> > with hidden...
     questText = questText.replace(
       /<\s*#NR\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' class='noresponse' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
+      "<input type='hidden' class='noresponse' id='" +
+        questID +
+        "_default' name='" +
+        questID +
+        "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -348,20 +351,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
 
-    rv =
-      "<form class='question' onsubmit='stopSubmit(event)' style='font-weight: bold' id='" +
-      questID +
-      "' " +
-      d +
-      " hardEdit='" +
-      hardBool +
-      "' softEdit='" +
-      softBool +
-      "'>" +
-      questText +
-      "<input type='button' onclick='prev(this)' class='previous' value='BACK'></input>\n" +
-      `<input type='button' onclick='nextClick(this, ${obj.store})' class='next' value='NEXT'></input>` +
-      "</form>";
+    rv = `<form class='question' onsubmit='stopSubmit(event,${obj.store})' style='font-weight: bold' id='${questID}' ${d} hardEdit='
+      ${hardBool}' softEdit='${softBool}'> ${questText} <input type='button' onclick='prev(this)' class='previous' value='BACK'></input>\n
+      <input type='submit' class='next' value='NEXT'></input>
+      </form>`;
 
     return rv;
   });
@@ -373,7 +366,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
   );
 
   // remove the first previous button...
-  contents = contents.replace(/<input type='button'.*?class='previous'.*?\n/, "");
+  contents = contents.replace(
+    /<input type='button'.*?class='previous'.*?\n/,
+    ""
+  );
   // remove the last next button...
   contents = contents.replace(
     /<input type='button'.*class='next'.*?><\/input><\/form>\[END\]/,
@@ -432,24 +428,24 @@ transform.render = async (obj, divId, previousResults = {}) => {
   }
 
   let questObj = {};
+
   async function fillForm(retrieve) {
     let tempObj = {};
     if (
-      localforage.keys().then((res) => {
+      localforage.keys().then(res => {
         res.includes(questName);
       })
     ) {
-      if(retrieve){
+      if (retrieve) {
         const response = await retrieve();
-        if(response.code === 200){
+        if (response.code === 200) {
           const userData = response.data;
-          console.log(userData)
-          if(userData[questName]){
-            questObj = userData[questName]
+          console.log(userData);
+          if (userData[questName]) {
+            questObj = userData[questName];
           }
         }
-      }
-      else {
+      } else {
         await localforage.keys().then(res => {
           tempObj = res.filter(key => key == questName)[0];
         });
@@ -457,10 +453,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
           questObj = res;
         });
       }
-      
+
       // go through the form and fill in all the values...
       if (questObj != null) {
-        Object.getOwnPropertyNames(questObj).forEach((element) => {
+        Object.getOwnPropertyNames(questObj).forEach(element => {
           let formElement = document.getElementById(element);
           // get input elements with name="element"
           let selector = "input[name='" + element + "']";
@@ -471,19 +467,24 @@ transform.render = async (obj, divId, previousResults = {}) => {
             if (questObj[element] == undefined) {
               return null;
             } else {
+              debugger;
               let value = questObj[element];
               console.log(inputElements);
               if (Array.isArray(questObj[element]) == true) {
                 if (inputElements.length > 1) {
                   // we have either a radio button or checkbox...
                   console.log("rb or cb");
-                  value.forEach((v) => {
+                  value.forEach(v => {
                     selector = "input[value='" + v + "']";
                     inputElements
-                      .filter((x) => x.value == v)
-                      .forEach((x) => {
+                      .filter(x => x.value == v)
+                      .forEach(x => {
                         x.checked = true;
-                        if ([...document.querySelectorAll("form")].includes(x.parentElement.parentElement)) {
+                        if (
+                          [...document.querySelectorAll("form")].includes(
+                            x.parentElement.parentElement
+                          )
+                        ) {
                           x.parentElement.parentElement.value = value;
                         } else {
                           x.parentElement.value = value;
@@ -502,10 +503,14 @@ transform.render = async (obj, divId, previousResults = {}) => {
               } else {
                 selector = "input[value='" + questObj[element] + "']";
                 inputElements
-                  .filter((elm) => elm.type == "number")
-                  .forEach((elm) => {
+                  .filter(elm => elm.type == "number")
+                  .forEach(elm => {
                     elm.value = value;
-                    if ([...document.querySelectorAll("form")].includes(elm.parentElement.parentElement)) {
+                    if (
+                      [...document.querySelectorAll("form")].includes(
+                        elm.parentElement.parentElement
+                      )
+                    ) {
                       elm.parentElement.parentElement.value = value;
                     } else {
                       elm.parentElement.value = value;
@@ -520,7 +525,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
             .map(([key, value]) => document.getElementById(key))
             .slice(-1)[0] != null
         ) {
-          Array.from(document.getElementsByClassName('active')).forEach(element => element.classList.remove('active'));
+          Array.from(
+            document.getElementsByClassName("active")
+          ).forEach(element => element.classList.remove("active"));
           Object.entries(questObj)
             .map(([key, value]) => document.getElementById(key))
             .slice(-1)[0]
@@ -536,7 +543,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   fillForm(obj.retrieve);
 };
 
-transform.tout = function (fun, tt = 500) {
+transform.tout = function(fun, tt = 500) {
   if (transform.tout.t) {
     clearTimeout(transform.tout.t);
   }
