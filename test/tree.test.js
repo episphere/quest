@@ -70,14 +70,61 @@ describe("Tree tests", function () {
     });
 
     it("previous should return the correct nodes", function () {
-      try {
-        let prevCalled = myTree.previous();
-      } catch (error) {
-        assert.fail(error);
-      }
+      let prevCalled = myTree.previous();
+      console.log(prevCalled);
+      assert.isFalse(prevCalled.done, "previous().done should be false");
+      assert.strictEqual(prevCalled.value.value, "Second node", "The second node should be the previous node");
+      assert.strictEqual(myTree.currentNode.value, "Second node", "The second node should now be the current node");
+
+      prevCalled = myTree.previous();
+      assert.isFalse(prevCalled.done, "previous().done should be false");
+      assert.strictEqual(prevCalled.value.value, "First node", "The first node should be the previous node");
+      assert.strictEqual(myTree.currentNode.value, "First node", "The first node should now be the current node");
+
+      prevCalled = myTree.previous();
+      assert.isTrue(prevCalled.done, "previous().done should be true.");
+      assert.isUndefined(prevCalled.value);
     });
     it("Finished Unit test", function () {
       assert.isOk("1");
     });
+  });
+
+  describe("Tree Serialization ", function () {
+    let myTree = new Tree();
+    myTree.add("Q1");
+    myTree.next();
+    myTree.add("Q2");
+    myTree.next();
+    myTree.add("Q3");
+    myTree.previous();
+    it("should be at Q1", function () {
+      assert.strictEqual(myTree.currentNode.value, "Q1");
+      let json = myTree.toJSON();
+      let tree2 = Tree.fromJSON(json);
+      assert.isOk(tree2);
+      let tree2JSON = tree2.toJSON();
+      assert.strictEqual(tree2JSON, json, "The two serialized trees should be identical...");
+    });
+  });
+
+  describe("Should be able to serialize the tree to localforage", async function () {
+    let myTree = new Tree();
+    myTree.add("Q1");
+    myTree.next();
+    myTree.add(["Q2", "Q3", "Q4"]);
+    myTree.next();
+    myTree.add("Q2A");
+    myTree.next();
+    myTree.next();
+    myTree.next();
+    myTree.add("Q5");
+    myTree.next(); // Q5 is the currentNode...
+
+    await localforage.clear();
+    await localforage.setItem("QuestionTree", myTree.toJSON());
+    const json = await localforage.getItem("QuestionTree");
+    assert.strictEqual(json, myTree.toJSON());
+    console.log(json, "\n", myTree.toJSON());
   });
 });

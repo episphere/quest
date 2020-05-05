@@ -22,6 +22,7 @@ export class Tree {
     if (value.length == 0) throw "cannot add an empty or falsy array to the tree";
     value.forEach((x) => {
       let child = new TreeNode(x);
+      child.setParent(this.currentNode);
       this.currentNode.addChild(child);
     });
     console.log(this.currentNode.children, this.rootNode.children);
@@ -53,6 +54,43 @@ export class Tree {
       this.currentNode = tmp.value;
     }
     console.log("in previous (2): current node: ", this.currentNode, this.currentNode.value);
+    return tmp;
+  }
+
+  toJSON() {
+    function nodeJSON(child) {
+      let value = child.value;
+      let kidsValue = child.children.map((x) => nodeJSON(x));
+      return { value: value, children: kidsValue };
+    }
+
+    let obj = nodeJSON(this.rootNode);
+    obj.currentNode = this.currentNode.value;
+    let json = JSON.stringify(obj);
+    console.log(obj);
+    console.log(json);
+    return json;
+  }
+
+  static fromJSON(json) {
+    let object = JSON.parse(json);
+    let newTree = new Tree();
+
+    function addKids(node, kidsArray) {
+      console.log("FROM JSON/ADD KIDS--->", kidsArray);
+      if (kidsArray.length == 0) return;
+      kidsArray.map((kid) => {
+        let kidNode = new TreeNode(kid.value);
+        if (object.currentNode == kidNode.value) {
+          newTree.currentNode = kidNode;
+        }
+        node.addChild(kidNode);
+        addKids(kidNode, kid.children);
+      });
+    }
+    addKids(newTree.rootNode, object.children);
+
+    return newTree;
   }
 }
 
@@ -61,7 +99,6 @@ class TreeNode {
     this.value = value;
     this.parent = null;
     this.children = [];
-    this.prev = undefined;
   }
 
   setParent(parent) {
@@ -87,7 +124,6 @@ class TreeNode {
     // it is still a valid index
     if (++childIndex < this.children.length) {
       //return this.children[childIndex];
-      this.children[childIndex].prev = this;
       return { done: false, value: this.children[childIndex] };
     }
     // child was the last element of the array,
@@ -102,7 +138,6 @@ class TreeNode {
   next() {
     console.log("in TN next() ", this.value, this.parent, this.children, this.children.length);
     if (this.children.length > 0) {
-      this.children[0].prev = this;
       return { done: false, value: this.children[0] };
     }
     if (this.parent == null) return { done: true, value: undefined };
@@ -111,7 +146,6 @@ class TreeNode {
     if (myNext.done) {
       return { done: true, value: undefined };
     }
-    myNext.value.prev = this;
     return myNext;
   }
 
