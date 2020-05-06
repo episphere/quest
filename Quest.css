@@ -20,7 +20,11 @@
 }
 
 body {
-  background-color: #a8d0e6;
+  background-color: rgb(245 245 246);
+}
+
+#legendDiv {
+  background-color: rgb(245 245 246);
 }
 
 #ta {
