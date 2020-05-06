@@ -50,4 +50,12 @@ body {
   [id="navLinks"] {
     background-color: #24305e;
   }
+
+  [id="prevResDiv"] {
+    border: 1px solid black !important;
+  }
+
+  [id="stylingDiv"] {
+    border: 1px solid black !important;
+  }
 }
