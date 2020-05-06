@@ -1,13 +1,13 @@
 [BACK]Background Information
 
-B0. Demographics
+[B0] Demographics
 |__| Name
 |__| Address
 
-B1. How old are you today?
+[B1] How old are you today?
 |__|__| Age
 
-B2. What is the highest level of school that you have completed?
+[B2] What is the highest level of school that you have completed?
 [] Grade school (grades 1-8)
 [] Some high school (grades 9-11)
 [] High school graduate or GED
@@ -18,7 +18,7 @@ B2. What is the highest level of school that you have completed?
 [] Advanced degree (Master’s, Doctorate, etc.)
 [] Other ( specify ) [text box]
 
-B3. What is your current marital/partner status?
+[B3] What is your current marital/partner status?
 [] Never married
 [] Not married but living with partner
 [] Married
@@ -27,7 +27,7 @@ B3. What is your current marital/partner status?
 [] Separated
 [] Prefer not to answer
 
-B4. What best describes your race? Select all that apply to you.
+[B4] What best describes your race? Select all that apply to you.
 [] American Indian or Alaska native
 [] Asian
 [] Black or African American
@@ -40,7 +40,7 @@ B4. What best describes your race? Select all that apply to you.
 
 /*
 
-B5. Are you of Hispanic, Latino, or Spanish origin?
+[B5] Are you of Hispanic, Latino, or Spanish origin?
 [] Yesgo to B6
 [] NogotoB7
 [] Do not know --> B7
@@ -48,7 +48,7 @@ B5. Are you of Hispanic, Latino, or Spanish origin?
 
 DCEG COHORT DRAFT BASELINE QUEX MODULES Baseline1_background_draftV3b_Oct2018
 
-B6. What countries are your ancestors from? Select all that apply.
+[B6] What countries are your ancestors from? Select all that apply.
 [] Columbia
 [] Cuba
 [] Dominican Republic
@@ -59,7 +59,8 @@ B6. What countries are your ancestors from? Select all that apply.
 [] El Salvador
 [] Spain
 [] None of these fully describe me– Specify:
-B7. What language(s) did you first learn at home in childhood? Select all that apply.
+
+[B7] What language(s) did you first learn at home in childhood? Select all that apply.
 [] English
 [] Spanish
 [] Spanish Creole
@@ -77,13 +78,17 @@ B7. What language(s) did you first learn at home in childhood? Select all that a
 [] Tagalog
 [] Arabic
 [] Other language(s) – Specify:
-B8. Wherewereyouborn?
+
+[B8] Where were you born?
 [] United States of America (Including US territories)
 [] Outside the USA – Specify country:
 [] None of these describe me – Specify:
-B9. Were you adopted? [] Yes
+
+[B9] Were you adopted? 
+[] Yes
 [] No
-B10. Were you born a twin, triplet, or other multiple?
+
+[B10] Were you born a twin, triplet, or other multiple?
 [] Yes, identical twins
 [] Yes, fraternal twins (not identical)
     2
