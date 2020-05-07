@@ -1,0 +1,9 @@
+// first text radio boxes
+[Q1] do you like dogs
+#YN
+
+
+[Q2] How old are you |__|__|id=age xor=q2| or what year were you borm? |__|__|id=yob xor=q2|
+
+
+[QEND] blah blah blah...  Thanks for the memories...

@@ -10,8 +10,7 @@
     <link id="pagestyle" href="Default.css" rel="stylesheet" type="text/css">
     <link id="pagelogic" href="Default.css" rel="stylesheet" type="text/css"> 
     <link href="Quest.css" rel="stylesheet" type="text/css"> 
-    <script src="replace2.js"></script>
-    <script src="questionnaire.js"></script>
+    <script src="replace2.js" type="module"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min.js"></script>
 </head>
 
@@ -173,31 +172,6 @@
         }
     </script>
     <script>
-        (async function() {
-            console.log("local anonymous");
-            var ta = document.querySelector("#ta");
-            ta.onkeyup = ev => {
-                transform.tout(() => {
-                    transform.render({text: ta.value + "[END]"}, 'rendering', prevRes) // <-- this is where quest.js is engaged
-                    // transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}, 'rendering') // <-- this is where quest.js is engaged
-                    if (document.querySelector(".question") != null) {
-                        document.querySelector(".question").classList.add("active")
-                    }
-                })
-            }
-
-            ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
-
-    
-            var q = (location.search + location.hash).replace(/[\#\?]/g, "");
-            if (q.length > 3) {
-                ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
-                ta.onkeyup();
-            }
-            ta.style.width =
-                parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
-        })();
-
         function clearLocalForage(){
             localforage.clear().then(()=>{
                 loaddisplay.innerHTML="local forage cleared"
@@ -207,6 +181,7 @@
                 console.log("error while clearing lf.  ",err)
             })
         }
-        console.log("localForage",localforage)
         clearMem.onclick = clearLocalForage;
     </script>
+    
+    <script src="quest.js" type="module"></script>

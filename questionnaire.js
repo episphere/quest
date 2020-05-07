@@ -1,7 +1,17 @@
 import { Tree } from "./tree.js";
 import { knownFunctions } from "./knownFunctions.js";
 
-function textBoxInput(inputElement) {
+export const moduleParams = {};
+
+// The questionQueue is an Tree which contains
+// the question ids in the order they should be displayed.
+const questionQueue = new Tree();
+export function isFirstQuestion() {
+  return questionQueue.isEmpty() || questionQueue.isFirst();
+}
+
+export function textBoxInput(event) {
+  let inputElement = event.target;
   if (inputElement.previousElementSibling.firstElementChild != null) {
     if (inputElement.previousElementSibling.firstElementChild.type == "checkbox") {
       inputElement.previousElementSibling.firstElementChild.checked = inputElement.value.length > 0;
@@ -15,7 +25,8 @@ function textBoxInput(inputElement) {
   inputElement.parentElement.value = inputElement.value;
 }
 
-function numberInput(inputElement) {
+export function numberInput(event) {
+  let inputElement = event.target;
   if ([...inputElement.parentElement.querySelectorAll("input[type=number]")].filter((x) => x != inputElement).length >= 1) {
     [...inputElement.parentElement.querySelectorAll("input[type=number]")]
       .filter((x) => x != inputElement)
@@ -23,18 +34,9 @@ function numberInput(inputElement) {
   }
   inputElement.parentElement.value = inputElement.value;
 }
-function handleXOR(inputElement) {
-  console.log("inhandleXOR");
-  let sibs = [...inputElement.parentElement.querySelectorAll("input")];
-  sibs = sibs.filter(
-    (x) => x.hasAttribute("xor") && x.getAttribute("xor") == inputElement.getAttribute("xor") && x.id != inputElement.id
-  );
-  sibs.forEach((x) => {
-    x.value = "";
-  });
-}
 
-function rbAndCbClick(inputElement) {
+export function rbAndCbClick(event) {
+  let inputElement = event.target;
   clearSelection(inputElement);
   if (inputElement.type == "checkbox") {
     inputElement.parentElement.parentElement.value = [
@@ -48,6 +50,7 @@ function rbAndCbClick(inputElement) {
 }
 
 function clearSelection(inputElement) {
+  if (!inputElement.form) return;
   var state = inputElement.checked;
   var cb = inputElement.form.querySelectorAll("input[type='checkbox'], input[type='radio']");
   if (inputElement.value == 99) {
@@ -64,40 +67,18 @@ function clearSelection(inputElement) {
   }
 }
 
-// The questionQueue is an array which contains
-// the question we should go to next.
-const questionQueue = new Tree(null);
-
-function continueQuestion(norp) {
-  if (questionQueue.rootNode.children.length == 0) {
-    questionQueue.add(norp.parentElement);
-    questionQueue.next();
-  }
-
-  // check if we need to add questions to the question queue
-  checkForSkips(norp.parentElement);
-
-  // get the next question from the questionQueue
-  // if it exists... otherwise get the next Element
-  let nextQuestion = questionQueue.next();
-  if (nextQuestion.done) {
-    // if the next element is a question add the next
-    // question to the queue and set the nextQuestion variable
-    let tmp = norp.parentElement.nextElementSibling;
-    if (tmp.classList.contains("question")) {
-      questionQueue.add(norp.parentElement.nextElementSibling);
-      nextQuestion = questionQueue.next();
-    }
-  }
-  nextElement = nextQuestion.value;
-
-  // hide the current question and move to the next...
-  norp.parentElement.classList.remove("active");
-  nextElement.classList.add("active");
-  return nextElement;
+function handleXOR(inputElement) {
+  console.log("inhandleXOR");
+  let sibs = [...inputElement.parentElement.querySelectorAll("input")];
+  sibs = sibs.filter(
+    (x) => x.hasAttribute("xor") && x.getAttribute("xor") == inputElement.getAttribute("xor") && x.id != inputElement.id
+  );
+  sibs.forEach((x) => {
+    x.value = "";
+  });
 }
 
-function nextClick(norp, store) {
+export function nextClick(norp, store) {
   // Because next button does not have ID, modal will pass-in ID of question
   // norp needs to be next button element
   if (typeof norp == "string") {
@@ -142,15 +123,16 @@ async function nextPage(norp, store) {
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
   // and call next().
-  if (questionQueue.rootNode.children.length == 0) {
-    questionQueue.add(norp.parentElement);
+  if (questionQueue.isEmpty) {
+    console.log("==> the tree is empty... add first element", norp.parentElement, norp.parentElement.id);
+    questionQueue.add(norp.parentElement.id);
     questionQueue.next();
   }
+  let questName = moduleParams.questName;
 
   tempObj[norp.parentElement.id] = norp.parentElement.value;
   questRes = tempObj;
   if (store && norp.parentElement.value) {
-    debugger;
     let formData = {};
     formData[`${questName}.${norp.parentElement.id}`] = norp.parentElement.value;
     store(formData);
@@ -189,14 +171,14 @@ async function nextPage(norp, store) {
       // not sure what to do if it is not...
       let tmp = norp.parentElement.nextElementSibling;
       if (tmp.classList.contains("question")) {
-        questionQueue.add(norp.parentElement.nextElementSibling);
+        questionQueue.add(tmp.id);
         nextQuestionNode = questionQueue.next();
       }
     }
 
     // at this point the we have have the next question from the question queue...
     // get the actual element.
-    nextElement = nextQuestionNode.value;
+    let nextElement = document.getElementById(nextQuestionNode.value.value);
     [...nextElement.querySelectorAll("span[forid]")].map((x) => {
       let elm = document.getElementById(x.getAttribute("forid"));
       x.innerHTML = elm.value != undefined ? elm.value : elm.innerText;
@@ -243,11 +225,11 @@ async function nextPage(norp, store) {
   }
 }
 
-async function prev(norp, retrieve) {
+export async function previousClicked(norp, retrieve) {
   // get the previousElement...
-  let prevElement = questionQueue.previous();
+  let prevElement = document.getElementById(questionQueue.previous().value.value);
   norp.parentElement.classList.remove("active");
-  prevElement.value.classList.add("active");
+  prevElement.classList.add("active");
 
   if (retrieve) {
     const response = await retrieve();
@@ -261,7 +243,7 @@ async function prev(norp, retrieve) {
 // question queue.  It always returns null;
 function checkForSkips(questionElement) {
   // get selected responses
-  selectedElements = getSelected(questionElement);
+  let selectedElements = getSelected(questionElement);
 
   let numSelected = selectedElements.filter((x) => x.type != "hidden").length;
   // if there are NO non-hidden responses ...
@@ -286,14 +268,16 @@ function checkForSkips(questionElement) {
 
   // make an array of the Elements, not the input elments...
   var ids = selectedElements.map((x) => x.getAttribute("skipTo"));
-  selectedElements = ids.map((x) => document.getElementById(x));
+  //selectedElements = ids.map((x) => document.getElementById(x));
 
   // add all the ids for the selected elements with the skipTo attribute to the question queue
   //var ids = selectedElements.map(x => x.id);
   //questionQueue.addChildren(ids);
 
   // add all the selected elements with the skipTo attribute to the question queue
-  questionQueue.addChildren(selectedElements);
+  if (ids.length > 0) {
+    questionQueue.add(ids);
+  }
 
   return null;
 }
@@ -364,84 +348,7 @@ function getResults(element) {
     .map((x) => (tmpRes[x.name] = x.value));
 }
 
-function stopSubmit(event, storeFunction) {
-  event.preventDefault();
-  console.log(event.target.id);
-  nextClick(event.target.id, storeFunction);
-}
-
 // x is the questionnaire text
-function unrollLoops(txt) {
-  // all the questions in the loops...
-  // each element in res is a loop in the questionnaire...
-  let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gm;
-  txt = txt.replace(/\n/g, "\xa9");
-  let res = [...txt.matchAll(loopRegex)].map(function (x, indx) {
-    return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
-  });
-
-  let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(,.*?)?\]/gm;
-  let disIfRegex = /displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\)/g;
-  // we have an array of objects holding the text..
-  // get all the ids...
-  let cleanedText = res.map(function (x) {
-    x.txt += "[_CONTINUE" + x.indx + ",displayif=setFalse(-1,#loop)]";
-    x.txt = x.txt.replace(/->\s*_CONTINUE\b/g, "-> _CONTINUE" + x.indx);
-    let ids = [...x.txt.matchAll(idRegex)].map((y) => ({
-      label: y[0],
-      id: y[1],
-      indx: x.indx,
-    }));
-    let disIfIDs = [...x.txt.matchAll(disIfRegex)].map((disIfID) => ({
-      label: disIfID[0],
-      id: disIfID[1],
-    }));
-    disIfIDs = disIfIDs.map((x) => x.id);
-    let newIds = ids.map((x) => x.id);
-
-    // goto from 1-> max for human consumption... need <=
-    let loopText = "";
-    for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
-      var currentText = x.txt;
-      // replace all instances of the question ids with id_#
-      ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
-
-      disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
-      disIfIDs.map((id) => (currentText = currentText.replace(new RegExp(id + "\\b", "g"), id + "_" + loopIndx)));
-
-      // replace all -> Id with -> Id_#
-      ids.map(
-        (id) => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx))
-      );
-
-      // replace all |__(|__)|ID with |__(|__)|ID_#
-      ids.map((id) => (currentText = currentText.replace(/(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g, "$1$3_" + loopIndx + "|")));
-
-      ids.map((id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx)));
-
-      // if (currentText.search(/->\s*_continue/g) >= 0) {
-      //   ;
-      //   if (loopIndx < x.cnt) {
-      //     currentText = currentText.replace(/->\s*_continue\s*/g, "-> " + ids[0].id + "_" + (loopIndx + 1));
-      //   } else {
-      //     currentText = currentText.replace(
-      //       /->\s*_continue\s*/g,
-      //       "-> " + document.getElementById(ids.slice(-1)[0].id + "_" + loopIndx).nextElementSibling.id
-      //     );
-      //   }
-      // }
-
-      loopText = loopText + "\n" + currentText;
-    }
-    return loopText;
-  });
-
-  for (var loopIndx = 0; loopIndx < cleanedText.length; loopIndx++) {
-    txt = txt.replace(res[loopIndx].orig, cleanedText[loopIndx]);
-  }
-  txt = txt.replace(/\xa9/g, "\n");
-  return txt;
-}
 
 function parse(txt) {
   //https://stackoverflow.com/questions/6323417/regex-to-extract-all-matches-from-string-using-regexp-exec

@@ -9,6 +9,8 @@ export class Tree {
   }
 
   add(value) {
+    console.log(value);
+    console.trace();
     // dont add empty/null
     if (!value) throw "adding a falsy value to the tree.";
 
@@ -25,38 +27,42 @@ export class Tree {
       child.setParent(this.currentNode);
       this.currentNode.addChild(child);
     });
-    console.log(this.currentNode.children, this.rootNode.children);
+    //console.log(this.currentNode.children, this.rootNode.children);
   }
 
   hasNext() {
     return !!this.nextNode.value;
   }
 
+  isFirst() {
+    return this.currentNode.parent === this.rootNode;
+  }
+
   // ask the current TreeNode what is the next value...
   next() {
-    console.log("in next (1): current node: ", this.currentNode, this.currentNode == this.rootNode);
     let tmp = this.currentNode.next();
-    console.log(tmp);
 
     if (!tmp.done) {
       this.currentNode = tmp.value;
     }
 
-    console.log("in next (2): current node: ", this.currentNode, this.currentNode == this.rootNode);
     return tmp;
   }
 
   // ask the TreeNode what is your previous value....
+  // if you cannot go back, the returned element
+  // is undefined!
   previous() {
-    console.log("in previous (1): current node: ", this.currentNode, this.currentNode.value);
     let tmp = this.currentNode.previous();
     if (!tmp.done) {
       this.currentNode = tmp.value;
     }
-    console.log("in previous (2): current node: ", this.currentNode, this.currentNode.value);
     return tmp;
   }
 
+  isEmpty() {
+    return this.rootNode.children.length == 0;
+  }
   toJSON() {
     function nodeJSON(child) {
       let value = child.value;
@@ -136,7 +142,6 @@ class TreeNode {
   }
 
   next() {
-    console.log("in TN next() ", this.value, this.parent, this.children, this.children.length);
     if (this.children.length > 0) {
       return { done: false, value: this.children[0] };
     }
