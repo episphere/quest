@@ -1,2 +1,3 @@
 # VS code puts some file in the directory. ignore them
 .vscode/**
+.DS_Store
