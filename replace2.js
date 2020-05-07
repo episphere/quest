@@ -467,7 +467,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
             if (questObj[element] == undefined) {
               return null;
             } else {
-              debugger;
               let value = questObj[element];
               console.log(inputElements);
               if (Array.isArray(questObj[element]) == true) {

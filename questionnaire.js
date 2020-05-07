@@ -300,7 +300,6 @@ async function nextPage(norp, store) {
   tempObj[norp.parentElement.id] = norp.parentElement.value;
   questRes = tempObj;
   if (store && norp.parentElement.value) {
-    debugger;
     let formData = {};
     formData[`${questName}.${norp.parentElement.id}`] =
       norp.parentElement.value;
