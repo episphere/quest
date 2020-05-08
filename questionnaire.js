@@ -729,7 +729,7 @@ function parse(txt) {
       stack.splice(callEnd - 5, 6, tmpValue);
     } else {
       console.log(stack);
-      throw "Bad Displayif Function";
+      throw { Message: "Bad Displayif Function", Stack: stack };
     }
   }
   return stack[0];
