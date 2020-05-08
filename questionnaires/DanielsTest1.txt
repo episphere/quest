@@ -2,8 +2,11 @@
 [Q1] do you like dogs
 #YN
 
+// test xor with numbers...
+[Q2] How old are you |__|__|id=age xor=q2| or what year were you born? |__|__|id=yob xor=q2|
 
-[Q2] How old are you |__|__|id=age xor=q2| or what year were you borm? |__|__|id=yob xor=q2|
 
+// test xor with text
+[Q3] What is your favorite TV show |__|id=TV xor=q3| or what you tuber? |____|id=yt xor=q3|
 
 [QEND] blah blah blah...  Thanks for the memories...

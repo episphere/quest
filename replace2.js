@@ -1,4 +1,4 @@
-import { nextClick, previousClicked, moduleParams, rbAndCbClick, isFirstQuestion } from "./questionnaire.js";
+import { nextClick, previousClicked, moduleParams, rbAndCbClick, numberInput } from "./questionnaire.js";
 
 export let transform = function () {
   // init
@@ -222,11 +222,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // make sure that the element id is set...
       const { options, elementId } = guaranteeIdSet(opts, "num");
       console.log(`
-      <input oninput='numberInput(this)' name='${questID}' ${options}></input>
+      <input name='${questID}' ${options}></input>
       <label id='${elementId}_label' for='${elementId}'></label>
       `);
 
-      return `<input type='number' oninput='numberInput(this)' name='${questID}' ${options}></input>`;
+      return `<input type='number' name='${questID}' ${options}></input>`;
     }
 
     // -------------
@@ -327,7 +327,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
 
-    let rv = `<form class='question' onsubmit='return stopSubmit(event,${obj.store})' style='font-weight: bold' id='${questID}' ${d} hardEdit='
+    let rv = `<form class='question'  style='font-weight: bold' id='${questID}' ${d} hardEdit='
       ${hardBool}' softEdit='${softBool}'> ${questText} 
       <input type='submit' class='previous' value='BACK'></input>\n
       <input type='submit' class='next' value='NEXT'></input>
@@ -404,6 +404,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   let questObj = {};
 
+  // If a user starts a module takes a break
+  // and comes back...  get the tree out of the
+  // local forage if it exists and fill out
+  // the forms.  This functionality is needed
+  // for the back/next functionality.
   async function fillForm(retrieve) {
     let tempObj = {};
     if (
@@ -522,8 +527,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //  console.log(questions);
 
   let textInputs = [...document.querySelectorAll("input[type='text']")];
-  textInputs.forEach((inputTextElement) => {
-    inputTextElement.oninput = textBoxInput;
+  textInputs.forEach((inputElement) => {
+    inputElement.oninput = textBoxInput;
   });
   //  console.log(textInputs);
 
@@ -532,6 +537,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     rcElement.onchange = rbAndCbClick;
   });
   //  console.log(rbCb);
+
+  let numberInputs = [...document.querySelectorAll("input[type='number']")];
+  numberInputs.forEach((inputElement) => {
+    inputElement.oninput = numberInput;
+  });
 
   moduleParams.questName = questName;
 };

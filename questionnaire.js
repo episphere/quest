@@ -6,6 +6,7 @@ export const moduleParams = {};
 // The questionQueue is an Tree which contains
 // the question ids in the order they should be displayed.
 const questionQueue = new Tree();
+
 export function isFirstQuestion() {
   return questionQueue.isEmpty() || questionQueue.isFirst();
 }
