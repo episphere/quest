@@ -392,7 +392,7 @@ async function nextPage(norp, store) {
       .map(elm => {
         f = parse(elm.getAttribute("displayif"));
 
-        elm.style.display = f ? "block" : "none";
+        elm.style.display = f ? "inline" : "none";
       });
 
     // hide the current question and move to the next...
@@ -728,7 +728,8 @@ function parse(txt) {
       // splice start at callEnd-5, remove 6, add the calculated value...
       stack.splice(callEnd - 5, 6, tmpValue);
     } else {
-      return console.log(stack);
+      console.log(stack);
+      throw "Bad Displayif Function";
     }
   }
   return stack[0];
