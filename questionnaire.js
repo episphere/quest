@@ -392,7 +392,7 @@ async function nextPage(norp, store) {
       .map(elm => {
         f = parse(elm.getAttribute("displayif"));
 
-        elm.style.display = f ? "inline" : "none";
+        elm.style.display = f ? "run-in" : "none";
       });
 
     // hide the current question and move to the next...
