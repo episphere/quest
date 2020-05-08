@@ -69,7 +69,7 @@ function clearSelection(inputElement) {
 }
 
 function handleXOR(inputElement) {
-  console.log("inhandleXOR");
+  console.log("in handleXOR");
   let sibs = [...inputElement.parentElement.querySelectorAll("input")];
   sibs = sibs.filter(
     (x) => x.hasAttribute("xor") && x.getAttribute("xor") == inputElement.getAttribute("xor") && x.id != inputElement.id
@@ -240,7 +240,7 @@ async function nextPage(norp, store) {
       .map((elm) => {
         f = parse(elm.getAttribute("displayif"));
 
-        elm.style.display = f ? "block" : "none";
+        elm.style.display = f ? "run-in" : "none";
       });
 
     // hide the current question and move to the next...
@@ -422,7 +422,8 @@ function parse(txt) {
       // splice start at callEnd-5, remove 6, add the calculated value...
       stack.splice(callEnd - 5, 6, tmpValue);
     } else {
-      return console.log(stack);
+      console.log(stack);
+      throw "Bad Displayif Function";
     }
   }
   return stack[0];
@@ -434,4 +435,18 @@ function ptree() {
     console.log(node);
     node = node.next().value;
   } while (node);
+}
+
+function increaseSize() {
+  let ta = document.getElementById("ta");
+  let style = window.getComputedStyle(ta, null).getPropertyValue("font-size");
+  let fontSize = parseFloat(style);
+  ta.style.fontSize = fontSize + 1 + "px";
+}
+
+function decreaseSize() {
+  let ta = document.getElementById("ta");
+  let style = window.getComputedStyle(ta, null).getPropertyValue("font-size");
+  let fontSize = parseFloat(style);
+  ta.style.fontSize = fontSize - 1 + "px";
 }

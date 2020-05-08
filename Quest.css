@@ -20,7 +20,11 @@
 }
 
 body {
-  background-color: #a8d0e6;
+  background-color: rgb(245 245 246);
+}
+
+#legendDiv {
+  background-color: rgb(245 245 246);
 }
 
 #ta {
@@ -45,5 +49,22 @@ body {
 
   [id="navLinks"] {
     background-color: #24305e;
+  }
+
+  [id="prevResDiv"] {
+    border: 1px solid black !important;
+  }
+
+  [id="stylingDiv"] {
+    border: 1px solid black !important;
+  }
+
+  [id="fontSpan"] {
+    float: left !important;
+    margin-top: 5px;
+  }
+
+  [id="renderText"] {
+    margin-top: 15px;
   }
 }

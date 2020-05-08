@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script href="https://fonts.googleapis.com/css?family=Archivo&display=swap" rel="stylesheet"></script>
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link id="pagestyle" href="Default.css" rel="stylesheet" type="text/css">
     <link id="pagelogic" href="Default.css" rel="stylesheet" type="text/css"> 
     <link href="Quest.css" rel="stylesheet" type="text/css"> 
@@ -25,7 +26,7 @@
     </div>
 
     <div class="container-fluid" id="tool">
-        <div class="row">
+        <div id="legendDiv" class="row">
             <div class="col-sm-6 my-2" id="loadSaveDiv" style="border: 1px solid black;">
                 <h3>Questionnaire Options</h3>
                 <input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)">
@@ -63,7 +64,7 @@
         </div>
         <div class="row">
             <div class="col" id="markup">
-                <h3>Markup (<a href="?questionnaires/demo.txt" id="demo">Demo</a>)</h3>
+                <span class="h3">Markup (<a href="?questionnaires/demo.txt" id="demo">Demo</a>) </span> <span id="fontSpan"class="h5"style="float:right;">Change Font Size <span class="h5 align-middle"><button onclick="increaseSize()" class="fa fa-plus-square-o"></button> <button onclick="decreaseSize()" class="fa fa-minus-square-o"></button></span></span>
                 <textarea id="ta"></textarea>
             </div>
             <!-- <div id="lint" style="border: 1px solid black; padding-right: 5px; padding-left:5px; width:500px">
@@ -86,7 +87,7 @@
                 }
             </script> -->
             <div class="col">
-                <h3 style="color: navy;">Rendering</h3>
+                <h3 id="renderText" style="color: navy;">Rendering</h3>
                 <div id="rendering" ></div>
             </div>
         </div>

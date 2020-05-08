@@ -317,6 +317,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
+    questText = questText.replace(/\|(displayif=.+?)\|(.*?)\|/g, fDisplayIf);
+    function fDisplayIf(containsGroup, condition, text) {
+      return `<span ${condition}>${text}</span>`;
+    }
+
     // replace next question  < -> > with hidden...
     questText = questText.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
