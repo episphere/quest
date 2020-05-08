@@ -1,4 +1,12 @@
-import { nextClick, previousClicked, moduleParams, rbAndCbClick, numberInput } from "./questionnaire.js";
+import {
+  questionQueue,
+  nextClick,
+  previousClicked,
+  moduleParams,
+  rbAndCbClick,
+  numberInput,
+  textBoxInput,
+} from "./questionnaire.js";
 
 export let transform = function () {
   // init
@@ -241,12 +249,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (option != undefined) {
         elementIdId = option;
       }
-      return `<input type='text' oninput='textBoxInput(this)' name='${questID}' id=${elementId}></input>`;
+      return `<input type='text' name='${questID}' id=${elementId}></input>`;
     }
     questText = questText.replace(/\|(?:__\|)(?:([^|]+)\|)?/g, fText);
     function fText(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "txt");
-      return `<input type='text' oninput='textBoxInput(this)' name='${questID}' ${options}></input>`;
+      return `<input type='text'  name='${questID}' ${options}></input>`;
     }
 
     // replace |___| with a textarea...
@@ -402,15 +410,39 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
   }
 
-  let questObj = {};
-
   // If a user starts a module takes a break
   // and comes back...  get the tree out of the
   // local forage if it exists and fill out
   // the forms.  This functionality is needed
   // for the back/next functionality.
   async function fillForm(retrieve) {
+    let questObj = {};
     let tempObj = {};
+
+    console.log("in fillForm... ret fun:", retrieve);
+
+    // get the tree from localforage...
+    await localforage.getItem(questName + ".treeJSON").then((tree) => {
+      // if this is the first time the user attempt
+      // the questionnaire, the tree will not be in
+      // the localForage...
+      if (tree) {
+        questionQueue.loadFromVanillaObject(tree);
+      }
+      console.log(questionQueue);
+    });
+
+    if (retrieve) {
+      const response = await retrieve();
+      if (response.code === 200) {
+        const userData = response.data;
+        console.log(userData);
+        if (userData[questName]) {
+          questObj = userData[questName];
+        }
+      }
+    }
+
     if (
       localforage.keys().then((res) => {
         res.includes(questName);
@@ -494,22 +526,37 @@ transform.render = async (obj, divId, previousResults = {}) => {
             }
           }
         });
-        if (
-          Object.entries(questObj)
-            .map(([key, value]) => document.getElementById(key))
-            .slice(-1)[0] != null
-        ) {
-          Array.from(document.getElementsByClassName("active")).forEach((element) => element.classList.remove("active"));
-          Object.entries(questObj)
-            .map(([key, value]) => document.getElementById(key))
-            .slice(-1)[0]
-            .classList.add("active");
-        }
-      } else {
-        if (document.querySelector(".question") != null) {
+        // use the questionQueue to set the active question....
+        // well if the queue is empty, just go to the first question...
+
+        console.log("In fill form... qq.currentnode:", questionQueue.currentNode);
+        let currentElement = document.getElementById(questionQueue.currentNode.value);
+        // remove the active class from all elements...
+        [...document.querySelectorAll(".active")].forEach((element) => {
+          element.classList.remove("active");
+        });
+        if (currentElement) {
+          currentElement.classList.add("active");
+        } else {
           document.querySelector(".question").classList.add("active");
         }
       }
+      //  if (
+      //     Object.entries(questObj)
+      //       .map(([key, value]) => document.getElementById(key))
+      //       .slice(-1)[0] != null
+      //   ) {
+      //     Array.from(document.getElementsByClassName("active")).forEach((element) => element.classList.remove("active"));
+      //     Object.entries(questObj)
+      //       .map(([key, value]) => document.getElementById(key))
+      //       .slice(-1)[0]
+      //       .classList.add("active");
+      //   }
+      // } else {
+      //   if (document.querySelector(".question") != null) {
+      //     document.querySelector(".question").classList.add("active");
+      //   }
+      // }
     }
   }
   fillForm(obj.retrieve);

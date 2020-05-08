@@ -9,7 +9,7 @@ export class Tree {
   }
 
   add(value) {
-    console.log(value);
+    console.log("adding", value, "to the tree");
     console.trace();
     // dont add empty/null
     if (!value) throw "adding a falsy value to the tree.";
@@ -78,24 +78,33 @@ export class Tree {
     return json;
   }
 
-  static fromJSON(json) {
-    let object = JSON.parse(json);
-    let newTree = new Tree();
+  loadFromVanillaObject(object) {
+    // reset the root's children
+    if (!this.rootNode.children) throw "children is null?";
+    this.rootNode.children.length = 0;
+
+    // we lose "this" reference in the mapping...
+    let thisObj = this;
 
     function addKids(node, kidsArray) {
-      console.log("FROM JSON/ADD KIDS--->", kidsArray);
       if (kidsArray.length == 0) return;
-      kidsArray.map((kid) => {
+      kidsArray.forEach((kid) => {
         let kidNode = new TreeNode(kid.value);
-        if (object.currentNode == kidNode.value) {
-          newTree.currentNode = kidNode;
+        if (object.currentNode.value == kidNode.value) {
+          thisObj.currentNode = kidNode;
         }
         node.addChild(kidNode);
         addKids(kidNode, kid.children);
       });
     }
-    addKids(newTree.rootNode, object.children);
 
+    addKids(this.rootNode, object.rootNode.children);
+  }
+  static fromJSON(json) {
+    let object = JSON.parse(json);
+    let newTree = new Tree();
+
+    newTree.loadFromVanillaObject(object);
     return newTree;
   }
 }

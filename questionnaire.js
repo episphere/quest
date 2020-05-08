@@ -5,7 +5,7 @@ export const moduleParams = {};
 
 // The questionQueue is an Tree which contains
 // the question ids in the order they should be displayed.
-const questionQueue = new Tree();
+export const questionQueue = new Tree();
 
 export function isFirstQuestion() {
   return questionQueue.isEmpty() || questionQueue.isFirst();
@@ -118,13 +118,18 @@ export function nextClick(norp, store) {
 let questRes = {};
 let tempObj = {};
 
+async function updateTreeInLocalForage() {
+  let questName = moduleParams.questName;
+  await localforage.setItem(questName + ".treeJSON", questionQueue);
+}
+
 // norp == next or previous button (which ever is clicked...)
 async function nextPage(norp, store) {
   // The root is defined as null, so if the question is not the same as the
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
   // and call next().
-  if (questionQueue.isEmpty) {
+  if (questionQueue.isEmpty()) {
     console.log("==> the tree is empty... add first element", norp.parentElement, norp.parentElement.id);
     questionQueue.add(norp.parentElement.id);
     questionQueue.next();
@@ -138,19 +143,39 @@ async function nextPage(norp, store) {
     formData[`${questName}.${norp.parentElement.id}`] = norp.parentElement.value;
     store(formData);
   } else {
-    if (await localforage.getItem(questName)) {
-      let tempObj = {};
-      tempObj = await localforage.getItem(questName);
-      if (tempObj[norp.parentElement.id]) {
-        tempObj[norp.parentElement.id] = norp.parentElement.value;
-      } else {
-        tempObj[norp.parentElement.id] = {};
-        tempObj[norp.parentElement.id] = norp.parentElement.value;
-      }
-      localforage.setItem(questName, tempObj);
-    } else {
-      localforage.setItem(questName, questRes);
-    }
+    let tmp = await localforage
+      .getItem(questName)
+      .then((allResponses) => {
+        // if their is not an object in LF create one that we will add later...
+        if (!allResponses) {
+          allResponses = {};
+        }
+        // set the value for the questionId...
+        allResponses[norp.parentElement.id] = norp.parentElement.value;
+        console.log(allResponses);
+
+        return allResponses;
+      })
+      .then((allResponses) => {
+        // allResposes really should be defined at this point. If it wasn't
+        // previously in LF, the previous block should have created it...
+        localforage.setItem(questName, allResponses, () => {
+          console.log("... Response stored in LF");
+        });
+      });
+
+    //       let tempObj = {};
+    //   tempObj = await localforage.getItem(questName);
+    //   if (tempObj[norp.parentElement.id]) {
+    //     tempObj[norp.parentElement.id] = norp.parentElement.value;
+    //   } else {
+    //     tempObj[norp.parentElement.id] = {};
+    //     tempObj[norp.parentElement.id] = norp.parentElement.value;
+    //   }
+    //   localforage.setItem(questName, tempObj);
+    // } else {
+    //   localforage.setItem(questName, questRes);
+    // }
   }
 
   // check if we need to add questions to the question queue
@@ -222,6 +247,10 @@ async function nextPage(norp, store) {
     norp.parentElement.classList.remove("active");
     nextElement.classList.add("active");
 
+    // FINALLY...  update the tree in localForage...
+    // First let's try NOT waiting for the function to return.
+    updateTreeInLocalForage();
+
     return nextElement;
   }
 }
@@ -237,6 +266,7 @@ export async function previousClicked(norp, retrieve) {
     console.log(response);
   } else localforage.removeItem(norp.parentElement.id);
 
+  updateTreeInLocalForage();
   return prevElement;
 }
 
