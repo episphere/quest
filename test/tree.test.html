@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mocha Tests</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/mocha/7.1.2/mocha.css"
+      integrity="sha256-a4j/9d0TJl1bbNF1UC8zUh8pnur9RLQIyyaGAVtj8fM="
+      crossorigin="anonymous"
+    />
+    <script src="../tree.js" type="module"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/mocha/7.1.2/mocha.js"
+      integrity="sha256-R58TnLK3MwVzpO0KK+mfiGsjYdV3DwLpqMc3MQ5kb0s="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js"
+      integrity="sha256-Oe35Xz+Zi1EffYsTw5ENBhzOS06LOTV5PSV4OVvnyU8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.js"
+      integrity="sha256-3NP4l3uenVxIZ0vLGnUjjObImjaJltaSzAHaGUr+yDA="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <script class="mocha-init">
+      mocha.setup("bdd");
+      mocha.checkLeaks();
+      let assert = chai.assert;
+    </script>
+
+    <script type="module" src="tree.test.js"></script>
+    <script type="module">
+      mocha.checkLeaks();
+      mocha.run();
+    </script>
+  </body>
+</html>
