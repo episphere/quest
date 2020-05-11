@@ -64,8 +64,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/\n/g, "\u001f");
 
-  contents = contents.replace(regEx, function(page, questID, d, questText) {
-    //  console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
+  contents = contents.replace(regEx, function(
+    page,
+    questID,
+    questArgs,
+    questText
+  ) {
+    //  console.log("page: ", page, "\nd: ", questArgs, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
@@ -76,16 +81,31 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     questText = questText.replace(/\[_#\]/g, "");
 
-    questID = questID.replace(/\[DISPLAY IF .*\]/g, "");
-
     // handle displayif on the question...
-    // if d is undefined set it to blank.
-    d = d ? d : "";
+    // if questArgs is undefined set it to blank.
+    questArgs = questArgs ? questArgs : "";
 
     // make sure that this is a "displayif"
-    var displayifMatch = d.match(/,\s*(displayif\s*=\s*.*)/);
-    // if so, remove the comma and go.  if not, set d to blank...
-    d = displayifMatch ? displayifMatch[1] : "";
+    var displayifMatch = questArgs.match(/displayif\s*=\s*.*/);
+    let endMatch = questArgs.match(/end\s*=\s*(.*)?/);
+    // if so, remove the comma and go.  if not, set questArgs to blank...
+    if (displayifMatch) {
+      questArgs = displayifMatch[0];
+    } else if (endMatch) {
+      questArgs = endMatch[0];
+    } else {
+      questArgs = "";
+    }
+
+    debugger;
+    let prevButton =
+      (endMatch && endMatch[1]) === "noback"
+        ? ""
+        : "<input type='button' onclick='prev(this)' class='previous' value='BACK'></input>";
+
+    let nextButton = endMatch
+      ? ""
+      : "<input type='submit' class='next' value='NEXT'></input>";
 
     let hardBool = questID.endsWith("!");
     let softBool = questID.endsWith("?");
@@ -356,9 +376,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
 
-    rv = `<form class='question' onsubmit='stopSubmit(event,${obj.store})' style='font-weight: bold' id='${questID}' ${d} hardEdit='
-      ${hardBool}' softEdit='${softBool}'> ${questText} <input type='button' onclick='prev(this)' class='previous' value='BACK'></input>\n
-      <input type='submit' class='next' value='NEXT'></input>
+    rv = `<form class='question' onsubmit='stopSubmit(event,${obj.store})' style='font-weight: bold' id='${questID}' ${questArgs} hardEdit='
+      ${hardBool}' softEdit='${softBool}'> ${questText} ${prevButton}\n
+      ${nextButton}
       </form>`;
 
     return rv;

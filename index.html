@@ -179,7 +179,7 @@
             var ta = document.querySelector("#ta");
             ta.onkeyup = ev => {
                 transform.tout(() => {
-                    transform.render({text: ta.value + "[END]"}, 'rendering', prevRes) // <-- this is where quest.js is engaged
+                    transform.render({text: ta.value}, 'rendering', prevRes) // <-- this is where quest.js is engaged
                     // transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}, 'rendering') // <-- this is where quest.js is engaged
                     if (document.querySelector(".question") != null) {
                         document.querySelector(".question").classList.add("active")
