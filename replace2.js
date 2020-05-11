@@ -86,10 +86,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // if d is undefined set it to blank.
     d = d ? d : "";
     // make sure that this is a "displayif"
-    var displayifMatch = d.match(/,\s*displayif\s*=\s*(.*)/);
+    var displayifMatch = d.match(/,\s*(displayif\s*=\s*.*)/);
     // if so, remove the comma and go.  if not, set d to blank...
     d = displayifMatch ? displayifMatch[1] : "";
-    if (d.length > 0) console.log(d); //###################
+    //    if (d.length > 0) console.log(d); //###################
 
     let hardBool = questID.endsWith("!");
     let softBool = questID.endsWith("?");

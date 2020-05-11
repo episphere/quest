@@ -7,6 +7,52 @@
 
 
 // test xor with text
-[Q3] What is your favorite TV show |__|id=TV xor=q3| or what you tuber? |____|id=yt xor=q3|
+[Q3] What is your favorite TV show |__|id=TV xor=q3| or who your favorite you-tuber? |__|id=yt xor=q3|
+
+
+
+[Q4] How many licks to the center of a tootsie pop? |__|__|id=licks max=10|
+
+<loop max=10>
+[Q5,displayif=greaterThanOrEqual(licks,#loop)] Knock-Knock?
+(1) come in.
+(2) go away.
+(3) come back later
+</loop>
+
+[WORKACTA] During the past 12 months, about how much time do you usually spend doing these activities while you 
+are at work? When thinking about your answers, please think about the time you spend at your job, 
+not counting time traveling to and from work. If you exercise during your workday 
+(such a going on walks during breaks or working out on lunch breaks), please include those activities.
+
+Sitting with small arm movements (for example, desk or computer work, light assembly, driving, etc.)
+(1) None
+(2) Less than 30 min
+(3) 30 min
+(4) 45 min
+(5) 1 hour
+(6) 1-2.9 hours
+(7) 3-4.9 hours
+(8) 5-6.9 hours
+(9) 7-8.9 hours
+(10) 9 hour or more
+
+[WORKACTB] During the past 12 months, about how much time do you usually spend doing these activities while you 
+are at work? When thinking about your answers, please think about the time you spend at your job, 
+not counting time traveling to and from work. If you exercise during your workday 
+(such a going on walks during breaks or working out on lunch breaks), please include those activities.
+
+Standing with some walking (for example, as a store clerk, filing, making copies, walking to/from meetings, working on an assembly line, etc.)
+(1) None
+(2) Less than 30 min
+(3) 30 min
+(4) 45 min
+(5) 1 hour
+(6) 1-2.9 hours
+(7) 3-4.9 hours
+(8) 5-6.9 hours
+(9) 7-8.9 hours
+(10) 9 hour or more
+
 
 [QEND] blah blah blah...  Thanks for the memories...

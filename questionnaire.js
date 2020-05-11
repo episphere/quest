@@ -13,15 +13,18 @@ export function isFirstQuestion() {
 
 export function textBoxInput(event) {
   let inputElement = event.target;
-  if (inputElement.previousElementSibling.firstElementChild != null) {
-    if (inputElement.previousElementSibling.firstElementChild.type == "checkbox") {
+  console.log(inputElement);
+  if (inputElement.previousElementSibling && inputElement.previousElementSibling.firstElementChild != null) {
+    let elementType = inputElement.previousElementSibling.firstElementChild.type;
+    if (elementType == "checkbox") {
       inputElement.previousElementSibling.firstElementChild.checked = inputElement.value.length > 0;
       rbAndCbClick(inputElement.previousElementSibling.firstElementChild);
+    } else if (elementType == "radio") {
+      inputElement.previousElementSibling.previousElementSibling.checked = inputElement.value.length > 0;
+      rbAndCbClick(inputElement.previousElementSibling.previousElementSibling);
     }
-  } else {
-    inputElement.previousElementSibling.previousElementSibling.checked = inputElement.value.length > 0;
-    rbAndCbClick(inputElement.previousElementSibling.previousElementSibling);
   }
+
   handleXOR(inputElement);
   inputElement.parentElement.value = inputElement.value;
 }
@@ -191,19 +194,31 @@ async function nextPage(norp, store) {
     let nextQuestionNode = questionQueue.next();
     if (nextQuestionNode.done) {
       // We are at the end of the question queue...
-      //
-      // if the next element is a question add the next
-      // question to the queue and set the nextQuestion variable
-      // not sure what to do if it is not...
+      // get the next element from the markdown...
       let tmp = norp.parentElement.nextElementSibling;
-      if (tmp.classList.contains("question")) {
-        questionQueue.add(tmp.id);
-        nextQuestionNode = questionQueue.next();
+      // before we add the next question to the queue...
+      // check for the displayif status...
+      while (tmp.hasAttribute("displayif")) {
+        // not sure what to do if the next element is is not a question ...
+        if (tmp.classList.contains("question")) {
+          let display = parse(tmp.getAttribute("displayif"));
+          console.log(tmp.getAttribute("displayif"), display);
+          if (display) break;
+          tmp = tmp.nextElementSibling;
+        } else {
+          console.log(" ============= next element is not a question...  not sure what went wrong...");
+          console.trace();
+        }
       }
+      // we are at a question that should be displayed add it to the queue and
+      // make it the current node.
+      questionQueue.add(tmp.id);
+      nextQuestionNode = questionQueue.next();
     }
 
-    // at this point the we have have the next question from the question queue...
-    // get the actual element.
+    // at this point the we nextQuestionNode is the current question from the question queue...
+    // get the actual HTML element.
+    // Why value.value?  nextQuestionNode is an object {done:boolean, value:obj}
     let nextElement = document.getElementById(nextQuestionNode.value.value);
     [...nextElement.querySelectorAll("span[forid]")].map((x) => {
       let elm = document.getElementById(x.getAttribute("forid"));
@@ -215,24 +230,6 @@ async function nextPage(norp, store) {
     Array.from(nextElement.querySelectorAll("input[data-min-validation-dependency]")).map(
       (x) => (x.min = document.getElementById(x.dataset.minValidationDependency).value)
     );
-    // what if there is a "displayif"...
-    let doNotDisplay = false;
-    do {
-      if (nextElement.hasAttribute("displayif")) {
-        // if the displayif is false, do not display....
-        doNotDisplay = !parse(nextElement.getAttribute("displayif"));
-
-        if (doNotDisplay) {
-          norp.parentElement.classList.remove("active");
-          // this should remove the "nextQuestion from the questionQueue"
-          questionQueue.previous();
-          let nextNorp = nextElement.querySelector("input[value='NEXT']");
-          if (nextNorp) {
-            return nextPage(nextNorp);
-          }
-        }
-      }
-    } while (doNotDisplay);
 
     // check all responses for next question
     [...nextElement.children]
@@ -251,13 +248,16 @@ async function nextPage(norp, store) {
     // First let's try NOT waiting for the function to return.
     updateTreeInLocalForage();
 
+    questionQueue.ptree();
     return nextElement;
   }
 }
 
 export async function previousClicked(norp, retrieve) {
   // get the previousElement...
-  let prevElement = document.getElementById(questionQueue.previous().value.value);
+  let pv = questionQueue.previous();
+  console.log("previous clicked: ", pv);
+  let prevElement = document.getElementById(pv.value.value);
   norp.parentElement.classList.remove("active");
   prevElement.classList.add("active");
 
@@ -314,6 +314,7 @@ function checkForSkips(questionElement) {
 }
 
 function checkValid(questionElement) {
+  console.log(questionElement);
   if (questionElement.checkValidity() == false) {
     return false;
   } else {
@@ -396,28 +397,28 @@ function parse(txt) {
   stack = stack.filter((x) => x != "");
 
   while (stack.indexOf(")") > 0) {
-    var callEnd = stack.indexOf(")");
+    let callEnd = stack.indexOf(")");
     if (stack[callEnd - 4] == "(" && stack[callEnd - 2] == "," && stack[callEnd - 5] in knownFunctions) {
       // it might hurt performance, but for debugging
       // expliciting setting the variables are helpful...
-      fun = stack[callEnd - 5];
-      arg1 = stack[callEnd - 3];
+      let fun = stack[callEnd - 5];
+      let arg1 = stack[callEnd - 3];
       // arg1 one should be a id or a boolean...
       // either from a element in the document or
       // from the currently undefined last module...
       if (typeof arg1 === "string") {
-        var element = document.getElementById(arg1);
+        let element = document.getElementById(arg1);
         if (element != null) {
           arg1 = document.getElementById(arg1).value;
         } else {
           //look up by name
-          temp1 = [...document.getElementsByName(arg1)].filter((x) => x.checked)[0];
+          let temp1 = [...document.getElementsByName(arg1)].filter((x) => x.checked)[0];
           arg1 = temp1 ? temp1.value : arg1;
           // ***** if it's neither... look in the previous module *****
         }
       }
-      arg2 = stack[callEnd - 1];
-      var tmpValue = knownFunctions[fun](arg1, arg2);
+      let arg2 = stack[callEnd - 1];
+      let tmpValue = knownFunctions[fun](arg1, arg2);
       // replace from callEnd-5 to callEnd with  the results...
       // splice start at callEnd-5, remove 6, add the calculated value...
       stack.splice(callEnd - 5, 6, tmpValue);

@@ -44,6 +44,8 @@ export class Tree {
 
     if (!tmp.done) {
       this.currentNode = tmp.value;
+      console.log(" ================ NEXT ================ ");
+      this.ptree();
     }
 
     return tmp;
@@ -56,8 +58,17 @@ export class Tree {
     let tmp = this.currentNode.previous();
     if (!tmp.done) {
       this.currentNode = tmp.value;
+      console.log(" ================ PREV ================ ");
+      this.ptree();
     }
     return tmp;
+  }
+
+  // remove the current element
+  // (this will remove ALL the children element of the current element)
+  prune() {
+    this.currentNode.removeFromParent();
+    this.previous();
   }
 
   isEmpty() {
@@ -106,6 +117,16 @@ export class Tree {
 
     newTree.loadFromVanillaObject(object);
     return newTree;
+  }
+
+  ptree() {
+    console.log(" ============ TREE ===========");
+    let node = this.rootNode.next();
+    while (!node.done) {
+      console.log(node.value.value, node.value.value == this.currentNode.value ? " <=== currentNode" : "");
+      node = node.value.next();
+    }
+    console.log(" ============================= ");
   }
 }
 
@@ -200,5 +221,14 @@ class TreeNode {
 
   iterator() {
     return new Tree(this);
+  }
+
+  removeChild(child) {
+    let childIndex = this.children.indexOf(child);
+    if (childIndex == -1) return;
+    this.children.splice(childIndex, 1);
+  }
+  removeFromParent() {
+    this.parent.removeChild(this);
   }
 }
