@@ -66,21 +66,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])",
-    "g"
-  );
+  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "g");
 
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/\n/g, "\u001f");
 
-  contents = contents.replace(regEx, function (
-    page,
-    questID,
-    questArgs,
-    questText
-  ) {
+  contents = contents.replace(regEx, function (page, questID, questArgs, questText) {
     //console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
@@ -105,14 +97,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       questArgs = "";
     }
 
-    let prevButton =
-      (endMatch && endMatch[1]) === "noback"
-        ? ""
-        : "<input type='submit' class='previous' value='BACK'></input>";
+    let prevButton = (endMatch && endMatch[1]) === "noback" ? "" : "<input type='submit' class='previous' value='BACK'></input>";
 
-    let nextButton = endMatch
-      ? ""
-      : "<input type='submit' class='next' value='NEXT'></input>";
+    let nextButton = endMatch ? "" : "<input type='submit' class='next' value='NEXT'></input>";
 
     let hardBool = questID.endsWith("!");
     let softBool = questID.endsWith("?");
@@ -126,10 +113,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
 
     // replace {$id} with span tag
-    questText = questText.replace(
-      /\{\$(\w+)\}/g,
-      `<span forId='$1'>${"$1"}</span>`
-    );
+    questText = questText.replace(/\{\$(\w+)\}/g, `<span forId='$1'>${"$1"}</span>`);
 
     // replace |@| with an email input
     questText = questText.replace(/\|@\|((\w+)\|)?/g, fEmail);
@@ -249,10 +233,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |image|URL|height,width| with a html img tag...
-    questText = questText.replace(
-      /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
-      "<img src=https://$1 height=$2 width=$3>"
-    );
+    questText = questText.replace(/\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g, "<img src=https://$1 height=$2 width=$3>");
     // replace |__|__|  with a number box...
     questText = questText.replace(/\|(?:__\|){2,}(?:([^|]+)\|)?/g, fNum);
     function fNum(fullmatch, opts) {
@@ -305,10 +286,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
 
     // replace (XX) with a radio button...
-    questText = questText.replace(
-      /\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
-      fRadio
-    );
+    questText = questText.replace(/\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g, fRadio);
     function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
@@ -329,10 +307,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace [a-zXX] with a checkbox box...
-    questText = questText.replace(
-      /\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g,
-      fCheck
-    );
+    questText = questText.replace(/\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
     function fCheck(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
@@ -360,21 +335,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace next question  < -> > with hidden...
     questText = questText.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" +
-        questID +
-        "_default' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      "<input type='hidden' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
     );
 
     // replace next question  < #NR -> > with hidden...
     questText = questText.replace(
       /<\s*#NR\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' class='noresponse' id='" +
-        questID +
-        "_default' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      "<input type='hidden' class='noresponse' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -494,6 +461,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           }
         }
       } else {
+        //questObj = await localforage.getItem(questObj);
         await localforage
           .keys()
           .then((res) => {
@@ -508,6 +476,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       // go through the form and fill in all the values...
       if (questObj != null) {
+        // check if it is an object as opposed to a string.
+        // fill the form appriately if it is an object.
+        // need to handle TEXTAREA and input[type=text]
         Object.getOwnPropertyNames(questObj).forEach((element) => {
           let formElement = document.getElementById(element);
           // get input elements with name="element"
@@ -529,14 +500,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
                     inputElements
                       .filter((x) => x.value == v)
                       .forEach((x) => {
+                        console.log("in for-each");
                         x.checked = true;
-                        if (
-                          [...document.querySelectorAll("form")].includes(
-                            x.parentElement.parentElement
-                          )
-                        ) {
+                        if ([...document.querySelectorAll("form")].includes(x.parentElement.parentElement)) {
                           x.parentElement.parentElement.value = value;
+                          console.log("in for-each === NO!!!!");
                         } else {
+                          console.log("in for-each === YES!!!");
                           x.parentElement.value = value;
                         }
                       });
@@ -553,14 +523,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
               } else {
                 selector = "input[value='" + questObj[element] + "']";
                 inputElements
-                  .filter((elm) => elm.type == "number")
+                  .filter((elm) => ["number", "text"].includes(elm.type))
                   .forEach((elm) => {
                     elm.value = value;
-                    if (
-                      [...document.querySelectorAll("form")].includes(
-                        elm.parentElement.parentElement
-                      )
-                    ) {
+                    if ([...document.querySelectorAll("form")].includes(elm.parentElement.parentElement)) {
                       elm.parentElement.parentElement.value = value;
                     } else {
                       elm.parentElement.value = value;
@@ -573,13 +539,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
         // use the questionQueue to set the active question....
         // well if the queue is empty, just go to the first question...
 
-        console.log(
-          "In fill form... qq.currentnode:",
-          questionQueue.currentNode
-        );
-        let currentElement = document.getElementById(
-          questionQueue.currentNode.value
-        );
+        console.log("In fill form... qq.currentnode:", questionQueue.currentNode);
+        let currentElement = document.getElementById(questionQueue.currentNode.value);
         // remove the active class from all elements...
         [...document.querySelectorAll(".active")].forEach((element) => {
           element.classList.remove("active");
@@ -632,9 +593,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   });
   //  console.log(textInputs);
 
-  let rbCb = [
-    ...document.querySelectorAll("input[type='radio'],input[type='checkbox'] "),
-  ];
+  let rbCb = [...document.querySelectorAll("input[type='radio'],input[type='checkbox'] ")];
   rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
   });
@@ -688,44 +647,20 @@ function unrollLoops(txt) {
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
       var currentText = x.txt;
       // replace all instances of the question ids with id_#
-      ids.map(
-        (id) =>
-          (currentText = currentText.replace(
-            id.label,
-            id.label.replace(id.id, id.id + "_" + loopIndx)
-          ))
-      );
+      ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
 
       disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
-      disIfIDs.map(
-        (id) =>
-          (currentText = currentText.replace(
-            new RegExp(id + "\\b", "g"),
-            id + "_" + loopIndx
-          ))
-      );
+      disIfIDs.map((id) => (currentText = currentText.replace(new RegExp(id + "\\b", "g"), id + "_" + loopIndx)));
 
       // replace all -> Id with -> Id_#
       ids.map(
-        (id) =>
-          (currentText = currentText.replace(
-            new RegExp("->\\s*" + id.id + "\\b", "g"),
-            "-> " + id.id + "_" + loopIndx
-          ))
+        (id) => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx))
       );
 
       // replace all |__(|__)|ID with |__(|__)|ID_#
-      ids.map(
-        (id) =>
-          (currentText = currentText.replace(
-            /(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g,
-            "$1$3_" + loopIndx + "|"
-          ))
-      );
+      ids.map((id) => (currentText = currentText.replace(/(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g, "$1$3_" + loopIndx + "|")));
 
-      ids.map(
-        (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
-      );
+      ids.map((id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx)));
 
       // if (currentText.search(/->\s*_continue/g) >= 0) {
       //   ;
