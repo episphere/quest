@@ -5,10 +5,10 @@ import {
   moduleParams,
   rbAndCbClick,
   numberInput,
-  textBoxInput
+  textBoxInput,
 } from "./questionnaire.js";
 
-export let transform = function() {
+export let transform = function () {
   // init
 };
 
@@ -75,7 +75,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/\n/g, "\u001f");
 
-  contents = contents.replace(regEx, function(
+  contents = contents.replace(regEx, function (
     page,
     questID,
     questArgs,
@@ -325,7 +325,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px; display:inline' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace [a-zXX] with a checkbox box...
@@ -349,7 +349,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px; display:inline' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     questText = questText.replace(/\|(displayif=.+?)\|(.*?)\|/g, fDisplayIf);
@@ -458,7 +458,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     console.log("in fillForm... ret fun:", retrieve);
 
     // get the tree from localforage...
-    await localforage.getItem(questName + ".treeJSON").then(tree => {
+    await localforage.getItem(questName + ".treeJSON").then((tree) => {
       // if this is the first time the user attempt
       // the questionnaire, the tree will not be in
       // the localForage...
@@ -480,7 +480,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     if (
-      localforage.keys().then(res => {
+      localforage.keys().then((res) => {
         res.includes(questName);
       })
     ) {
@@ -496,19 +496,19 @@ transform.render = async (obj, divId, previousResults = {}) => {
       } else {
         await localforage
           .keys()
-          .then(res => {
-            let r = res.filter(key => key == questName);
+          .then((res) => {
+            let r = res.filter((key) => key == questName);
             return r.length > 0 ? r[0] : null;
           })
-          .then(key => (key ? localforage.getItem(key) : null))
-          .then(res => {
+          .then((key) => (key ? localforage.getItem(key) : null))
+          .then((res) => {
             questObj = res;
           });
       }
 
       // go through the form and fill in all the values...
       if (questObj != null) {
-        Object.getOwnPropertyNames(questObj).forEach(element => {
+        Object.getOwnPropertyNames(questObj).forEach((element) => {
           let formElement = document.getElementById(element);
           // get input elements with name="element"
           let selector = "input[name='" + element + "']";
@@ -524,11 +524,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
                 if (inputElements.length > 1) {
                   // we have either a radio button or checkbox...
                   //                  console.log("rb or cb");
-                  value.forEach(v => {
+                  value.forEach((v) => {
                     selector = "input[value='" + v + "']";
                     inputElements
-                      .filter(x => x.value == v)
-                      .forEach(x => {
+                      .filter((x) => x.value == v)
+                      .forEach((x) => {
                         x.checked = true;
                         if (
                           [...document.querySelectorAll("form")].includes(
@@ -553,8 +553,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
               } else {
                 selector = "input[value='" + questObj[element] + "']";
                 inputElements
-                  .filter(elm => elm.type == "number")
-                  .forEach(elm => {
+                  .filter((elm) => elm.type == "number")
+                  .forEach((elm) => {
                     elm.value = value;
                     if (
                       [...document.querySelectorAll("form")].includes(
@@ -581,7 +581,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           questionQueue.currentNode.value
         );
         // remove the active class from all elements...
-        [...document.querySelectorAll(".active")].forEach(element => {
+        [...document.querySelectorAll(".active")].forEach((element) => {
           element.classList.remove("active");
         });
         if (currentElement) {
@@ -621,34 +621,34 @@ transform.render = async (obj, divId, previousResults = {}) => {
     buttonToRemove.remove();
   }
 
-  questions.forEach(question => {
+  questions.forEach((question) => {
     question.onsubmit = stopSubmit;
   });
   //  console.log(questions);
 
   let textInputs = [...document.querySelectorAll("input[type='text']")];
-  textInputs.forEach(inputElement => {
+  textInputs.forEach((inputElement) => {
     inputElement.oninput = textBoxInput;
   });
   //  console.log(textInputs);
 
   let rbCb = [
-    ...document.querySelectorAll("input[type='radio'],input[type='checkbox'] ")
+    ...document.querySelectorAll("input[type='radio'],input[type='checkbox'] "),
   ];
-  rbCb.forEach(rcElement => {
+  rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
   });
   //  console.log(rbCb);
 
   let numberInputs = [...document.querySelectorAll("input[type='number']")];
-  numberInputs.forEach(inputElement => {
+  numberInputs.forEach((inputElement) => {
     inputElement.oninput = numberInput;
   });
 
   moduleParams.questName = questName;
 };
 
-transform.tout = function(fun, tt = 500) {
+transform.tout = function (fun, tt = 500) {
   if (transform.tout.t) {
     clearTimeout(transform.tout.t);
   }
@@ -660,7 +660,7 @@ function unrollLoops(txt) {
   // each element in res is a loop in the questionnaire...
   let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gm;
   txt = txt.replace(/\n/g, "\xa9");
-  let res = [...txt.matchAll(loopRegex)].map(function(x, indx) {
+  let res = [...txt.matchAll(loopRegex)].map(function (x, indx) {
     return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
   });
 
@@ -668,20 +668,20 @@ function unrollLoops(txt) {
   let disIfRegex = /displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\)/g;
   // we have an array of objects holding the text..
   // get all the ids...
-  let cleanedText = res.map(function(x) {
+  let cleanedText = res.map(function (x) {
     x.txt += "[_CONTINUE" + x.indx + ",displayif=setFalse(-1,#loop)]";
     x.txt = x.txt.replace(/->\s*_CONTINUE\b/g, "-> _CONTINUE" + x.indx);
-    let ids = [...x.txt.matchAll(idRegex)].map(y => ({
+    let ids = [...x.txt.matchAll(idRegex)].map((y) => ({
       label: y[0],
       id: y[1],
-      indx: x.indx
+      indx: x.indx,
     }));
-    let disIfIDs = [...x.txt.matchAll(disIfRegex)].map(disIfID => ({
+    let disIfIDs = [...x.txt.matchAll(disIfRegex)].map((disIfID) => ({
       label: disIfID[0],
-      id: disIfID[1]
+      id: disIfID[1],
     }));
-    disIfIDs = disIfIDs.map(x => x.id);
-    let newIds = ids.map(x => x.id);
+    disIfIDs = disIfIDs.map((x) => x.id);
+    let newIds = ids.map((x) => x.id);
 
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
@@ -689,16 +689,16 @@ function unrollLoops(txt) {
       var currentText = x.txt;
       // replace all instances of the question ids with id_#
       ids.map(
-        id =>
+        (id) =>
           (currentText = currentText.replace(
             id.label,
             id.label.replace(id.id, id.id + "_" + loopIndx)
           ))
       );
 
-      disIfIDs = disIfIDs.filter(x => newIds.includes(x));
+      disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
       disIfIDs.map(
-        id =>
+        (id) =>
           (currentText = currentText.replace(
             new RegExp(id + "\\b", "g"),
             id + "_" + loopIndx
@@ -707,7 +707,7 @@ function unrollLoops(txt) {
 
       // replace all -> Id with -> Id_#
       ids.map(
-        id =>
+        (id) =>
           (currentText = currentText.replace(
             new RegExp("->\\s*" + id.id + "\\b", "g"),
             "-> " + id.id + "_" + loopIndx
@@ -716,7 +716,7 @@ function unrollLoops(txt) {
 
       // replace all |__(|__)|ID with |__(|__)|ID_#
       ids.map(
-        id =>
+        (id) =>
           (currentText = currentText.replace(
             /(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g,
             "$1$3_" + loopIndx + "|"
@@ -724,7 +724,7 @@ function unrollLoops(txt) {
       );
 
       ids.map(
-        id => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
+        (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
       );
 
       // if (currentText.search(/->\s*_continue/g) >= 0) {

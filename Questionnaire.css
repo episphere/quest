@@ -61,19 +61,16 @@ input[type="checkbox"] {
 }
 
 label {
-  display: block;
+  display: inline !important;
   border-radius: 15px;
   background-color: rgb(106, 186, 244);
   border: solid 2px blue;
-  height: 40px;
-  width: 80%;
   padding: 10px;
   margin: 5px;
   font-family: "Arial", "sans-serif";
   font-size: 1.5em;
   text-align: center;
   /* vertical-align: middle; */
-  display: block;
 }
 
 label:hover {

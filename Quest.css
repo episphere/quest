@@ -39,6 +39,10 @@ body {
   width: 100%;
 }
 
+label {
+  display: inline;
+}
+
 @media only screen and (max-width: 768px) {
   [id="ta"] {
     width: 350px !important;
