@@ -58,6 +58,7 @@ export class Tree {
     let tmp = this.currentNode.previous();
     if (!tmp.done) {
       this.currentNode = tmp.value;
+      this.currentNode.clearChildren();
       console.log(" ================ PREV ================ ");
       this.ptree();
     }
@@ -221,6 +222,10 @@ class TreeNode {
 
   iterator() {
     return new Tree(this);
+  }
+
+  clearChildren() {
+    this.children = [];
   }
 
   removeChild(child) {
