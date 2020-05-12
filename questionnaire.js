@@ -429,17 +429,3 @@ function parse(txt) {
   }
   return stack[0];
 }
-
-function increaseSize() {
-  let ta = document.getElementById("ta");
-  let style = window.getComputedStyle(ta, null).getPropertyValue("font-size");
-  let fontSize = parseFloat(style);
-  ta.style.fontSize = fontSize + 1 + "px";
-}
-
-function decreaseSize() {
-  let ta = document.getElementById("ta");
-  let style = window.getComputedStyle(ta, null).getPropertyValue("font-size");
-  let fontSize = parseFloat(style);
-  ta.style.fontSize = fontSize - 1 + "px";
-}
