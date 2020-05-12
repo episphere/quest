@@ -240,6 +240,22 @@ async function nextPage(norp, store) {
         elm.style.display = f ? "run-in" : "none";
       });
 
+    // check min/max for variable substitution in validation
+    function exchangeValue(element, attrName) {
+      let attr = element.getAttribute(attrName);
+      if (attr) {
+        let isnum = /^[\d\.]+$/.test(attr);
+        if (!isnum) {
+          element.setAttribute(attrName, document.getElementById(attr).value);
+        }
+      }
+      return element;
+    }
+    [...nextElement.children]
+      .filter((x) => x.hasAttribute("min") || x.hasAttribute("max"))
+      .map((element) => exchangeValue(element, "min"))
+      .map((element) => exchangeValue(element, "max"));
+
     // hide the current question and move to the next...
     norp.parentElement.classList.remove("active");
     nextElement.classList.add("active");
