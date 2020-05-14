@@ -42,6 +42,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // contents = contents.replace(/(?<=\n{2,})(\w+)\./gms, "[$1]");
   //contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
+
   contents = contents.replace(/\/\*.*\*\//g, "");
   contents = contents.replace(/\/\/.*/g, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
@@ -80,6 +81,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\u001f/g, "\n");
     questText = questText.replace(/\n/g, "<br>");
     questText = questText.replace(/\[_#\]/g, "");
+    let counter = 1;
+    questText = questText.replace(/\[\]/g, function (x) {
+      let t = "[" + counter.toString() + "]";
+      counter = counter + 1;
+      return t;
+    });
 
     // handle displayif on the question...
     // if questArgs is undefined set it to blank.
@@ -461,7 +468,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
           }
         }
       } else {
-        //questObj = await localforage.getItem(questObj);
+        // load the
+        questObj = await localforage.getItem(questObj);
+
         await localforage
           .keys()
           .then((res) => {
