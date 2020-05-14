@@ -1,7 +1,7 @@
 import { transform } from "./replace2.js";
 
 console.log("in quest.js");
-
+let prevRes = {};
 async function startUp() {
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
@@ -26,7 +26,8 @@ async function startUp() {
     ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
     ta.onkeyup();
   }
-  ta.style.width = parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
+  ta.style.width =
+    parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
