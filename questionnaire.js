@@ -160,6 +160,7 @@ async function nextPage(norp, store) {
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
   // and call next().
+
   if (questionQueue.isEmpty()) {
     console.log(
       "==> the tree is empty... add first element",

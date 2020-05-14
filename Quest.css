@@ -37,10 +37,19 @@ body {
 
 #rendering {
   width: 100%;
+  background-color: re;
 }
 
 label {
   display: inline;
+}
+
+.popover-dismiss {
+  background: linear-gradient(
+    rgb(232, 232, 232),
+    rgb(245, 245, 245)
+  ) !important;
+  border: 1px solid rgb(175, 175, 175);
 }
 
 @media only screen and (max-width: 768px) {
