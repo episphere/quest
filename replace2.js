@@ -140,10 +140,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
 
     // replace {$id} with span tag
-    questText = questText.replace(
-      /\{\$(\w+)\}/g,
-      `<span forId='$1'>${"$1"}</span>`
-    );
+    questText = questText.replace(/\{\$(\w+)(?::([^\s]+.*))?\}/g, fID);
+    function fID(fullmatch, forId, optional) {
+      if (optional == undefined) {
+        optional = "";
+      } else {
+        optional = optional;
+      }
+      return `<span forId='${forId}' optional='${optional}'>${forId}</span>`;
+    }
 
     //replace |popup|buttonText|Title|text| with a popover
     questText = questText.replace(

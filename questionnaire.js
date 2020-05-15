@@ -258,7 +258,7 @@ async function nextPage(norp, store) {
     let nextElement = document.getElementById(nextQuestionNode.value.value);
     [...nextElement.querySelectorAll("span[forid]")].map((x) => {
       let elm = document.getElementById(x.getAttribute("forid"));
-      x.innerHTML = elm.value != undefined ? elm.value : elm.innerText;
+      x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
     });
     Array.from(
       nextElement.querySelectorAll("input[data-max-validation-dependency]")
