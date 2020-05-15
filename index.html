@@ -171,18 +171,8 @@
             document.getElementById('markup').style.display = 'none'
             changeLogic("ActiveLogic.css")
         }
-    </script>
-    <script>
-        function clearLocalForage(){
-            localforage.clear().then(()=>{
-                loaddisplay.innerHTML="local forage cleared"
-                console.log("lf cleared")
-            }).catch((err)=>{
-                loaddisplay.innerHTML="caught error"+err;
-                console.log("error while clearing lf.  ",err)
-            })
-        }
-        clearMem.onclick = clearLocalForage;
+        let myTree ={};
+       
     </script>
     
     <script src="quest.js" type="module"></script>

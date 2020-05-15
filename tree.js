@@ -10,7 +10,6 @@ export class Tree {
 
   add(value) {
     console.log("adding", value, "to the tree");
-    console.trace();
     // dont add empty/null
     if (!value) throw "adding a falsy value to the tree.";
 
@@ -36,6 +35,11 @@ export class Tree {
 
   isFirst() {
     return this.currentNode.parent === this.rootNode;
+  }
+
+  clear() {
+    this.rootNode.clearChildren();
+    this.currentNode = this.rootNode;
   }
 
   // ask the current TreeNode what is the next value...
@@ -226,6 +230,7 @@ class TreeNode {
 
   clearChildren() {
     this.children = [];
+    this.currentNode = this.rootNode;
   }
 
   removeChild(child) {

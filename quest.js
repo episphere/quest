@@ -1,4 +1,6 @@
 import { transform } from "./replace2.js";
+import { questionQueue } from "./questionnaire.js";
+import { Tree } from "./tree.js";
 
 console.log("in quest.js");
 
@@ -30,6 +32,8 @@ async function startUp() {
 
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
+  document.getElementById("clearMem").onclick = clearLocalForage;
+  myTree = questionQueue;
 }
 
 function increaseSize() {
@@ -44,6 +48,22 @@ function decreaseSize() {
   let style = window.getComputedStyle(ta, null).getPropertyValue("font-size");
   let fontSize = parseFloat(style);
   ta.style.fontSize = fontSize - 1 + "px";
+}
+
+function clearLocalForage() {
+  localforage
+    .clear()
+    .then(() => {
+      loaddisplay.innerHTML = "local forage cleared";
+      console.log("lf cleared");
+    })
+    .catch((err) => {
+      loaddisplay.innerHTML = "caught error" + err;
+      console.log("error while clearing lf.  ", err);
+    });
+
+  console.log("clearing the in-memory tree");
+  questionQueue.clear();
 }
 
 startUp();

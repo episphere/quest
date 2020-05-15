@@ -7,6 +7,7 @@ import {
   numberInput,
   textBoxInput,
 } from "./questionnaire.js";
+import { retrieveFromLocalForage } from "./localforageDAO.js";
 
 export let transform = function () {
   // init
@@ -253,10 +254,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fNum(fullmatch, opts) {
       // make sure that the element id is set...
       const { options, elementId } = guaranteeIdSet(opts, "num");
-      console.log(`
-      <input name='${questID}' ${options}></input>
-      <label id='${elementId}_label' for='${elementId}'></label>
-      `);
 
       return `<input type='number' name='${questID}' ${options}></input>`;
     }
@@ -416,10 +413,24 @@ transform.render = async (obj, divId, previousResults = {}) => {
       </div>
   </div>`;
 
-  if (obj.url && obj.url.split("&").includes("run")) {
-    if (document.querySelector(".question") != null) {
-      document.querySelector(".question").classList.add("active");
-    }
+  // if (obj.url && obj.url.split("&").includes("run")) {
+  //   if (document.querySelector(".question") != null) {
+  //     document.querySelector(".question").classList.add("active");
+  //   }
+  // }
+
+  function setActive(id) {
+    let active = document.getElementById(id);
+    if (!active) return;
+
+    // remove active from all questions...
+    Array.from(divElement.getElementsByClassName("active")).forEach((element) => {
+      console.log(`removing active from ${element.id}`);
+      element.classList.remove("active");
+    });
+    // make the id active...
+    console.log(`setting ${id} active`);
+    document.getElementById(id).classList.add("active");
   }
 
   // If a user starts a module takes a break
@@ -441,7 +452,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (tree) {
         questionQueue.loadFromVanillaObject(tree);
       }
-      console.log(questionQueue);
+      console.log(`the current node is ${questionQueue.currentNode.value}`);
+      setActive(questionQueue.currentNode.value);
     });
 
     if (retrieve) {
@@ -453,164 +465,67 @@ transform.render = async (obj, divId, previousResults = {}) => {
           questObj = userData[questName];
         }
       }
+    } else {
+      // a retrieve function is not defined use
+      // the default which pull the values out of
+      // localforage...
+      await retrieveFromLocalForage(questName);
     }
-
-    if (
-      localforage.keys().then((res) => {
-        res.includes(questName);
-      })
-    ) {
-      if (retrieve) {
-        const response = await retrieve();
-        if (response.code === 200) {
-          const userData = response.data;
-          console.log(userData);
-          if (userData[questName]) {
-            questObj = userData[questName];
-          }
-        }
+  }
+  function resetTree() {
+    // make the appropriate question active...
+    // don't bother if there are no questions...
+    if (questions.length > 0) {
+      let currentId = questionQueue.currentNode.value;
+      let currentQuestion = divElement.querySelector(`[id=${currentId}]`);
+      console.log("currentId", currentId);
+      if (currentId) {
+        console.log(` ==============>>>>  setting ${currentId} active`);
+        setActive(currentId);
       } else {
-        // load the
-        questObj = await localforage.getItem(questObj);
+        console.log(` ==============>>>>  setting the first question ${questions[0].id} active`);
 
-        await localforage
-          .keys()
-          .then((res) => {
-            let r = res.filter((key) => key == questName);
-            return r.length > 0 ? r[0] : null;
-          })
-          .then((key) => (key ? localforage.getItem(key) : null))
-          .then((res) => {
-            questObj = res;
-          });
+        // if the tree is empty add the first question to the tree...
+        // and make it active...
+        questionQueue.add(questions[0].id);
+        questionQueue.next();
+        setActive(questions[0].id);
       }
-
-      // go through the form and fill in all the values...
-      if (questObj != null) {
-        // check if it is an object as opposed to a string.
-        // fill the form appriately if it is an object.
-        // need to handle TEXTAREA and input[type=text]
-        Object.getOwnPropertyNames(questObj).forEach((element) => {
-          let formElement = document.getElementById(element);
-          // get input elements with name="element"
-          let selector = "input[name='" + element + "']";
-          if (formElement == null) {
-            return null;
-          } else {
-            let inputElements = [...formElement.querySelectorAll(selector)];
-            if (questObj[element] == undefined) {
-              return null;
-            } else {
-              let value = questObj[element];
-              if (Array.isArray(questObj[element]) == true) {
-                if (inputElements.length > 1) {
-                  // we have either a radio button or checkbox...
-                  //                  console.log("rb or cb");
-                  value.forEach((v) => {
-                    selector = "input[value='" + v + "']";
-                    inputElements
-                      .filter((x) => x.value == v)
-                      .forEach((x) => {
-                        console.log("in for-each");
-                        x.checked = true;
-                        if ([...document.querySelectorAll("form")].includes(x.parentElement.parentElement)) {
-                          x.parentElement.parentElement.value = value;
-                          console.log("in for-each === NO!!!!");
-                        } else {
-                          console.log("in for-each === YES!!!");
-                          x.parentElement.value = value;
-                        }
-                      });
-                  });
-                } else {
-                  if (Array.isArray(value)) {
-                    if (value.length == 1) inputElements[0].value = value[0];
-                  } else {
-                    inputElements[0].value = value;
-                  }
-                  // we have something else...
-                  // set the value...
-                }
-              } else {
-                selector = "input[value='" + questObj[element] + "']";
-                inputElements
-                  .filter((elm) => ["number", "text"].includes(elm.type))
-                  .forEach((elm) => {
-                    elm.value = value;
-                    if ([...document.querySelectorAll("form")].includes(elm.parentElement.parentElement)) {
-                      elm.parentElement.parentElement.value = value;
-                    } else {
-                      elm.parentElement.value = value;
-                    }
-                  });
-              }
-            }
-          }
-        });
-        // use the questionQueue to set the active question....
-        // well if the queue is empty, just go to the first question...
-
-        console.log("In fill form... qq.currentnode:", questionQueue.currentNode);
-        let currentElement = document.getElementById(questionQueue.currentNode.value);
-        // remove the active class from all elements...
-        [...document.querySelectorAll(".active")].forEach((element) => {
-          element.classList.remove("active");
-        });
-        if (currentElement) {
-          currentElement.classList.add("active");
-        } else {
-          document.querySelector(".question").classList.add("active");
-        }
-      }
-      //  if (
-      //     Object.entries(questObj)
-      //       .map(([key, value]) => document.getElementById(key))
-      //       .slice(-1)[0] != null
-      //   ) {
-      //     Array.from(document.getElementsByClassName("active")).forEach((element) => element.classList.remove("active"));
-      //     Object.entries(questObj)
-      //       .map(([key, value]) => document.getElementById(key))
-      //       .slice(-1)[0]
-      //       .classList.add("active");
-      //   }
-      // } else {
-      //   if (document.querySelector(".question") != null) {
-      //     document.querySelector(".question").classList.add("active");
-      //   }
-      // }
     }
   }
-  fillForm(obj.retrieve);
-
   let questions = [...document.getElementsByClassName("question")];
+  let divElement = document.getElementById(divId);
 
-  let buttonToRemove = questions[0].querySelector(".previous");
-  if (buttonToRemove) {
-    buttonToRemove.remove();
-  }
-  buttonToRemove = [...questions].pop().querySelector(".next");
-  if (buttonToRemove) {
-    buttonToRemove.remove();
+  // wait for the objects to be retrieved,
+  // then reset the tree.
+  fillForm(obj.retrieve).then(resetTree());
+
+  if (questions.length > 0) {
+    let buttonToRemove = questions[0].querySelector(".previous");
+    if (buttonToRemove) {
+      buttonToRemove.remove();
+    }
+    buttonToRemove = [...questions].pop().querySelector(".next");
+    if (buttonToRemove) {
+      buttonToRemove.remove();
+    }
   }
 
   questions.forEach((question) => {
     question.onsubmit = stopSubmit;
   });
-  //  console.log(questions);
 
-  let textInputs = [...document.querySelectorAll("input[type='text']")];
+  let textInputs = [...divElement.querySelectorAll("input[type='text']")];
   textInputs.forEach((inputElement) => {
     inputElement.oninput = textBoxInput;
   });
-  //  console.log(textInputs);
 
-  let rbCb = [...document.querySelectorAll("input[type='radio'],input[type='checkbox'] ")];
+  let rbCb = [...divElement.querySelectorAll("input[type='radio'],input[type='checkbox'] ")];
   rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
   });
-  //  console.log(rbCb);
 
-  let numberInputs = [...document.querySelectorAll("input[type='number']")];
+  let numberInputs = [...divElement.querySelectorAll("input[type='number']")];
   numberInputs.forEach((inputElement) => {
     inputElement.oninput = numberInput;
   });
