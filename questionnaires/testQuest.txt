@@ -14,4 +14,7 @@
 [1] some 
 [2] none 
 [3] all
+
+[Q7] Tell me a story |___|
+
 [END,end] Thank you
