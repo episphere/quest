@@ -1,0 +1,17 @@
+[Q1] Do you like dogs 
+#YN
+
+[Q2] What is your name |__|
+
+[Q3] What is your age |__|__|xor=ageyob id=age| or what year where you born |__|__|__|__|xor=ageyob id=yob|
+
+[Q4] What is your first name |__|xor=callme id=firstName| or what do you wish to be called |__|xor=callme id=nickname|
+
+[Q5] how many licks to the center of a tootsie pop
+|__|
+
+[Q6] select all that apply
+[1] some 
+[2] none 
+[3] all
+[END,end] Thank you
