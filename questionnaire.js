@@ -11,66 +11,105 @@ export function isFirstQuestion() {
   return questionQueue.isEmpty() || questionQueue.isFirst();
 }
 
+function numberOfInputs(element) {
+  let resps = Array.from(element.querySelectorAll("input, textarea")).reduce((acc, current) => {
+    if (current.type == "submit") return acc;
+    if (["radio", "checkbox"].includes(current.type)) {
+      acc[current.name] = true;
+    } else {
+      acc[current.id] = true;
+    }
+    return acc;
+  }, {});
+  return Object.keys(resps).length;
+}
+
+function setFormValue(form, value, id) {
+  if (numberOfInputs(form) == 1) {
+    form.value = value;
+  } else {
+    if (!form.value) {
+      form.value = {};
+    }
+    form.value[id] = value;
+  }
+}
+
+// here are function that handle the
+// user selection and attach the
+// selected value to the form (question)
 export function textBoxInput(event) {
   let inputElement = event.target;
-  console.log(inputElement);
-  if (
-    inputElement.previousElementSibling &&
-    inputElement.previousElementSibling.firstElementChild != null
-  ) {
-    let elementType =
-      inputElement.previousElementSibling.firstElementChild.type;
+  textboxinput(inputElement);
+}
+
+export function textboxinput(inputElement) {
+  // what is going on here...
+  if (inputElement.previousElementSibling && inputElement.previousElementSibling.firstElementChild != null) {
+    let elementType = inputElement.previousElementSibling.firstElementChild.type;
     if (elementType == "checkbox") {
-      inputElement.previousElementSibling.firstElementChild.checked =
-        inputElement.value.length > 0;
+      inputElement.previousElementSibling.firstElementChild.checked = inputElement.value.length > 0;
       rbAndCbClick(inputElement.previousElementSibling.firstElementChild);
     } else if (elementType == "radio") {
-      inputElement.previousElementSibling.previousElementSibling.checked =
-        inputElement.value.length > 0;
+      inputElement.previousElementSibling.previousElementSibling.checked = inputElement.value.length > 0;
       rbAndCbClick(inputElement.previousElementSibling.previousElementSibling);
     }
   }
 
-  handleXOR(inputElement);
-  inputElement.parentElement.value = inputElement.value;
+  let value = handleXOR(inputElement);
+  let id = value ? inputElement.getAttribute("xor") : inputElement.id;
+  value = value ? value : inputElement.value;
+
+  setFormValue(inputElement.form, value, id);
 }
 
 export function numberInput(event) {
   let inputElement = event.target;
-  if (
-    [
-      ...inputElement.parentElement.querySelectorAll("input[type=number]"),
-    ].filter((x) => x != inputElement).length >= 1
-  ) {
+  numberInputUpdate(inputElement);
+}
+
+export function numberInputUpdate(inputElement) {
+  // what is going on here..
+  if ([...inputElement.parentElement.querySelectorAll("input[type=number]")].filter((x) => x != inputElement).length >= 1) {
     [...inputElement.parentElement.querySelectorAll("input[type=number]")]
       .filter((x) => x != inputElement)
       .map((x) => (x.value = ""));
   }
-  inputElement.parentElement.value = inputElement.value;
+
+  let value = handleXOR(inputElement);
+  let id = value ? inputElement.getAttribute("xor") : inputElement.id;
+  value = value ? value : inputElement.value;
+
+  setFormValue(inputElement.form, value, id);
 }
 
+// onInput/Change handler for radio/checkboxex
 export function rbAndCbClick(event) {
   let inputElement = event.target;
+  radioAndCheckboxUpdate(inputElement);
+}
+
+export function radioAndCheckboxUpdate(inputElement) {
   clearSelection(inputElement);
+
+  let selectedValue = {};
   if (inputElement.type == "checkbox") {
-    inputElement.parentElement.parentElement.value = [
-      ...inputElement.parentElement.parentElement.querySelectorAll(
-        "input[type='checkbox']"
-      ),
-    ]
+    // get all checkboxes with the same name attribute...
+    selectedValue = Array.from(inputElement.form.querySelectorAll(`[name=${inputElement.name}]`))
       .filter((x) => x.checked)
       .map((x) => x.value);
   } else {
-    inputElement.parentElement.parentElement.value = [...inputElement.value];
+    // we have a radio button..  just get the selected value...
+    selectedValue = inputElement.value;
   }
+
+  setFormValue(inputElement.form, selectedValue, inputElement.name);
 }
 
 function clearSelection(inputElement) {
   if (!inputElement.form) return;
   var state = inputElement.checked;
-  var cb = inputElement.form.querySelectorAll(
-    "input[type='checkbox'], input[type='radio']"
-  );
+  var cb = inputElement.form.querySelectorAll("input[type='checkbox'], input[type='radio']");
   if (inputElement.value == 99) {
     for (var x of cb) {
       if (x != inputElement) {
@@ -86,17 +125,21 @@ function clearSelection(inputElement) {
 }
 
 function handleXOR(inputElement) {
-  console.log("in handleXOR");
+  if (numberOfInputs(inputElement.form) == 1) {
+    return false;
+  }
+  let valueObj = {};
+  valueObj[inputElement.id] = inputElement.value;
   let sibs = [...inputElement.parentElement.querySelectorAll("input")];
   sibs = sibs.filter(
-    (x) =>
-      x.hasAttribute("xor") &&
-      x.getAttribute("xor") == inputElement.getAttribute("xor") &&
-      x.id != inputElement.id
+    (x) => x.hasAttribute("xor") && x.getAttribute("xor") == inputElement.getAttribute("xor") && x.id != inputElement.id
   );
+
   sibs.forEach((x) => {
     x.value = "";
+    valueObj[x.id] = x.value;
   });
+  return valueObj;
 }
 
 export function nextClick(norp, store) {
@@ -106,25 +149,11 @@ export function nextClick(norp, store) {
     norp = document.getElementById(norp).querySelector(".next");
   }
 
-  // if (norp.hasAttribute("data-toggle")) {
-  //   norp.removeAttribute("data-toggle");
-  // }
-  // if (norp.parentElement.lastChild.id == "softModalContainer") {
-  //   norp.parentElement.removeChild(norp.parentElement.lastChild);
-  // }
-  // if (norp.parentElement.lastChild.id == "hardModalContainer") {
-  //   norp.parentElement.removeChild(norp.parentElement.lastChild);
-  // }
-
+  //handle the soft and hard edits...
   if (
     norp.parentElement.getAttribute("softedit") == "true" &&
-    getSelected(norp.parentElement).filter((x) => x.type !== "hidden").length ==
-      0
+    getSelected(norp.parentElement).filter((x) => x.type !== "hidden").length == 0
   ) {
-    // console.log(norp.parentElement);
-    // norp.setAttribute("data-toggle", "modal");
-    // norp.setAttribute("data-target", "#softModal");
-
     document.getElementById(
       "softModalFooter"
     ).innerHTML = `<button type="button" id="continueButton" class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
@@ -133,15 +162,10 @@ export function nextClick(norp, store) {
     f1 = f1.bind(f1, norp, store);
     document.getElementById("continueButton").onclick = f1;
     $("#softModal").modal("toggle");
-  } else if (
-    norp.getAttribute("data-target") == "#hardModal" &&
-    getSelected(norp.parentElement) == 0
-  ) {
+  } else if (norp.getAttribute("data-target") == "#hardModal" && getSelected(norp.parentElement) == 0) {
     $("#hardModal").modal("toggle");
     return null;
   } else {
-    // norp.setAttribute("data-toggle", "");
-    // norp.setAttribute("data-target", "");
     nextPage(norp, store);
   }
 }
@@ -162,11 +186,7 @@ async function nextPage(norp, store) {
   // and call next().
 
   if (questionQueue.isEmpty()) {
-    console.log(
-      "==> the tree is empty... add first element",
-      norp.parentElement,
-      norp.parentElement.id
-    );
+    console.log("==> the tree is empty... add first element", norp.parentElement, norp.parentElement.id);
     questionQueue.add(norp.parentElement.id);
     questionQueue.next();
   }
@@ -176,8 +196,7 @@ async function nextPage(norp, store) {
   questRes = tempObj;
   if (store && norp.parentElement.value) {
     let formData = {};
-    formData[`${questName}.${norp.parentElement.id}`] =
-      norp.parentElement.value;
+    formData[`${questName}.${norp.parentElement.id}`] = norp.parentElement.value;
     store(formData);
   } else {
     let tmp = await localforage
@@ -189,7 +208,6 @@ async function nextPage(norp, store) {
         }
         // set the value for the questionId...
         allResponses[norp.parentElement.id] = norp.parentElement.value;
-        console.log(allResponses);
 
         return allResponses;
       })
@@ -240,9 +258,7 @@ async function nextPage(norp, store) {
           if (display) break;
           tmp = tmp.nextElementSibling;
         } else {
-          console.log(
-            " ============= next element is not a question...  not sure what went wrong..."
-          );
+          console.log(" ============= next element is not a question...  not sure what went wrong...");
           console.trace();
         }
       }
@@ -260,21 +276,11 @@ async function nextPage(norp, store) {
       let elm = document.getElementById(x.getAttribute("forid"));
       x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
     });
-    Array.from(
-      nextElement.querySelectorAll("input[data-max-validation-dependency]")
-    ).map(
-      (x) =>
-        (x.max = document.getElementById(
-          x.dataset.maxValidationDependency
-        ).value)
+    Array.from(nextElement.querySelectorAll("input[data-max-validation-dependency]")).map(
+      (x) => (x.max = document.getElementById(x.dataset.maxValidationDependency).value)
     );
-    Array.from(
-      nextElement.querySelectorAll("input[data-min-validation-dependency]")
-    ).map(
-      (x) =>
-        (x.min = document.getElementById(
-          x.dataset.minValidationDependency
-        ).value)
+    Array.from(nextElement.querySelectorAll("input[data-min-validation-dependency]")).map(
+      (x) => (x.min = document.getElementById(x.dataset.minValidationDependency).value)
     );
 
     // check all responses for next question
@@ -318,7 +324,6 @@ async function nextPage(norp, store) {
 export async function previousClicked(norp, retrieve) {
   // get the previousElement...
   let pv = questionQueue.previous();
-  console.log("previous clicked: ", pv);
   let prevElement = document.getElementById(pv.value.value);
   norp.parentElement.classList.remove("active");
   prevElement.classList.add("active");
@@ -352,9 +357,7 @@ function checkForSkips(questionElement) {
     selectedElements.sort(classSort);
   } else {
     // something was selected... remove the no response hidden tag..
-    selectedElements = selectedElements.filter(
-      (x) => !x.classList.contains("noresponse")
-    );
+    selectedElements = selectedElements.filter((x) => !x.classList.contains("noresponse"));
   }
 
   // if there is a skipTo attribute, add them to the beginning of the queue...
@@ -378,7 +381,6 @@ function checkForSkips(questionElement) {
 }
 
 function checkValid(questionElement) {
-  console.log(questionElement);
   if (questionElement.checkValidity() == false) {
     return false;
   } else {
@@ -396,11 +398,7 @@ function getSelected(questionElement) {
   //   )
   // ];
 
-  var rv1 = [
-    ...questionElement.querySelectorAll(
-      "input[type='radio'],input[type='checkbox']"
-    ),
-  ];
+  var rv1 = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox']")];
 
   var rv2 = [
     ...questionElement.querySelectorAll(
@@ -440,17 +438,11 @@ function getResults(element) {
 
   let allResponses = [...element.querySelectorAll(".response")];
   // get all the checkboxes
-  cb = allResponses
-    .filter((x) => x.type == "checkbox")
-    .map((x) => (tmpRes[x.value] = x.checked));
+  cb = allResponses.filter((x) => x.type == "checkbox").map((x) => (tmpRes[x.value] = x.checked));
 
   // get all the text and radio elements...
   rd = allResponses
-    .filter(
-      (x) =>
-        (x.type == "radio" && x.checked) ||
-        ["text", "date", "email", "number", "tel"].includes(x.type)
-    )
+    .filter((x) => (x.type == "radio" && x.checked) || ["text", "date", "email", "number", "tel"].includes(x.type))
     .map((x) => (tmpRes[x.name] = x.value));
 }
 
@@ -472,11 +464,7 @@ function parse(txt) {
 
   while (stack.indexOf(")") > 0) {
     let callEnd = stack.indexOf(")");
-    if (
-      stack[callEnd - 4] == "(" &&
-      stack[callEnd - 2] == "," &&
-      stack[callEnd - 5] in knownFunctions
-    ) {
+    if (stack[callEnd - 4] == "(" && stack[callEnd - 2] == "," && stack[callEnd - 5] in knownFunctions) {
       // it might hurt performance, but for debugging
       // expliciting setting the variables are helpful...
       let fun = stack[callEnd - 5];
@@ -490,9 +478,7 @@ function parse(txt) {
           arg1 = document.getElementById(arg1).value;
         } else {
           //look up by name
-          let temp1 = [...document.getElementsByName(arg1)].filter(
-            (x) => x.checked
-          )[0];
+          let temp1 = [...document.getElementsByName(arg1)].filter((x) => x.checked)[0];
           arg1 = temp1 ? temp1.value : arg1;
           // ***** if it's neither... look in the previous module *****
         }
