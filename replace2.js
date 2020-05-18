@@ -592,18 +592,20 @@ function unrollLoops(txt) {
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
       var currentText = x.txt;
       // replace all instances of the question ids with id_#
-      ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
+      ids.map((id) => (currentText = currentText.replace(new RegExp("\\b" + id.id + "\\b", "g"), `${id.id}_${loopIndx}`)));
+      // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
 
-      disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
-      disIfIDs.map((id) => (currentText = currentText.replace(new RegExp(id + "\\b", "g"), id + "_" + loopIndx)));
+      // disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
+      // disIfIDs.map((id) => (currentText = currentText.replace(new RegExp(id + "\\b", "g"), id + "_" + loopIndx)));
 
-      // replace all -> Id with -> Id_#
-      ids.map(
-        (id) => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx))
-      );
+      // // replace all -> Id with -> Id_#
+      // ids.map(
+      //   (id) => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx))
+      // );
 
-      // replace all |__(|__)|ID with |__(|__)|ID_#
-      ids.map((id) => (currentText = currentText.replace(/(\|__(\|__)*\|)([A-Za-z0-9]\w+)\|/g, "$1$3_" + loopIndx + "|")));
+      // // replace all |__(|__)|xxxx|  xxxx= id=questionid_xxx xor=questionid
+      // // |__|id=lalala_3_txt xor=lalala_3|  |xor= lalala id=lalala_txt|
+      // ids.map((id) => (currentText = currentText.replace(/(\|__(?:\|__)*\|[^|\s][^|]\b)(${id.id})(\b[^|]*\|)/g, `$1$2_${loopIndx}$3`)));
 
       ids.map((id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx)));
 
