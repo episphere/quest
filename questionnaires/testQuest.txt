@@ -3,18 +3,20 @@
 
 [Q2] What is your name |__|
 
-[Q3] What is your age |__|__|xor=ageyob id=age| or what year where you born |__|__|__|__|xor=ageyob id=yob|
+[Q3] Pick a number from 1 to 10. |__|__|min=1 max=10|
 
-[Q4] What is your first name |__|xor=callme id=firstName| or what do you wish to be called |__|xor=callme id=nickname|
+[Q4] What is your age |__|__|xor=ageyob id=age| or what year where you born |__|__|__|__|xor=ageyob id=yob|
 
-[Q5] how many licks to the center of a tootsie pop
+[Q5] What is your first name |__|xor=callme id=firstName| or what do you wish to be called |__|xor=callme id=nickname|
+
+[Q6] how many licks to the center of a tootsie pop
 |__|
 
-[Q6] select all that apply
+[Q7] select all that apply
 [1] some 
 [2] none 
 [3] all
 
-[Q7] Tell me a story |___|
+[Q8] Tell me a story |___|
 
 [END,end] Thank you

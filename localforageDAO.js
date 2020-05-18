@@ -23,6 +23,7 @@ export async function retrieveFromLocalForage(questName) {
       let element = formElement.querySelector("input,textarea");
       switch (element.type) {
         case "number":
+          element.value = results[qid];
           numberInputUpdate(element);
           break;
         case "date":
@@ -53,6 +54,7 @@ export async function retrieveFromLocalForage(questName) {
         checkboxElements.forEach((value, index) => {
           value.checked = results[qid][index];
         });
+        radioAndCheckboxUpdate(checkboxElements[0]);
       } else {
         Object.entries(results[qid]).forEach((qEntry) => {
           // qEntry[0] = name of the element (xor)..
@@ -61,6 +63,7 @@ export async function retrieveFromLocalForage(questName) {
             let element = formElement.querySelector(`[id=${el[0]}]`);
             if (element) {
               element.value = el[1];
+              if (el[1].length > 0) textboxinput(element);
             }
           });
         });
