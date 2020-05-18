@@ -12,7 +12,7 @@ export function isFirstQuestion() {
 }
 
 function numberOfInputs(element) {
-  let resps = Array.from(element.querySelectorAll("input", "textarea")).reduce((acc, current) => {
+  let resps = Array.from(element.querySelectorAll("input, textarea")).reduce((acc, current) => {
     if (current.type == "submit") return acc;
     if (["radio", "checkbox"].includes(current.type)) {
       acc[current.name] = true;
@@ -40,7 +40,10 @@ function setFormValue(form, value, id) {
 // selected value to the form (question)
 export function textBoxInput(event) {
   let inputElement = event.target;
+  textboxinput(inputElement);
+}
 
+export function textboxinput(inputElement) {
   // what is going on here...
   if (inputElement.previousElementSibling && inputElement.previousElementSibling.firstElementChild != null) {
     let elementType = inputElement.previousElementSibling.firstElementChild.type;
@@ -62,7 +65,10 @@ export function textBoxInput(event) {
 
 export function numberInput(event) {
   let inputElement = event.target;
+  numberInputUpdate(inputElement);
+}
 
+export function numberInputUpdate(inputElement) {
   // what is going on here..
   if ([...inputElement.parentElement.querySelectorAll("input[type=number]")].filter((x) => x != inputElement).length >= 1) {
     [...inputElement.parentElement.querySelectorAll("input[type=number]")]
@@ -77,8 +83,13 @@ export function numberInput(event) {
   setFormValue(inputElement.form, value, id);
 }
 
+// onInput/Change handler for radio/checkboxex
 export function rbAndCbClick(event) {
   let inputElement = event.target;
+  radioAndCheckboxUpdate(inputElement);
+}
+
+export function radioAndCheckboxUpdate(inputElement) {
   clearSelection(inputElement);
 
   let selectedValue = {};
