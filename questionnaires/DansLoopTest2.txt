@@ -9,14 +9,17 @@
 
 <loop max=10>
 [Q4,displayif=greaterThanOrEqual(numnames,#loop)] Are you bored yet? #loop
-(1) yes -> _CONTINUE
-(2) no, no yet...
+(1) yes -> Q6
+(2) no, no yet...  -> Q5
+< -> _CONTINUE >
 
 [Q5,displayif=greaterThanOrEqual(numnames,#loop)] What is your name ..#loop..? |__|
 [Q6,displayif=greaterThanOrEqual(numnames,#loop)] Knock-Knock?
 (1) come in.
 (2) go away.
 (3) come back later
+
+[Q7,displayif=greaterThanOrEqual(numnames,#loop)]] Thank you for not seeing this question
 </loop>
 
 [END,end] 
