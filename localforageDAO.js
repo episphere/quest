@@ -51,8 +51,8 @@ export async function retrieveFromLocalForage(questName) {
       console.log("...  WE HAVE AN OBJECT ... ");
       if (Array.isArray(results[qid])) {
         let checkboxElements = Array.from(formElement.querySelectorAll(`input[name=${qid}]`));
-        checkboxElements.forEach((value, index) => {
-          value.checked = results[qid][index];
+        checkboxElements.forEach((checkbox) => {
+          checkbox.checked = results[qid].includes(checkbox.value);
         });
         radioAndCheckboxUpdate(checkboxElements[0]);
       } else {

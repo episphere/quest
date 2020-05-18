@@ -95,7 +95,9 @@ export function radioAndCheckboxUpdate(inputElement) {
   let selectedValue = {};
   if (inputElement.type == "checkbox") {
     // get all checkboxes with the same name attribute...
-    selectedValue = Array.from(inputElement.form.querySelectorAll(`[name=${inputElement.name}]`)).map((x) => x.checked);
+    selectedValue = Array.from(inputElement.form.querySelectorAll(`[name=${inputElement.name}]`))
+      .filter((x) => x.checked)
+      .map((x) => x.value);
   } else {
     // we have a radio button..  just get the selected value...
     selectedValue = inputElement.value;
