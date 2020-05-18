@@ -76,6 +76,15 @@ export class Tree {
     this.previous();
   }
 
+  // you can ONLY pop a node that has no
+  // children.
+  pop() {
+    if (this.currentNode.children.length > 0) return;
+
+    let tmp = this.currentNode;
+    this.previous();
+    tmp.removeFromParent();
+  }
   isEmpty() {
     return this.rootNode.children.length == 0;
   }

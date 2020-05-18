@@ -1,19 +1,23 @@
-[Q1] how many names? |__|__|numnames|
+[Q1] how many names? |__|__|id=numnames|
 [Q2,displayif=greaterThanOrEqual(numnames,3)] Are you sure you want {$numnames} names
 (1) yes
 (0) no
-[Q3] How many licks to the center of a tootsie pop? |__|__|licks|
+[Q3] How many licks to the center of a tootsie pop? |__|__|id=licks|
 
 
 
 
 <loop max=10>
-[Q4,displayif=greaterThanOrEqual(numnames,#loop)] What is your name ..#loop..? |__|name|
-[Q5,displayif=greaterThanOrEqual(numnames,#loop)] Knock-Knock?
+[Q4,displayif=greaterThanOrEqual(numnames,#loop)] Are you bored yet? #loop
+(1) yes -> _CONTINUE
+(2) no, no yet...
+
+[Q5,displayif=greaterThanOrEqual(numnames,#loop)] What is your name ..#loop..? |__|
+[Q6,displayif=greaterThanOrEqual(numnames,#loop)] Knock-Knock?
 (1) come in.
 (2) go away.
 (3) come back later
 </loop>
 
-[QEND] 
+[END,end] 
    Thats all folks!!!

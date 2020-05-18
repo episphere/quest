@@ -178,6 +178,24 @@ async function updateTreeInLocalForage() {
   await localforage.setItem(questName + ".treeJSON", questionQueue);
 }
 
+function getNextQuestionId(currentFormElement) {
+  // get the next question from the questionQueue
+  // if it exists... otherwise get the next look at the
+  // markdown and get the question follows.
+  let nextQuestionNode = questionQueue.next();
+  if (nextQuestionNode.done) {
+    // We are at the end of the question queue...
+    // get the next element from the markdown...
+    let tmp = currentFormElement.nextElementSibling;
+    // we are at a question that should be displayed add it to the queue and
+    // make it the current node.
+    questionQueue.add(tmp.id);
+    nextQuestionNode = questionQueue.next();
+  }
+
+  return nextQuestionNode.value;
+}
+
 // norp == next or previous button (which ever is clicked...)
 async function nextPage(norp, store) {
   // The root is defined as null, so if the question is not the same as the
@@ -235,90 +253,80 @@ async function nextPage(norp, store) {
 
   // check if we need to add questions to the question queue
   checkForSkips(norp.parentElement);
-  checkValid(norp.parentElement);
 
   if (checkValid(norp.parentElement) == false) {
     return null;
-  } else {
-    // get the next question from the questionQueue
-    // if it exists... otherwise get the next look at the
-    // markdown and get the question follows.
-    let nextQuestionNode = questionQueue.next();
-    if (nextQuestionNode.done) {
-      // We are at the end of the question queue...
-      // get the next element from the markdown...
-      let tmp = norp.parentElement.nextElementSibling;
-      // before we add the next question to the queue...
-      // check for the displayif status...
-      while (tmp.hasAttribute("displayif")) {
-        // not sure what to do if the next element is is not a question ...
-        if (tmp.classList.contains("question")) {
-          let display = parse(tmp.getAttribute("displayif"));
-          console.log(tmp.getAttribute("displayif"), display);
-          if (display) break;
-          tmp = tmp.nextElementSibling;
-        } else {
-          console.log(" ============= next element is not a question...  not sure what went wrong...");
-          console.trace();
-        }
-      }
-      // we are at a question that should be displayed add it to the queue and
-      // make it the current node.
-      questionQueue.add(tmp.id);
-      nextQuestionNode = questionQueue.next();
-    }
-
-    // at this point the we nextQuestionNode is the current question from the question queue...
-    // get the actual HTML element.
-    // Why value.value?  nextQuestionNode is an object {done:boolean, value:obj}
-    let nextElement = document.getElementById(nextQuestionNode.value.value);
-    [...nextElement.querySelectorAll("span[forid]")].map((x) => {
-      let elm = document.getElementById(x.getAttribute("forid"));
-      x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
-    });
-    Array.from(nextElement.querySelectorAll("input[data-max-validation-dependency]")).map(
-      (x) => (x.max = document.getElementById(x.dataset.maxValidationDependency).value)
-    );
-    Array.from(nextElement.querySelectorAll("input[data-min-validation-dependency]")).map(
-      (x) => (x.min = document.getElementById(x.dataset.minValidationDependency).value)
-    );
-
-    // check all responses for next question
-    [...nextElement.children]
-      .filter((x) => x.hasAttribute("displayif"))
-      .map((elm) => {
-        f = parse(elm.getAttribute("displayif"));
-
-        elm.style.display = f ? "run-in" : "none";
-      });
-
-    // check min/max for variable substitution in validation
-    function exchangeValue(element, attrName) {
-      let attr = element.getAttribute(attrName);
-      if (attr) {
-        let isnum = /^[\d\.]+$/.test(attr);
-        if (!isnum) {
-          element.setAttribute(attrName, document.getElementById(attr).value);
-        }
-      }
-      return element;
-    }
-    [...nextElement.children]
-      .filter((x) => x.hasAttribute("min") || x.hasAttribute("max"))
-      .map((element) => exchangeValue(element, "min"))
-      .map((element) => exchangeValue(element, "max"));
-
-    // hide the current question and move to the next...
-    norp.parentElement.classList.remove("active");
-    nextElement.classList.add("active");
-
-    // FINALLY...  update the tree in localForage...
-    // First let's try NOT waiting for the function to return.
-    updateTreeInLocalForage();
-
-    questionQueue.ptree();
-    return nextElement;
   }
+
+  let nextQuestionId = getNextQuestionId(norp.parentElement);
+  // get the actual HTML element.
+  let nextElement = document.getElementById(nextQuestionId.value);
+
+  // before we add the next question to the queue...
+  // check for the displayif status...
+  while (nextElement.hasAttribute("displayif")) {
+    // not sure what to do if the next element is is not a question ...
+    if (nextElement.classList.contains("question")) {
+      let display = parse(nextElement.getAttribute("displayif"));
+      console.log(nextElement.getAttribute("displayif"), display);
+      if (display) break;
+
+      questionQueue.pop();
+      nextQuestionId = getNextQuestionId(nextElement);
+      nextElement = document.getElementById(nextQuestionId.value);
+    } else {
+      console.log(" ============= next element is not a question...  not sure what went wrong...");
+      console.trace();
+    }
+  }
+
+  [...nextElement.querySelectorAll("span[forid]")].map((x) => {
+    let elm = document.getElementById(x.getAttribute("forid"));
+    x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
+  });
+
+  Array.from(nextElement.querySelectorAll("input[data-max-validation-dependency]")).map(
+    (x) => (x.max = document.getElementById(x.dataset.maxValidationDependency).value)
+  );
+  Array.from(nextElement.querySelectorAll("input[data-min-validation-dependency]")).map(
+    (x) => (x.min = document.getElementById(x.dataset.minValidationDependency).value)
+  );
+
+  // check all responses for next question
+  [...nextElement.children]
+    .filter((x) => x.hasAttribute("displayif"))
+    .map((elm) => {
+      f = parse(elm.getAttribute("displayif"));
+
+      elm.style.display = f ? "run-in" : "none";
+    });
+
+  // check min/max for variable substitution in validation
+  function exchangeValue(element, attrName) {
+    let attr = element.getAttribute(attrName);
+    if (attr) {
+      let isnum = /^[\d\.]+$/.test(attr);
+      if (!isnum) {
+        element.setAttribute(attrName, document.getElementById(attr).value);
+      }
+    }
+    return element;
+  }
+  [...nextElement.children]
+    .filter((x) => x.hasAttribute("min") || x.hasAttribute("max"))
+    .map((element) => exchangeValue(element, "min"))
+    .map((element) => exchangeValue(element, "max"));
+
+  // hide the current question and move to the next...
+  norp.parentElement.classList.remove("active");
+  nextElement.classList.add("active");
+
+  // FINALLY...  update the tree in localForage...
+  // First let's try NOT waiting for the function to return.
+  updateTreeInLocalForage();
+
+  questionQueue.ptree();
+  return nextElement;
 }
 
 export async function previousClicked(norp, retrieve) {
@@ -381,11 +389,7 @@ function checkForSkips(questionElement) {
 }
 
 function checkValid(questionElement) {
-  if (questionElement.checkValidity() == false) {
-    return false;
-  } else {
-    return true;
-  }
+  return questionElement.checkValidity();
 }
 
 function getSelected(questionElement) {
