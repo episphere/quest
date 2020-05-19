@@ -8,6 +8,8 @@ export async function retrieveFromLocalForage(questName) {
 
   // retrieved the results... now lets fill the form..
   Object.keys(results).forEach((qid) => {
+    function handleCB() {}
+
     let formElement = document.querySelector("#" + qid);
     // not sure have a non-question would be here
     // but ignore it...

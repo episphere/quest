@@ -311,6 +311,40 @@ transform.render = async (obj, divId, previousResults = {}) => {
        (0) No`
     );
 
+    // replace [a-zXX] with a checkbox box...
+    // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
+    questText = questText.replace(
+      /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([\w\s:]+)?(<input.*?<\/input>)(?:\s*->\s*(\w+))?/g,
+      cb1
+    );
+    function cb1(completeMatch, bracket, cbValue, cbName, cbArgs, labelText, textBox, skipToId) {
+      let inputType = bracket == "[" ? "checkbox" : "radio";
+      cbArgs = cbArgs ? cbArgs : "";
+
+      // first look in the args for the name [v|name=lala], if not there,
+      // look for cbName [v:name], otherwise use the question id.
+      let name = cbArgs.match(/name=['"]?(\w+)['"]?/);
+      if (!name) {
+        name = cbName ? `name="${cbName}"` : `name="${questID}"`;
+      }
+
+      let id = cbArgs.match(/id=['"]?(\w+)/);
+      // if the user does supply the id in the cbArgs, we add it to.
+      // otherwise it is in the cbArgs...
+      let forceId = "";
+      if (id) {
+        id = id[1];
+      } else {
+        id = cbName ? cbName : `${questID}_${cbValue}`;
+        forceId = `id=${id}`;
+      }
+
+      let skipTo = skipToId ? `skipTo=${skipToId}` : "";
+      let value = cbValue ? `value=${cbValue}` : "";
+      let rv = `<div class='response' style='margin-top:15px'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}></input><label for='${id}'>${labelText}</label>${textBox}</div>`;
+      return rv;
+    }
+
     // replace (XX) with a radio button...
     questText = questText.replace(/\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g, fRadio);
     function fRadio(containsGroup, value, name, labelID, condition, label) {
@@ -332,7 +366,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
-    // replace [a-zXX] with a checkbox box...
+    // replace [XX] with checkbox
     questText = questText.replace(/\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
     function fCheck(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
@@ -593,6 +627,7 @@ function unrollLoops(txt) {
       var currentText = x.txt;
       // replace all instances of the question ids with id_#
       ids.map((id) => (currentText = currentText.replace(new RegExp("\\b" + id.id + "\\b", "g"), `${id.id}_${loopIndx}`)));
+      ids.map((id) => (currentText = currentText.replace(new RegExp("\\b" + id.id + "_", "g"), `${id.id}_${loopIndx}_`)));
       // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
 
       // disIfIDs = disIfIDs.filter((x) => newIds.includes(x));

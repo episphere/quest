@@ -45,19 +45,17 @@ export function textBoxInput(event) {
 
 export function textboxinput(inputElement) {
   // what is going on here...
-  if (inputElement.previousElementSibling && inputElement.previousElementSibling.firstElementChild != null) {
-    let elementType = inputElement.previousElementSibling.firstElementChild.type;
-    if (elementType == "checkbox") {
-      inputElement.previousElementSibling.firstElementChild.checked = inputElement.value.length > 0;
-      rbAndCbClick(inputElement.previousElementSibling.firstElementChild);
-    } else if (elementType == "radio") {
-      inputElement.previousElementSibling.previousElementSibling.checked = inputElement.value.length > 0;
-      rbAndCbClick(inputElement.previousElementSibling.previousElementSibling);
-    }
+  // we are checking if we should click the checkbox/radio button..
+  // first see if the parent is a div and the first child is a checkbox...
+  if (inputElement.parentElement && ["checkbox", "radio"].includes(inputElement.parentElement.firstElementChild.type)) {
+    let rbCb = inputElement.parentElement.firstElementChild;
+    let elementType = rbCb.type;
+    rbCb.checked = inputElement.value.length > 0;
+    radioAndCheckboxUpdate(rbCb);
   }
 
   let value = handleXOR(inputElement);
-  let id = value ? inputElement.getAttribute("xor") : inputElement.id;
+  let id = inputElement.getAttribute("xor") ? value : inputElement.id;
   value = value ? value : inputElement.value;
 
   setFormValue(inputElement.form, value, id);
@@ -77,8 +75,8 @@ export function numberInputUpdate(inputElement) {
   }
 
   let value = handleXOR(inputElement);
-  let id = value ? inputElement.getAttribute("xor") : inputElement.id;
   value = value ? value : inputElement.value;
+  let id = inputElement.hasAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
 
   setFormValue(inputElement.form, value, id);
 }
@@ -86,7 +84,11 @@ export function numberInputUpdate(inputElement) {
 // onInput/Change handler for radio/checkboxex
 export function rbAndCbClick(event) {
   let inputElement = event.target;
-  radioAndCheckboxUpdate(inputElement);
+  // when we programatically click, the input element is null.
+  // however we call radioAndCheckboxUpdate directly..
+  if (inputElement) {
+    radioAndCheckboxUpdate(inputElement);
+  }
 }
 
 export function radioAndCheckboxUpdate(inputElement) {
@@ -95,7 +97,7 @@ export function radioAndCheckboxUpdate(inputElement) {
   let selectedValue = {};
   if (inputElement.type == "checkbox") {
     // get all checkboxes with the same name attribute...
-    selectedValue = Array.from(inputElement.form.querySelectorAll(`[name=${inputElement.name}]`))
+    selectedValue = Array.from(inputElement.form.querySelectorAll(`input[type="checkbox"][name=${inputElement.name}]`))
       .filter((x) => x.checked)
       .map((x) => x.value);
   } else {
