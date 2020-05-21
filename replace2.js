@@ -21,6 +21,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
+    moduleParams.config = await (await fetch(obj.url)).json();
+    console.log(moduleParams.config);
+  }
+  if (obj.url) {
     contents = await (await fetch(obj.url.split("&")[0])).text();
     if (obj.url.split("&").includes("run")) {
       const link = document.createElement("link");
@@ -68,7 +72,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "g");
+  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z@])", "g");
 
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
@@ -344,6 +348,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let rv = `<div class='response' style='margin-top:15px'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}></input><label for='${id}'>${labelText}</label>${textBox}</div>`;
       return rv;
     }
+    // SAME thing but this time with a textarea...
 
     // replace (XX) with a radio button...
     questText = questText.replace(/\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g, fRadio);
@@ -412,6 +417,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     let rv = `<form class='question' style='font-weight: bold' id='${questID}' ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'> ${questText} ${prevButton}\n${nextButton}</form>`;
     return rv;
+  });
+
+  contents = contents.replace(/\[@(\w+)\]/g, function (wholeMatch, questID) {
+    if (config[questID]) {
+      console.log(`DYNAMIC QUESTION: ${questID}`);
+      return config[questID]();
+    }
+    console.error(`UNKNOWN DYNAMIC QUESTION: ${questID}`);
+    return "";
   });
 
   // handle the display if case...

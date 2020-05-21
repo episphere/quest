@@ -205,18 +205,19 @@ async function nextPage(norp, store) {
   // NOTE: if the root has no children, add the current question to the queue
   // and call next().
 
+  let questionElement = norp.form;
   if (questionQueue.isEmpty()) {
-    console.log("==> the tree is empty... add first element", norp.parentElement, norp.parentElement.id);
-    questionQueue.add(norp.parentElement.id);
+    console.log("==> the tree is empty... add first element", questionElement, questionElement.id);
+    questionQueue.add(questionElement.id);
     questionQueue.next();
   }
   let questName = moduleParams.questName;
 
-  tempObj[norp.parentElement.id] = norp.parentElement.value;
+  tempObj[questionElement.id] = questionElement.value;
   questRes = tempObj;
-  if (store && norp.parentElement.value) {
+  if (store && questionElement.value) {
     let formData = {};
-    formData[`${questName}.${norp.parentElement.id}`] = norp.parentElement.value;
+    formData[`${questName}.${questionElement.id}`] = questionElement.value;
     store(formData);
   } else {
     let tmp = await localforage
@@ -227,7 +228,7 @@ async function nextPage(norp, store) {
           allResponses = {};
         }
         // set the value for the questionId...
-        allResponses[norp.parentElement.id] = norp.parentElement.value;
+        allResponses[questionElement.id] = questionElement.value;
 
         return allResponses;
       })
@@ -254,13 +255,13 @@ async function nextPage(norp, store) {
   }
 
   // check if we need to add questions to the question queue
-  checkForSkips(norp.parentElement);
+  checkForSkips(questionElement);
 
-  if (checkValid(norp.parentElement) == false) {
+  if (checkValid(questionElement) == false) {
     return null;
   }
 
-  let nextQuestionId = getNextQuestionId(norp.parentElement);
+  let nextQuestionId = getNextQuestionId(questionElement);
   // get the actual HTML element.
   let nextElement = document.getElementById(nextQuestionId.value);
 
@@ -320,7 +321,7 @@ async function nextPage(norp, store) {
     .map((element) => exchangeValue(element, "max"));
 
   // hide the current question and move to the next...
-  norp.parentElement.classList.remove("active");
+  questionElement.classList.remove("active");
   nextElement.classList.add("active");
 
   // FINALLY...  update the tree in localForage...
@@ -335,13 +336,13 @@ export async function previousClicked(norp, retrieve) {
   // get the previousElement...
   let pv = questionQueue.previous();
   let prevElement = document.getElementById(pv.value.value);
-  norp.parentElement.classList.remove("active");
+  norp.form.classList.remove("active");
   prevElement.classList.add("active");
 
   if (retrieve) {
     const response = await retrieve();
     console.log(response);
-  } else localforage.removeItem(norp.parentElement.id);
+  } else localforage.removeItem(norp.form.id);
 
   updateTreeInLocalForage();
   return prevElement;
