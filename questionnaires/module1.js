@@ -14,7 +14,7 @@ config = {
       if (x && x.length > 0) {
         let qText = `<b>Which occupation best describes your job [${jobtitle}]?</b>`;
         x.forEach((soc, indx) => {
-          qText = `${qText} <br><input type="radio" id="EMPLOY_${indx}" name="SOCcerResult"> <label for="EMPLOY_${indx}">${soc.label}</label>\n`;
+          qText = `${qText} <br><input type="radio" id="EMPLOY_${indx}" value=${soc.label} name="SOCcerResult"> <label for="EMPLOY_${indx}">${soc.label}</label>\n`;
         });
         qText = `${qText} <br><br> <input type="submit" class="previous" value="BACK"> <input type="submit" class="next" data-target="#softModal" value="NEXT">`;
         document.getElementById("q1").innerHTML = qText;
