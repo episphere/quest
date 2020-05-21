@@ -420,9 +420,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
   });
 
   contents = contents.replace(/\[@(\w+)\]/g, function (wholeMatch, questID) {
-    if (config[questID]) {
+    if (moduleParams.config[questID]) {
       console.log(`DYNAMIC QUESTION: ${questID}`);
-      return config[questID]();
+      return moduleParams.config[questID]();
     }
     console.error(`UNKNOWN DYNAMIC QUESTION: ${questID}`);
     return "";
