@@ -8,6 +8,8 @@ export async function retrieveFromLocalForage(questName) {
 
   // retrieved the results... now lets fill the form..
   Object.keys(results).forEach((qid) => {
+    function handleCB() {}
+
     let formElement = document.querySelector("#" + qid);
     // not sure have a non-question would be here
     // but ignore it...
@@ -60,10 +62,15 @@ export async function retrieveFromLocalForage(questName) {
           // qEntry[0] = name of the element (xor)..
           // qEntry[1] = values
           Object.entries(qEntry[1]).forEach((el) => {
-            let element = formElement.querySelector(`[id=${el[0]}]`);
-            if (element) {
-              element.value = el[1];
-              if (el[1].length > 0) textboxinput(element);
+            try {
+              let element = formElement.querySelector(`[id=${el[0]}]`);
+              if (element) {
+                element.value = el[1];
+                if (el[1].length > 0) textboxinput(element);
+              }
+            } catch (err) {
+              console.error(`====== in question ${qid} result:`, results[qid], el);
+              console.error(err);
             }
           });
         });

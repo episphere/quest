@@ -1,10 +1,26 @@
 import { transform } from "./replace2.js";
-import { questionQueue } from "./questionnaire.js";
+import { questionQueue, moduleParams } from "./questionnaire.js";
 import { Tree } from "./tree.js";
 
 console.log("in quest.js");
 let prevRes = {};
+
+//  let script = document.createElement("script");
+//  script.src = q;
+//  document.getElementsByTagName("body")[0].appendChild(script);
+
 async function startUp() {
+  if (location.hash.startsWith("#config=")) {
+    let q = location.hash.replace(/#/, "").split("=")[1];
+    // create a script tag and add it to the DOM...
+    // NOTE: it will not be run now.  Wait until window.onLoad...
+
+    let txt = await (await fetch(q)).text();
+    eval(txt);
+    console.log(config);
+    moduleParams.config = config;
+  }
+  config = moduleParams.config;
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
     transform.tout(() => {
@@ -22,14 +38,18 @@ async function startUp() {
     });
   };
 
-  ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
+  ta.innerHTML = "// type, paste, or upload questionnair/e markup\n\n";
   var q = (location.search + location.hash).replace(/[\#\?]/g, "");
   if (q.length > 3) {
-    ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
+    if (!q.startsWith("config")) {
+      ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
+    } else {
+      moduleParams.config = config;
+      ta.value = await (await fetch(config.markdown)).text();
+    }
     ta.onkeyup();
   }
-  ta.style.width =
-    parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
+  ta.style.width = parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
@@ -67,4 +87,13 @@ function clearLocalForage() {
   questionQueue.clear();
 }
 
-startUp();
+// document.addEventListener("readystatechange", (event) => {
+//   if (event.target.readystate == "complete") {
+//     console.log("in quest.js:readystatechangelistener");
+//     startUp();
+//   }
+// });
+window.onload = function () {
+  console.log("in quest.js:window.onload");
+  startUp();
+};

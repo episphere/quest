@@ -21,8 +21,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
-    contents = await (await fetch(obj.url.split("&")[0])).text();
-    if (obj.url.split("&").includes("run")) {
+    moduleParams.config = await (await fetch(obj.url)).text();
+    console.log(moduleParams.config);
+  }
+  if (obj.url) {
+    contents = await (await fetch(obj.url)).text();
+    if (obj.activate) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
       link.href = "https://episphere.github.io/quest/ActiveLogic.css";
@@ -336,6 +340,50 @@ transform.render = async (obj, divId, previousResults = {}) => {
        (0) No`
     );
 
+    // replace [a-zXX] with a checkbox box...
+    // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
+    questText = questText.replace(
+      /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([\w\s:]+)?(<input.*?<\/input>)(?:\s*->\s*(\w+))?/g,
+      cb1
+    );
+    function cb1(
+      completeMatch,
+      bracket,
+      cbValue,
+      cbName,
+      cbArgs,
+      labelText,
+      textBox,
+      skipToId
+    ) {
+      let inputType = bracket == "[" ? "checkbox" : "radio";
+      cbArgs = cbArgs ? cbArgs : "";
+
+      // first look in the args for the name [v|name=lala], if not there,
+      // look for cbName [v:name], otherwise use the question id.
+      let name = cbArgs.match(/name=['"]?(\w+)['"]?/);
+      if (!name) {
+        name = cbName ? `name="${cbName}"` : `name="${questID}"`;
+      }
+
+      let id = cbArgs.match(/id=['"]?(\w+)/);
+      // if the user does supply the id in the cbArgs, we add it to.
+      // otherwise it is in the cbArgs...
+      let forceId = "";
+      if (id) {
+        id = id[1];
+      } else {
+        id = cbName ? cbName : `${questID}_${cbValue}`;
+        forceId = `id=${id}`;
+      }
+
+      let skipTo = skipToId ? `skipTo=${skipToId}` : "";
+      let value = cbValue ? `value=${cbValue}` : "";
+      let rv = `<div class='response' style='margin-top:15px'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}></input><label for='${id}'>${labelText}</label>${textBox}</div>`;
+      return rv;
+    }
+    // SAME thing but this time with a textarea...
+
     // replace (XX) with a radio button...
     questText = questText.replace(
       /\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
@@ -417,6 +465,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     let rv = `<form class='question' style='font-weight: bold' id='${questID}' ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'> ${questText} ${prevButton}\n${nextButton}</form>`;
     return rv;
+  });
+
+  contents = contents.replace(/\[@(\w+)\]/g, function (wholeMatch, questID) {
+    if (moduleParams.config[questID]) {
+      console.log(`DYNAMIC QUESTION: ${questID}`);
+      return moduleParams.config[questID]();
+    }
+    console.error(`UNKNOWN DYNAMIC QUESTION: ${questID}`);
+    return "";
   });
 
   // handle the display if case...
@@ -599,6 +656,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   });
 
   moduleParams.questName = questName;
+  return true;
 };
 
 transform.tout = function (fun, tt = 500) {
@@ -646,6 +704,13 @@ function unrollLoops(txt) {
           (currentText = currentText.replace(
             new RegExp("\\b" + id.id + "\\b", "g"),
             `${id.id}_${loopIndx}`
+          ))
+      );
+      ids.map(
+        (id) =>
+          (currentText = currentText.replace(
+            new RegExp("\\b" + id.id + "_", "g"),
+            `${id.id}_${loopIndx}_`
           ))
       );
       // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
