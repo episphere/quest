@@ -21,7 +21,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
-    moduleParams.config = await (await fetch(obj.url)).json();
+    moduleParams.config = await (await fetch(obj.url)).text();
     console.log(moduleParams.config);
   }
   if (obj.url) {
