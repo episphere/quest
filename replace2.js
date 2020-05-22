@@ -598,6 +598,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   });
 
   moduleParams.questName = questName;
+  return true;
 };
 
 transform.tout = function (fun, tt = 500) {
