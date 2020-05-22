@@ -25,8 +25,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
     console.log(moduleParams.config);
   }
   if (obj.url) {
-    contents = await (await fetch(obj.url.split("&")[0])).text();
-    if (obj.url.split("&").includes("run")) {
+    contents = await (await fetch(obj.url)).text();
+    if (obj.activate) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
       link.href = "https://episphere.github.io/quest/ActiveLogic.css";
