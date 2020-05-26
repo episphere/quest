@@ -283,13 +283,19 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace |__| or [text box:xxx] with an input box...
     //questText = questText.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
+    //
+    // questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
+    // function fTextBox(fullmatch, option) {
+    //   let elementId = `${questID}_text`;
+    //   if (option != undefined) {
+    //     elementId = option;
+    //   }
+    //   return `<input type='text' name='${questID}' id=${elementId}></input>`;
+    // }
     questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
-    function fTextBox(fullmatch, option) {
-      let elementId = `${questID}_text`;
-      if (option != undefined) {
-        elementId = option;
-      }
-      return `<input type='text' name='${questID}' id=${elementId}></input>`;
+    function fTextBox(fullmatch, options) {
+      let id = options ? options : `${questID}_text`;
+      return `|__|id=${id} name=${questID}|`;
     }
     questText = questText.replace(/\|(?:__\|)(?:([\S][^|]+[\S])\|)?/g, fText);
     function fText(fullmatch, opts) {
@@ -318,7 +324,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
     questText = questText.replace(
-      /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([\w\s:]+)?(<input.*?<\/input>)(?:\s*->\s*(\w+))?/g,
+      /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([\w\s:]+)?(<input.*?<\/input>)(?:\s*->\s*(\w+))/g,
       cb1
     );
     function cb1(completeMatch, bracket, cbValue, cbName, cbArgs, labelText, textBox, skipToId) {
@@ -351,7 +357,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // SAME thing but this time with a textarea...
 
     // replace (XX) with a radio button...
-    questText = questText.replace(/\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g, fRadio);
+    // questText = questText.replace(/\((\d*)(?::([^\)\n]+))?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
+    // function fRadio(wholeMatch, value, options) {
+    //   value = value ? `value=${value}` : "";
+    //   options = options ? options : "";
+    //   options.match(/displayif=/)
+    //   let displayIf=(options.match("displayif"))?
+    //   return `<div class='response' style='margin-top:15px' ${options}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
+    // }
+    questText = questText.replace(/\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
     function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
@@ -372,7 +386,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace [XX] with checkbox
-    questText = questText.replace(/\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
+    //questText = questText.replace(/\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
+    questText = questText.replace(
+      /\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
+      fCheck
+    );
     function fCheck(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {

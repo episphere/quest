@@ -48,14 +48,14 @@ export function textboxinput(inputElement) {
   // what is going on here...
   // we are checking if we should click the checkbox/radio button..
   // first see if the parent is a div and the first child is a checkbox...
-  if (inputElement.parentElement && ["checkbox", "radio"].includes(inputElement.parentElement.firstElementChild.type)) {
-    let rbCb = inputElement.parentElement.firstElementChild;
+  if (inputElement.parentElement && inputElement.parentElement.tagName == "LABEL") {
+    let rbCb = inputElement.parentElement.previousSibling;
     rbCb.checked = inputElement.value.length > 0;
     radioAndCheckboxUpdate(rbCb);
   }
 
   let value = handleXOR(inputElement);
-  let id = inputElement.getAttribute("xor") ? value : inputElement.id;
+  let id = inputElement.getAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
   value = value ? value : inputElement.value;
 
   setFormValue(inputElement.form, value, id);
