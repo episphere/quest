@@ -294,6 +294,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<img src=https://$1 height=$2 width=$3>"
     );
 
+    // replace |time| with a time input
+    questText = questText.replace(/\|time\|(?:([\S][^|]+[\S])\|)?/g, fTime);
+    function fTime(x, opts) {
+      const { options, elementId } = guaranteeIdSet(opts, "time");
+      return `<input type='time' ${options}>`;
+    }
+
     // replace |__|__|  with a number box...
     questText = questText.replace(
       /\|(?:__\|){2,}(?:([\S][^|]+[\S])\|)?/g,
