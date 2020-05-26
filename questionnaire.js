@@ -109,20 +109,24 @@ export function radioAndCheckboxUpdate(inputElement) {
 }
 
 function clearSelection(inputElement) {
-  if (!inputElement.form) return;
-  var state = inputElement.checked;
-  var cb = inputElement.form.querySelectorAll("input[type='checkbox'], input[type='radio']");
+  if (!inputElement.form || inputElement.type != "checkbox") return;
+  let state = inputElement.checked;
+  // WARNING.. we are not dealing with the unlikely case that
+  //           there are 2 set of checkboxes in the question....
+
+  let cb = inputElement.form.querySelectorAll("input[type='checkbox']");
   if (inputElement.value == 99) {
-    for (var x of cb) {
-      if (x != inputElement) {
-        x.checked = false;
-        x.clear = inputElement.id;
-        x.onclick = function () {
-          clearElement = document.getElementById(this.clear);
-          clearElement.checked = false;
-        };
-      }
-    }
+    // if you clicked the "Prefer not to answer" button, clear all
+    // element except the input element...
+    cb.forEach((element) => {
+      element.checked = element == inputElement;
+    });
+  } else {
+    // if you click any other button, leave the element checked as is
+    // until you hit the "prefer not to answer button", which is cleared.
+    cb.forEach((element) => {
+      element.checked = element.value == 99 ? false : element.checked;
+    });
   }
 }
 
