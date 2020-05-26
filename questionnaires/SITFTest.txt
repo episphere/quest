@@ -1,0 +1,8 @@
+// type, paste, or upload questionnaire markup
+
+[WORK3?]  What is your current job title? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
+|__|id=JOBTITLE|
+
+[OCCUPTN1?]
+
+[DONE,end]

@@ -1,26 +1,10 @@
 import { transform } from "./replace2.js";
 import { questionQueue, moduleParams } from "./questionnaire.js";
-import { Tree } from "./tree.js";
 
 console.log("in quest.js");
 let prevRes = {};
 
-//  let script = document.createElement("script");
-//  script.src = q;
-//  document.getElementsByTagName("body")[0].appendChild(script);
-
 async function startUp() {
-  if (location.hash.startsWith("#config=")) {
-    let q = location.hash.replace(/#/, "").split("=")[1];
-    // create a script tag and add it to the DOM...
-    // NOTE: it will not be run now.  Wait until window.onLoad...
-
-    let txt = await (await fetch(q)).text();
-    eval(txt);
-    console.log(config);
-    moduleParams.config = config;
-  }
-  config = moduleParams.config;
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
     transform.tout(() => {
@@ -88,12 +72,6 @@ function clearLocalForage() {
   questionQueue.clear();
 }
 
-// document.addEventListener("readystatechange", (event) => {
-//   if (event.target.readystate == "complete") {
-//     console.log("in quest.js:readystatechangelistener");
-//     startUp();
-//   }
-// });
 window.onload = function () {
   console.log("in quest.js:window.onload");
   startUp();

@@ -1,5 +1,5 @@
 console.log("in module1.js");
-
+console.log(myCallbacks);
 config = {
   markdown: "https://jonasalmeida.github.io/privatequest/demo2.txt",
   WORK3: function () {
@@ -14,7 +14,7 @@ config = {
       if (x && x.length > 0) {
         let qText = `<b>Which occupation best describes your job [${jobtitle}]?</b>`;
         x.forEach((soc, indx) => {
-          qText = `${qText} <br><input type="radio" id="EMPLOY_${indx}" value=${soc.label} name="SOCcerResult"> <label for="EMPLOY_${indx}">${soc.label}</label>\n`;
+          qText = `${qText} <br><input type="radio" id="EMPLOY_${indx}" value=${soc.code} name="SOCcerResult" onclick=myCallbacks.radio(this)> <label for="EMPLOY_${indx}">${soc.label}</label>\n`;
         });
         qText = `${qText} <br><br> <input type="submit" class="previous" value="BACK"> <input type="submit" class="next" data-target="#softModal" value="NEXT">`;
         document.getElementById("q1").innerHTML = qText;
@@ -22,7 +22,10 @@ config = {
       }
     }
 
-    let jobtitle = inputElement.previousElementSibling.value;
+    let jobtitleElement = inputElement.previousElementSibling;
+    myCallbacks.text(jobtitleElement);
+
+    let jobtitle = jobtitleElement.value;
     let cache = await localforage.getItem("soccer");
     if (!cache) cache = {};
     if (cache[jobtitle]) {
@@ -32,7 +35,7 @@ config = {
     }
     if (!jobtitle) return;
     let URL = `https://sitf-cwlcji5kxq-uc.a.run.app/soccer/code?title=${jobtitle}`;
-    zz = fetch(URL)
+    fetch(URL)
       .then((x) => x.json())
       .then((x) => {
         console.log(x);

@@ -51,28 +51,50 @@ export async function retrieveFromLocalForage(questName) {
     // CASE 2: we have an object...
     else {
       console.log("...  WE HAVE AN OBJECT ... ");
-      if (Array.isArray(results[qid])) {
+      function getFromRbCb(rbCbName, result) {
         let checkboxElements = Array.from(formElement.querySelectorAll(`input[name=${qid}]`));
         checkboxElements.forEach((checkbox) => {
-          checkbox.checked = results[qid].includes(checkbox.value);
+          checkbox.checked = result.includes(checkbox.value);
         });
         radioAndCheckboxUpdate(checkboxElements[0]);
+      }
+
+      if (Array.isArray(results[qid])) {
+        console.log("...  for KEY ", qid, " WE HAVE AN ARRAY!!!  ... ");
+        getFromRbCb(qid, results[qid]);
       } else {
-        Object.entries(results[qid]).forEach((qEntry) => {
-          // qEntry[0] = name of the element (xor)..
-          // qEntry[1] = values
-          Object.entries(qEntry[1]).forEach((el) => {
-            try {
-              let element = formElement.querySelector(`[id=${el[0]}]`);
-              if (element) {
-                element.value = el[1];
-                if (el[1].length > 0) textboxinput(element);
+        console.log("...  for KEY ", qid, " WE HAVE AN OBJECT!!!  ... ", Object.keys(results[qid]), Object.values(results[qid]));
+        Object.keys(results[qid]).forEach((resKey) => {
+          let resObject = results[qid][resKey];
+          console.log(resKey, resObject);
+
+          let handled = false;
+          if (Array.isArray(resObject)) {
+            getFromRbCb(resKey, resObject);
+            handled = true;
+          }
+          if (!handled && typeof resObject == "object") {
+            // ok wasn't an array .. i.e. it wasnt a radiobutton...
+            // how about an XOR object...
+            console.log("==========> XOR OBJ....");
+            let element = Array.from(formElement.querySelectorAll(`[xor="${resKey}"]`));
+            element.forEach((xorElement) => {
+              if (resObject[xorElement.id]) xorElement.value = resObject[xorElement.id];
+            });
+            handled = true;
+          }
+          if (!handled && typeof resObject == "string") {
+            console.log("=========> text in object...");
+            let element = formElement.querySelector(`[id="${resKey}"]`);
+            if (element) {
+              element.value = resObject;
+              if (element.type == "number") {
+                numberInputUpdate(element);
+              } else {
+                textboxinput(element);
               }
-            } catch (err) {
-              console.error(`====== in question ${qid} result:`, results[qid], el);
-              console.error(err);
             }
-          });
+          }
         });
       }
     }

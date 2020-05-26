@@ -13,6 +13,7 @@ export function isFirstQuestion() {
 
 function numberOfInputs(element) {
   let resps = Array.from(element.querySelectorAll("input, textarea")).reduce((acc, current) => {
+    //if (["submit", "button"].includes(current.type)) return acc;
     if (current.type == "submit") return acc;
     if (["radio", "checkbox"].includes(current.type)) {
       acc[current.name] = true;
@@ -47,15 +48,14 @@ export function textboxinput(inputElement) {
   // what is going on here...
   // we are checking if we should click the checkbox/radio button..
   // first see if the parent is a div and the first child is a checkbox...
-  if (inputElement.parentElement && ["checkbox", "radio"].includes(inputElement.parentElement.firstElementChild.type)) {
-    let rbCb = inputElement.parentElement.firstElementChild;
-    let elementType = rbCb.type;
+  if (inputElement.parentElement && inputElement.parentElement.tagName == "LABEL") {
+    let rbCb = inputElement.parentElement.previousSibling;
     rbCb.checked = inputElement.value.length > 0;
     radioAndCheckboxUpdate(rbCb);
   }
 
   let value = handleXOR(inputElement);
-  let id = inputElement.getAttribute("xor") ? value : inputElement.id;
+  let id = inputElement.getAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
   value = value ? value : inputElement.value;
 
   setFormValue(inputElement.form, value, id);
@@ -75,7 +75,6 @@ export function numberInputUpdate(inputElement) {
   }
 
   let value = handleXOR(inputElement);
-  value = value ? value : inputElement.value;
   let id = inputElement.hasAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
 
   setFormValue(inputElement.form, value, id);
@@ -92,6 +91,7 @@ export function rbAndCbClick(event) {
 }
 
 export function radioAndCheckboxUpdate(inputElement) {
+  if (!inputElement) return;
   clearSelection(inputElement);
 
   let selectedValue = {};
@@ -109,27 +109,32 @@ export function radioAndCheckboxUpdate(inputElement) {
 }
 
 function clearSelection(inputElement) {
-  if (!inputElement.form) return;
-  var state = inputElement.checked;
-  var cb = inputElement.form.querySelectorAll("input[type='checkbox'], input[type='radio']");
+  if (!inputElement.form || inputElement.type != "checkbox") return;
+  let state = inputElement.checked;
+  // WARNING.. we are not dealing with the unlikely case that
+  //           there are 2 set of checkboxes in the question....
+
+  let cb = inputElement.form.querySelectorAll("input[type='checkbox']");
   if (inputElement.value == 99) {
-    for (var x of cb) {
-      if (x != inputElement) {
-        x.checked = false;
-        x.clear = inputElement.id;
-        x.onclick = function () {
-          clearElement = document.getElementById(this.clear);
-          clearElement.checked = false;
-        };
-      }
-    }
+    // if you clicked the "Prefer not to answer" button, clear all
+    // element except the input element...
+    cb.forEach((element) => {
+      element.checked = element == inputElement;
+    });
+  } else {
+    // if you click any other button, leave the element checked as is
+    // until you hit the "prefer not to answer button", which is cleared.
+    cb.forEach((element) => {
+      element.checked = element.value == 99 ? false : element.checked;
+    });
   }
 }
 
 function handleXOR(inputElement) {
-  if (numberOfInputs(inputElement.form) == 1) {
-    return false;
+  if (!inputElement.hasAttribute("xor")) {
+    return inputElement.value;
   }
+
   let valueObj = {};
   valueObj[inputElement.id] = inputElement.value;
   let sibs = [...inputElement.parentElement.querySelectorAll("input")];
