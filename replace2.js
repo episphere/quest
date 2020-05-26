@@ -43,10 +43,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // convert (^|\n{2,}Q1. to [Q1]
   // note:  the first question wont have the
   // \n\n so we need to look at start of string(^)
-  //    contents = contents.replace(/(\n{2,})(\w+)\./msg, "$1[$2]")
-
-  // contents = contents.replace(/(?<=\n{2,})(\w+)\./gms, "[$1]");
-  //contents = contents.replace(/(\n{2,})([^\[])/gms, "$1[_#]$2");
 
   contents = contents.replace(/\/\*.*\*\//g, "");
   contents = contents.replace(/\/\/.*/g, "");
@@ -72,21 +68,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // note: we want this possessive (NOT greedy) so add a ?
   //       otherwise it would match the first and last square bracket
 
-  let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])",
-    "g"
-  );
+  let regEx = new RegExp("\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z])", "g");
 
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/\n/g, "\u001f");
 
-  contents = contents.replace(regEx, function (
-    page,
-    questID,
-    questArgs,
-    questText
-  ) {
+  contents = contents.replace(regEx, function (page, questID, questArgs, questText) {
     //console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
@@ -130,14 +118,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
     }
 
-    let prevButton =
-      (endMatch && endMatch[1]) === "noback"
-        ? ""
-        : "<input type='submit' class='previous' value='BACK'></input>";
+    let prevButton = (endMatch && endMatch[1]) === "noback" ? "" : "<input type='submit' class='previous' value='BACK'></input>";
 
-    let nextButton = endMatch
-      ? ""
-      : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
+    let nextButton = endMatch ? "" : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/, (all, varid) => {
@@ -156,10 +139,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     //replace |popup|buttonText|Title|text| with a popover
-    questText = questText.replace(
-      /\|popup\|([\S][^|]+[\S])\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g,
-      fPopover
-    );
+    questText = questText.replace(/\|popup\|([\S][^|]+[\S])\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g, fPopover);
     function fPopover(fullmatch, buttonText, title, popText) {
       title = title ? title : "";
       return `<a tabindex="0" class="popover-dismiss btn btn" role="button" data-toggle="popover" data-trigger="focus" title="${title}" data-content="${popText}">${buttonText}</a>`;
@@ -289,10 +269,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |image|URL|height,width| with a html img tag...
-    questText = questText.replace(
-      /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
-      "<img src=https://$1 height=$2 width=$3>"
-    );
+    questText = questText.replace(/\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g, "<img src=https://$1 height=$2 width=$3>");
 
     // replace |time| with a time input
     questText = questText.replace(/\|time\|(?:([\S][^|]+[\S])\|)?/g, fTime);
@@ -302,10 +279,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |__|__|  with a number box...
-    questText = questText.replace(
-      /\|(?:__\|){2,}(?:([\S][^|]+[\S])\|)?/g,
-      fNum
-    );
+    questText = questText.replace(/\|(?:__\|){2,}(?:([\S][^|]+[\S])\|)?/g, fNum);
     function fNum(fullmatch, opts) {
       // make sure that the element id is set...
       const { options, elementId } = guaranteeIdSet(opts, "num");
@@ -313,21 +287,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<input type='number' name='${questID}' ${options}></input>`;
     }
 
-    // -------------
-    // questText = questText.replace(/\_{4,}/g, "<input name='" + questID + "'></input>");
-    // -------------
-
     // replace |__| or [text box:xxx] with an input box...
-    //questText = questText.replace(/(?:\[text\s?box(?:\s*:\s*(\w+))?\]|\|__\|(?:(\w+)?\|)?)(?:(.*?)(?:<br>))/g, fText);
-    //
-    // questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
-    // function fTextBox(fullmatch, option) {
-    //   let elementId = `${questID}_text`;
-    //   if (option != undefined) {
-    //     elementId = option;
-    //   }
-    //   return `<input type='text' name='${questID}' id=${elementId}></input>`;
-    // }
     questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
     function fTextBox(fullmatch, options) {
       let id = options ? options : `${questID}_text`;
@@ -363,16 +323,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([\w\s:]+)?(<input.*?<\/input>)(?:\s*->\s*(\w+))/g,
       cb1
     );
-    function cb1(
-      completeMatch,
-      bracket,
-      cbValue,
-      cbName,
-      cbArgs,
-      labelText,
-      textBox,
-      skipToId
-    ) {
+    function cb1(completeMatch, bracket, cbValue, cbName, cbArgs, labelText, textBox, skipToId) {
       let inputType = bracket == "[" ? "checkbox" : "radio";
       cbArgs = cbArgs ? cbArgs : "";
 
@@ -402,22 +353,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // SAME thing but this time with a textarea...
 
     // replace (XX) with a radio button...
-<<<<<<< HEAD
-    questText = questText.replace(
-      /\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\)))?\)([^<\n]*)|\(\)/g,
-      fRadio
-    );
-=======
-    // questText = questText.replace(/\((\d*)(?::([^\)\n]+))?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
-    // function fRadio(wholeMatch, value, options) {
-    //   value = value ? `value=${value}` : "";
-    //   options = options ? options : "";
-    //   options.match(/displayif=/)
-    //   let displayIf=(options.match("displayif"))?
-    //   return `<div class='response' style='margin-top:15px' ${options}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
-    // }
     questText = questText.replace(/\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
->>>>>>> working
     function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
       if (condition == undefined) {
@@ -437,16 +373,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
-<<<<<<< HEAD
-    // replace [a-zXX] with a checkbox box...
-    questText = questText.replace(
-      /\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g,
-=======
     // replace [XX] with checkbox
-    //questText = questText.replace(/\s*\[(\w*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?))?\]([^<\n]*)|\[\]|\*/g, fCheck);
     questText = questText.replace(
       /\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
->>>>>>> working
       fCheck
     );
     function fCheck(containsGroup, value, name, labelID, condition, label) {
@@ -476,21 +405,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace next question  < -> > with hidden...
     questText = questText.replace(
       /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" +
-        questID +
-        "_default' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      "<input type='hidden' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
     );
 
     // replace next question  < #NR -> > with hidden...
     questText = questText.replace(
       /<\s*#NR\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' class='noresponse' id='" +
-        questID +
-        "_default' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      "<input type='hidden' class='noresponse' id='" + questID + "_default' name='" + questID + "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -562,12 +483,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     if (!active) return;
 
     // remove active from all questions...
-    Array.from(divElement.getElementsByClassName("active")).forEach(
-      (element) => {
-        console.log(`removing active from ${element.id}`);
-        element.classList.remove("active");
-      }
-    );
+    Array.from(divElement.getElementsByClassName("active")).forEach((element) => {
+      console.log(`removing active from ${element.id}`);
+      element.classList.remove("active");
+    });
     // make the id active...
     console.log(`setting ${id} active`);
     document.getElementById(id).classList.add("active");
@@ -623,9 +542,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         console.log(` ==============>>>>  setting ${currentId} active`);
         setActive(currentId);
       } else {
-        console.log(
-          ` ==============>>>>  setting the first question ${questions[0].id} active`
-        );
+        console.log(` ==============>>>>  setting the first question ${questions[0].id} active`);
 
         // if the tree is empty add the first question to the tree...
         // and make it active...
@@ -657,18 +574,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
     question.onsubmit = stopSubmit;
   });
 
-  let textInputs = [
-    ...divElement.querySelectorAll("input[type='text'],textarea"),
-  ];
+  let textInputs = [...divElement.querySelectorAll("input[type='text'],textarea")];
   textInputs.forEach((inputElement) => {
     inputElement.oninput = textBoxInput;
   });
 
-  let rbCb = [
-    ...divElement.querySelectorAll(
-      "input[type='radio'],input[type='checkbox'] "
-    ),
-  ];
+  let rbCb = [...divElement.querySelectorAll("input[type='radio'],input[type='checkbox'] ")];
   rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
   });
@@ -726,20 +637,8 @@ function unrollLoops(txt) {
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
       var currentText = x.txt;
       // replace all instances of the question ids with id_#
-      ids.map(
-        (id) =>
-          (currentText = currentText.replace(
-            new RegExp("\\b" + id.id + "\\b", "g"),
-            `${id.id}_${loopIndx}`
-          ))
-      );
-      ids.map(
-        (id) =>
-          (currentText = currentText.replace(
-            new RegExp("\\b" + id.id + "_", "g"),
-            `${id.id}_${loopIndx}_`
-          ))
-      );
+      ids.map((id) => (currentText = currentText.replace(new RegExp("\\b" + id.id + "\\b", "g"), `${id.id}_${loopIndx}`)));
+      ids.map((id) => (currentText = currentText.replace(new RegExp("\\b" + id.id + "_", "g"), `${id.id}_${loopIndx}_`)));
       // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
 
       // disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
@@ -754,9 +653,7 @@ function unrollLoops(txt) {
       // // |__|id=lalala_3_txt xor=lalala_3|  |xor= lalala id=lalala_txt|
       // ids.map((id) => (currentText = currentText.replace(/(\|__(?:\|__)*\|[^|\s][^|]\b)(${id.id})(\b[^|]*\|)/g, `$1$2_${loopIndx}$3`)));
 
-      ids.map(
-        (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
-      );
+      ids.map((id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx)));
 
       // if (currentText.search(/->\s*_continue/g) >= 0) {
       //   ;
