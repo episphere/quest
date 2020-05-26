@@ -38,7 +38,7 @@ async function startUp() {
     });
   };
 
-  ta.innerHTML = "// type, paste, or upload questionnair/e markup\n\n";
+  ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
   var q = (location.search + location.hash).replace(/[\#\?]/g, "");
   if (q.length > 3) {
     if (!q.startsWith("config")) {
@@ -49,7 +49,8 @@ async function startUp() {
     }
     ta.onkeyup();
   }
-  ta.style.width = parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
+  ta.style.width =
+    parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
