@@ -419,15 +419,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     return rv;
   });
 
-  contents = contents.replace(/\[@(\w+)\]/g, function (wholeMatch, questID) {
-    if (moduleParams.config[questID]) {
-      console.log(`DYNAMIC QUESTION: ${questID}`);
-      return moduleParams.config[questID]();
-    }
-    console.error(`UNKNOWN DYNAMIC QUESTION: ${questID}`);
-    return "";
-  });
-
   // handle the display if case...
   contents = contents.replace(
     /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,

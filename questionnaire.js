@@ -13,6 +13,7 @@ export function isFirstQuestion() {
 
 function numberOfInputs(element) {
   let resps = Array.from(element.querySelectorAll("input, textarea")).reduce((acc, current) => {
+    //if (["submit", "button"].includes(current.type)) return acc;
     if (current.type == "submit") return acc;
     if (["radio", "checkbox"].includes(current.type)) {
       acc[current.name] = true;
@@ -49,7 +50,6 @@ export function textboxinput(inputElement) {
   // first see if the parent is a div and the first child is a checkbox...
   if (inputElement.parentElement && ["checkbox", "radio"].includes(inputElement.parentElement.firstElementChild.type)) {
     let rbCb = inputElement.parentElement.firstElementChild;
-    let elementType = rbCb.type;
     rbCb.checked = inputElement.value.length > 0;
     radioAndCheckboxUpdate(rbCb);
   }
@@ -75,7 +75,6 @@ export function numberInputUpdate(inputElement) {
   }
 
   let value = handleXOR(inputElement);
-  value = value ? value : inputElement.value;
   let id = inputElement.hasAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
 
   setFormValue(inputElement.form, value, id);
@@ -92,6 +91,7 @@ export function rbAndCbClick(event) {
 }
 
 export function radioAndCheckboxUpdate(inputElement) {
+  if (!inputElement) return;
   clearSelection(inputElement);
 
   let selectedValue = {};
@@ -127,9 +127,10 @@ function clearSelection(inputElement) {
 }
 
 function handleXOR(inputElement) {
-  if (numberOfInputs(inputElement.form) == 1) {
-    return false;
+  if (!inputElement.hasAttribute("xor")) {
+    return inputElement.value;
   }
+
   let valueObj = {};
   valueObj[inputElement.id] = inputElement.value;
   let sibs = [...inputElement.parentElement.querySelectorAll("input")];
