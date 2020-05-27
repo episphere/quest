@@ -576,7 +576,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   let textInputs = [
     ...divElement.querySelectorAll(
-      "input[type='text'],input[type='email'],input[type='phone'],input[type='date'],input[type='time'],textarea,select"
+      "input[type='text'],input[type='email'],input[type='tel'],input[type='date'],input[type='time'],textarea,select"
     ),
   ];
 

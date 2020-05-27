@@ -28,13 +28,6 @@ export async function retrieveFromLocalForage(questName) {
           element.value = results[qid];
           numberInputUpdate(element);
           break;
-        case "date":
-        case "textarea":
-        case "text":
-        case "select-one":
-          element.value = results[qid];
-          textboxinput(element);
-          break;
         case "radio":
           let selector = `input[value='${results[qid]}']`;
           let selectedRadioElement = formElement.querySelector(selector);
@@ -46,7 +39,8 @@ export async function retrieveFromLocalForage(questName) {
           radioAndCheckboxUpdate(selectedRadioElement);
           break;
         default:
-          console.log("unhandled type: ", element);
+          element.value = results[qid];
+          textboxinput(element);
       }
     }
     // CASE 2: we have an object...
