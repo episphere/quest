@@ -304,7 +304,7 @@ async function nextPage(norp, store) {
   [...nextElement.children]
     .filter((x) => x.hasAttribute("displayif"))
     .map((elm) => {
-      f = parse(elm.getAttribute("displayif"));
+      let f = parse(elm.getAttribute("displayif"));
 
       elm.style.display = f ? "run-in" : "none";
     });
