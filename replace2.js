@@ -574,7 +574,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
     question.onsubmit = stopSubmit;
   });
 
-  let textInputs = [...divElement.querySelectorAll("input[type='text'],textarea")];
+  let textInputs = [
+    ...divElement.querySelectorAll(
+      "input[type='text'],input[type='email'],input[type='phone'],input[type='date'],input[type='time'],textarea,select"
+    ),
+  ];
+
   textInputs.forEach((inputElement) => {
     inputElement.oninput = textBoxInput;
   });

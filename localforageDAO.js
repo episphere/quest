@@ -22,7 +22,7 @@ export async function retrieveFromLocalForage(questName) {
     // CASE 1:  it is just a simple value...
     if (typeof results[qid] == "string") {
       // in this case get the first input/textarea in the form and fill it in.
-      let element = formElement.querySelector("input,textarea");
+      let element = formElement.querySelector("input,textarea,select");
       switch (element.type) {
         case "number":
           element.value = results[qid];
@@ -31,6 +31,7 @@ export async function retrieveFromLocalForage(questName) {
         case "date":
         case "textarea":
         case "text":
+        case "select-one":
           element.value = results[qid];
           textboxinput(element);
           break;
@@ -88,10 +89,12 @@ export async function retrieveFromLocalForage(questName) {
             let element = formElement.querySelector(`[id="${resKey}"]`);
             if (element) {
               element.value = resObject;
-              if (element.type == "number") {
-                numberInputUpdate(element);
-              } else {
-                textboxinput(element);
+              switch (element.type) {
+                case "number":
+                  numberInputUpdate(element);
+                  break;
+                default:
+                  textboxinput(element);
               }
             }
           }

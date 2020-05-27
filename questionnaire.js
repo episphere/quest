@@ -12,7 +12,7 @@ export function isFirstQuestion() {
 }
 
 function numberOfInputs(element) {
-  let resps = Array.from(element.querySelectorAll("input, textarea")).reduce((acc, current) => {
+  let resps = Array.from(element.querySelectorAll("input, textarea, select")).reduce((acc, current) => {
     //if (["submit", "button"].includes(current.type)) return acc;
     if (current.type == "submit") return acc;
     if (["radio", "checkbox"].includes(current.type)) {
