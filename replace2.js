@@ -375,7 +375,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace [XX] with checkbox
     questText = questText.replace(
-      /\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
+      /\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
       fCheck
     );
     function fCheck(containsGroup, value, name, labelID, condition, label) {
