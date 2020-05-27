@@ -293,7 +293,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let id = options ? options : `${questID}_text`;
       return `|__|id=${id} name=${questID}|`;
     }
-    questText = questText.replace(/\|(?:__\|)(?:([\S][^|]+[\S])\|)?/g, fText);
+    questText = questText.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?/g, fText);
     function fText(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "txt");
       return `<input type='text'  name='${questID}' ${options}></input>`;
