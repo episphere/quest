@@ -493,6 +493,10 @@ function parse(txt) {
           let temp1 = [...document.getElementsByName(arg1)].filter((x) => x.checked)[0];
           arg1 = temp1 ? temp1.value : arg1;
           // ***** if it's neither... look in the previous module *****
+          if (!temp1) {
+            temp1 = moduleParams.previousResults[arg1];
+            arg1 = temp1 ? temp1.value : arg1;
+          }
         }
       }
       let arg2 = stack[callEnd - 1];

@@ -18,6 +18,7 @@ let questName = "Questionnaire";
 
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
+  moduleParams.previousResults = previousResults;
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -347,7 +348,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       let skipTo = skipToId ? `skipTo=${skipToId}` : "";
       let value = cbValue ? `value=${cbValue}` : "";
-      let rv = `<div class='response' style='margin-top:15px'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}></input><label for='${id}'>${labelText}</label>${textBox}</div>`;
+      let rv = `<div class='response' style='margin-top:15px'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}></input><label for='${id}'>${labelText}${textBox}</label></div>`;
       return rv;
     }
     // SAME thing but this time with a textarea...
