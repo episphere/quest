@@ -290,7 +290,11 @@ async function nextPage(norp, store) {
 
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
-    x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
+    if (elm.tagName == "LABEL") {
+      x.innerHTML = elm.innerHTML;
+    } else {
+      x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
+    }
   });
 
   Array.from(nextElement.querySelectorAll("input[data-max-validation-dependency]")).map(
