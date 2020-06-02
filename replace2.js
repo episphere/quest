@@ -317,6 +317,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
       `(1) Yes
        (0) No`
     );
+    // replace #YNP with Yes No input
+    questText = questText.replace(
+      /#YNP/g,
+      `(1) Yes
+       (0) No
+       (99) Prefer not to answer`
+    );
 
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
