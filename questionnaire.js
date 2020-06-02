@@ -74,6 +74,7 @@ export function numberInputUpdate(inputElement) {
       .map((x) => (x.value = ""));
   }
 
+  clearSelection(inputElement);
   let value = handleXOR(inputElement);
   let id = inputElement.hasAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
 
@@ -109,23 +110,23 @@ export function radioAndCheckboxUpdate(inputElement) {
 }
 
 function clearSelection(inputElement) {
-  if (!inputElement.form || inputElement.type != "checkbox") return;
-  let state = inputElement.checked;
-  // WARNING.. we are not dealing with the unlikely case that
-  //           there are 2 set of checkboxes in the question....
-
-  let cb = inputElement.form.querySelectorAll("input[type='checkbox']");
+  if (!inputElement.form) return;
+  let sameName = [...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`)].filter((x) => x.type != "hidden");
   if (inputElement.value == 99) {
-    // if you clicked the "Prefer not to answer" button, clear all
-    // element except the input element...
-    cb.forEach((element) => {
-      element.checked = element == inputElement;
+    sameName.forEach((element) => {
+      switch (element.type) {
+        case "checkbox":
+          element.checked = element == inputElement;
+          break;
+        case "radio":
+          break;
+        default:
+          element.value = "";
+      }
     });
   } else {
-    // if you click any other button, leave the element checked as is
-    // until you hit the "prefer not to answer button", which is cleared.
-    cb.forEach((element) => {
-      element.checked = element.value == 99 ? false : element.checked;
+    sameName.forEach((element) => {
+      if (["checkbox", "radio"].includes(element.type)) element.checked = element.value == 99 ? false : element.checked;
     });
   }
 }
