@@ -54,6 +54,7 @@ export function textboxinput(inputElement) {
     radioAndCheckboxUpdate(rbCb);
   }
 
+  clearSelection(inputElement);
   let value = handleXOR(inputElement);
   let id = inputElement.getAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
   value = value ? value : inputElement.value;
@@ -270,10 +271,10 @@ async function nextPage(norp, store) {
   }
   //hide the current question
   questionElement.classList.remove("active");
-  
-  displayQuestion(nextElement)
+
+  displayQuestion(nextElement);
 }
-export function displayQuestion(nextElement){
+export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
     if (elm.tagName == "LABEL") {
