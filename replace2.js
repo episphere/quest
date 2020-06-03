@@ -1,12 +1,4 @@
-import {
-  questionQueue,
-  nextClick,
-  previousClicked,
-  moduleParams,
-  rbAndCbClick,
-  numberInput,
-  textBoxInput,
-} from "./questionnaire.js";
+import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput } from "./questionnaire.js";
 import { retrieveFromLocalForage } from "./localforageDAO.js";
 
 export let transform = function () {
@@ -584,7 +576,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   let textInputs = [
     ...divElement.querySelectorAll(
-      "input[type='text'],input[type='email'],input[type='tel'],input[type='date'],input[type='time'],textarea,select"
+      "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='time'],textarea,select"
     ),
   ];
 
@@ -595,11 +587,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   let rbCb = [...divElement.querySelectorAll("input[type='radio'],input[type='checkbox'] ")];
   rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
-  });
-
-  let numberInputs = [...divElement.querySelectorAll("input[type='number']")];
-  numberInputs.forEach((inputElement) => {
-    inputElement.oninput = numberInput;
   });
 
   $(".popover-dismiss").popover({

@@ -1,4 +1,4 @@
-import { textboxinput, numberInputUpdate, radioAndCheckboxUpdate } from "./questionnaire.js";
+import { textboxinput, radioAndCheckboxUpdate } from "./questionnaire.js";
 
 export async function retrieveFromLocalForage(questName) {
   // get the results from localforage...
@@ -23,11 +23,7 @@ export async function retrieveFromLocalForage(questName) {
     if (typeof results[qid] == "string") {
       // in this case get the first input/textarea in the form and fill it in.
       let element = formElement.querySelector("input,textarea,select");
-      switch (element.type) {
-        case "number":
-          element.value = results[qid];
-          numberInputUpdate(element);
-          break;
+      switch (element.type)
         case "radio":
           let selector = `input[value='${results[qid]}']`;
           let selectedRadioElement = formElement.querySelector(selector);
@@ -83,13 +79,7 @@ export async function retrieveFromLocalForage(questName) {
             let element = formElement.querySelector(`[id="${resKey}"]`);
             if (element) {
               element.value = resObject;
-              switch (element.type) {
-                case "number":
-                  numberInputUpdate(element);
-                  break;
-                default:
-                  textboxinput(element);
-              }
+              textboxinput(element);
             }
           }
         });

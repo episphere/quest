@@ -61,26 +61,6 @@ export function textboxinput(inputElement) {
   setFormValue(inputElement.form, value, id);
 }
 
-export function numberInput(event) {
-  let inputElement = event.target;
-  numberInputUpdate(inputElement);
-}
-
-export function numberInputUpdate(inputElement) {
-  // what is going on here..
-  if ([...inputElement.parentElement.querySelectorAll("input[type=number]")].filter((x) => x != inputElement).length >= 1) {
-    [...inputElement.parentElement.querySelectorAll("input[type=number]")]
-      .filter((x) => x != inputElement)
-      .map((x) => (x.value = ""));
-  }
-
-  clearSelection(inputElement);
-  let value = handleXOR(inputElement);
-  let id = inputElement.hasAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
-
-  setFormValue(inputElement.form, value, id);
-}
-
 // onInput/Change handler for radio/checkboxex
 export function rbAndCbClick(event) {
   let inputElement = event.target;
