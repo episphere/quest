@@ -7,13 +7,13 @@ let prevRes = {};
 async function startUp() {
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
-    transform.tout(() => {
+    transform.tout((previousResults) => {
       transform.render(
         {
           text: ta.value,
         },
         "rendering",
-        prevRes
+        previousResults
       ); // <-- this is where quest.js is engaged
       // transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}, 'rendering') // <-- this is where quest.js is engaged
       if (document.querySelector(".question") != null) {
@@ -33,12 +33,24 @@ async function startUp() {
     }
     ta.onkeyup();
   }
-  ta.style.width =
-    parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
+  ta.style.width = parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
   document.getElementById("clearMem").onclick = clearLocalForage;
+
+  document.getElementById("updater").onclick = function (event) {
+    console.log(event);
+    let txt = "";
+    try {
+      prevRes = JSON.parse(json_input.value);
+      console.log(prevRes);
+      txt = "added json... ";
+    } catch (err) {
+      txt = "caught error: " + err;
+    }
+    loaddisplay.innerText = txt;
+  };
   myTree = questionQueue;
 }
 
@@ -71,6 +83,14 @@ function clearLocalForage() {
   console.log("clearing the in-memory tree");
   questionQueue.clear();
 }
+
+transform.tout = function (fun, tt = 500) {
+  if (transform.tout.t) {
+    clearTimeout(transform.tout.t);
+  }
+  console.log(prevRes);
+  transform.tout.t = setTimeout(fun(prevRes), tt);
+};
 
 window.onload = function () {
   console.log("in quest.js:window.onload");

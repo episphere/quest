@@ -105,23 +105,6 @@
         }
     </script>
 
-    <script>
-        prevRes={}
-        config={};
-        myCallbacks={};
-        updater.onclick = function (event) {
-          console.log(event);
-          let txt = "";
-          try {
-            prevRes = JSON.parse(json_input.value);
-            console.log(prevRes);
-            txt = "added json... ";
-          } catch (err) {
-            txt = "caught error: " + err;
-          }
-          loaddisplay.innerText = txt;
-        };
-      </script>
 
     <script>
         function goToLink(){

@@ -608,13 +608,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   return true;
 };
 
-transform.tout = function (fun, tt = 500) {
-  if (transform.tout.t) {
-    clearTimeout(transform.tout.t);
-  }
-  transform.tout.t = setTimeout(fun, tt);
-};
-
 function unrollLoops(txt) {
   // all the questions in the loops...
   // each element in res is a loop in the questionnaire...
