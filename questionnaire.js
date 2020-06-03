@@ -287,7 +287,12 @@ async function nextPage(norp, store) {
       console.trace();
     }
   }
-
+  //hide the current question
+  questionElement.classList.remove("active");
+  
+  displayQuestion(nextElement)
+}
+export function displayQuestion(nextElement){
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
     if (elm.tagName == "LABEL") {
@@ -310,7 +315,7 @@ async function nextPage(norp, store) {
     .map((elm) => {
       let f = parse(elm.getAttribute("displayif"));
 
-      elm.style.display = f ? "run-in" : "none";
+      elm.style.display = f ? "inline" : "none";
     });
 
   // check min/max for variable substitution in validation
@@ -329,8 +334,7 @@ async function nextPage(norp, store) {
     .map((element) => exchangeValue(element, "min"))
     .map((element) => exchangeValue(element, "max"));
 
-  // hide the current question and move to the next...
-  questionElement.classList.remove("active");
+  //move to the next question...
   nextElement.classList.add("active");
 
   // FINALLY...  update the tree in localForage...
