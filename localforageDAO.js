@@ -23,24 +23,22 @@ export async function retrieveFromLocalForage(questName) {
     if (typeof results[qid] == "string") {
       // in this case get the first input/textarea in the form and fill it in.
       let element = formElement.querySelector("input,textarea,select");
-      switch (element.type)
-        case "radio":
-          let selector = `input[value='${results[qid]}']`;
-          let selectedRadioElement = formElement.querySelector(selector);
-          if (selectedRadioElement) {
-            selectedRadioElement.checked = true;
-          } else {
-            console.log("...  problem with ", element);
-          }
-          radioAndCheckboxUpdate(selectedRadioElement);
-          break;
-        default:
-          element.value = results[qid];
-          textboxinput(element);
+      if (element.type == "radio") {
+        let selector = `input[value='${results[qid]}']`;
+        let selectedRadioElement = formElement.querySelector(selector);
+        if (selectedRadioElement) {
+          selectedRadioElement.checked = true;
+        } else {
+          console.log("...  problem with ", element);
+        }
+        radioAndCheckboxUpdate(selectedRadioElement);
+      } else {
+        element.value = results[qid];
+        textboxinput(element);
       }
-    }
-    // CASE 2: we have an object...
-    else {
+
+      // CASE 2: we have an object...
+    } else {
       console.log("...  WE HAVE AN OBJECT ... ");
       function getFromRbCb(rbCbName, result) {
         let checkboxElements = Array.from(formElement.querySelectorAll(`input[name=${qid}]`));
