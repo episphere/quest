@@ -1,4 +1,12 @@
-import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput } from "./questionnaire.js";
+import {
+  questionQueue,
+  nextClick,
+  previousClicked,
+  moduleParams,
+  rbAndCbClick,
+  textBoxInput,
+  displayQuestion,
+} from "./questionnaire.js";
 import { retrieveFromLocalForage } from "./localforageDAO.js";
 
 export let transform = function () {
@@ -489,7 +497,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
     // make the id active...
     console.log(`setting ${id} active`);
-    document.getElementById(id).classList.add("active");
+    displayQuestion(active);
   }
 
   // If a user starts a module takes a break
@@ -502,18 +510,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let tempObj = {};
 
     console.log("in fillForm... ret fun:", retrieve);
-
-    // get the tree from localforage...
-    await localforage.getItem(questName + ".treeJSON").then((tree) => {
-      // if this is the first time the user attempt
-      // the questionnaire, the tree will not be in
-      // the localForage...
-      if (tree) {
-        questionQueue.loadFromVanillaObject(tree);
-      }
-      console.log(`the current node is ${questionQueue.currentNode.value}`);
-      setActive(questionQueue.currentNode.value);
-    });
 
     if (retrieve) {
       const response = await retrieve();
@@ -531,6 +527,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       await retrieveFromLocalForage(questName);
     }
   }
+
   function resetTree() {
     // make the appropriate question active...
     // don't bother if there are no questions...
@@ -557,7 +554,21 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // wait for the objects to be retrieved,
   // then reset the tree.
-  fillForm(obj.retrieve).then(resetTree());
+  await fillForm(obj.retrieve);
+
+  // get the tree from localforage...
+  await localforage.getItem(questName + ".treeJSON").then((tree) => {
+    // if this is the first time the user attempt
+    // the questionnaire, the tree will not be in
+    // the localForage...
+    if (tree) {
+      questionQueue.loadFromVanillaObject(tree);
+    }
+    console.log(`the current node is ${questionQueue.currentNode.value}`);
+    setActive(questionQueue.currentNode.value);
+  });
+
+  resetTree();
 
   if (questions.length > 0) {
     let buttonToRemove = questions[0].querySelector(".previous");
