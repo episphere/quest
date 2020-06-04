@@ -22,8 +22,8 @@
 
 [Q8_1] What is your favorite fruit?
 [1] oranges -> Q8_2
-[2] apricot -> Q8_2
-[3] apricot -> Q8_2 
+[2] apricots -> Q8_2
+[3] watermelon -> Q8_2 
 [4] peaches -> Q8_2
 [5] cherries -> Q8_2
 [6] other |__|
