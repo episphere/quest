@@ -141,7 +141,7 @@ export function nextClick(norp, store) {
   //handle the soft and hard edits...
   if (
     norp.parentElement.getAttribute("softedit") == "true" &&
-    getSelected(norp.parentElement).filter((x) => x.type !== "hidden").length == 0
+    getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0
   ) {
     document.getElementById(
       "softModalFooter"
@@ -151,7 +151,7 @@ export function nextClick(norp, store) {
     f1 = f1.bind(f1, norp, store);
     document.getElementById("continueButton").onclick = f1;
     $("#softModal").modal("toggle");
-  } else if (norp.getAttribute("data-target") == "#hardModal" && getSelected(norp.parentElement) == 0) {
+  } else if (norp.getAttribute("data-target") == "#hardModal" && getSelected(norp.form) == 0) {
     $("#hardModal").modal("toggle");
     return null;
   } else {
