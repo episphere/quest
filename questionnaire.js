@@ -91,7 +91,7 @@ export function radioAndCheckboxUpdate(inputElement) {
 }
 
 function clearSelection(inputElement) {
-  if (!inputElement.form) return;
+  if (!inputElement.form || !inputElement.name) return;
   let sameName = [...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`)].filter((x) => x.type != "hidden");
   if (inputElement.value == 99) {
     sameName.forEach((element) => {

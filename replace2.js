@@ -311,12 +311,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
       return `<textarea id='${elId}'></textarea>`;
     }
-    // replace #YN with Yes No input
-    questText = questText.replace(
-      /#YN/g,
-      `(1) Yes
-       (0) No`
-    );
+
     // replace #YNP with Yes No input
     questText = questText.replace(
       /#YNP/g,
@@ -325,10 +320,17 @@ transform.render = async (obj, divId, previousResults = {}) => {
        (99) Prefer not to answer`
     );
 
+    // replace #YN with Yes No input
+    questText = questText.replace(
+      /#YN/g,
+      `(1) Yes
+       (0) No`
+    );
+
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
     questText = questText.replace(
-      /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([\w\s:]+)?(<input.*?<\/input>)(?:\s*->\s*(\w+))/g,
+      /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([^<\n]+)?(<(?:input|textarea).*?<\/(?:input|textarea)>)(?:\s*->\s*(\w+))/g,
       cb1
     );
     function cb1(completeMatch, bracket, cbValue, cbName, cbArgs, labelText, textBox, skipToId) {
@@ -428,7 +430,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
 
-    let rv = `<form class='question' style='font-weight: bold' id='${questID}' ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'> ${questText} ${prevButton}\n${nextButton}</form>`;
+    let rv = `<form class='question' style='font-weight: bold' id='${questID}' ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'> <div>${questText} ${prevButton}\n${nextButton}</div></form>`;
     return rv;
   });
 

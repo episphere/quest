@@ -16,11 +16,32 @@
 [1] some 
 [2] none 
 [3] all
-[4] just get this over -> Q9 |__|id=dingdong|
+[4] just get this over |__|id=dingdong| -> Q9 
 
 [Q8] Tell me a story |___|
+
+[Q8_1] What is your favorite fruit?
+[1] oranges -> Q8_2
+[2] apricot -> Q8_2
+[3] apricot -> Q8_2 
+[4] peaches -> Q8_2
+[5] cherries -> Q8_2
+[6] other |__|
+
+[Q8_1A] Really!! you like {$Q8_1_txt}?
+#YNP
+
+[Q8_2?] Do you mind typing in some long text?
+(1) Not a problem, I love typing |___| -> Q9
+(0) yes, lets move on
+
+[Q8_3!] that was not nice.  Do you care to reconsider?
+(1) Sure, I'll reconsider -> Q8_2
+(0) I SAID LET'S MOVE ON!
+
 
 [Q9] Do you think this is the last question?
 #YN
 
 [END,end] Thank you
+|displayif=equals(Q9,1)|You were right by the way.| |displayif=equals(Q9,0)|You were wrong by the way.| That was the last question.
