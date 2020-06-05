@@ -587,6 +587,14 @@ transform.render = async (obj, divId, previousResults = {}) => {
     question.onsubmit = stopSubmit;
   });
 
+  [...divElement.querySelectorAll("input")].forEach((inputElement) => {
+    inputElement.addEventListener("keydown", (event) => {
+      if (event.keyCode == 13) {
+        event.preventDefault();
+      }
+    });
+  });
+
   let textInputs = [
     ...divElement.querySelectorAll(
       "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='time'],textarea,select"
