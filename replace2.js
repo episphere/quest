@@ -23,7 +23,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   if (obj.text) contents = obj.text;
   if (obj.url) {
     moduleParams.config = await (await fetch(obj.url)).text();
-    console.log(moduleParams.config);
+    // console.log(moduleParams.config);
   }
   if (obj.url) {
     contents = await (await fetch(obj.url)).text();

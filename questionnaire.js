@@ -140,7 +140,7 @@ export function nextClick(norp, store) {
 
   //handle the soft and hard edits...
   if (
-    norp.parentElement.getAttribute("softedit") == "true" &&
+    norp.form.getAttribute("softedit") == "true" &&
     getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0
   ) {
     document.getElementById(
