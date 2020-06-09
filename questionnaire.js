@@ -356,7 +356,7 @@ export function displayQuestion(nextElement) {
   updateTreeInLocalForage();
 
   questionQueue.ptree();
-  nextElement.scrollIntoView();
+  document.body.scrollIntoView();
   return nextElement;
 }
 
@@ -373,7 +373,7 @@ export async function previousClicked(norp, retrieve) {
   } else localforage.removeItem(norp.form.id);
 
   updateTreeInLocalForage();
-  prevElement.scrollIntoView();
+  document.body.scrollIntoView();
   return prevElement;
 }
 
