@@ -215,7 +215,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(
       /\|state\|((\w+)\|)?/g,
       `<select id='$2'>
-      <option value='' disabled selected>Chose a state: </option>
+      <option value='' disabled selected>Choose a state: </option>
       <option value='AL'>Alabama</option>
       <option value='AK'>Alaska</option>
       <option value='AZ'>Arizona</option>
