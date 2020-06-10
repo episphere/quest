@@ -297,8 +297,8 @@ async function nextPage(norp, store) {
   }
   //hide the current question
   questionElement.classList.remove("active");
-  displayQuestion(nextElement);
   nextElement.parentElement.scrollIntoView();
+  displayQuestion(nextElement);
 }
 export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
