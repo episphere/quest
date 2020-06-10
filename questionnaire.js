@@ -115,7 +115,7 @@ function clearSelection(inputElement) {
         case "radio":
           break;
         default:
-          element.value = "";
+          element.value = element == inputElement ? inputElement.value : "";
       }
     });
   } else {
