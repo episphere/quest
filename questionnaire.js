@@ -297,7 +297,7 @@ async function nextPage(norp, store) {
   }
   //hide the current question
   questionElement.classList.remove("active");
-
+  document.body.scrollIntoView();
   displayQuestion(nextElement);
 }
 export function displayQuestion(nextElement) {
@@ -356,7 +356,6 @@ export function displayQuestion(nextElement) {
   updateTreeInLocalForage();
 
   questionQueue.ptree();
-  document.body.scrollIntoView();
   return nextElement;
 }
 
