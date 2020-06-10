@@ -297,8 +297,8 @@ async function nextPage(norp, store) {
   }
   //hide the current question
   questionElement.classList.remove("active");
-  document.body.scrollIntoView();
   displayQuestion(nextElement);
+  nextElement.parentElement.scrollIntoView();
 }
 export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
@@ -372,7 +372,7 @@ export async function previousClicked(norp, retrieve) {
   } else localforage.removeItem(norp.form.id);
 
   updateTreeInLocalForage();
-  document.body.scrollIntoView();
+  prevElement.parentElement.scrollIntoView();
   return prevElement;
 }
 
