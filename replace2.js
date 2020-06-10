@@ -40,6 +40,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
   }
   // first thing we must do is unroll the loops...
   contents = unrollLoops(contents);
+
+  contents = contents.replace(/#currentYear/g, new Date().getFullYear());
   // hey, lets de-lint the contents..
   // convert (^|\n{2,}Q1. to [Q1]
   // note:  the first question wont have the
