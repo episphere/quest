@@ -5,6 +5,9 @@ export const knownFunctions = {
   or: function (x, y) {
     return x || y;
   },
+  isDefined: function (x, y) {
+    return x == undefined ? y : x;
+  },
   equals: function (x, y) {
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
