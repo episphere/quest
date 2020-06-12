@@ -297,7 +297,7 @@ async function nextPage(norp, store) {
   }
   //hide the current question
   questionElement.classList.remove("active");
-  nextElement.parentElement.scrollIntoView();
+  nextElement.scrollIntoView();
   displayQuestion(nextElement);
 }
 export function displayQuestion(nextElement) {

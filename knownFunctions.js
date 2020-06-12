@@ -9,6 +9,9 @@ export const knownFunctions = {
     return x == undefined ? y : x;
   },
   equals: function (x, y) {
+    if (x == undefined && y == "undefined") {
+      return true;
+    }
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
   doesNotEqual: function (x, y) {
