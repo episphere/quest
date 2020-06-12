@@ -637,6 +637,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
   questions.forEach((question) => {
     question.onsubmit = stopSubmit;
   });
+  divElement.querySelectorAll("input[type='submit']").forEach((submitButton) => {
+    submitButton.addEventListener("click", (event) => {
+      event.target.form.clickType = event.target.value;
+    });
+  });
 
   [...divElement.querySelectorAll("input")].forEach((inputElement) => {
     inputElement.addEventListener("keydown", (event) => {
@@ -766,9 +771,11 @@ export function stopSubmit(event) {
   event.preventDefault();
   console.log(event.target.id);
 
-  if (event.submitter.value == "BACK") {
-    previousClicked(event.submitter, moduleParams.renderObj.retrieve);
+  if (event.target.clickType == "BACK") {
+    let buttonClicked = event.target.getElementsByClassName("previous")[0];
+    previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
   } else {
-    nextClick(event.submitter, moduleParams.renderObj.store);
+    let buttonClicked = event.target.getElementsByClassName("next")[0];
+    nextClick(buttonClicked, moduleParams.renderObj.store);
   }
 }
