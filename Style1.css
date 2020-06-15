@@ -54,6 +54,10 @@ input[type="checkbox"] {
   display: none;
 }
 
+.show-button {
+  display: inline !important;
+}
+
 label {
   display: block;
   border-radius: 6px;

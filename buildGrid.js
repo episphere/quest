@@ -1,11 +1,12 @@
 export const grid_replace_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
 
-export function toggle(element) {
+export function toggle(event) {
+  let element = event.target;
   let id_regex = /(^.*?)(_sm)?(_.*$)/;
   let tmp = element.id.match(id_regex);
   // tmp MUST match!!!
   if (!tmp) {
-    console.error("ERROR in [grid] toggle!!!  Bad element id!");
+    //console.error("ERROR in [grid] toggle!!!  Bad element id!");
   }
   let otherid = tmp[2] ? tmp[1] + tmp[3] : tmp[1] + "_sm" + tmp[3];
   document.getElementById(otherid).checked = element.checked;
@@ -21,7 +22,7 @@ function buildHtml(grid_obj) {
   grid_obj.questions.forEach((question) => {
     grid_table_body += `<div class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.question_text}" id="${question.id}_${resp_indx}" onclick="toggle(this)"/></div>`;
+      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" class="grid-input-element show-button"/></div>`;
     });
     grid_table_body += "</div>";
   });
@@ -30,7 +31,7 @@ function buildHtml(grid_obj) {
   grid_obj.questions.forEach((question) => {
     small_format += `<div class="py-4">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      small_format += `<div class="text-center"><input type="${resp.type}" class="d-none" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" onclick="toggle(this)" /><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
+      small_format += `<div class="text-center"><input type="${resp.type}" class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}"/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
   });
   let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">

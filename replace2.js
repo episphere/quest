@@ -622,6 +622,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     rcElement.onchange = rbAndCbClick;
   });
 
+  [...divElement.querySelectorAll(".grid-input-element")].forEach((x) => {
+    addEventListener("click", toggle);
+  });
+
   $(".popover-dismiss").popover({
     trigger: "focus",
   });
