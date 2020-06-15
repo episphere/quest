@@ -8,7 +8,7 @@ import {
   displayQuestion,
 } from "./questionnaire.js";
 import { retrieveFromLocalForage } from "./localforageDAO.js";
-import { parseGrid, grid_replace_regex } from "./buildGrid.js";
+import { parseGrid, grid_replace_regex, toggle } from "./buildGrid.js";
 
 export let transform = function () {
   // init
