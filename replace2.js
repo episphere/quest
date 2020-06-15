@@ -187,7 +187,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       } else {
         elId = z1;
       }
-      return `<input type='tel' name='phone' id='${elId}' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' required></input>`;
+      return `<input type='tel' name='phone' id='${elId}' pattern='(([0-9]{3})|[0-9]{3})-[0-9]{3}-[0-9]{4}' placeholder='(###)-###-####'></input>`;
     }
 
     // replace |###-##-####| with SSN input
@@ -593,11 +593,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
   questions.forEach((question) => {
     question.onsubmit = stopSubmit;
   });
-  divElement.querySelectorAll("input[type='submit']").forEach((submitButton) => {
-    submitButton.addEventListener("click", (event) => {
-      event.target.form.clickType = event.target.value;
+  divElement
+    .querySelectorAll("input[type='submit']")
+    .forEach((submitButton) => {
+      submitButton.addEventListener("click", (event) => {
+        event.target.form.clickType = event.target.value;
+      });
     });
-  });
 
   [...divElement.querySelectorAll("input")].forEach((inputElement) => {
     inputElement.addEventListener("keydown", (event) => {
