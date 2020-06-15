@@ -1,4 +1,4 @@
-export const grid_replace_regex = /\|grid\|([^|]*?)\|([^|]*?)\|([^|]*?)\|/g;
+export const grid_replace_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
 
 export function toggle(element) {
   let id_regex = /(^.*?)(_sm)?(_.*$)/;
@@ -33,7 +33,7 @@ function buildHtml(grid_obj) {
       small_format += `<div class="text-center"><input type="${resp.type}" class="d-none" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" onclick="toggle(this)" /><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
   });
-  let html_text = `<form class="container question" hardedit="false" softedit="false">
+  let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
     ${grid_obj.shared_text}<div class="d-none d-lg-block" style="background-color: beige;">${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
     <div><input type='submit' class='previous' value='BACK'></input><input type='submit' class='next' value='NEXT'></input></div>
     </form>`;
@@ -48,18 +48,18 @@ export function parseGrid(text) {
   console.log("in parseGrid ", text);
 
   let grid_obj = {};
-  //  look for key element of the text
-  let grid_regex = /\|grid\|([^|]*?)\|([^|]*?)\|([^|]*?)\|/;
+  //  look for key elements of the text
+  // |grid|id=xxx|shared_text|questions|response|
+  let grid_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/;
   let grid_match = text.match(grid_regex);
   if (grid_match) {
-    // match[1] should be "shared text ; [Q1] question text ; [Q2] question text; shared responses"
-    // dont use string split -- it is possible that shared text OR question text contains a ;
     console.log(grid_match);
     grid_obj = {
       original: grid_match[0],
-      shared_text: grid_match[1],
-      question_text: grid_match[2],
-      shared_response: grid_match[3],
+      args: grid_match[1],
+      shared_text: grid_match[2],
+      question_text: grid_match[3],
+      shared_response: grid_match[4],
       questions: [],
       responses: [],
     };
