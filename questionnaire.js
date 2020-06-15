@@ -16,7 +16,7 @@ function numberOfInputs(element) {
     element.querySelectorAll("input, textarea, select")
   ).reduce((acc, current) => {
     //if (["submit", "button"].includes(current.type)) return acc;
-    if (current.type == "submit") return acc;
+    if (current.type == "submit" || current.type == "hidden") return acc;
     if (["radio", "checkbox"].includes(current.type)) {
       acc[current.name] = true;
     } else {
@@ -142,8 +142,12 @@ function handleXOR(inputElement) {
   );
 
   sibs.forEach((x) => {
-    x.value = "";
-    valueObj[x.id] = x.value;
+    if (["checkbox", "radio"].includes(x.type)) {
+      x.checked = x.value == 99 ? false : x.checked;
+    } else {
+      x.value = "";
+      valueObj[x.id] = x.value;
+    }
   });
   return valueObj;
 }
