@@ -6,6 +6,7 @@ export function toggle(event) {
   let tmp = element.id.match(id_regex);
   // tmp MUST match!!!
   if (!tmp) {
+    return;
     //console.error("ERROR in [grid] toggle!!!  Bad element id!");
   }
   let otherid = tmp[2] ? tmp[1] + tmp[3] : tmp[1] + "_sm" + tmp[3];

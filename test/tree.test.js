@@ -128,3 +128,37 @@ describe("Tree tests", function () {
     console.log(json, "\n", myTree.toJSON());
   });
 });
+
+describe("ISSUE 86: Previous Node", function () {
+  let myTree = new Tree();
+
+  myTree.add(["Q1", "Q2", "Q3"]);
+  myTree.next();
+  let x1 = myTree.currentNode.value;
+  it("should be at Q1", function () {
+    assert.strictEqual(x1, "Q1");
+  });
+  myTree.add("Q1a");
+  myTree.next();
+  myTree.add("Q1b");
+  myTree.next();
+  myTree.add("Q1c");
+  myTree.next();
+  myTree.ptree();
+  let x2 = myTree.currentNode.value;
+  it("should be at Q1c", function () {
+    assert.strictEqual(x2, "Q1c");
+  });
+  myTree.next();
+  let x3 = myTree.currentNode.value;
+  it("should be at Q2", function () {
+    assert.strictEqual(x3, "Q2");
+  });
+  myTree.previous();
+  let x4 = myTree.currentNode.value;
+  it("should be at Q1c", function () {
+    assert.strictEqual(x4, "Q1c");
+  });
+
+  myTree = null;
+});

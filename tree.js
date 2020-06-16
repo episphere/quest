@@ -210,7 +210,8 @@ class TreeNode {
     }
 
     if (childIndex > 0) {
-      return { done: false, value: this.children[childIndex - 1] };
+      let lastChild = this.children[childIndex - 1].getLastChild();
+      return { done: false, value: lastChild };
     }
 
     // Mu first child is calling, return me...
@@ -220,6 +221,15 @@ class TreeNode {
     }
 
     return { done: false, value: this };
+  }
+
+  getLastChild() {
+    // I have been asked to by my parent to get the last child
+    // if I dont have any children.. return me.
+    if (this.children.length > 0) {
+      return this.children[this.children.length - 1].getLastChild();
+    }
+    return this;
   }
 
   previous() {
