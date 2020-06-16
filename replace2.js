@@ -170,15 +170,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |@| with an email input
-    questText = questText.replace(/\|@\|((\w+)\|)?/g, fEmail);
-    function fEmail(x1, y1, z1) {
-      let elId = "";
-      if (z1 == undefined) {
-        elId = questID + "_email";
-      } else {
-        elId = z1;
-      }
-      return `<input type='email' id='${elId}'></input>`;
+    questText = questText.replace(/\|@\|(?:([\S][^|]+[\S])\|)?/g, fEmail);
+    function fEmail(fullmatch, opts) {
+      const { options, elementId } = guaranteeIdSet(opts, "email");
+      return `<input type='email' ${options}'></input>`;
     }
 
     // replace |date| with a date input
