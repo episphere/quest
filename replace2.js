@@ -264,11 +264,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     </select>`
     );
 
-    // function createInvalid(element) {
-    //   debugger;
-    //   element.style.border = "2px solid red";
-    // }
-
     function guaranteeIdSet(options, inputType = "inp") {
       if (options == undefined) {
         options = "";
@@ -306,7 +301,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // make sure that the element id is set...
       const { options, elementId } = guaranteeIdSet(opts, "num");
 
-      return `<input type='number' name='${questID}' ${options}></input>`;
+      return `<input type='number' name='${questID}' ${options}'></input>`;
     }
 
     // replace |__| or [text box:xxx] with an input box...

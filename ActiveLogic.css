@@ -51,7 +51,3 @@
 input[type="text"] {
   flex-grow: 1;
 }
-
-input:invalid {
-  border: 3px solid red;
-}
