@@ -301,7 +301,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // make sure that the element id is set...
       const { options, elementId } = guaranteeIdSet(opts, "num");
 
-      return `<input type='number' name='${questID}' ${options}'></input>`;
+      return `<input type='number' name='${questID}' ${options}></input>`;
     }
 
     // replace |__| or [text box:xxx] with an input box...

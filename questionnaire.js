@@ -530,7 +530,11 @@ function parse(txt) {
       if (typeof arg1 === "string") {
         let element = document.getElementById(arg1);
         if (element != null) {
+          let tmpVal = arg1
           arg1 = document.getElementById(arg1).value;
+          if(typeof arg1 == 'object' && Array.isArray(arg1) != true){
+            arg1 = arg1[tmpVal]
+          }
         } else {
           //look up by name
           let temp1 = [...document.getElementsByName(arg1)].filter(
