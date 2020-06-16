@@ -199,7 +199,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |SSNsm| with SSN input
-    questText = questText.replace(/\|SSNsm\|/g, fSSNsm);
+    questText = questText.replace(/\|SSNsm\|(?:([\S][^|]+[\S])\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
       return `<input type='text' ${options} pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
@@ -263,6 +263,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
       <option value='WY'>Wyoming</option>
     </select>`
     );
+
+    // function createInvalid(element) {
+    //   debugger;
+    //   element.style.border = "2px solid red";
+    // }
 
     function guaranteeIdSet(options, inputType = "inp") {
       if (options == undefined) {
