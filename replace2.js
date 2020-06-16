@@ -192,16 +192,18 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |SSN| with SSN input
-    questText = questText.replace(
-      /\|SSN\|/g,
-      `<input type='text' id='${questID}_SSN'pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}|[0-9]{9}'placeholder="_ _ _-_ _-_ _ _ _"></input>`
-    );
+    questText = questText.replace(/\|SSN\|(?:([\S][^|]+[\S])\|)?/g, fSSN);
+    function fSSN(fullmatch, opts) {
+      const { options, elementId } = guaranteeIdSet(opts, "SSN");
+      return `<input type='text' ${options} pattern='[0-9]{3}-[0-9]{2}-[0-9]{4}|[0-9]{9}'placeholder="_ _ _-_ _-_ _ _ _"></input>`;
+    }
 
     // replace |SSNsm| with SSN input
-    questText = questText.replace(
-      /\|SSNsm\|/g,
-      `<input type='text' id='${questID}_SSN_Sm'pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`
-    );
+    questText = questText.replace(/\|SSNsm\|/g, fSSNsm);
+    function fSSNsm(fullmatch, opts) {
+      const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
+      return `<input type='text' ${options} pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
+    }
 
     // replace |state| with state dropdown
     questText = questText.replace(
