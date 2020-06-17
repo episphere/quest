@@ -41,7 +41,9 @@ export async function retrieveFromLocalForage(questName) {
     } else {
       console.log("...  WE HAVE AN OBJECT ... ");
       function getFromRbCb(rbCbName, result) {
-        let checkboxElements = Array.from(formElement.querySelectorAll(`input[name=${rbCbName}]`));
+        let checkboxElements = Array.from(
+          formElement.querySelectorAll(`input[name=${rbCbName}]`)
+        );
         checkboxElements.forEach((checkbox) => {
           checkbox.checked = result.includes(checkbox.value);
         });
@@ -72,16 +74,19 @@ export async function retrieveFromLocalForage(questName) {
             // ok wasn't an array .. i.e. it wasnt a radiobutton...
             // how about an XOR object...
             console.log("==========> XOR OBJ....");
-            let element = Array.from(formElement.querySelectorAll(`[xor="${resKey}"]`));
+            let element = Array.from(
+              formElement.querySelectorAll(`[xor="${resKey}"]`)
+            );
             element.forEach((xorElement) => {
-              if (resObject[xorElement.id]) xorElement.value = resObject[xorElement.id];
+              if (resObject[xorElement.id])
+                xorElement.value = resObject[xorElement.id];
             });
             handled = true;
           }
           if (!handled && typeof resObject == "string") {
             let element = document.getElementById(resKey);
             console.log(element);
-            if (element.tagName == "DIV") {
+            if (element.tagName == "DIV" || element.tagName == "FORM") {
               // radio in grid???
               let selector = `input[value='${results[qid][resKey]}']`;
               let selectedRadioElement = element.querySelector(selector);
