@@ -1,16 +1,24 @@
 export const grid_replace_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
 
-export function toggle(event) {
+export function firstFun(event) {
+  event.preventDefault();
+  console.log("WTF!!!");
+}
+export function toggle_grid(event) {
+  event.preventDefault();
   let element = event.target;
   let id_regex = /(^.*?)(_sm)?(_.*$)/;
   let tmp = element.id.match(id_regex);
   // tmp MUST match!!!
   if (!tmp) {
+    console.error("ERROR in [grid] toggle_grid!!!  Bad element id!\n", element);
     return;
-    //console.error("ERROR in [grid] toggle!!!  Bad element id!");
   }
   let otherid = tmp[2] ? tmp[1] + tmp[3] : tmp[1] + "_sm" + tmp[3];
-  document.getElementById(otherid).checked = element.checked;
+  let otherElement = document.getElementById(otherid);
+  otherElement.checked = element.checked;
+
+  element.form.value[otherElement.name] = element.form.value[element.name];
 }
 
 function buildHtml(grid_obj) {
@@ -21,7 +29,7 @@ function buildHtml(grid_obj) {
   grid_head += "</div>";
   let grid_table_body = "";
   grid_obj.questions.forEach((question) => {
-    grid_table_body += `<div class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
+    grid_table_body += `<div id="${question.id}" class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" class="grid-input-element show-button"/></div>`;
     });
@@ -30,10 +38,11 @@ function buildHtml(grid_obj) {
 
   let small_format = "";
   grid_obj.questions.forEach((question) => {
-    small_format += `<div class="py-4">${question.question_text}</div>`;
+    small_format += `<div id="${question.id}_sm"><div class="py-4">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       small_format += `<div class="text-center"><input type="${resp.type}" class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
+    small_format += "</div>";
   });
   let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
     ${grid_obj.shared_text}<div class="d-none d-lg-block" style="background-color: beige;">${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>

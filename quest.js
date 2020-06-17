@@ -33,8 +33,7 @@ async function startUp() {
     }
     ta.onkeyup();
   }
-  ta.style.width =
-    parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
+  ta.style.width = parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;

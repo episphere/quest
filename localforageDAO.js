@@ -41,7 +41,7 @@ export async function retrieveFromLocalForage(questName) {
     } else {
       console.log("...  WE HAVE AN OBJECT ... ");
       function getFromRbCb(rbCbName, result) {
-        let checkboxElements = Array.from(formElement.querySelectorAll(`input[name=${qid}]`));
+        let checkboxElements = Array.from(formElement.querySelectorAll(`input[name=${rbCbName}]`));
         checkboxElements.forEach((checkbox) => {
           checkbox.checked = result.includes(checkbox.value);
         });
@@ -52,7 +52,13 @@ export async function retrieveFromLocalForage(questName) {
         console.log("...  for KEY ", qid, " WE HAVE AN ARRAY!!!  ... ");
         getFromRbCb(qid, results[qid]);
       } else {
-        console.log("...  for KEY ", qid, " WE HAVE AN OBJECT!!!  ... ", Object.keys(results[qid]), Object.values(results[qid]));
+        console.log(
+          "...  for KEY ",
+          qid,
+          " ...1 WE HAVE AN OBJECT!!!  ... ",
+          Object.keys(results[qid]),
+          Object.values(results[qid])
+        );
         Object.keys(results[qid]).forEach((resKey) => {
           let resObject = results[qid][resKey];
           console.log(resKey, resObject);
@@ -73,9 +79,20 @@ export async function retrieveFromLocalForage(questName) {
             handled = true;
           }
           if (!handled && typeof resObject == "string") {
-            console.log("=========> text in object...");
-            let element = formElement.querySelector(`[id="${resKey}"]`);
-            if (element) {
+            let element = document.getElementById(resKey);
+            console.log(element);
+            if (element.tagName == "DIV") {
+              // radio in grid???
+              let selector = `input[value='${results[qid][resKey]}']`;
+              let selectedRadioElement = element.querySelector(selector);
+              if (selectedRadioElement) {
+                selectedRadioElement.checked = true;
+              } else {
+                console.log("...  problem with ", element);
+              }
+              radioAndCheckboxUpdate(selectedRadioElement);
+            } else {
+              console.log("=========> text in object...");
               element.value = resObject;
               textboxinput(element);
             }

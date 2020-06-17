@@ -42,7 +42,7 @@ input[type="text"] {
   flex-grow: 1;
 }
 
-input#styling[type="radio"] {
+input.styling[type="radio"] {
   display: inline;
 }
 
