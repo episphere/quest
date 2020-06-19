@@ -6,7 +6,30 @@ export const knownFunctions = {
     return x || y;
   },
   isDefined: function (x, y) {
-    return x == undefined ? y : x;
+    console.log("x:", x, "y:", y);
+    let tmpVal = !x ? y : x;
+    let isnum = /^[\d\.]+$/.test(tmpVal);
+    if (isnum) {
+      return tmpVal;
+    }
+    let tmpVal2 = document.getElementById(tmpVal).value;
+    return tmpVal2 ? tmpVal2 : tmpVal;
+  },
+  min: function (x, y) {
+    if (!x && !y) {
+      return "";
+    }
+    x = x ? x : Number.POSITIVE_INFINITY;
+    y = y ? y : Number.POSITIVE_INFINITY;
+    return Math.min(parseFloat(x), parseFloat(y));
+  },
+  max: function (x, y) {
+    if (!x && !y) {
+      return "";
+    }
+    x = x ? x : Number.NEGATIVE_INFINITY;
+    y = y ? y : Number.NEGATIVE_INFINITY;
+    return Math.max(parseFloat(x), parseFloat(y));
   },
   equals: function (x, y) {
     if (x == undefined && y == "undefined") {

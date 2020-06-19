@@ -304,6 +304,7 @@ async function nextPage(norp, store) {
   nextElement.scrollIntoView();
   displayQuestion(nextElement);
 }
+
 export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
@@ -337,20 +338,30 @@ export function displayQuestion(nextElement) {
     });
 
   // check min/max for variable substitution in validation
-  function exchangeValue(element, attrName) {
+  function exchangeValue(element, attrName, newAttrName) {
     let attr = element.getAttribute(attrName);
     if (attr) {
       let isnum = /^[\d\.]+$/.test(attr);
       if (!isnum) {
-        element.setAttribute(attrName, document.getElementById(attr).value);
+        let tmpVal = parse(attr);
+        element.setAttribute(newAttrName, tmpVal);
       }
     }
     return element;
   }
-  [...nextElement.children]
-    .filter((x) => x.hasAttribute("min") || x.hasAttribute("max"))
-    .map((element) => exchangeValue(element, "min"))
-    .map((element) => exchangeValue(element, "max"));
+  [...nextElement.querySelectorAll("input[minval]")].forEach((element) =>
+    exchangeValue(element, "minval", "min")
+  );
+  [...nextElement.querySelectorAll("input[maxval]")].forEach((element) =>
+    exchangeValue(element, "maxval", "max")
+  );
+
+  [...nextElement.querySelectorAll("input[min]")].forEach((element) =>
+    exchangeValue(element, "min", "min")
+  );
+  [...nextElement.querySelectorAll("input[max]")].forEach((element) =>
+    exchangeValue(element, "max", "max")
+  );
 
   //move to the next question...
   nextElement.classList.add("active");
@@ -530,10 +541,10 @@ function parse(txt) {
       if (typeof arg1 === "string") {
         let element = document.getElementById(arg1);
         if (element != null) {
-          let tmpVal = arg1
+          let tmpVal = arg1;
           arg1 = document.getElementById(arg1).value;
-          if(typeof arg1 == 'object' && Array.isArray(arg1) != true){
-            arg1 = arg1[tmpVal]
+          if (typeof arg1 == "object" && Array.isArray(arg1) != true) {
+            arg1 = arg1[tmpVal];
           }
         } else {
           //look up by name
