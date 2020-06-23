@@ -33,6 +33,12 @@ export async function retrieveFromLocalForage(questName) {
         }
         radioAndCheckboxUpdate(selectedRadioElement);
       } else {
+        if (element.type == "submit") {
+          console.log(
+            `local forage is trying to change the value of a submit button. Question ${qid} response value: ${results[qid]}; skipping this 1 value..`
+          );
+          return;
+        }
         element.value = results[qid];
         textboxinput(element);
       }
