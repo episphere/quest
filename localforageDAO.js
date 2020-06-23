@@ -41,9 +41,7 @@ export async function retrieveFromLocalForage(questName) {
     } else {
       console.log("...  WE HAVE AN OBJECT ... ");
       function getFromRbCb(rbCbName, result) {
-        let checkboxElements = Array.from(
-          formElement.querySelectorAll(`input[name=${rbCbName}]`)
-        );
+        let checkboxElements = Array.from(formElement.querySelectorAll(`input[name=${rbCbName}]`));
         checkboxElements.forEach((checkbox) => {
           checkbox.checked = result.includes(checkbox.value);
         });
@@ -62,6 +60,11 @@ export async function retrieveFromLocalForage(questName) {
           Object.values(results[qid])
         );
         Object.keys(results[qid]).forEach((resKey) => {
+          if (!resKey) {
+            // added because dynamic questions sometimes muck up the previous button.
+            console.log(`empty key in local forage Question ${qid} response value: ${results[qid]}; skipping this 1 value..`);
+            return;
+          }
           let resObject = results[qid][resKey];
           console.log(resKey, resObject);
 
@@ -74,12 +77,9 @@ export async function retrieveFromLocalForage(questName) {
             // ok wasn't an array .. i.e. it wasnt a radiobutton...
             // how about an XOR object...
             console.log("==========> XOR OBJ....");
-            let element = Array.from(
-              formElement.querySelectorAll(`[xor="${resKey}"]`)
-            );
+            let element = Array.from(formElement.querySelectorAll(`[xor="${resKey}"]`));
             element.forEach((xorElement) => {
-              if (resObject[xorElement.id])
-                xorElement.value = resObject[xorElement.id];
+              if (resObject[xorElement.id]) xorElement.value = resObject[xorElement.id];
             });
             handled = true;
           }

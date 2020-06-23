@@ -12,8 +12,8 @@ export const knownFunctions = {
     if (isnum) {
       return tmpVal;
     }
-    let tmpVal2 = document.getElementById(tmpVal).value;
-    return tmpVal2 ? tmpVal2 : tmpVal;
+    let tmpVal2 = document.getElementById(tmpVal);
+    return tmpVal2 ? tmpVal2.value : tmpVal;
   },
   min: function (x, y) {
     if (!x && !y) {
