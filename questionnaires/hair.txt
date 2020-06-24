@@ -2,13 +2,14 @@
 Sex
 (1) Male 
 (2) Female
-[HAIRFEM?,displayif=and(equals(GEN,2),equals(SEX,2))]<b>Hair pattern</b>
+
 
 [GEN] This is only for testing the hair question, not trying to insult..
 Gender
 (1) Male
 (2) Female
 
+[HAIRFEM?,displayif=and(equals(GEN,2),equals(SEX,2))]<b>Hair pattern</b>
 Which one of these figures most closely resembles your hair pattern at age 40?
 |image|episphere.github.io/quest/images/FemaleBaldness1.png|140,140|
 (1)Figure 1 – Full head of hair without any hair loss.
