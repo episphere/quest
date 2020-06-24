@@ -1,0 +1,67 @@
+[SEX] This is for testing the hair question, not trying to insult anyone
+Sex
+(1) Male 
+(2) Female
+[HAIRFEM?,displayif=and(equals(GEN,2),equals(SEX,2))]<b>Hair pattern</b>
+
+[GEN] This is only for testing the hair question, not trying to insult..
+Gender
+(1) Male
+(2) Female
+
+Which one of these figures most closely resembles your hair pattern at age 40?
+|image|episphere.github.io/quest/images/FemaleBaldness1.png|140,140|
+(1)Figure 1 – Full head of hair without any hair loss.
+
+|image|episphere.github.io/quest/images/FemaleBaldness2.png|140,140|
+(2) Figure 2 – Very slight hair loss or thinning of hair on the crown of the head along the part/midline of the head.
+
+|image|episphere.github.io/quest/images/FemaleBaldness3.png|140,140|
+(3) Figure 3 – Slight hair loss on the crown of the head along the part/midline of the head.
+
+|image|episphere.github.io/quest/images/FemaleBaldness4.png|140,140|
+(4) Figure 4 – Slight-to-moderate hair loss on the crown of the head along the part/midline of the head.
+
+|image|episphere.github.io/quest/images/FemaleBaldness5.png|140,140|
+(5) Figure 5 – Moderate hair loss on the crown of the head along the part/midline of the head.
+
+|image|episphere.github.io/quest/images/FemaleBaldness6.png|140,140|
+(6) Figure 6 – Significant hair loss on the crown of the head, hair along the hairline at the forehead is still present.
+
+|image|episphere.github.io/quest/images/FemaleBaldness7.png|140,140|
+(7) Figure 7 - Significant hair loss on the crown of the head, hair along the hairline (at the forehead) is thinning.
+
+|image|episphere.github.io/quest/images/FemaleBaldness8.png|140,140|
+(8) Figure 8 - Significant hair loss on the crown of the head extending as far forward as the forehead and as far backwards to be in line with the back of the ears. This figure represents the most substantial form a hair loss.
+
+|image|episphere.github.io/quest/images/FemaleBaldness9.png|140,140|
+(9)Figure 9 – Moderate hair loss from the temple areas of the side of the head as well as moderate-to-significant hair loss at the crown of the head.< -> HAIRMALE >
+
+[HAIRMALE?,displayif=and(equals(GEN,1),equals(SEX,1))] <b>Hair pattern</b>
+Which one of these figures most closely resembles your hair pattern at age 40?
+|image|episphere.github.io/quest/images/MaleBaldness1.png|200,340|
+(1) Figure 1 – Full head of hair without any hair loss.
+|image|episphere.github.io/quest/images/MaleBaldness2.png|200,340|
+(2) Figure 2 – Slight hair loss from the temple areas of the sides of the head but not extending as far backwards as the ears.
+|image|episphere.github.io/quest/images/MaleBaldness3.png|200,340|
+(3) Figure 3 – Slight loss of hair across the entire front of the head, but not extending as far backwards as the ears.
+|image|episphere.github.io/quest/images/MaleBaldness4.png|200,340|
+(4) Figure 4 – Moderate hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the start of the ears.
+|image|episphere.github.io/quest/images/MaleBaldness5.png|200,340|
+(5) Figure 5 – Moderate hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the start of the ears and with hair thinning of the crown of the head.
+|image|episphere.github.io/quest/images/MaleBaldness6.png|200,340|
+(6) Figure 6 – Moderate loss of hair across the entire front of the hairline extending as far backwards as to be in line with the middle of the ears.
+|image|episphere.github.io/quest/images/MaleBaldness7.png|200,340|
+(7) Figure 7 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a small area of hair loss on the crown of the head. These two areas of hair loss are separated by a band of moderately dense hair that extends across the top of the head
+|image|episphere.github.io/quest/images/MaleBaldness8.png|200,340|
+(8) Figure 8 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a moderate-sized area of hair loss on the crown of the head. The two areas of hair loss are separated by a thin band of thin hair that extends across the top of the head.
+|image|episphere.github.io/quest/images/MaleBaldness9.png|200,340|
+(9) Figure 9 – Significant loss of hair across the entire front of the hairline extending as far backwards as to be in line with the back of the ears.
+|image|episphere.github.io/quest/images/MaleBaldness10.png|200,340|
+(10) Figure 10 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a large area of hair loss on the crown of the head. These areas of hair loss are continuous across the top of the head.
+|image|episphere.github.io/quest/images/MaleBaldness11.png|200,340|
+(11) Figure 11 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a large area of hair loss on the crown of the head. These areas of hair loss are continuous across the top of the head. This figure represents the most substantial form a hair loss, where only a narrow band of hair remains at around the ears and at the back of the scalp.
+|image|episphere.github.io/quest/images/MaleBaldness12.png|200,340|
+(12) Figure 12 – Significant hair loss from the temple areas of the sides of the head, extending as far backwards to be in line with the back of the ears and with a large area of hair loss on the crown of the head. These areas of hair loss are continuous across the top of the head.
+
+[END,end]  What did you think?
