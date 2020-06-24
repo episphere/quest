@@ -423,7 +423,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
-    questText = questText.replace(/<textarea ([^>]*)><\/textarea>\s*->\s*([^\s]+)/g, "<textarea $1 skipTo=$2></textarea>");
+    questText = questText.replace(/<textarea ([^>]*)><\/textarea>\s*->\s*([^\s<]+)/g, "<textarea $1 skipTo=$2></textarea>");
 
     let rv = `<form class='question' id='${questID}' ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'> ${questText} <div>${prevButton}\n${nextButton}</div></form>`;
     return rv;
