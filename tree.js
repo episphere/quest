@@ -62,7 +62,8 @@ export class Tree {
     let tmp = this.currentNode.previous();
     if (!tmp.done) {
       this.currentNode = tmp.value;
-      this.currentNode.clearChildren();
+      //this.currentNode.clearChildren();
+      this.currentNode.children.forEach((child) => child.clearChildren());
       console.log(" ================ PREV ================ ");
       this.ptree();
     }

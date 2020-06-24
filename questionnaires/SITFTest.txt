@@ -1,4 +1,35 @@
-// type, paste, or upload questionnaire markup
+[SECTION5] <b>Education and Occupation</b>
+
+The next set of questions ask for more background information about you. 
+
+[EDU?] What is the highest level of school that you have completed?
+(1) Grade school (grades 1-8)
+(2) Some high school (grades 9-11), no diploma
+(3) High school graduate or GED
+(4) Some college, no degree
+(5) Technical or trade school after high school
+(6) Associate’s degree
+(7) College graduate (Bachelor’s degree)
+(8) Advanced degree (Master’s, Doctorate, etc.)
+(9) Other: Please describe [text box]
+
+[STUDENT?] Are you currently enrolled in school? 
+(0) No
+(1) Yes, full-time student
+(2) Yes, part-time student 
+
+[WORK?] Do you currently work for pay (full-time or part-time)?   
+(1) Yes -> WORK3
+(0) No -> WORK2
+
+[WORK2?] Which of these best describes your current employment status?
+(1) Retired
+(2) A homemaker
+(3) Unemployed
+(4) Unable to work (disabled)
+(5) Other
+() Prefer not to answer
+< -> WORK6 >
 
 [WORK3?]  What is your current job title? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
 |__|id=WORK3_JOBTITLE|	
@@ -7,12 +38,75 @@
 
 [EMPLYR1?] What was your employer’s name for this job?
 |__|
+< -> BSNSSTYP1 >
 
-[LALALA] well hello!
+[BSNSSTYP1?] What type of business was this? (Select all that apply.)
+[1] Manufacturing
+[2] A retail store
+[3] Wholesale or distributor
+[4] A service provider
+[5] Construction
+[6] Mining
+[7] Farming
+[8] Fishing
+[9] Forestry
+[10] Government
+[11] Military
+[12] A shipyard
+[13] Some other type of business [text box:BSNSSTYP1_TB]
+[77] Don’t Know
+< -> EMPLYRSRVCE1 >
+
+[EMPLYRSRVCE1?] What products were made, or services provided, by this employer?  If multiple, please provide the product/services related to your work unit. For example: automotive parts, residential home construction, accounting services, pharmaceutical research.
+|___| -> WORK4
+< #NR -> WORK8 >
+
+[WORK4?] How many years have you worked in that job {$WORK3_JOBTITLE}? 
+|__|__|min=0 max=99| #Years
+< -> WORK5 >
+
+[WORK5?] Is this your longest-held job? 
+(1) Yes  -> INCOME
+(0) No -> WORK7
+< #NR -> WORK7 >
+
+[WORK6?] Have you ever worked for pay (full-time or part-time)?
+(1) Yes -> WORK7
+(2) No -> INCOME
+< #NR -> INCOME >
 
 [WORK7?] What was your longest-held job? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
 |__|WORK7_JOBTITLE|
+< -> OCCUPTN2 >
 
 [OCCUPTN2?]
+
+[EMPLYR2?] What was your employer’s name for your longest-held job?
+|__|
+< -> BSNSSTYP2 >
+
+[BSNSSTYP2?] What type of business was this? (Select all that apply.)
+[1] Manufacturing
+[2] A retail store
+[3] Wholesale or distributor
+[4] A service provider
+[5] Construction
+[6] Mining
+[7] Farming
+[8] Fishing
+[9] Forestry
+[10] Government
+[11] Military
+[12] A shipyard
+[13] Some other type of business [text box:BSNSSTYP2_TB]
+[77] Don’t Know
+< -> EMPLYRSRVCE2 >
+
+[EMPLYRSRVCE2?] What products were made, or services provided, by this employer? If multiple, please provide the product/services related to your work unit. For example: automotive parts, residential home construction, accounting services, pharmaceutical research.
+|___|
+< -> WORK8 >
+
+[WORK8?] How many years did you work in that job?
+|__|__|min=0 max=isDefined(AGE,age)| #Years
 
 [DONE,end] ohh la la
