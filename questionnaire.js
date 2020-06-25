@@ -47,13 +47,14 @@ export function textBoxInput(event) {
 }
 
 export function textboxinput(inputElement) {
-  // what is going on here...
-  // we are checking if we should click the checkbox/radio button..
-  // first see if the parent is a div and the first child is a checkbox...
-  debugger;
+  // handles SSN auto-format
   if (inputElement.className == "SSN") {
     parseSSN(inputElement);
   }
+
+  // what is going on here...
+  // we are checking if we should click the checkbox/radio button..
+  // first see if the parent is a div and the first child is a checkbox...
   if (
     inputElement.parentElement &&
     inputElement.parentElement.tagName == "LABEL"
