@@ -195,7 +195,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|SSN\|(?:([\S][^|]+[\S])\|)?/g, fSSN);
     function fSSN(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSN");
-      return `<input type='text' ${options} pattern='[0-9]{3}-?[0-9]{2}-?[0-9]{4}'placeholder="_ _ _-_ _-_ _ _ _"></input>`;
+      return `<input type='text' ${options} class="SSN" maxlength="11" pattern='[0-9]{3}-?[0-9]{2}-?[0-9]{4}'placeholder="_ _ _-_ _-_ _ _ _"></input>`;
     }
 
     // replace |SSNsm| with SSN input

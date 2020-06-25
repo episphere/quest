@@ -12,7 +12,9 @@ export function isFirstQuestion() {
 }
 
 function numberOfInputs(element) {
-  let resps = Array.from(element.querySelectorAll("input, textarea, select")).reduce((acc, current) => {
+  let resps = Array.from(
+    element.querySelectorAll("input, textarea, select")
+  ).reduce((acc, current) => {
     //if (["submit", "button"].includes(current.type)) return acc;
     if (current.type == "submit" || current.type == "hidden") return acc;
     if (["radio", "checkbox"].includes(current.type)) {
@@ -48,7 +50,14 @@ export function textboxinput(inputElement) {
   // what is going on here...
   // we are checking if we should click the checkbox/radio button..
   // first see if the parent is a div and the first child is a checkbox...
-  if (inputElement.parentElement && inputElement.parentElement.tagName == "LABEL") {
+  debugger;
+  if (inputElement.className == "SSN") {
+    parseSSN(inputElement);
+  }
+  if (
+    inputElement.parentElement &&
+    inputElement.parentElement.tagName == "LABEL"
+  ) {
     let rbCb = inputElement.parentElement.previousSibling;
     rbCb.checked = inputElement.value.length > 0;
     radioAndCheckboxUpdate(rbCb);
@@ -56,10 +65,32 @@ export function textboxinput(inputElement) {
 
   clearSelection(inputElement);
   let value = handleXOR(inputElement);
-  let id = inputElement.getAttribute("xor") ? inputElement.getAttribute("xor") : inputElement.id;
+  let id = inputElement.getAttribute("xor")
+    ? inputElement.getAttribute("xor")
+    : inputElement.id;
   value = value ? value : inputElement.value;
 
   setFormValue(inputElement.form, value, id);
+}
+
+function parseSSN(element) {
+  debugger;
+  let val = element.value.replace(/\D/g, "");
+  let newVal = "";
+  if (val.length > 4) {
+    element.value = val;
+  }
+  if (val.length > 3 && val.length < 6) {
+    newVal += val.substr(0, 3) + "-";
+    val = val.substr(3);
+  }
+  if (val.length > 5) {
+    newVal += val.substr(0, 3) + "-";
+    newVal += val.substr(3, 2) + "-";
+    val = val.substr(5);
+  }
+  newVal += val;
+  element.value = newVal;
 }
 
 // onInput/Change handler for radio/checkboxex
@@ -79,7 +110,11 @@ export function radioAndCheckboxUpdate(inputElement) {
   let selectedValue = {};
   if (inputElement.type == "checkbox") {
     // get all checkboxes with the same name attribute...
-    selectedValue = Array.from(inputElement.form.querySelectorAll(`input[type="checkbox"][name=${inputElement.name}]`))
+    selectedValue = Array.from(
+      inputElement.form.querySelectorAll(
+        `input[type="checkbox"][name=${inputElement.name}]`
+      )
+    )
       .filter((x) => x.checked)
       .map((x) => x.value);
   } else {
@@ -92,7 +127,9 @@ export function radioAndCheckboxUpdate(inputElement) {
 
 function clearSelection(inputElement) {
   if (!inputElement.form || !inputElement.name) return;
-  let sameName = [...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`)].filter((x) => x.type != "hidden");
+  let sameName = [
+    ...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`),
+  ].filter((x) => x.type != "hidden");
   if (inputElement.value == 99) {
     sameName.forEach((element) => {
       switch (element.type) {
@@ -107,7 +144,8 @@ function clearSelection(inputElement) {
     });
   } else {
     sameName.forEach((element) => {
-      if (["checkbox", "radio"].includes(element.type)) element.checked = element.value == 99 ? false : element.checked;
+      if (["checkbox", "radio"].includes(element.type))
+        element.checked = element.value == 99 ? false : element.checked;
     });
   }
 }
@@ -121,7 +159,10 @@ function handleXOR(inputElement) {
   valueObj[inputElement.id] = inputElement.value;
   let sibs = [...inputElement.parentElement.querySelectorAll("input")];
   sibs = sibs.filter(
-    (x) => x.hasAttribute("xor") && x.getAttribute("xor") == inputElement.getAttribute("xor") && x.id != inputElement.id
+    (x) =>
+      x.hasAttribute("xor") &&
+      x.getAttribute("xor") == inputElement.getAttribute("xor") &&
+      x.id != inputElement.id
   );
 
   sibs.forEach((x) => {
@@ -143,7 +184,10 @@ export function nextClick(norp, store) {
   }
 
   //handle the soft and hard edits...
-  if (norp.form.getAttribute("softedit") == "true" && getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0) {
+  if (
+    norp.form.getAttribute("softedit") == "true" &&
+    getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0
+  ) {
     document.getElementById(
       "softModalFooter"
     ).innerHTML = `<button type="button" id="continueButton" class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
@@ -152,7 +196,10 @@ export function nextClick(norp, store) {
     f1 = f1.bind(f1, norp, store);
     document.getElementById("continueButton").onclick = f1;
     $("#softModal").modal("toggle");
-  } else if (norp.getAttribute("data-target") == "#hardModal" && getSelected(norp.form) == 0) {
+  } else if (
+    norp.getAttribute("data-target") == "#hardModal" &&
+    getSelected(norp.form) == 0
+  ) {
     $("#hardModal").modal("toggle");
     return null;
   } else {
@@ -195,7 +242,11 @@ async function nextPage(norp, store) {
 
   let questionElement = norp.form;
   if (questionQueue.isEmpty()) {
-    console.log("==> the tree is empty... add first element", questionElement, questionElement.id);
+    console.log(
+      "==> the tree is empty... add first element",
+      questionElement,
+      questionElement.id
+    );
     questionQueue.add(questionElement.id);
     questionQueue.next();
   }
@@ -266,7 +317,9 @@ async function nextPage(norp, store) {
       nextQuestionId = getNextQuestionId(nextElement);
       nextElement = document.getElementById(nextQuestionId.value);
     } else {
-      console.log(" ============= next element is not a question...  not sure what went wrong...");
+      console.log(
+        " ============= next element is not a question...  not sure what went wrong..."
+      );
       console.trace();
     }
   }
@@ -286,11 +339,17 @@ export function displayQuestion(nextElement) {
     }
   });
 
-  Array.from(nextElement.querySelectorAll("input[data-max-validation-dependency]")).map(
-    (x) => (x.max = document.getElementById(x.dataset.maxValidationDependency).value)
+  Array.from(
+    nextElement.querySelectorAll("input[data-max-validation-dependency]")
+  ).map(
+    (x) =>
+      (x.max = document.getElementById(x.dataset.maxValidationDependency).value)
   );
-  Array.from(nextElement.querySelectorAll("input[data-min-validation-dependency]")).map(
-    (x) => (x.min = document.getElementById(x.dataset.minValidationDependency).value)
+  Array.from(
+    nextElement.querySelectorAll("input[data-min-validation-dependency]")
+  ).map(
+    (x) =>
+      (x.min = document.getElementById(x.dataset.minValidationDependency).value)
   );
 
   // check all responses for next question
@@ -314,11 +373,19 @@ export function displayQuestion(nextElement) {
     }
     return element;
   }
-  [...nextElement.querySelectorAll("input[minval]")].forEach((element) => exchangeValue(element, "minval", "min"));
-  [...nextElement.querySelectorAll("input[maxval]")].forEach((element) => exchangeValue(element, "maxval", "max"));
+  [...nextElement.querySelectorAll("input[minval]")].forEach((element) =>
+    exchangeValue(element, "minval", "min")
+  );
+  [...nextElement.querySelectorAll("input[maxval]")].forEach((element) =>
+    exchangeValue(element, "maxval", "max")
+  );
 
-  [...nextElement.querySelectorAll("input[min]")].forEach((element) => exchangeValue(element, "min", "min"));
-  [...nextElement.querySelectorAll("input[max]")].forEach((element) => exchangeValue(element, "max", "max"));
+  [...nextElement.querySelectorAll("input[min]")].forEach((element) =>
+    exchangeValue(element, "min", "min")
+  );
+  [...nextElement.querySelectorAll("input[max]")].forEach((element) =>
+    exchangeValue(element, "max", "max")
+  );
 
   //move to the next question...
   nextElement.classList.add("active");
@@ -368,7 +435,9 @@ function checkForSkips(questionElement) {
     selectedElements.sort(classSort);
   } else {
     // something was selected... remove the no response hidden tag..
-    selectedElements = selectedElements.filter((x) => !x.classList.contains("noresponse"));
+    selectedElements = selectedElements.filter(
+      (x) => !x.classList.contains("noresponse")
+    );
   }
 
   // if there is a skipTo attribute, add them to the beginning of the queue...
@@ -405,7 +474,11 @@ function getSelected(questionElement) {
   //   )
   // ];
 
-  var rv1 = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox']")];
+  var rv1 = [
+    ...questionElement.querySelectorAll(
+      "input[type='radio'],input[type='checkbox']"
+    ),
+  ];
 
   var rv2 = [
     ...questionElement.querySelectorAll(
@@ -445,11 +518,17 @@ function getResults(element) {
 
   let allResponses = [...element.querySelectorAll(".response")];
   // get all the checkboxes
-  cb = allResponses.filter((x) => x.type == "checkbox").map((x) => (tmpRes[x.value] = x.checked));
+  cb = allResponses
+    .filter((x) => x.type == "checkbox")
+    .map((x) => (tmpRes[x.value] = x.checked));
 
   // get all the text and radio elements...
   rd = allResponses
-    .filter((x) => (x.type == "radio" && x.checked) || ["text", "date", "email", "number", "tel"].includes(x.type))
+    .filter(
+      (x) =>
+        (x.type == "radio" && x.checked) ||
+        ["text", "date", "email", "number", "tel"].includes(x.type)
+    )
     .map((x) => (tmpRes[x.name] = x.value));
 }
 
@@ -467,7 +546,9 @@ function parse(txt) {
         }
       } else {
         //look up by name
-        let temp1 = [...document.getElementsByName(x)].filter((y) => y.checked)[0];
+        let temp1 = [...document.getElementsByName(x)].filter(
+          (y) => y.checked
+        )[0];
         x = temp1 ? temp1.value : x;
         // ***** if it's neither... look in the previous module *****
         if (!temp1) {
@@ -494,7 +575,11 @@ function parse(txt) {
 
   while (stack.indexOf(")") > 0) {
     let callEnd = stack.indexOf(")");
-    if (stack[callEnd - 4] == "(" && stack[callEnd - 2] == "," && stack[callEnd - 5] in knownFunctions) {
+    if (
+      stack[callEnd - 4] == "(" &&
+      stack[callEnd - 2] == "," &&
+      stack[callEnd - 5] in knownFunctions
+    ) {
       // it might hurt performance, but for debugging
       // expliciting setting the variables are helpful...
       let fun = stack[callEnd - 5];
