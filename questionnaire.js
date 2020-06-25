@@ -74,7 +74,6 @@ export function textboxinput(inputElement) {
 }
 
 function parseSSN(element) {
-  debugger;
   let val = element.value.replace(/\D/g, "");
   let newVal = "";
   if (val.length > 4) {
