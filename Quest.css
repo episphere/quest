@@ -82,4 +82,8 @@ label {
   [id="renderText"] {
     margin-top: 15px;
   }
+
+  .spacePadding {
+    height: 500px;
+  }
 }
