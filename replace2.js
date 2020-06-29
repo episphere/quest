@@ -676,6 +676,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     trigger: "focus",
   });
 
+  [...document.querySelectorAll(".response")].map((elm) =>
+    elm.nextSibling.remove()
+  );
+
   moduleParams.questName = questName;
   return true;
 };

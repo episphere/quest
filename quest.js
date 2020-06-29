@@ -20,9 +20,6 @@ async function startUp() {
         document.querySelector(".question").classList.add("active");
       }
     });
-    [...document.querySelectorAll(".response")].map((elm) =>
-      elm.nextSibling.remove()
-    );
   };
 
   ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
