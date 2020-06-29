@@ -20,6 +20,9 @@ async function startUp() {
         document.querySelector(".question").classList.add("active");
       }
     });
+    [...document.querySelectorAll(".response")].map((elm) =>
+      elm.nextSibling.remove()
+    );
   };
 
   ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
@@ -33,7 +36,8 @@ async function startUp() {
     }
     ta.onkeyup();
   }
-  ta.style.width = parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
+  ta.style.width =
+    parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
