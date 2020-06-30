@@ -22,7 +22,8 @@ export function toggle_grid(event) {
 }
 
 function buildHtml(grid_obj) {
-  let grid_head = '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
+  let grid_head =
+    '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
   grid_obj.responses.forEach((resp) => {
     grid_head += `<div class="col-1">${resp.text}</div>`;
   });
@@ -45,7 +46,7 @@ function buildHtml(grid_obj) {
     small_format += "</div>";
   });
   let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
-    ${grid_obj.shared_text}<div class="d-none d-lg-block" style="background-color: beige;">${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
+    ${grid_obj.shared_text}<div class="d-none d-lg-block" style="background-color: rgb(193,225,236)">${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
     <div><input type='submit' class='previous' value='BACK'></input><input type='submit' class='next' value='NEXT'></input></div>
     </form>`;
 
