@@ -41,14 +41,29 @@ function setFormValue(form, value, id) {
 // here are function that handle the
 // user selection and attach the
 // selected value to the form (question)
+let inputTimer;
 export function textBoxInput(event) {
   let inputElement = event.target;
   textboxinput(inputElement);
 }
 
 export function textboxinput(inputElement) {
-  // handles SSN auto-format
+  let evalBool = "";
+  if (inputElement.getAttribute("modalif") && inputElement.value != "") {
+    evalBool = math.evaluate(
+      inputElement.getAttribute("modalif").replace(/value/, inputElement.value)
+    );
+  }
+  if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
+    if (inputElement.getAttribute("modalvalue")) {
+      document.getElementById(
+        "modalResponseBody"
+      ).innerText = inputElement.getAttribute("modalvalue");
+      $("#softModalResponse").modal("toggle");
+    }
+  }
   if (inputElement.className == "SSN") {
+    // handles SSN auto-format
     parseSSN(inputElement);
   }
 
@@ -188,13 +203,9 @@ export function nextClick(norp, store) {
     norp.form.getAttribute("softedit") == "true" &&
     getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0
   ) {
-    document.getElementById(
-      "softModalFooter"
-    ).innerHTML = `<button type="button" id="continueButton" class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
-     <button type="button" class="btn btn-light" data-dismiss="modal">Answer the Question</button>`;
     let f1 = nextPage;
     f1 = f1.bind(f1, norp, store);
-    document.getElementById("continueButton").onclick = f1;
+    document.getElementById("modalContinueButton").onclick = f1;
     $("#softModal").modal("toggle");
   } else if (
     norp.getAttribute("data-target") == "#hardModal" &&

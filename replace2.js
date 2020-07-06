@@ -497,12 +497,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
               <span aria-hidden="true">&times;</span>
               </button>
           </div>
-          <div class="modal-body">
+          <div id="modalBody" class="modal-body">
               <p>There is 1 unanswered question on this page. Would you like to continue?</p>
           </div>
           <div id="softModalFooter" class="modal-footer">
-              <button type="button" class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
-              <button type="button" class="btn btn-light" data-dismiss="modal">Answer the Question</button>
+              <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
+              <button type="button" id=modalCloseButton class="btn btn-light" data-dismiss="modal">Answer the Question</button>
           </div>
           </div>
       </div>
@@ -524,7 +524,28 @@ transform.render = async (obj, divId, previousResults = {}) => {
           </div>
           </div>
       </div>
-  </div>`;
+  </div>
+  <div class="modal" id="softModalResponse" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Response Requested</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div id="modalResponseBody" class="modal-body">
+              <p>There is an error with this response. Is this correct?</p>
+          </div>
+          <div id="softModalResponseFooter" class="modal-footer">
+              <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
+              <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
+          </div>
+          </div>
+      </div>
+  </div>
+  
+  `;
 
   // if (obj.url && obj.url.split("&").includes("run")) {
   //   if (document.querySelector(".question") != null) {
@@ -657,7 +678,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   ];
 
   textInputs.forEach((inputElement) => {
-    inputElement.oninput = textBoxInput;
+    inputElement.onfocusout = textBoxInput;
   });
 
   let rbCb = [
