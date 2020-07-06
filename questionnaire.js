@@ -340,8 +340,8 @@ async function nextPage(norp, store) {
   //hide the current question
   questionElement.classList.remove("active");
   // nextElement.scrollIntoView();
-  nextElement.querySelectorAll(".questionLabel")[0].scrollIntoView();
   displayQuestion(nextElement);
+  nextElement.querySelectorAll(".questionLabel")[0].scrollIntoView();
 }
 
 export function displayQuestion(nextElement) {
