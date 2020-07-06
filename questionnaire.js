@@ -3,6 +3,10 @@ import { knownFunctions } from "./knownFunctions.js";
 
 export const moduleParams = {};
 
+let script = document.createElement("script");
+script.src = "https://pagecdn.io/lib/mathjs/7.0.1/math.min.js";
+document.body.appendChild(script);
+
 // The questionQueue is an Tree which contains
 // the question ids in the order they should be displayed.
 export const questionQueue = new Tree();
@@ -41,7 +45,6 @@ function setFormValue(form, value, id) {
 // here are function that handle the
 // user selection and attach the
 // selected value to the form (question)
-let inputTimer;
 export function textBoxInput(event) {
   let inputElement = event.target;
   textboxinput(inputElement);
