@@ -341,7 +341,7 @@ async function nextPage(norp, store) {
   questionElement.classList.remove("active");
   // nextElement.scrollIntoView();
   displayQuestion(nextElement);
-  nextElement.querySelectorAll(".questionLabel")[0].scrollIntoView();
+  nextElement.scrollIntoView();
 }
 
 export function displayQuestion(nextElement) {
