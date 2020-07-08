@@ -498,7 +498,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
               </button>
           </div>
           <div id="modalBody" class="modal-body">
-              <p>There is 1 unanswered question on this page. Would you like to continue?</p>
+              <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
           </div>
           <div id="softModalFooter" class="modal-footer">
               <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>

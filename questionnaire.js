@@ -202,14 +202,38 @@ export function nextClick(norp, store) {
   }
 
   //handle the soft and hard edits...
-  if (
+  showModal(norp, store);
+}
+
+function setNumberOfQuestionsInModal(num, norp, store) {
+  let f1 = nextPage;
+  f1 = f1.bind(f1, norp, store);
+  document.getElementById("modalBodyText").innerText = `There ${
+    num > 1 ? "are" : "is"
+  } ${num} question${
+    num > 1 ? "s" : ""
+  } unanswered on this page. Would you like to continue?`;
+  document.getElementById("modalContinueButton").onclick = f1;
+  $("#softModal").modal("toggle");
+}
+// show modal function
+function showModal(norp, store) {
+  let numBlankSoftEdits = [...norp.form.children]
+    .filter(
+      (x) =>
+        x.type &&
+        x.getAttribute("softedit") == "true" &&
+        x.style.display != "none"
+    )
+    .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
+
+  if (numBlankSoftEdits > 0) {
+    setNumberOfQuestionsInModal(numBlankSoftEdits, norp, store);
+  } else if (
     norp.form.getAttribute("softedit") == "true" &&
     getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0
   ) {
-    let f1 = nextPage;
-    f1 = f1.bind(f1, norp, store);
-    document.getElementById("modalContinueButton").onclick = f1;
-    $("#softModal").modal("toggle");
+    setNumberOfQuestionsInModal(1, norp, store);
   } else if (
     norp.getAttribute("data-target") == "#hardModal" &&
     getSelected(norp.form) == 0
