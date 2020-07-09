@@ -62,6 +62,9 @@ export const knownFunctions = {
     return x - y;
   },
   percentDiff: function (x, y) {
+    if (x == "" || y == "") {
+      return false;
+    }
     if (typeof y == "string" && document.getElementById(y)) {
       y = document.getElementById(y).value;
     }

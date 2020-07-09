@@ -173,7 +173,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|@\|(?:([\S][^|]+[\S])\|)?/g, fEmail);
     function fEmail(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "email");
-      return `<input type='email' ${options}'></input>`;
+      return `<input type='email' ${options}></input>`;
     }
 
     // replace |date| with a date input
