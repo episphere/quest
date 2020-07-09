@@ -529,7 +529,7 @@ function getSelected(questionElement) {
 
   rv1 = rv1.filter((x) => x.checked);
   rv2 = rv2.filter((x) => x.value.length > 0);
-  rv3 = rv3.filter((x) => x.checked);
+  rv3 = rv3.filter((x) => x.hasAttribute('checked'));
 
   // rv = rv.filter(x =>
   //   x.type == "radio" || x.type == "checkbox" || x.type == "hidden"
