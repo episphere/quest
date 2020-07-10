@@ -77,7 +77,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //       otherwise it would match the first and last square bracket
 
   let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
     "g"
   );
 
@@ -88,6 +88,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   contents = contents.replace(regEx, function (
     page,
     questID,
+    questOpts,
     questArgs,
     questText
   ) {
@@ -104,6 +105,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       counter = counter + 1;
       return t;
     });
+
+    //handle options for question
+    questOpts = questOpts ? questOpts : "";
 
     // handle displayif on the question...
     // if questArgs is undefined set it to blank.
@@ -474,7 +478,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<textarea $1 skipTo=$2></textarea>"
     );
 
-    let rv = `<form class='question' id='${questID}' ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>${prevButton}\n${nextButton}</div><div class="spacePadding"></div></form>`;
+    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>${prevButton}\n${nextButton}</div><div class="spacePadding"></div></form>`;
     return rv;
   });
 
@@ -714,8 +718,9 @@ function unrollLoops(txt) {
   let res = [...txt.matchAll(loopRegex)].map(function (x, indx) {
     return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
   });
+  debugger;
 
-  let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(,.*?)?\]/gm;
+  let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(?:\|([^,\|\]]+)\|)?(,.*?)?\]/gm;
   let disIfRegex = /displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\)/g;
   // we have an array of objects holding the text..
   // get all the ids...
@@ -785,6 +790,9 @@ function unrollLoops(txt) {
 
       loopText = loopText + "\n" + currentText;
     }
+    loopText +=
+      "[_CONTINUE" + x.indx + "_DONE" + ",displayif=setFalse(-1,#loop)]";
+    debugger;
     return loopText;
   });
 
