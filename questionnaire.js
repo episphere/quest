@@ -350,8 +350,7 @@ async function nextPage(norp, store) {
       let display = parse(nextElement.getAttribute("displayif"));
       console.log(nextElement.getAttribute("displayif"), display);
       if (display) break;
-
-      questionQueue.pop();
+      if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
       nextQuestionId = getNextQuestionId(nextElement);
       nextElement = document.getElementById(nextQuestionId.value);
     } else {
@@ -440,6 +439,9 @@ export function displayQuestion(nextElement) {
 export async function previousClicked(norp, retrieve) {
   // get the previousElement...
   let pv = questionQueue.previous();
+  while (pv.value.value.substring(0, 9) == "_CONTINUE") {
+    pv = questionQueue.previous();
+  }
   let prevElement = document.getElementById(pv.value.value);
   norp.form.classList.remove("active");
   prevElement.classList.add("active");
@@ -529,7 +531,7 @@ function getSelected(questionElement) {
 
   rv1 = rv1.filter((x) => x.checked);
   rv2 = rv2.filter((x) => x.value.length > 0);
-  rv3 = rv3.filter((x) => x.hasAttribute('checked'));
+  rv3 = rv3.filter((x) => x.hasAttribute("checked"));
 
   // rv = rv.filter(x =>
   //   x.type == "radio" || x.type == "checkbox" || x.type == "hidden"
