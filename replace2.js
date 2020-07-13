@@ -718,13 +718,13 @@ function unrollLoops(txt) {
   let res = [...txt.matchAll(loopRegex)].map(function (x, indx) {
     return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
   });
-  debugger;
 
   let idRegex = /\[([A-Z_][A-Z0-9_#]*)[?!]?(?:\|([^,\|\]]+)\|)?(,.*?)?\]/gm;
   let disIfRegex = /displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\)/g;
   // we have an array of objects holding the text..
   // get all the ids...
   let cleanedText = res.map(function (x) {
+    x.txt = x.txt.replace("firstquestion", `loopindx=${x.indx} firstquestion`);
     x.txt += "[_CONTINUE" + x.indx + ",displayif=setFalse(-1,#loop)]";
     x.txt = x.txt.replace(/->\s*_CONTINUE\b/g, "-> _CONTINUE" + x.indx);
     let ids = [...x.txt.matchAll(idRegex)].map((y) => ({
@@ -792,7 +792,6 @@ function unrollLoops(txt) {
     }
     loopText +=
       "[_CONTINUE" + x.indx + "_DONE" + ",displayif=setFalse(-1,#loop)]";
-    debugger;
     return loopText;
   });
 

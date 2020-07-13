@@ -51,6 +51,13 @@ export function textBoxInput(event) {
 }
 
 export function textboxinput(inputElement) {
+  /////////// To change all max attributes to input element ///////////
+  // [...inputElement.parentElement.parentElement.children]
+  //   .filter((x) => x.hasAttribute("max"))
+  //   .map((x) =>
+  //     x.getAttribute("max").replace(x.getAttribute("max"), inputElement.value)
+  //   );
+  ///////////////////////////////////////////////////////////////////////
   let evalBool = "";
   if (inputElement.getAttribute("modalif") && inputElement.value != "") {
     evalBool = math.evaluate(
@@ -342,6 +349,8 @@ async function nextPage(norp, store) {
   // get the actual HTML element.
   let nextElement = document.getElementById(nextQuestionId.value);
 
+  nextElement = exitLoop(nextElement);
+
   // before we add the next question to the queue...
   // check for the displayif status...
   while (nextElement.hasAttribute("displayif")) {
@@ -351,8 +360,9 @@ async function nextPage(norp, store) {
       console.log(nextElement.getAttribute("displayif"), display);
       if (display) break;
       if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
-      nextQuestionId = getNextQuestionId(nextElement);
+      let nextQuestionId = getNextQuestionId(nextElement);
       nextElement = document.getElementById(nextQuestionId.value);
+      nextElement = exitLoop(nextElement);
     } else {
       console.log(
         " ============= next element is not a question...  not sure what went wrong..."
@@ -365,6 +375,22 @@ async function nextPage(norp, store) {
   // nextElement.scrollIntoView();
   displayQuestion(nextElement);
   nextElement.scrollIntoView();
+}
+
+function exitLoop(nextElement) {
+  if (nextElement.hasAttribute("firstquestion")) {
+    let loopMax = document.getElementById(nextElement.getAttribute("loopmax"))
+      .value;
+    let firstQuestion = nextElement.getAttribute("firstquestion");
+    let loopIndex = nextElement.getAttribute("loopindx");
+    if (math.evaluate(firstQuestion > loopMax)) {
+      questionQueue.pop();
+      questionQueue.add(`_CONTINUE${loopIndex}_DONE`);
+      let nextQuestionId = questionQueue.next().value;
+      nextElement = document.getElementById(nextQuestionId.value);
+    }
+  }
+  return nextElement;
 }
 
 export function displayQuestion(nextElement) {
