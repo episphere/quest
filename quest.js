@@ -89,7 +89,6 @@ transform.tout = function (fun, tt = 500) {
   if (transform.tout.t) {
     clearTimeout(transform.tout.t);
   }
-  console.log(prevRes);
   transform.tout.t = setTimeout(fun(prevRes), tt);
 };
 

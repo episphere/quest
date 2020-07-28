@@ -582,7 +582,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let questObj = {};
     let tempObj = {};
 
-    console.log("in fillForm... ret fun:", retrieve);
+    // console.log("in fillForm... ret fun:", retrieve);
 
     if (retrieve) {
       const response = await retrieve();
@@ -702,9 +702,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     trigger: "focus",
   });
 
-  [...document.querySelectorAll(".response")].map((elm) =>
-    elm.nextSibling.remove()
-  );
+  [...document.querySelectorAll(".response")].map((elm) => {
+    if (elm.nextSibling.tagName == "BR") {
+      elm.nextSibling.remove();
+    }
+  });
 
   moduleParams.questName = questName;
   return true;
