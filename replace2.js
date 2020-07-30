@@ -450,13 +450,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace next question  < -> > with hidden...
     questText = questText.replace(
-      /<\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
-      "<input type='hidden' id='" +
-        questID +
-        "_default' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      /<\s*(?:\|if\s*=\s*([^|]+)\|)?\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
+      fHidden
     );
+    function fHidden(containsGroup, ifArgs, skipTo) {
+      ifArgs = ifArgs == undefined ? "" : ` if=${ifArgs}`;
+      return `<input type='hidden'${ifArgs} id='${questID}_skipto_${skipTo}' name='${questID}' skipTo=${skipTo} checked>`;
+    }
 
     // replace next question  < #NR -> > with hidden...
     questText = questText.replace(
