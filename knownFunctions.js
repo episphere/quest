@@ -73,6 +73,6 @@ export const knownFunctions = {
     return knownFunctions.difference(x, y) / x;
   },
   numberOfChoicesSelected: function (x) {
-    return x.length;
+    return x == undefined ? 0 : x.length;
   },
 };
