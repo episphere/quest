@@ -541,7 +541,7 @@ function checkValid(questionElement) {
   return questionElement.checkValidity();
 }
 
-function getSelected(questionElement) {
+export function getSelected(questionElement) {
   // look for radio boxes, checkboxes, and  hidden elements
   // for checked items.  Return all checked items.
   // If nothing is checked, an empty array should be returned.

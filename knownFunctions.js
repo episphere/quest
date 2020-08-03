@@ -1,3 +1,5 @@
+import { getSelected } from "./questionnaire.js";
+
 export const knownFunctions = {
   and: function (x, y) {
     return x && y;
@@ -69,5 +71,8 @@ export const knownFunctions = {
       y = document.getElementById(y).value;
     }
     return knownFunctions.difference(x, y) / x;
+  },
+  numberOfChoicesSelected: function (x) {
+    return x.length;
   },
 };
