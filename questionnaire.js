@@ -70,7 +70,7 @@ export function textboxinput(inputElement) {
       document.getElementById(
         "modalResponseBody"
       ).innerText = inputElement.getAttribute("modalvalue");
-      $("#softModalResponse").modal("toggle");
+      $("#softModalResponse").modal("show");
     }
   }
   if (inputElement.className == "SSN") {
