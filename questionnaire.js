@@ -5,7 +5,7 @@ import { removeQuestion } from "./localforageDAO.js";
 export const moduleParams = {};
 
 let script = document.createElement("script");
-script.src = "./math.min.js";
+script.src = "https://episphere.github.io/quest/math.min.js";
 document.body.appendChild(script);
 
 // The questionQueue is an Tree which contains
