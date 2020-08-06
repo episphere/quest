@@ -6,6 +6,7 @@ import {
   rbAndCbClick,
   textBoxInput,
   displayQuestion,
+  parseSSN,
 } from "./questionnaire.js";
 import { retrieveFromLocalForage } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
@@ -683,6 +684,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   textInputs.forEach((inputElement) => {
     inputElement.onfocusout = textBoxInput;
+  });
+
+  let SSNInputs = [...divElement.querySelectorAll(".SSN")];
+  SSNInputs.forEach((inputElement) => {
+    inputElement.addEventListener("keyup", parseSSN);
   });
 
   let rbCb = [

@@ -51,6 +51,28 @@ export function textBoxInput(event) {
   textboxinput(inputElement);
 }
 
+export function parseSSN(event) {
+  if (event.type == "keyup") {
+    let element = event.target;
+    let val = element.value.replace(/\D/g, "");
+    let newVal = "";
+    if (val.length > 4) {
+      element.value = val;
+    }
+    if (val.length > 3 && val.length < 6) {
+      newVal += val.substr(0, 3) + "-";
+      val = val.substr(3);
+    }
+    if (val.length > 5) {
+      newVal += val.substr(0, 3) + "-";
+      newVal += val.substr(3, 2) + "-";
+      val = val.substr(5);
+    }
+    newVal += val;
+    element.value = newVal;
+  }
+}
+
 export function textboxinput(inputElement) {
   /////////// To change all max attributes to input element ///////////
   // [...inputElement.parentElement.parentElement.children]
@@ -98,25 +120,6 @@ export function textboxinput(inputElement) {
   value = value ? value : inputElement.value;
 
   setFormValue(inputElement.form, value, id);
-}
-
-function parseSSN(element) {
-  let val = element.value.replace(/\D/g, "");
-  let newVal = "";
-  if (val.length > 4) {
-    element.value = val;
-  }
-  if (val.length > 3 && val.length < 6) {
-    newVal += val.substr(0, 3) + "-";
-    val = val.substr(3);
-  }
-  if (val.length > 5) {
-    newVal += val.substr(0, 3) + "-";
-    newVal += val.substr(3, 2) + "-";
-    val = val.substr(5);
-  }
-  newVal += val;
-  element.value = newVal;
 }
 
 // onInput/Change handler for radio/checkboxex
