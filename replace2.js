@@ -178,7 +178,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|@\|(?:([\S][^|]+[\S])\|)?/g, fEmail);
     function fEmail(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "email");
-      return `<input type='email' ${options}></input>`;
+      return `<input type='email' ${options} placeholder="user@example.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"></input>`;
     }
 
     // replace |date| with a date input
@@ -193,7 +193,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|tel\|(?:([\S][^|]+[\S])\|)?/g, fPhone);
     function fPhone(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "tel");
-      return `<input type='tel' ${options} pattern='(([0-9]{3})|[0-9]{3})-?[0-9]{3}-?[0-9]{4}' placeholder='(###)-###-####'></input>`;
+      return `<input type='tel' ${options} pattern="(\\([0-9]{3}\\)|[0-9]{3})-?[0-9]{3}-?[0-9]{4}" placeholder='(###)-###-####'></input>`;
     }
 
     // replace |SSN| with SSN input
