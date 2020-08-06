@@ -685,7 +685,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   textInputs.forEach((inputElement) => {
     inputElement.onfocusout = textBoxInput;
+    inputElement.setAttribute("style", "size: 20 !important");
   });
+
+  [...document.querySelectorAll("input[type='number']")].map(
+    (elm) => (elm.style.width = "150px")
+  );
 
   let SSNInputs = [...divElement.querySelectorAll(".SSN")];
   SSNInputs.forEach((inputElement) => {
