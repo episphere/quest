@@ -7,6 +7,7 @@ import {
   textBoxInput,
   displayQuestion,
   parseSSN,
+  parsePhoneNumber,
 } from "./questionnaire.js";
 import { retrieveFromLocalForage } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
@@ -193,7 +194,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|tel\|(?:([\S][^|]+[\S])\|)?/g, fPhone);
     function fPhone(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "tel");
-      return `<input type='tel' ${options} pattern="(\\([0-9]{3}\\)|[0-9]{3})[0-9]{3}-?[0-9]{4}" placeholder='(###)###-####'></input>`;
+      return `<input type='tel' ${options} pattern="[0-9]{3}[0-9]{3}[0-9]{4}" maxlength="12" placeholder='###-###-####'></input>`;
     }
 
     // replace |SSN| with SSN input
@@ -678,7 +679,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   let textInputs = [
     ...divElement.querySelectorAll(
-      "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='time'],textarea,select"
+      "input[type='text'],input[type='number'],input[type='email'],input[type='date'],input[type='time'],textarea,select"
     ),
   ];
 
@@ -690,6 +691,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
   SSNInputs.forEach((inputElement) => {
     inputElement.addEventListener("keyup", parseSSN);
   });
+
+  let phoneInputs = [...divElement.querySelectorAll("input[type='tel']")];
+  phoneInputs.forEach((inputElement) =>
+    inputElement.addEventListener("keyup", parsePhoneNumber)
+  );
 
   let rbCb = [
     ...divElement.querySelectorAll(

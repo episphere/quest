@@ -52,25 +52,65 @@ export function textBoxInput(event) {
 }
 
 export function parseSSN(event) {
+  debugger;
   if (event.type == "keyup") {
     let element = event.target;
     let val = element.value.replace(/\D/g, "");
     let newVal = "";
-    if (val.length > 4) {
-      element.value = val;
+
+    if (val.length >= 3 && val.length < 5 && event.code != "Backspace") {
+      //reformat and return SSN
+      newVal += val.replace(/(\d{3})/, "$1-");
+      element.value = newVal;
     }
-    if (val.length > 3 && val.length < 6) {
-      newVal += val.substr(0, 3) + "-";
-      val = val.substr(3);
+
+    if (val.length >= 5 && event.code != "Backspace") {
+      //reformat and return SSN
+      newVal += val.replace(/(\d{3})(\d{2})/, "$1-$2-");
+      element.value = newVal;
     }
-    if (val.length > 5) {
-      newVal += val.substr(0, 3) + "-";
-      newVal += val.substr(3, 2) + "-";
-      val = val.substr(5);
-    }
-    newVal += val;
-    element.value = newVal;
+    return null;
   }
+}
+
+export function parsePhoneNumber(event) {
+  if (event.type == "keyup") {
+    let element = event.target;
+    let phone = element.value.replace(/\D/g, "");
+    let newVal = "";
+
+    if (phone.length >= 3 && phone.length < 6 && event.code != "Backspace") {
+      //reformat and return phone number
+      newVal += phone.replace(/(\d{3})/, "$1-");
+      element.value = newVal;
+    }
+
+    if (phone.length >= 6 && event.code != "Backspace") {
+      //reformat and return phone number
+      newVal += phone.replace(/(\d{3})(\d{3})/, "$1-$2-");
+      element.value = newVal;
+    }
+
+    return null;
+  }
+  //   let newVal = "";
+
+  //   if (val.length > 4) {
+  //     element.value = val;
+  //   }
+  //   if (val.length > 3 && val.length < 6) {
+  //     newVal += val.substr(0, 3) + "-";
+  //     val = val.substr(3);
+  //   }
+  //   if (val.length > 5) {
+  //     debugger;
+  //     newVal += val.substr(0, 3) + "-";
+  //     newVal += val.substr(3, 3) + "-";
+  //     val = val.substr(6);
+  //   }
+  //   newVal += val;
+  //   element.value = newVal;
+  // }
 }
 
 export function textboxinput(inputElement) {
