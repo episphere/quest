@@ -52,7 +52,6 @@ export function textBoxInput(event) {
 }
 
 export function parseSSN(event) {
-  debugger;
   if (event.type == "keyup") {
     let element = event.target;
     let val = element.value.replace(/\D/g, "");
