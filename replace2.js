@@ -688,9 +688,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
     inputElement.setAttribute("style", "size: 20 !important");
   });
 
-  [...document.querySelectorAll("input[type='number']")].map(
-    (elm) => (elm.style.width = "150px")
-  );
+  // [...document.querySelectorAll("input[type='number']")].map(
+  //   (elm) => (elm.style.width = "150px")
+  // );
 
   let SSNInputs = [...divElement.querySelectorAll(".SSN")];
   SSNInputs.forEach((inputElement) => {
@@ -726,7 +726,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   });
 
   moduleParams.questName = questName;
-  return true;
+  // return true;
 };
 
 function unrollLoops(txt) {

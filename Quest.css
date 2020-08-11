@@ -57,6 +57,10 @@ label {
 }
 
 @media only screen and (max-width: 768px) {
+  input[type="number"] {
+    width: 150px;
+  }
+
   [id="ta"] {
     width: 350px !important;
   }
@@ -122,3 +126,4 @@ label {
   .spacePadding {
     height: 50px;
   }
+}
