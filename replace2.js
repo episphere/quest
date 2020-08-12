@@ -722,7 +722,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   });
 
   moduleParams.questName = questName;
-  // return true;
+  return true;
 };
 
 function unrollLoops(txt) {
