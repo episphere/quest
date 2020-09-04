@@ -306,8 +306,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fNum(fullmatch, opts) {
       // make sure that the element id is set...
-      const { options, elementId } = guaranteeIdSet(opts, "num");
-
+      let { options, elementId } = guaranteeIdSet(opts, "num");
+      let maxRegex = /max(?![(a-z])/g;
+      let minRegex = /min(?![(a-z])/g;
+      if (minRegex.test(options)) {
+        options = options.replace(minRegex, "data-min");
+      }
+      if (maxRegex.test(options)) {
+        options = options.replace(maxRegex, "data-max");
+      }
       return `<input type='number' name='${questID}' ${options}></input>`;
     }
 
@@ -679,13 +686,20 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   let textInputs = [
     ...divElement.querySelectorAll(
-      "input[type='text'],input[type='number'],input[type='email'],input[type='date'],input[type='time'],textarea,select"
+      "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='time'],textarea,select"
     ),
   ];
 
   textInputs.forEach((inputElement) => {
+    let div = document.createElement("div");
+    let span = document.createElement("span");
+    span.innerText = " ";
+    span.style.height = "inherit";
+    div.appendChild(span);
+    div.style.minHeight = "30px";
     inputElement.onfocusout = textBoxInput;
     inputElement.setAttribute("style", "size: 20 !important");
+    inputElement.insertAdjacentElement("afterend", div);
   });
 
   let SSNInputs = [...divElement.querySelectorAll(".SSN")];

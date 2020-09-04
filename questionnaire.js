@@ -139,6 +139,48 @@ export function textboxinput(inputElement) {
     parseSSN(inputElement);
   }
 
+  let span1 = inputElement.nextElementSibling.firstChild;
+  if (span1 != null) {
+    span1.style.color = "red";
+
+    switch (inputElement.type) {
+      //Please fill out this field.
+      case "number":
+        if (inputElement.value != "") {
+          if (
+            inputElement.dataset.min &&
+            math.evaluate(
+              `${inputElement.value} < ${inputElement.getAttribute("data-min")}`
+            )
+          ) {
+            span1.innerText =
+              `Value must be greater than or equal to ` +
+              inputElement.getAttribute("data-min") +
+              ".";
+            inputElement.classList.add("invalid");
+          } else if (
+            inputElement.dataset.max &&
+            math.evaluate(
+              `${inputElement.value} > ${inputElement.getAttribute("data-max")}`
+            )
+          ) {
+            span1.innerText =
+              `Value must be less than or equal to ` +
+              inputElement.getAttribute("data-max") +
+              ".";
+            inputElement.classList.add("invalid");
+          } else {
+            span1.innerText = " ";
+            if ([...inputElement.classList].includes("invalid")) {
+              inputElement.classList.remove("invalid");
+            }
+          }
+        } else {
+          span1.innerText = " ";
+        }
+    }
+  }
+
   // what is going on here...
   // we are checking if we should click the checkbox/radio button..
   // first see if the parent is a div and the first child is a checkbox...
@@ -329,6 +371,9 @@ async function nextPage(norp, store) {
   // and call next().
 
   let questionElement = norp.form;
+  if (checkValid(questionElement) == false) {
+    return null;
+  }
   if (questionQueue.isEmpty()) {
     console.log(
       "==> the tree is empty... add first element",
@@ -383,10 +428,6 @@ async function nextPage(norp, store) {
 
   // check if we need to add questions to the question queue
   checkForSkips(questionElement);
-
-  if (checkValid(questionElement) == false) {
-    return null;
-  }
 
   let nextQuestionId = getNextQuestionId(questionElement);
   // get the actual HTML element.
@@ -480,11 +521,20 @@ export function displayQuestion(nextElement) {
     }
     return element;
   }
-  [...nextElement.querySelectorAll("input[minval]")].forEach((element) =>
-    exchangeValue(element, "minval", "min")
-  );
+  //Replacing all default HTML form validations with datasets
+
+  [...nextElement.querySelectorAll("input[required]")].forEach((element) => {
+    if (element.hasAttribute("required")) {
+      element.removeAttribute("required");
+      element.dataset.required = "true";
+    }
+  });
+
+  [...nextElement.querySelectorAll("input[minval]")].forEach((element) => {
+    exchangeValue(element, "minval", "data-min");
+  });
   [...nextElement.querySelectorAll("input[maxval]")].forEach((element) =>
-    exchangeValue(element, "maxval", "max")
+    exchangeValue(element, "maxval", "data-max")
   );
 
   [...nextElement.querySelectorAll("input[min]")].forEach((element) =>
@@ -580,7 +630,16 @@ function checkForSkips(questionElement) {
 }
 
 function checkValid(questionElement) {
-  return questionElement.checkValidity();
+  debugger;
+  if (
+    [...questionElement.children].filter(
+      (element) => element.classList == "invalid"
+    ).length > 0
+  ) {
+    return false;
+  } else {
+    return questionElement.checkValidity();
+  }
 }
 
 export function getSelected(questionElement) {
