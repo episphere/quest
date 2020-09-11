@@ -73,6 +73,7 @@ export function parseSSN(event) {
 }
 
 export function parsePhoneNumber(event) {
+  debugger;
   if (event.type == "keyup") {
     let element = event.target;
     let phone = element.value.replace(/\D/g, "");
@@ -185,6 +186,40 @@ export function textboxinput(inputElement) {
         if (inputElement.value != "" && !emailRegEx.test(inputElement.value)) {
           span1.innerText =
             "Please enter an email address in this format: user@example.com.";
+          inputElement.classList.add("invalid");
+          inputElement.form.noValidate = true;
+        } else {
+          span1.innerText = " ";
+          if ([...inputElement.classList].includes("invalid")) {
+            inputElement.classList.remove("invalid");
+          }
+          inputElement.form.noValidate = false;
+        }
+        break;
+
+      case "tel":
+        if (inputElement.value != "" && inputElement.value.length < 12) {
+          span1.innerText =
+            "Please enter a phone number in this format: 999-999-9999.";
+          inputElement.classList.add("invalid");
+          inputElement.form.noValidate = true;
+        } else {
+          span1.innerText = " ";
+          if ([...inputElement.classList].includes("invalid")) {
+            inputElement.classList.remove("invalid");
+          }
+          inputElement.form.noValidate = false;
+        }
+        break;
+
+      case "text":
+        if (
+          inputElement.value != "" &&
+          [...inputElement.classList].includes("SSN") &&
+          inputElement.value.length < 11
+        ) {
+          span1.innerText =
+            "Please enter a Social Security Number in this format: 999-99-9999.";
           inputElement.classList.add("invalid");
           inputElement.form.noValidate = true;
         } else {
