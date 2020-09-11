@@ -178,6 +178,23 @@ export function textboxinput(inputElement) {
         } else {
           span1.innerText = " ";
         }
+        break;
+
+      case "email":
+        let emailRegEx = /\S+@\S+\.\S+/;
+        if (inputElement.value != "" && !emailRegEx.test(inputElement.value)) {
+          span1.innerText =
+            "Please enter an email address in this format: user@example.com.";
+          inputElement.classList.add("invalid");
+          inputElement.form.noValidate = true;
+        } else {
+          span1.innerText = " ";
+          if ([...inputElement.classList].includes("invalid")) {
+            inputElement.classList.remove("invalid");
+          }
+          inputElement.form.noValidate = false;
+        }
+        break;
     }
   }
 
@@ -630,12 +647,11 @@ function checkForSkips(questionElement) {
 }
 
 function checkValid(questionElement) {
-  debugger;
-  if (
-    [...questionElement.children].filter(
-      (element) => element.classList == "invalid"
-    ).length > 0
-  ) {
+  let invalidElements = [...questionElement.children].filter((element) =>
+    element.classList.contains("invalid")
+  );
+  if (invalidElements.length > 0) {
+    invalidElements[0].focus();
     return false;
   } else {
     return questionElement.checkValidity();

@@ -167,7 +167,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     //replace |popup|buttonText|Title|text| with a popover
     questText = questText.replace(
-      /\|popup\|([\S][^|]+[\S])\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g,
+      /\|popup\|([^\s\|\<]+[\S])\|(?:([^\s\|\<]+[\S])\|)?([^\s\|\<]+[\S])\|/g,
       fPopover
     );
     function fPopover(fullmatch, buttonText, title, popText) {
@@ -176,14 +176,14 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |@| with an email input
-    questText = questText.replace(/\|@\|(?:([\S][^|]+[\S])\|)?/g, fEmail);
+    questText = questText.replace(/\|@\|(?:([^\|\<]+[^\|])\|)?/g, fEmail);
     function fEmail(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "email");
-      return `<input type='email' ${options} placeholder="user@example.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"></input>`;
+      return `<input type='email' ${options} placeholder="user@example.com"></input>`;
     }
 
     // replace |date| with a date input
-    questText = questText.replace(/\|date\|(?:([\S][^|]+[\S])\|)?/g, fDate);
+    questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|])\|)?/g, fDate);
     function fDate(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "date");
       return `<input type='date' ${options}></input>`;
@@ -191,28 +191,28 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace |tel| with phone input
 
-    questText = questText.replace(/\|tel\|(?:([\S][^|]+[\S])\|)?/g, fPhone);
+    questText = questText.replace(/\|tel\|(?:([^\|\<]+[^\|])\|)?/g, fPhone);
     function fPhone(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "tel");
       return `<input type='tel' ${options} pattern="[0-9]{3}-?[0-9]{3}-?[0-9]{4}" maxlength="12" placeholder='###-###-####'></input>`;
     }
 
     // replace |SSN| with SSN input
-    questText = questText.replace(/\|SSN\|(?:([\S][^|]+[\S])\|)?/g, fSSN);
+    questText = questText.replace(/\|SSN\|(?:([^\|\<]+[^\|])\|)?/g, fSSN);
     function fSSN(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSN");
       return `<input type='text' ${options} class="SSN" maxlength="11" pattern='[0-9]{3}-?[0-9]{2}-?[0-9]{4}'placeholder="_ _ _-_ _-_ _ _ _"></input>`;
     }
 
     // replace |SSNsm| with SSN input
-    questText = questText.replace(/\|SSNsm\|(?:([\S][^|]+[\S])\|)?/g, fSSNsm);
+    questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|])\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
       return `<input type='text' ${options} pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
     }
 
     // replace |state| with state dropdown
-    questText = questText.replace(/\|state\|(?:([\S][^|]+[\S])\|)?/g, fState);
+    questText = questText.replace(/\|state\|(?:([^\|\<]+[^\|])\|)?/g, fState);
     function fState(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "state");
       return `<select ${options}>
@@ -293,7 +293,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
 
     // replace |time| with a time input
-    questText = questText.replace(/\|time\|(?:([\S][^|]+[\S])\|)?/g, fTime);
+    questText = questText.replace(/\|time\|(?:([^\|\<]+[^\|])\|)?/g, fTime);
     function fTime(x, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "time");
       return `<input type='time' ${options}>`;
@@ -301,7 +301,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace |__|__|  with a number box...
     questText = questText.replace(
-      /\|(?:__\|){2,}(?:([\S][^|]+[\S])\|)?/g,
+      /\|(?:__\|){2,}(?:([^\|\<]+[^\|])\|)?/g,
       fNum
     );
     function fNum(fullmatch, opts) {
