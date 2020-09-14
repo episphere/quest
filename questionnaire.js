@@ -73,7 +73,6 @@ export function parseSSN(event) {
 }
 
 export function parsePhoneNumber(event) {
-  debugger;
   if (event.type == "keyup") {
     let element = event.target;
     let phone = element.value.replace(/\D/g, "");
@@ -345,8 +344,24 @@ export function nextClick(norp, store) {
     norp = document.getElementById(norp).querySelector(".next");
   }
 
-  //handle the soft and hard edits...
-  showModal(norp, store);
+  let reqElms = [];
+  reqElms = [...norp.form.children].filter((elm) => elm.dataset.required);
+  if (reqElms.length > 0) {
+    reqElms.forEach((elm) => {
+      let span = elm.nextElementSibling.firstChild;
+      if (elm.value.length == 0) {
+        span.style.color = "red";
+        span.innerText = "Please fill out this field.";
+        elm.focus();
+        return null;
+      } else {
+        //handle the soft and hard edits...
+        showModal(norp, store);
+      }
+    });
+  } else {
+    showModal(norp, store);
+  }
 }
 
 function setNumberOfQuestionsInModal(num, norp, store) {
@@ -366,7 +381,7 @@ function showModal(norp, store) {
     .filter(
       (x) =>
         x.type &&
-        x.getAttribute("softedit") == "true" &&
+        norp.form.getAttribute("softedit") == "true" &&
         x.style.display != "none"
     )
     .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
