@@ -176,14 +176,14 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |@| with an email input
-    questText = questText.replace(/\|@\|(?:([^\|\<]+[^\|])\|)?/g, fEmail);
+    questText = questText.replace(/\|@\|(?:([^\|\<]+[^\|]+)\|)?/g, fEmail);
     function fEmail(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "email");
       return `<input type='email' ${options} placeholder="user@example.com"></input>`;
     }
 
     // replace |date| with a date input
-    questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|])\|)?/g, fDate);
+    questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
     function fDate(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "date");
       return `<input type='date' ${options}></input>`;
@@ -191,28 +191,28 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace |tel| with phone input
 
-    questText = questText.replace(/\|tel\|(?:([^\|\<]+[^\|])\|)?/g, fPhone);
+    questText = questText.replace(/\|tel\|(?:([^\|\<]+[^\|]+)\|)?/g, fPhone);
     function fPhone(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "tel");
       return `<input type='tel' ${options} pattern="[0-9]{3}-?[0-9]{3}-?[0-9]{4}" maxlength="12" placeholder='###-###-####'></input>`;
     }
 
     // replace |SSN| with SSN input
-    questText = questText.replace(/\|SSN\|(?:([^\|\<]+[^\|])\|)?/g, fSSN);
+    questText = questText.replace(/\|SSN\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSN);
     function fSSN(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSN");
       return `<input type='text' ${options} class="SSN" maxlength="11" pattern='[0-9]{3}-?[0-9]{2}-?[0-9]{4}'placeholder="_ _ _-_ _-_ _ _ _"></input>`;
     }
 
     // replace |SSNsm| with SSN input
-    questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|])\|)?/g, fSSNsm);
+    questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
       return `<input type='text' ${options} pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
     }
 
     // replace |state| with state dropdown
-    questText = questText.replace(/\|state\|(?:([^\|\<]+[^\|])\|)?/g, fState);
+    questText = questText.replace(/\|state\|(?:([^\|\<]+[^\|]+)\|)?/g, fState);
     function fState(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "state");
       return `<select ${options}>
@@ -293,7 +293,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
 
     // replace |time| with a time input
-    questText = questText.replace(/\|time\|(?:([^\|\<]+[^\|])\|)?/g, fTime);
+    questText = questText.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
     function fTime(x, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "time");
       return `<input type='time' ${options}>`;
@@ -301,7 +301,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace |__|__|  with a number box...
     questText = questText.replace(
-      /\|(?:__\|){2,}(?:([^\|\<]+[^\|])\|)?/g,
+      /\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g,
       fNum
     );
     function fNum(fullmatch, opts) {
@@ -454,7 +454,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     questText = questText.replace(/\|(displayif=.+?)\|(.*?)\|/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
-      return `<span ${condition}>${text}</span>`;
+      return `<span class='displayif' ${condition}>${text}</span>`;
     }
 
     // replace next question  < -> > with hidden...
