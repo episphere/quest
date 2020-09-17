@@ -167,7 +167,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     //replace |popup|buttonText|Title|text| with a popover
     questText = questText.replace(
-      /\|popup\|([^\s\|\<]+[\S])\|(?:([^\s\|\<]+[\S])\|)?([^\s\|\<]+[\S])\|/g,
+      /\|popup\|([\S][^|]+[\S])\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g,
       fPopover
     );
     function fPopover(fullmatch, buttonText, title, popText) {
@@ -530,7 +530,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
               </button>
           </div>
           <div class="modal-body">
-              <p>There is 1 unanswered question on this page. Please answer this question.</p>
+              <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Answer the Question</button>

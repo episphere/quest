@@ -331,6 +331,12 @@ function handleXOR(inputElement) {
       x.checked = x.value == 99 ? false : x.checked;
     } else {
       x.value = "";
+      if (x.nextElementSibling.children[0].tagName == "SPAN") {
+        if (x.nextElementSibling.children[0].innerText.length != 0) {
+          x.nextElementSibling.children[0].innerText = "";
+          x.classList.remove("invalid");
+        }
+      }
       valueObj[x.id] = x.value;
     }
   });
@@ -364,44 +370,64 @@ export function nextClick(norp, store) {
   }
 }
 
-function setNumberOfQuestionsInModal(num, norp, store) {
+function setNumberOfQuestionsInModal(num, norp, store, soft) {
+  let prompt = `There ${num > 1 ? "are" : "is"} ${num} question${
+    num > 1 ? "s" : ""
+  } unanswered on this page. `;
+  if (!soft) {
+    document.getElementById(
+      "hardModalBodyText"
+    ).innerText = `${prompt} Please answer the question${num > 1 ? "s" : ""}.`;
+    $("#hardModal").modal("toggle");
+    return null;
+  }
   let f1 = nextPage;
   f1 = f1.bind(f1, norp, store);
-  document.getElementById("modalBodyText").innerText = `There ${
-    num > 1 ? "are" : "is"
-  } ${num} question${
-    num > 1 ? "s" : ""
-  } unanswered on this page. Would you like to continue?`;
+  document.getElementById(
+    "modalBodyText"
+  ).innerText = `${prompt} Would you like to continue?`;
   document.getElementById("modalContinueButton").onclick = f1;
   $("#softModal").modal("toggle");
 }
 // show modal function
 function showModal(norp, store) {
-  let numBlankSoftEdits = [...norp.form.children]
-    .filter(
-      (x) =>
-        x.type &&
-        norp.form.getAttribute("softedit") == "true" &&
-        x.style.display != "none"
-    )
-    .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
-
-  if (numBlankSoftEdits > 0) {
-    setNumberOfQuestionsInModal(numBlankSoftEdits, norp, store);
-  } else if (
-    norp.form.getAttribute("softedit") == "true" &&
-    getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0
+  if (
+    norp.form.getAttribute("softedit") == "true" ||
+    norp.form.getAttribute("hardedit") == "true"
   ) {
-    setNumberOfQuestionsInModal(1, norp, store);
-  } else if (
-    norp.getAttribute("data-target") == "#hardModal" &&
-    getSelected(norp.form) == 0
-  ) {
-    $("#hardModal").modal("toggle");
-    return null;
-  } else {
-    nextPage(norp, store);
+    let numBlankReponses = [...norp.form.children]
+      .filter(
+        (x) =>
+          x.type &&
+          x.type != "hidden" &&
+          !x.hasAttribute("xor") &&
+          x.style.display != "none"
+      )
+      .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
+    let hasNoResponses =
+      getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0;
+    numBlankReponses =
+      numBlankReponses == 0 && hasNoResponses ? 1 : numBlankReponses;
+    if (numBlankReponses > 0) {
+      setNumberOfQuestionsInModal(
+        numBlankReponses,
+        norp,
+        store,
+        norp.form.getAttribute("softedit") == "true"
+      );
+      return null;
+    }
+    // if (
+    //   norp.getAttribute("data-target") == "#hardModal" &&
+    //   getSelected(norp.form) == 0
+    // ) {
+    //   $("#hardModal").modal("toggle");
+    //   return null;
+    // } else {
+    //   nextPage(norp, store);
+    // }
   }
+  nextPage(norp, store);
 }
 
 let questRes = {};
@@ -604,12 +630,12 @@ export function displayQuestion(nextElement) {
     exchangeValue(element, "maxval", "data-max")
   );
 
-  [...nextElement.querySelectorAll("input[min]")].forEach((element) =>
-    exchangeValue(element, "min", "min")
+  [...nextElement.querySelectorAll("input[data-min]")].forEach((element) =>
+    exchangeValue(element, "data-min", "data-min")
   );
-  [...nextElement.querySelectorAll("input[max]")].forEach((element) =>
-    exchangeValue(element, "max", "max")
-  );
+  [...nextElement.querySelectorAll("input[data-max]")].forEach((element) => {
+    exchangeValue(element, "data-max", "data-max");
+  });
 
   //move to the next question...
   nextElement.classList.add("active");
