@@ -406,8 +406,24 @@ function showModal(norp, store) {
       .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
     let hasNoResponses =
       getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0;
-    numBlankReponses =
-      numBlankReponses == 0 && hasNoResponses ? 1 : numBlankReponses;
+    // let tempVal = 0;
+    // if (hasNoResponses) {
+    //   tempVal = 0;
+    // } else {
+    //   tempVal = 1;
+    // }
+    if (numBlankReponses == 0 && hasNoResponses == true) {
+      numBlankReponses = 1;
+    } else if ((numBlankReponses == 0) == true && hasNoResponses == false) {
+      numBlankReponses = 0;
+    } else if ((numBlankReponses == 0) == false && hasNoResponses == true) {
+      numBlankReponses = numBlankReponses;
+    } else {
+      numBlankReponses = 0;
+    }
+    // numBlankReponses =
+    //   numBlankReponses == 0 && hasNoResponses ? tempVal : numBlankReponses;
+
     if (numBlankReponses > 0) {
       setNumberOfQuestionsInModal(
         numBlankReponses,
