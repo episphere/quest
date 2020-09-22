@@ -177,6 +177,9 @@ export function textboxinput(inputElement) {
           }
         } else {
           span1.innerText = " ";
+          if ([...inputElement.classList].includes("invalid")) {
+            inputElement.classList.remove("invalid");
+          }
         }
         break;
 
