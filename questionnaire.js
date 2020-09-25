@@ -233,6 +233,16 @@ export function textboxinput(inputElement) {
           inputElement.classList.add("invalid");
           inputElement.form.classList.remove("invalid");
           inputElement.form.noValidate = true;
+        } else if (
+          inputElement.value != "" &&
+          [...inputElement.classList].includes("SSNsm") &&
+          inputElement.value.length < 4
+        ) {
+          span1.innerText =
+            "Please enter the last four digits of a Social Security Number in this format: 9999.";
+          inputElement.classList.add("invalid");
+          inputElement.form.classList.remove("invalid");
+          inputElement.form.noValidate = true;
         } else {
           span1.innerText = " ";
           if ([...inputElement.classList].includes("invalid")) {
