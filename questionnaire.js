@@ -158,6 +158,7 @@ export function textboxinput(inputElement) {
               inputElement.getAttribute("data-min") +
               ".";
             inputElement.classList.add("invalid");
+            inputElement.form.classList.add("invalid");
           } else if (
             inputElement.dataset.max &&
             math.evaluate(
@@ -169,16 +170,19 @@ export function textboxinput(inputElement) {
               inputElement.getAttribute("data-max") +
               ".";
             inputElement.classList.add("invalid");
+            inputElement.form.classList.add("invalid");
           } else {
             span1.innerText = " ";
             if ([...inputElement.classList].includes("invalid")) {
               inputElement.classList.remove("invalid");
+              inputElement.form.classList.remove("invalid");
             }
           }
         } else {
           span1.innerText = " ";
           if ([...inputElement.classList].includes("invalid")) {
             inputElement.classList.remove("invalid");
+            inputElement.form.classList.remove("invalid");
           }
         }
         break;
@@ -189,11 +193,13 @@ export function textboxinput(inputElement) {
           span1.innerText =
             "Please enter an email address in this format: user@example.com.";
           inputElement.classList.add("invalid");
+          inputElement.form.classList.add("invalid");
           inputElement.form.noValidate = true;
         } else {
           span1.innerText = " ";
           if ([...inputElement.classList].includes("invalid")) {
             inputElement.classList.remove("invalid");
+            inputElement.form.classList.remove("invalid");
           }
           inputElement.form.noValidate = false;
         }
@@ -204,11 +210,13 @@ export function textboxinput(inputElement) {
           span1.innerText =
             "Please enter a phone number in this format: 999-999-9999.";
           inputElement.classList.add("invalid");
+          inputElement.form.classList.add("invalid");
           inputElement.form.noValidate = true;
         } else {
           span1.innerText = " ";
           if ([...inputElement.classList].includes("invalid")) {
             inputElement.classList.remove("invalid");
+            inputElement.form.classList.remove("invalid");
           }
           inputElement.form.noValidate = false;
         }
@@ -223,11 +231,13 @@ export function textboxinput(inputElement) {
           span1.innerText =
             "Please enter a Social Security Number in this format: 999-99-9999.";
           inputElement.classList.add("invalid");
+          inputElement.form.classList.remove("invalid");
           inputElement.form.noValidate = true;
         } else {
           span1.innerText = " ";
           if ([...inputElement.classList].includes("invalid")) {
             inputElement.classList.remove("invalid");
+            inputElement.form.classList.remove("invalid");
           }
           inputElement.form.noValidate = false;
         }
@@ -742,11 +752,7 @@ function checkForSkips(questionElement) {
 }
 
 function checkValid(questionElement) {
-  let invalidElements = [...questionElement.children].filter((element) =>
-    element.classList.contains("invalid")
-  );
-  if (invalidElements.length > 0) {
-    invalidElements[0].focus();
+  if (questionElement.classList.contains("invalid")) {
     return false;
   } else {
     return questionElement.checkValidity();
