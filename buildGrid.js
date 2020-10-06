@@ -65,7 +65,6 @@ export function parseGrid(text) {
   let grid_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/;
   let grid_match = text.match(grid_regex);
   if (grid_match) {
-    console.log(grid_match);
     grid_obj = {
       original: grid_match[0],
       args: grid_match[1],

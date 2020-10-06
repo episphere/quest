@@ -99,8 +99,6 @@ export class Tree {
     let obj = nodeJSON(this.rootNode);
     obj.currentNode = this.currentNode.value;
     let json = JSON.stringify(obj);
-    console.log(obj);
-    console.log(json);
     return json;
   }
 

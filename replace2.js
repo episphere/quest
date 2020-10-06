@@ -120,6 +120,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let endMatch = questArgs.match(/end\s*=\s*(.*)?/);
     // if so, remove the comma and go.  if not, set questArgs to blank...
     if (displayifMatch) {
+      console.log("displayif================================");
       questArgs = displayifMatch[0];
     } else if (endMatch) {
       questArgs = endMatch[0];
@@ -307,15 +308,22 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fNum(fullmatch, opts) {
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
+      //console.log("Number input options", options);
       let maxRegex = /max(?![(a-z])/g;
       let minRegex = /min(?![(a-z])/g;
-      if (minRegex.test(options)) {
-        options = options.replace(minRegex, "data-min");
+      //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
+      let optionList = options.split(" ");
+      for (var o of optionList){
+        if (minRegex.test(o)) {
+          o = o.replace(minRegex, "data-min");
+          options = options + " " + o;
+        }
+        if (maxRegex.test(o)) {
+          o = o.replace(maxRegex, "data-max");
+          options = options + " " + o;
+        }
       }
-      if (maxRegex.test(options)) {
-        options = options.replace(maxRegex, "data-max");
-      }
-      return `<input type='number' name='${questID}' ${options}></input>`;
+      return `<input type='number' name='${questID}' ${options} ></input>`;
     }
 
     // replace |__| or [text box:xxx] with an input box...
@@ -411,6 +419,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
+      console.log("displayifffffffffffffffff");
       if (condition == undefined) {
         displayIf = "";
       } else {
@@ -597,7 +606,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const response = await retrieve();
       if (response.code === 200) {
         const userData = response.data;
-        console.log(userData);
         if (userData[questName]) {
           questObj = userData[questName];
         }
@@ -638,6 +646,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // wait for the objects to be retrieved,
   // then reset the tree.
+  console.log('obj.retrieve==', obj.retrieve);
   await fillForm(obj.retrieve);
 
   // get the tree from localforage...
@@ -833,8 +842,6 @@ function unrollLoops(txt) {
 
 export function stopSubmit(event) {
   event.preventDefault();
-  console.log(event.target.id);
-
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve);

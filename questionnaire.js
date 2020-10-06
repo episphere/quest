@@ -540,7 +540,7 @@ async function nextPage(norp, store) {
         // allResposes really should be defined at this point. If it wasn't
         // previously in LF, the previous block should have created it...
         localforage.setItem(questName, allResponses, () => {
-          console.log("... Response stored in LF");
+          console.log("... Response stored in LF: " + questName, JSON.stringify(allResponses));
         });
       });
 
@@ -571,9 +571,9 @@ async function nextPage(norp, store) {
   // check for the displayif status...
   while (nextElement.hasAttribute("displayif")) {
     // not sure what to do if the next element is is not a question ...
+    console.log("displayffffffffffffffff 111111");
     if (nextElement.classList.contains("question")) {
       let display = parse(nextElement.getAttribute("displayif"));
-      console.log(nextElement.getAttribute("displayif"), display);
       if (display) break;
       if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
       let nextQuestionId = getNextQuestionId(nextElement);
@@ -636,6 +636,7 @@ export function displayQuestion(nextElement) {
   [...nextElement.children]
     .filter((x) => x.hasAttribute("displayif"))
     .map((elm) => {
+      console.log("displayfffffffffffffffff 2222222222");
       let f = parse(elm.getAttribute("displayif"));
 
       elm.style.display = f ? "inline" : "none";
@@ -699,7 +700,6 @@ export async function previousClicked(norp, retrieve) {
 
   if (retrieve) {
     const response = await retrieve();
-    console.log(response);
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
   updateTreeInLocalForage();
@@ -900,7 +900,6 @@ function parse(txt) {
       // splice start at callEnd-5, remove 6, add the calculated value...
       stack.splice(callEnd - 5, 6, tmpValue);
     } else {
-      console.log(stack);
       throw { Message: "Bad Displayif Function", Stack: stack };
     }
   }
