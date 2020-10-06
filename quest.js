@@ -41,11 +41,9 @@ async function startUp() {
   document.getElementById("clearMem").onclick = clearLocalForage;
 
   document.getElementById("updater").onclick = function (event) {
-    console.log(event);
     let txt = "";
     try {
       prevRes = JSON.parse(json_input.value);
-      console.log(prevRes);
       txt = "added json... ";
     } catch (err) {
       txt = "caught error: " + err;

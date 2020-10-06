@@ -76,8 +76,6 @@ export async function retrieveFromLocalForage(questName) {
             return;
           }
           let resObject = results[qid][resKey];
-          console.log(resKey, resObject);
-
           let handled = false;
           if (Array.isArray(resObject)) {
             getFromRbCb(resKey, resObject);
@@ -98,7 +96,6 @@ export async function retrieveFromLocalForage(questName) {
           }
           if (!handled && typeof resObject == "string") {
             let element = document.getElementById(resKey);
-            console.log(element);
             if (element.tagName == "DIV" || element.tagName == "FORM") {
               // radio in grid???
               let selector = `input[value='${results[qid][resKey]}']`;

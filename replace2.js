@@ -411,6 +411,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
+      console.log("displayifffffffffffffffff");
       if (condition == undefined) {
         displayIf = "";
       } else {
@@ -597,7 +598,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const response = await retrieve();
       if (response.code === 200) {
         const userData = response.data;
-        console.log(userData);
         if (userData[questName]) {
           questObj = userData[questName];
         }
@@ -638,6 +638,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // wait for the objects to be retrieved,
   // then reset the tree.
+  console.log('obj.retrieve==', obj.retrieve);
   await fillForm(obj.retrieve);
 
   // get the tree from localforage...
@@ -833,8 +834,6 @@ function unrollLoops(txt) {
 
 export function stopSubmit(event) {
   event.preventDefault();
-  console.log(event.target.id);
-
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve);

@@ -1,5 +1,4 @@
 console.log("in module1.js");
-console.log(myCallbacks);
 config = {
   markdown: "https://jonasalmeida.github.io/privatequest/demo2.txt",
   WORK3: function () {
@@ -18,7 +17,6 @@ config = {
         });
         qText = `${qText} <br><br> <input type="submit" class="previous" value="BACK"> <input type="submit" class="next" data-target="#softModal" value="NEXT">`;
         document.getElementById("q1").innerHTML = qText;
-        console.log(qText);
       }
     }
 
@@ -38,7 +36,6 @@ config = {
     fetch(URL)
       .then((x) => x.json())
       .then((x) => {
-        console.log(x);
         buildHtml(x, jobtitle);
         console.log("build from API");
         cache[jobtitle] = x;
