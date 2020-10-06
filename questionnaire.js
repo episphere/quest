@@ -571,7 +571,7 @@ async function nextPage(norp, store) {
   // check for the displayif status...
   while (nextElement.hasAttribute("displayif")) {
     // not sure what to do if the next element is is not a question ...
-    console.log("displayifffffffffffffffff 111111");
+    console.log("displayffffffffffffffff 111111");
     if (nextElement.classList.contains("question")) {
       let display = parse(nextElement.getAttribute("displayif"));
       if (display) break;
@@ -636,7 +636,7 @@ export function displayQuestion(nextElement) {
   [...nextElement.children]
     .filter((x) => x.hasAttribute("displayif"))
     .map((elm) => {
-      console.log("displayifffffffffffffffff 2222222222");
+      console.log("displayfffffffffffffffff 2222222222");
       let f = parse(elm.getAttribute("displayif"));
 
       elm.style.display = f ? "inline" : "none";
