@@ -323,7 +323,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           options = options + " " + o;
         }
       }
-      return `<input type='number' name='${questID}' ${options} ></input>`;
+      return `<input type='number' step='any' name='${questID}' ${options} ></input>`;
     }
 
     // replace |__| or [text box:xxx] with an input box...
