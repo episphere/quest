@@ -22,6 +22,7 @@ export function toggle_grid(event) {
 }
 
 function buildHtml(grid_obj) {
+  console.log("grid question=======", grid_obj);
   let grid_head =
     '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
   grid_obj.responses.forEach((resp) => {
@@ -30,6 +31,7 @@ function buildHtml(grid_obj) {
   grid_head += "</div>";
   let grid_table_body = "";
   grid_obj.questions.forEach((question) => {
+    
     grid_table_body += `<div id="${question.id}" class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" class="grid-input-element show-button"/></div>`;
@@ -74,10 +76,14 @@ export function parseGrid(text) {
       questions: [],
       responses: [],
     };
-    let question_regex = /\[([A-Z][A-Z0-9_]*)\](.*?);\s*(?=[\[\]])/g;
+    //need to account for displayif 
+    //let question_regex = /\[([A-Z][A-Z0-9_]*)\](.*?);\s*(?=[\[\]])/g;     
+    let question_regex = /\[([A-Z][A-Z0-9_]*)(,displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\))*\](.*?);\s*(?=[\[\]])/g;
     let question_matches = grid_obj.question_text.matchAll(question_regex);
+
     for (const match of question_matches) {
-      let question_obj = { id: match[1], question_text: match[2] };
+      console.log("match====",match);
+      let question_obj = { id: match[1], question_text: match[4] };
       grid_obj.questions.push(question_obj);
     }
 

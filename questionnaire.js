@@ -571,9 +571,9 @@ async function nextPage(norp, store) {
   // check for the displayif status...
   while (nextElement.hasAttribute("displayif")) {
     // not sure what to do if the next element is is not a question ...
-    console.log("displayffffffffffffffff 111111");
     if (nextElement.classList.contains("question")) {
-      let display = parse(nextElement.getAttribute("displayif"));
+      console.log("displayfffffffffffffffff 1111111111", nextElement.getAttribute("displayif"));
+      let display = displayIf(nextElement.getAttribute("displayif"));
       if (display) break;
       if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
       let nextQuestionId = getNextQuestionId(nextElement);
@@ -636,8 +636,8 @@ export function displayQuestion(nextElement) {
   [...nextElement.children]
     .filter((x) => x.hasAttribute("displayif"))
     .map((elm) => {
-      console.log("displayfffffffffffffffff 2222222222");
-      let f = parse(elm.getAttribute("displayif"));
+      console.log("displayfffffffffffffffff 2222222222", elm.getAttribute("displayif"));
+      let f = displayIf(elm.getAttribute("displayif"));
 
       elm.style.display = f ? "inline" : "none";
     });
@@ -648,7 +648,7 @@ export function displayQuestion(nextElement) {
     if (attr) {
       let isnum = /^[\d\.]+$/.test(attr);
       if (!isnum) {
-        let tmpVal = parse(attr);
+        let tmpVal = displayIf(attr);
         element.setAttribute(newAttrName, tmpVal);
       }
     }
@@ -742,7 +742,7 @@ function checkForSkips(questionElement) {
     if (!x.hasAttribute("if")) {
       return true;
     }
-    return parse(x.getAttribute("if"));
+    return displayIf(x.getAttribute("if"));
   });
 
   // make an array of the Elements, not the input elments...
@@ -839,7 +839,7 @@ function getResults(element) {
 
 // x is the questionnaire text
 
-function parse(txt) {
+function displayIf(txt) { //refactored to displayIf from parse
   function replaceValue(x) {
     if (typeof x === "string") {
       let element = document.getElementById(x);
@@ -869,7 +869,7 @@ function parse(txt) {
   var re = /[\(\),]/g;
   var stack = [];
   var lastMatch = 0;
-
+  console.log("displayIf(txt)=====", txt);
   for (const match of txt.matchAll(re)) {
     stack.push(match.input.substr(lastMatch, match.index - lastMatch));
     stack.push(match.input.charAt(match.index));

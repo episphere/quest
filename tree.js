@@ -48,7 +48,6 @@ export class Tree {
 
     if (!tmp.done) {
       this.currentNode = tmp.value;
-      console.log(" ================ NEXT ================ ");
       this.ptree();
     }
 
