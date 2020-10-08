@@ -32,7 +32,9 @@ function buildHtml(grid_obj) {
   let grid_table_body = "";
   grid_obj.questions.forEach((question) => {
     
-    grid_table_body += `<div id="${question.id}" class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
+    let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
+
+    grid_table_body += `<div id="${question.id}" ${displayif} class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" class="grid-input-element show-button"/></div>`;
     });
@@ -82,8 +84,13 @@ export function parseGrid(text) {
     let question_matches = grid_obj.question_text.matchAll(question_regex);
 
     for (const match of question_matches) {
-      console.log("match====",match);
-      let question_obj = { id: match[1], question_text: match[4] };
+      let displayIf = '';
+      if (match[2]){
+        displayIf = match[2].replace(",displayif=","");
+      }
+      let question_obj = { id: match[1], question_text: match[4], displayif: displayIf };
+      //TODO test displayif
+      console.log("question_obj======", question_obj);
       grid_obj.questions.push(question_obj);
     }
 

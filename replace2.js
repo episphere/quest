@@ -645,7 +645,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // wait for the objects to be retrieved,
   // then reset the tree.
-  console.log('obj.retrieve==', obj.retrieve);
   await fillForm(obj.retrieve);
 
   // get the tree from localforage...
@@ -656,7 +655,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     if (tree) {
       questionQueue.loadFromVanillaObject(tree);
     }
-    console.log(`the current node is ${questionQueue.currentNode.value}`);
     setActive(questionQueue.currentNode.value);
   });
 

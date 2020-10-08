@@ -610,6 +610,7 @@ function exitLoop(nextElement) {
 }
 
 export function displayQuestion(nextElement) {
+  console.log("displayQuestion 2222222222");
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
     if (elm.tagName == "LABEL") {
@@ -634,7 +635,11 @@ export function displayQuestion(nextElement) {
 
   // check all responses for next question
   [...nextElement.children]
-    .filter((x) => x.hasAttribute("displayif"))
+    .filter((x) => {
+    console.log("nextElement.children filter x======", x);
+    x.hasAttribute("displayif");
+    }
+    )
     .map((elm) => {
       console.log("displayfffffffffffffffff 2222222222", elm.getAttribute("displayif"));
       let f = displayIf(elm.getAttribute("displayif"));
