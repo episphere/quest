@@ -567,7 +567,6 @@ async function nextPage(norp, store) {
   while (nextElement.hasAttribute("displayif")) {
     // not sure what to do if the next element is is not a question ...
     if (nextElement.classList.contains("question")) {
-      console.log("displayfffffffffffffffff 1111111111", nextElement.getAttribute("displayif"));
       let display = displayIf(nextElement.getAttribute("displayif"));
       if (display) break;
       if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
@@ -605,7 +604,6 @@ function exitLoop(nextElement) {
 }
 
 export function displayQuestion(nextElement) {
-  console.log("displayQuestion 2222222222");
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
     if (elm.tagName == "LABEL") {
