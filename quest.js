@@ -1,7 +1,6 @@
 import { transform } from "./replace2.js";
 import { questionQueue, moduleParams } from "./questionnaire.js";
 
-console.log("in quest.js");
 let prevRes = {};
 
 async function startUp() {
@@ -72,14 +71,12 @@ function clearLocalForage() {
     .clear()
     .then(() => {
       loaddisplay.innerHTML = "local forage cleared";
-      console.log("lf cleared");
     })
     .catch((err) => {
       loaddisplay.innerHTML = "caught error" + err;
       console.log("error while clearing lf.  ", err);
     });
 
-  console.log("clearing the in-memory tree");
   questionQueue.clear();
 }
 
@@ -91,6 +88,5 @@ transform.tout = function (fun, tt = 500) {
 };
 
 window.onload = function () {
-  console.log("in quest.js:window.onload");
   startUp();
 };

@@ -507,11 +507,6 @@ async function nextPage(norp, store) {
     return null;
   }
   if (questionQueue.isEmpty()) {
-    console.log(
-      "==> the tree is empty... add first element",
-      questionElement,
-      questionElement.id
-    );
     questionQueue.add(questionElement.id);
     questionQueue.next();
   }

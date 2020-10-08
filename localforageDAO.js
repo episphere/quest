@@ -45,7 +45,6 @@ export async function retrieveFromLocalForage(questName) {
 
       // CASE 2: we have an object...
     } else {
-      console.log("...  WE HAVE AN OBJECT ... ");
       function getFromRbCb(rbCbName, result) {
         let checkboxElements = Array.from(
           formElement.querySelectorAll(`input[name=${rbCbName}]`)
@@ -57,13 +56,8 @@ export async function retrieveFromLocalForage(questName) {
       }
 
       if (Array.isArray(results[qid])) {
-        console.log("...  for KEY ", qid, " WE HAVE AN ARRAY!!!  ... ");
         getFromRbCb(qid, results[qid]);
       } else {
-        console.log(
-          "...  for KEY ",
-          qid,
-          " ...1 WE HAVE AN OBJECT!!!  ... ",
           Object.keys(results[qid]),
           Object.values(results[qid])
         );
@@ -84,7 +78,6 @@ export async function retrieveFromLocalForage(questName) {
           if (!handled && typeof resObject == "object") {
             // ok wasn't an array .. i.e. it wasnt a radiobutton...
             // how about an XOR object...
-            console.log("==========> XOR OBJ....");
             let element = Array.from(
               formElement.querySelectorAll(`[xor="${resKey}"]`)
             );
@@ -107,7 +100,6 @@ export async function retrieveFromLocalForage(questName) {
               }
               radioAndCheckboxUpdate(selectedRadioElement);
             } else {
-              console.log("=========> text in object...");
               element.value = resObject;
               textboxinput(element);
             }

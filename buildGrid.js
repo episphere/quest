@@ -2,7 +2,6 @@ export const grid_replace_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/
 
 export function firstFun(event) {
   event.preventDefault();
-  console.log("WTF!!!");
 }
 export function toggle_grid(event) {
   event.preventDefault();
@@ -22,7 +21,6 @@ export function toggle_grid(event) {
 }
 
 function buildHtml(grid_obj) {
-  console.log("grid question=======", grid_obj);
   let grid_head =
     '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
   grid_obj.responses.forEach((resp) => {
@@ -61,8 +59,6 @@ function buildHtml(grid_obj) {
 // the regex for a grid is /\|grid\|([^|]*?)\|([^|]*?)\|([^|]*?)\|
 // you  can use the /g and then pass it to the function one at a time...
 export function parseGrid(text) {
-  console.log("in parseGrid ", text);
-
   let grid_obj = {};
   //  look for key elements of the text
   // |grid|id=xxx|shared_text|questions|response|
@@ -89,8 +85,6 @@ export function parseGrid(text) {
         displayIf = match[2].replace(",displayif=","");
       }
       let question_obj = { id: match[1], question_text: match[4], displayif: displayIf };
-      //TODO test displayif
-      console.log("question_obj======", question_obj);
       grid_obj.questions.push(question_obj);
     }
 
