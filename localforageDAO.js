@@ -58,6 +58,10 @@ export async function retrieveFromLocalForage(questName) {
       if (Array.isArray(results[qid])) {
         getFromRbCb(qid, results[qid]);
       } else {
+        console.log(	
+          "...  for KEY ",	
+          qid,	
+          " ...1 WE HAVE AN OBJECT!!!  ... ",
           Object.keys(results[qid]),
           Object.values(results[qid])
         );
