@@ -635,17 +635,28 @@ export function displayQuestion(nextElement) {
 
   // check all responses for next question
   [...nextElement.children]
-    .filter((x) => {
-    console.log("nextElement.children filter x======", x);
-    x.hasAttribute("displayif");
-    }
-    )
+    .filter((x) => { return x.hasAttribute("displayif");})
     .map((elm) => {
-      console.log("displayfffffffffffffffff 2222222222", elm.getAttribute("displayif"));
       let f = displayIf(elm.getAttribute("displayif"));
-
       elm.style.display = f ? "inline" : "none";
     });
+
+    //check if grid elements needs to be shown
+    [...nextElement.children]
+    .filter((x) => {return x.hasAttribute("redertypegrid");})
+    .map((elm) => {
+      for (let child of elm.children){
+        if (child.getAttribute("displayif")){
+          let f = displayIf(child.getAttribute("displayif"));
+          if (!f){
+            child.setAttribute('style', 'display:none !important');
+          } else {
+            child.setAttribute('style', 'display:inline');
+          }
+        }
+      }
+    });
+
 
   // check min/max for variable substitution in validation
   function exchangeValue(element, attrName, newAttrName) {

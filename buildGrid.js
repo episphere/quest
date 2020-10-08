@@ -50,7 +50,7 @@ function buildHtml(grid_obj) {
     small_format += "</div>";
   });
   let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
-    ${grid_obj.shared_text}<div class="d-none d-lg-block" style="background-color: rgb(193,225,236)">${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
+    ${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
     <div><input type='submit' class='previous' value='BACK'></input><input type='submit' class='next' value='NEXT'></input></div>
     </form>`;
 
