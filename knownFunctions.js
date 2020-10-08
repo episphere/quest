@@ -8,7 +8,6 @@ export const knownFunctions = {
     return x || y;
   },
   isDefined: function (x, y) {
-    console.log("x:", x, "y:", y);
     let tmpVal = !x ? y : x;
     let isnum = /^[\d\.]+$/.test(tmpVal);
     if (isnum) {
