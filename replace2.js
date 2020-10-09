@@ -208,7 +208,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
-      return `<input type='text' ${options} class="SSNsm" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
+      return `<input type='text' ${options} class="SSNsm" inputmode="numeric" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
     }
 
     // replace |state| with state dropdown
