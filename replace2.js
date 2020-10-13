@@ -845,18 +845,27 @@ export function stopSubmit(event) {
 
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
-    console.log("BACKKKK");
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
   } else if(event.target.clickType == "RESET ANSWER")  {
-    
-    console.log("RESET", event.target.elements);
-    for (let radio of event.target.elements ){
-        if (radio.type === 'radio'){
-          radio.checked = false;
-        }
-    }
+    resetChildren(event.target);
   } else  {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
     nextClick(buttonClicked, moduleParams.renderObj.store);
   }
+}
+
+
+function resetChildren(node) {
+  if (node == null) {
+    return;
+  }
+
+  if (node.type === 'radio' || node.type === 'checkbox'){
+    node.checked = false;
+  } else if (node.type === 'text') {
+    node.value = '';
+  }
+
+  resetChildren(node.firstElementChild);
+  resetChildren(node.nextElementSibling);
 }
