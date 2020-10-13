@@ -19,6 +19,7 @@ export let transform = function () {
 const validation = {};
 let questName = "Questionnaire";
 
+
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
@@ -144,6 +145,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
       (endMatch && endMatch[1]) === "noback"
         ? ""
         : "<input type='submit' class='previous' value='BACK'></input>";
+
+    let resetButton = "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
     let nextButton = endMatch
       ? ""
@@ -418,7 +421,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fRadio(containsGroup, value, name, labelID, condition, label) {
       let displayIf = "";
-      console.log("displayifffffffffffffffff");
       if (condition == undefined) {
         displayIf = "";
       } else {
@@ -495,7 +497,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<textarea $1 skipTo=$2></textarea>"
     );
 
-    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>${prevButton}\n${nextButton}</div><div class="spacePadding"></div></form>`;
+    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>${prevButton}\n${resetButton}\n${nextButton}</div><div class="spacePadding"></div></form>`;
     return rv;
   });
 
@@ -672,6 +674,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   }
 
   questions.forEach((question) => {
+    console.log('question=======', question);
     question.onsubmit = stopSubmit;
   });
   divElement
@@ -839,10 +842,20 @@ function unrollLoops(txt) {
 
 export function stopSubmit(event) {
   event.preventDefault();
+
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
+    console.log("BACKKKK");
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
-  } else {
+  } else if(event.target.clickType == "RESET ANSWER")  {
+    
+    console.log("RESET", event.target.elements);
+    for (let radio of event.target.elements ){
+        if (radio.type === 'radio'){
+          radio.checked = false;
+        }
+    }
+  } else  {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
     nextClick(buttonClicked, moduleParams.renderObj.store);
   }
