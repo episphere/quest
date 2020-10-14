@@ -847,25 +847,47 @@ export function stopSubmit(event) {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
   } else if(event.target.clickType == "RESET ANSWER")  {
-    resetChildren(event.target);
+
+    resetChildren(event.target.elements);
+    console.log("before event.target.value=====",event.target.value);
+    event.target.value = undefined;
+    console.log("after event.target.value=====",event.target.value);
+
   } else  {
+    console.log("next event.target.value=====",event.target.value);
     let buttonClicked = event.target.getElementsByClassName("next")[0];
     nextClick(buttonClicked, moduleParams.renderObj.store);
   }
 }
 
 
-function resetChildren(node) {
-  if (node == null) {
+function resetChildren(nodes) {
+  if (nodes == null) {
     return;
   }
 
-  if (node.type === 'radio' || node.type === 'checkbox'){
-    node.checked = false;
-  } else if (node.type === 'text') {
-    node.value = '';
-  }
+  
+  // if (node.nodeName==='FORM') {
+  //   console.log("node.nodeName form", node);
+  //   //node.reset();
+  // }
 
-  resetChildren(node.firstElementChild);
-  resetChildren(node.nextElementSibling);
+  // if (node.type === 'radio' || node.type === 'checkbox'){
+  //   node.checked = false;
+  //   node.value = '';
+  // } else if (node.type === 'text') {
+  //   node.value = '';
+  // } 
+
+  // resetChildren(node.firstElementChild);
+  // resetChildren(node.nextElementSibling);
+
+  for (let node of nodes ){
+    if (node.type === 'radio' || node.type === 'checkbox'){
+      node.checked = false;
+      node.value = '';
+    } else if (node.type === 'text') {
+      node.value = '';
+    } 
+}
 }
