@@ -847,12 +847,20 @@ export function stopSubmit(event) {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
   } else if(event.target.clickType == "RESET ANSWER")  {
-
-    resetChildren(event.target.elements);
     console.log("before event.target.value=====",event.target.value);
+    resetChildren(event.target.elements);
+ 
+    
     event.target.value = undefined;
     console.log("after event.target.value=====",event.target.value);
-
+    
+    //http://jsfiddle.net/8cvBM/
+    // var elements  = document.getElementsByTagName('input');
+    // for (let elem of elements)
+    // {
+    //   console.log("elem=====", elem);
+    //   elem.addEventListener ("click", uncheckRadio, false);
+    // }
   } else  {
     console.log("next event.target.value=====",event.target.value);
     let buttonClicked = event.target.getElementsByClassName("next")[0];
@@ -865,8 +873,8 @@ function resetChildren(nodes) {
   if (nodes == null) {
     return;
   }
-
-  
+ 
+ 
   // if (node.nodeName==='FORM') {
   //   console.log("node.nodeName form", node);
   //   //node.reset();
@@ -885,9 +893,14 @@ function resetChildren(nodes) {
   for (let node of nodes ){
     if (node.type === 'radio' || node.type === 'checkbox'){
       node.checked = false;
-      node.value = '';
     } else if (node.type === 'text') {
       node.value = '';
     } 
+  }
 }
-}
+
+// export function uncheckRadio(event){
+//   if (event.srcElement.checked) 
+//     event.srcElement.checked = false;
+//   console.log("uncheckRadio =======", event);
+// }
