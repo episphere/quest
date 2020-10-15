@@ -14,13 +14,13 @@
   display: block;
 }
 
-.previous {
+/* .previous {
   float: left;
 }
 
 .next {
   float: right;
-}
+} */
 
 /* this is an answer with a text area...*/
 
@@ -133,7 +133,8 @@ input[type="checkbox"]:checked + label {
 }
 
 .next,
-.previous {
+.previous,
+.reset {
   background-color: rgb(50, 122, 187);
   color: white;
   border: solid 3px rgb(50, 122, 187);
@@ -142,6 +143,7 @@ input[type="checkbox"]:checked + label {
   padding-right: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
+  margin-top: 10px;
 }
 
 .next:hover,
