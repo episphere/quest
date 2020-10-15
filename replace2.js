@@ -27,7 +27,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   if (obj.text) contents = obj.text;
   if (obj.url) {
     moduleParams.config = await (await fetch(obj.url)).text();
-    // console.log(moduleParams.config);
+
   }
   if (obj.url) {
     contents = await (await fetch(obj.url)).text();
@@ -68,7 +68,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   } else {
     questName = "Questionnaire";
   }
-  //console.log(contents)
   // first let's deal with breaking up questions..
   // a question starts with the [ID1] regex pattern
   // and end with the next pattern or the end of string...
@@ -95,7 +94,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questArgs,
     questText
   ) {
-    //console.log("page: ", page, "\nd: ", d, "\ny: ", questID, "\nz: ", questText);
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
@@ -310,7 +308,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fNum(fullmatch, opts) {
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
-      //console.log("Number input options", options);
       let maxRegex = /max(?![(a-z])/g;
       let minRegex = /min(?![(a-z])/g;
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
@@ -615,7 +612,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let questObj = {};
     let tempObj = {};
 
-    // console.log("in fillForm... ret fun:", retrieve);
 
     if (retrieve) {
       const response = await retrieve();
@@ -688,7 +684,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   }
 
   questions.forEach((question) => {
-    console.log('question=======', question);
     question.onsubmit = stopSubmit;
   });
   divElement
