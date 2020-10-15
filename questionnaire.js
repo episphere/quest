@@ -878,7 +878,6 @@ function displayIf(txt) { //refactored to displayIf from parse
   var re = /[\(\),]/g;
   var stack = [];
   var lastMatch = 0;
-  console.log("displayIf(txt)=====", txt);
   for (const match of txt.matchAll(re)) {
     stack.push(match.input.substr(lastMatch, match.index - lastMatch));
     stack.push(match.input.charAt(match.index));
