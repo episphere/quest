@@ -47,9 +47,26 @@ function buildHtml(grid_obj) {
     });
     small_format += "</div>";
   });
-  let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div><div class="container"><div class="row"><div class="col-lg-5"><input type='submit' class='previous' value='BACK'/></div><div class="col-lg-6"><input type='submit' class='reset' value='RESET ANSWER'/></div><div class="col-lg-1"><input type='submit' class='next' value='NEXT'/></div></div></div></form>`;
+  let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
+  ${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">
+  ${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-5">
+        <input type='submit' class='previous' value='BACK'/>
+      </div>
+      <div class="col-lg-6">
+        <input type='submit' class='reset' value='RESET ANSWER'/>
+      </div>
+      <div class="col-lg-1">
+        <input type='submit' class='next' value='NEXT'/>
+      </div>
+    </div>
+  </div>
+  </form>`;
 
-  return html_text;
+  //for some reason spacing needs to be removed
+  return html_text.replace(/(\r\n|\n|\r)/gm, "");;
 }
 
 // note the text should contain the entirity of ONE grid!
