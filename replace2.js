@@ -497,7 +497,21 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<textarea $1 skipTo=$2></textarea>"
     );
 
-    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>${prevButton}\n${resetButton}\n${nextButton}</div><div class="spacePadding"></div></form>`;
+    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-5">
+          ${prevButton}
+        </div>
+        <div class="col-lg-6">
+          ${resetButton}
+        </div>
+        <div class="col-lg-1">
+          ${nextButton}
+        </div>
+      </div>
+    </div>
+    </div><div class="spacePadding"></div></form>`;
     return rv;
   });
 
