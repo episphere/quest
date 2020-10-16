@@ -494,9 +494,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<textarea $1 skipTo=$2></textarea>"
     );
     
-    if (!questText.includes('input type=\'radio\'')){
-      resetButton = '';
-    }
+    // If reset is needed only for radio buttons then uncomment out the next lines
+    // if (!questText.includes('input type=\'radio\'')){
+    //   resetButton = '';
+    // }
 
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
@@ -875,8 +876,10 @@ function resetChildren(nodes) {
     return;
   }
   for (let node of nodes ){
-    if (node.type === 'radio'){
+    if (node.type === 'radio' || node.type === 'checkbox'){
       node.checked = false;
+    } else if (node.type === 'text') {
+      node.value = '';
     } 
   }
 }
