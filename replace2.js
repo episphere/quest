@@ -19,7 +19,6 @@ export let transform = function () {
 const validation = {};
 let questName = "Questionnaire";
 
-
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
@@ -27,7 +26,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   if (obj.text) contents = obj.text;
   if (obj.url) {
     moduleParams.config = await (await fetch(obj.url)).text();
-
   }
   if (obj.url) {
     contents = await (await fetch(obj.url)).text();
@@ -94,7 +92,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questArgs,
     questText
   ) {
-
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
     questText = questText.replace(/\u001f/g, "\n");
@@ -144,7 +141,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
         ? ""
         : "<input type='submit' class='previous' value='BACK'></input>";
 
-    let resetButton = "<input type='submit' class='reset' value='RESET ANSWER'></input>";
+    let resetButton =
+      "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
     let nextButton = endMatch
       ? ""
@@ -209,7 +207,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
-      return `<input type='text' ${options} class="SSNsm" inputmode="numeric" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
+      return `<input type='text' ${options} class="SSNsm" inputmode="numeric" maxlength="4" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
     }
 
     // replace |state| with state dropdown
@@ -312,7 +310,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let minRegex = /min(?![(a-z])/g;
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionList = options.split(" ");
-      for (var o of optionList){
+      for (var o of optionList) {
         if (minRegex.test(o)) {
           o = o.replace(minRegex, "data-min");
           options = options + " " + o;
@@ -612,7 +610,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let questObj = {};
     let tempObj = {};
 
-
     if (retrieve) {
       const response = await retrieve();
       if (response.code === 200) {
@@ -855,27 +852,25 @@ export function stopSubmit(event) {
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
-  } else if(event.target.clickType == "RESET ANSWER")  {
+  } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
     event.target.value = undefined;
-  } else  {
+  } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
     nextClick(buttonClicked, moduleParams.renderObj.store);
   }
 }
 
-
 function resetChildren(nodes) {
   if (nodes == null) {
     return;
   }
- 
 
-  for (let node of nodes ){
-    if (node.type === 'radio' || node.type === 'checkbox'){
+  for (let node of nodes) {
+    if (node.type === "radio" || node.type === "checkbox") {
       node.checked = false;
-    } else if (node.type === 'text') {
-      node.value = '';
-    } 
+    } else if (node.type === "text") {
+      node.value = "";
+    }
   }
 }
