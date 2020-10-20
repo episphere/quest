@@ -209,7 +209,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
-      return `<input type='text' ${options} class="SSNsm" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
+      return `<input type='text' ${options} class="SSNsm" maxlength="4" pattern='[0-9]{4}' placeholder="_ _ _ _"></input>`;
     }
 
     // replace |state| with state dropdown
@@ -310,6 +310,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let { options, elementId } = guaranteeIdSet(opts, "num");
       let maxRegex = /max(?![(a-z])/g;
       let minRegex = /min(?![(a-z])/g;
+
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionList = options.split(" ");
       for (var o of optionList){
@@ -499,7 +500,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     //   resetButton = '';
     // }
 
-    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
+    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
       <div class="row">
         <div class="col-lg-5">

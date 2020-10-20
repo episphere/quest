@@ -201,7 +201,7 @@ export function textboxinput(inputElement) {
             inputElement.classList.remove("invalid");
             inputElement.form.classList.remove("invalid");
           }
-          inputElement.form.noValidate = false;
+          //inputElement.form.noValidate = false;
         }
         break;
 
@@ -218,7 +218,7 @@ export function textboxinput(inputElement) {
             inputElement.classList.remove("invalid");
             inputElement.form.classList.remove("invalid");
           }
-          inputElement.form.noValidate = false;
+          //inputElement.form.noValidate = false;
         }
         break;
 
@@ -226,7 +226,7 @@ export function textboxinput(inputElement) {
         if (
           inputElement.value != "" &&
           [...inputElement.classList].includes("SSN") &&
-          inputElement.value.length < 11
+          !inputElement.value.match("[0-9]{3}-?[0-9]{2}-?[0-9]{4}")
         ) {
           span1.innerText =
             "Please enter a Social Security Number in this format: 999-99-9999.";
@@ -236,7 +236,7 @@ export function textboxinput(inputElement) {
         } else if (
           inputElement.value != "" &&
           [...inputElement.classList].includes("SSNsm") &&
-          inputElement.value.length < 4
+          !inputElement.value.match("[0-9]{4}")
         ) {
           span1.innerText =
             "Please enter the last four digits of a Social Security Number in this format: 9999.";
@@ -249,7 +249,7 @@ export function textboxinput(inputElement) {
             inputElement.classList.remove("invalid");
             inputElement.form.classList.remove("invalid");
           }
-          inputElement.form.noValidate = false;
+          //inputElement.form.noValidate = false;
         }
         break;
     }
