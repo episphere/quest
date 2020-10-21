@@ -23,16 +23,16 @@ export const knownFunctions = {
     if (!x && !y) {
       return "";
     }
-    x = x ? x : Number.POSITIVE_INFINITY;
-    y = y ? y : Number.POSITIVE_INFINITY;
+    x = !isNaN(x) ? x : Number.POSITIVE_INFINITY;
+    y = !isNaN(y) ? y : Number.POSITIVE_INFINITY;
     return Math.min(parseFloat(x), parseFloat(y));
   },
   max: function (x, y) {
     if (!x && !y) {
       return "";
     }
-    x = x ? x : Number.NEGATIVE_INFINITY;
-    y = y ? y : Number.NEGATIVE_INFINITY;
+    x = !isNaN(x) ? x : Number.NEGATIVE_INFINITY;
+    y = !isNaN(y) ? y : Number.NEGATIVE_INFINITY;
     return Math.max(parseFloat(x), parseFloat(y));
   },
   equals: function (x, y) {
