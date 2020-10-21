@@ -16,6 +16,9 @@ export const knownFunctions = {
     let tmpVal2 = document.getElementById(tmpVal);
     return tmpVal2 ? tmpVal2.value : tmpVal;
   },
+  isNotDefined: function (x, y) {
+    return !x;
+  },
   min: function (x, y) {
     if (!x && !y) {
       return "";

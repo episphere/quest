@@ -324,6 +324,8 @@ function clearSelection(inputElement) {
           break;
         default:
           element.value = element == inputElement ? inputElement.value : "";
+          element.nextElementSibling.children[0].innerText = "";
+          element.form.classList.remove("invalid");
       }
     });
   } else {
@@ -535,7 +537,10 @@ async function nextPage(norp, store) {
         // allResposes really should be defined at this point. If it wasn't
         // previously in LF, the previous block should have created it...
         localforage.setItem(questName, allResponses, () => {
-          console.log("... Response stored in LF: " + questName, JSON.stringify(allResponses));
+          console.log(
+            "... Response stored in LF: " + questName,
+            JSON.stringify(allResponses)
+          );
         });
       });
 
@@ -628,28 +633,31 @@ export function displayQuestion(nextElement) {
 
   // check all responses for next question
   [...nextElement.children]
-    .filter((x) => { return x.hasAttribute("displayif");})
+    .filter((x) => {
+      return x.hasAttribute("displayif");
+    })
     .map((elm) => {
       let f = displayIf(elm.getAttribute("displayif"));
       elm.style.display = f ? "inline" : "none";
     });
 
-    //check if grid elements needs to be shown
-    [...nextElement.children]
-    .filter((x) => {return x.hasAttribute("redertypegrid");})
+  //check if grid elements needs to be shown
+  [...nextElement.children]
+    .filter((x) => {
+      return x.hasAttribute("redertypegrid");
+    })
     .map((elm) => {
-      for (let child of elm.children){
-        if (child.getAttribute("displayif")){
+      for (let child of elm.children) {
+        if (child.getAttribute("displayif")) {
           let f = displayIf(child.getAttribute("displayif"));
-          if (!f){
-            child.setAttribute('style', 'display:none !important');
+          if (!f) {
+            child.setAttribute("style", "display:none !important");
           } else {
-            child.setAttribute('style', 'display:inline');
+            child.setAttribute("style", "display:inline");
           }
         }
       }
     });
-
 
   // check min/max for variable substitution in validation
   function exchangeValue(element, attrName, newAttrName) {
@@ -848,7 +856,8 @@ function getResults(element) {
 
 // x is the questionnaire text
 
-function displayIf(txt) { //refactored to displayIf from parse
+function displayIf(txt) {
+  //refactored to displayIf from parse
   function replaceValue(x) {
     if (typeof x === "string") {
       let element = document.getElementById(x);
