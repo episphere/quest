@@ -47,6 +47,8 @@ function buildHtml(grid_obj) {
     });
     small_format += "</div>";
   });
+  //remove , from display if for form if it exists
+  grid_obj.args = grid_obj.args.replace(",displayif"," displayif");
   let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
   ${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">
   ${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
