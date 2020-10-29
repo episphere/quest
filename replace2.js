@@ -522,7 +522,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
     /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,
     "<div $3 showIfId='$1' values='$2'>"
   );
-
+  
+  //removing random &#x1f; unit separator chars
+  contents = contents.replace(//g, "");
   // add the HTML/HEAD/BODY tags...
   document.getElementById(divId).innerHTML =
     contents +
