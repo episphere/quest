@@ -36,9 +36,18 @@ export const knownFunctions = {
     if (x == undefined && y == "undefined") {
       return true;
     }
+    if (x==='' && (y==='\'\''||y==='\"\"')){ //handle empty string comparison
+        return true;
+    }
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
   doesNotEqual: function (x, y) {
+    if (x == undefined && y == "undefined") {
+      return false;
+    }
+    if (x==='' &&  (y==='\'\''||y==='\"\"')){ //handle empty string comparison
+      return false;
+  }
     return Array.isArray(x) ? !x.includes(y) : x != y;
   },
   lessThan: function (x, y) {
