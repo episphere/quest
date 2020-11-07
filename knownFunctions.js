@@ -40,6 +40,12 @@ export const knownFunctions = {
       return true;
     }
     y = y.replace(/\"/g, ""); //handle string comparison
+    if (y==='true'){    //handles truthy comparison
+      y=true;
+    }
+    if (y==='false'){
+      y=false;
+    }
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
   doesNotEqual: function (x, y) {
@@ -47,6 +53,12 @@ export const knownFunctions = {
       return false;
     }
     y = y.replace(/\"/g, ""); //handle string comparison
+    if (y==='true'){    //handles truthy comparison
+      y=true;
+    }
+    if (y==='false'){
+      y=false;
+    }
     return Array.isArray(x) ? !x.includes(y) : x != y;
   },
   lessThan: function (x, y) {
