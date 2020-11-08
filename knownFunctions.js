@@ -14,7 +14,7 @@ export const knownFunctions = {
       return tmpVal;
     }
     let tmpVal2 = document.getElementById(tmpVal);
-    return tmpVal2 ? tmpVal2.value : tmpVal;
+    return tmpVal2 ? tmpVal2.value : y;   //used to be return tmpVal2 ? tmpVal2.value : tmpVal; but now it will return y if x is undefined
   },
   isNotDefined: function (x, y) {
     return !x;
