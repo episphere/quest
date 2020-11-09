@@ -589,7 +589,7 @@ async function nextPage(norp, store) {
   questionElement.classList.remove("active");
   // nextElement.scrollIntoView();
   displayQuestion(nextElement);
-  nextElement.scrollIntoView();
+  //nextElement.scrollIntoView();
 }
 
 function exitLoop(nextElement) {
@@ -720,7 +720,7 @@ export async function previousClicked(norp, retrieve) {
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
   updateTreeInLocalForage();
-  prevElement.parentElement.scrollIntoView();
+  //prevElement.parentElement.scrollIntoView();
   return prevElement;
 }
 
