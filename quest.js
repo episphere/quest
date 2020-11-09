@@ -78,6 +78,8 @@ function clearLocalForage() {
     });
 
   questionQueue.clear();
+
+  prevRes ={};
 }
 
 transform.tout = function (fun, tt = 500) {
