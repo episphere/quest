@@ -14,31 +14,51 @@ export const knownFunctions = {
       return tmpVal;
     }
     let tmpVal2 = document.getElementById(tmpVal);
-    return tmpVal2 ? tmpVal2.value : tmpVal;
+    return tmpVal2 ? tmpVal2.value : y;   //used to be return tmpVal2 ? tmpVal2.value : tmpVal; but now it will return y if x is undefined
+  },
+  isNotDefined: function (x, y) {
+    return !x;
   },
   min: function (x, y) {
     if (!x && !y) {
       return "";
     }
-    x = x ? x : Number.POSITIVE_INFINITY;
-    y = y ? y : Number.POSITIVE_INFINITY;
+    x = !isNaN(x) ? x : Number.POSITIVE_INFINITY;
+    y = !isNaN(y) ? y : Number.POSITIVE_INFINITY;
     return Math.min(parseFloat(x), parseFloat(y));
   },
   max: function (x, y) {
     if (!x && !y) {
       return "";
     }
-    x = x ? x : Number.NEGATIVE_INFINITY;
-    y = y ? y : Number.NEGATIVE_INFINITY;
+    x = !isNaN(x) ? x : Number.NEGATIVE_INFINITY;
+    y = !isNaN(y) ? y : Number.NEGATIVE_INFINITY;
     return Math.max(parseFloat(x), parseFloat(y));
   },
   equals: function (x, y) {
     if (x == undefined && y == "undefined") {
       return true;
     }
+    y = y.replace(/\"/g, ""); //handle string comparison
+    if (y==='true'){    //handles truthy comparison
+      y=true;
+    }
+    if (y==='false'){
+      y=false;
+    }
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
   doesNotEqual: function (x, y) {
+    if (x == undefined && y == "undefined") {
+      return false;
+    }
+    y = y.replace(/\"/g, ""); //handle string comparison
+    if (y==='true'){    //handles truthy comparison
+      y=true;
+    }
+    if (y==='false'){
+      y=false;
+    }
     return Array.isArray(x) ? !x.includes(y) : x != y;
   },
   lessThan: function (x, y) {

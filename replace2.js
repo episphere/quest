@@ -308,6 +308,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let { options, elementId } = guaranteeIdSet(opts, "num");
       let maxRegex = /max(?![(a-z])/g;
       let minRegex = /min(?![(a-z])/g;
+
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionList = options.split(" ");
       for (var o of optionList) {
@@ -492,8 +493,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<textarea $1 skipTo=$2></textarea>"
     );
     questText = questText.replace(/<\/div><br>/g,"</div>");
+    
+    // If reset is needed only for radio buttons then uncomment out the next lines
+    // if (!questText.includes('input type=\'radio\'')){
+    //   resetButton = '';
+    // }
 
-    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
+    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
       <div class="row">
         <div class="col-lg-5">
@@ -508,6 +514,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       </div>
     </div>
     </div><div class="spacePadding"></div></form>`;
+
     return rv;
   });
 
@@ -516,7 +523,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
     /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,
     "<div $3 showIfId='$1' values='$2'>"
   );
-
+  
+  //removing random &#x1f; unit separator chars
+  contents = contents.replace(//g, "");
   // add the HTML/HEAD/BODY tags...
   document.getElementById(divId).innerHTML =
     contents +

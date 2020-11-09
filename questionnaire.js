@@ -201,7 +201,7 @@ export function textboxinput(inputElement) {
             inputElement.classList.remove("invalid");
             inputElement.form.classList.remove("invalid");
           }
-          inputElement.form.noValidate = false;
+          //inputElement.form.noValidate = false;
         }
         break;
 
@@ -218,7 +218,7 @@ export function textboxinput(inputElement) {
             inputElement.classList.remove("invalid");
             inputElement.form.classList.remove("invalid");
           }
-          inputElement.form.noValidate = false;
+          //inputElement.form.noValidate = false;
         }
         break;
 
@@ -226,7 +226,7 @@ export function textboxinput(inputElement) {
         if (
           inputElement.value != "" &&
           [...inputElement.classList].includes("SSN") &&
-          inputElement.value.length < 11
+          !inputElement.value.match("[0-9]{3}-?[0-9]{2}-?[0-9]{4}")
         ) {
           span1.innerText =
             "Please enter a Social Security Number in this format: 999-99-9999.";
@@ -236,7 +236,7 @@ export function textboxinput(inputElement) {
         } else if (
           inputElement.value != "" &&
           [...inputElement.classList].includes("SSNsm") &&
-          inputElement.value.length < 4
+          !inputElement.value.match("[0-9]{4}")
         ) {
           span1.innerText =
             "Please enter the last four digits of a Social Security Number in this format: 9999.";
@@ -249,7 +249,7 @@ export function textboxinput(inputElement) {
             inputElement.classList.remove("invalid");
             inputElement.form.classList.remove("invalid");
           }
-          inputElement.form.noValidate = false;
+          //inputElement.form.noValidate = false;
         }
         break;
     }
@@ -324,6 +324,8 @@ function clearSelection(inputElement) {
           break;
         default:
           element.value = element == inputElement ? inputElement.value : "";
+          element.nextElementSibling.children[0].innerText = "";
+          element.form.classList.remove("invalid");
       }
     });
   } else {
@@ -535,7 +537,10 @@ async function nextPage(norp, store) {
         // allResposes really should be defined at this point. If it wasn't
         // previously in LF, the previous block should have created it...
         localforage.setItem(questName, allResponses, () => {
-          console.log("... Response stored in LF: " + questName, JSON.stringify(allResponses));
+          console.log(
+            "... Response stored in LF: " + questName,
+            JSON.stringify(allResponses)
+          );
         });
       });
 
@@ -628,28 +633,31 @@ export function displayQuestion(nextElement) {
 
   // check all responses for next question
   [...nextElement.children]
-    .filter((x) => { return x.hasAttribute("displayif");})
+    .filter((x) => {
+      return x.hasAttribute("displayif");
+    })
     .map((elm) => {
       let f = displayIf(elm.getAttribute("displayif"));
       elm.style.display = f ? "inline" : "none";
     });
 
-    //check if grid elements needs to be shown
-    [...nextElement.children]
-    .filter((x) => {return x.hasAttribute("redertypegrid");})
+  //check if grid elements needs to be shown
+  [...nextElement.children]
+    .filter((x) => {
+      return x.hasAttribute("redertypegrid");
+    })
     .map((elm) => {
-      for (let child of elm.children){
-        if (child.getAttribute("displayif")){
+      for (let child of elm.children) {
+        if (child.getAttribute("displayif")) {
           let f = displayIf(child.getAttribute("displayif"));
-          if (!f){
-            child.setAttribute('style', 'display:none !important');
+          if (!f) {
+            child.setAttribute("style", "display:none !important");
           } else {
-            child.setAttribute('style', 'display:inline');
+            child.setAttribute("style", "display:inline");
           }
         }
       }
     });
-
 
   // check min/max for variable substitution in validation
   function exchangeValue(element, attrName, newAttrName) {
@@ -848,16 +856,24 @@ function getResults(element) {
 
 // x is the questionnaire text
 
-function displayIf(txt) { //refactored to displayIf from parse
+function displayIf(txt) {
+  //refactored to displayIf from parse
   function replaceValue(x) {
-    if (typeof x === "string") {
-      let element = document.getElementById(x);
+    if (typeof x === "string") { 
+      let element = document.getElementById(x); 
       if (element != null) {
-        let tmpVal = x;
-        x = document.getElementById(x).value;
-        if (typeof x == "object" && Array.isArray(x) != true) {
-          x = x[tmpVal];
-        }
+          if (element.hasAttribute('grid') && (element.type === "radio" || element.type === "checkbox")){
+            //for displayif conditions with grid elements
+              x = element.checked ? 1 : 0;
+          }
+          else {
+            let tmpVal = x;
+            x = document.getElementById(x).value;
+            if (typeof x == "object" && Array.isArray(x) != true) {
+              x = x[tmpVal];
+            }
+          }
+
       } else {
         //look up by name
         let temp1 = [...document.getElementsByName(x)].filter(
@@ -872,8 +888,8 @@ function displayIf(txt) { //refactored to displayIf from parse
       }
     }
     return x;
-  }
 
+  }
   //https://stackoverflow.com/questions/6323417/regex-to-extract-all-matches-from-string-using-regexp-exec
   var re = /[\(\),]/g;
   var stack = [];

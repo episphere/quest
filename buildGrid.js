@@ -34,7 +34,7 @@ function buildHtml(grid_obj) {
 
     grid_table_body += `<div id="${question.id}" ${displayif} class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" class="grid-input-element show-button"/></div>`;
+      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" grid class="grid-input-element show-button"/></div>`;
     });
     grid_table_body += "</div>";
   });
@@ -43,10 +43,12 @@ function buildHtml(grid_obj) {
   grid_obj.questions.forEach((question) => {
     small_format += `<div id="${question.id}_sm"><div class="py-4">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      small_format += `<div class="text-center"><input type="${resp.type}" class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
+      small_format += `<div class="text-center"><input type="${resp.type}" grid class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
     small_format += "</div>";
   });
+  //remove , from display if for form if it exists
+  grid_obj.args = grid_obj.args.replace(",displayif"," displayif");
   let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
   ${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">
   ${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
