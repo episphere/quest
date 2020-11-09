@@ -491,6 +491,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       /<textarea ([^>]*)><\/textarea>\s*->\s*([^\s<]+)/g,
       "<textarea $1 skipTo=$2></textarea>"
     );
+    questText = questText.replace(/<\/div><br>/g,"</div>");
 
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
@@ -744,11 +745,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     trigger: "focus",
   });
 
-  [...document.querySelectorAll(".response")].map((elm) => {
-    if (elm.nextSibling.tagName == "BR") {
-      elm.nextSibling.remove();
-    }
-  });
+  // [...document.querySelectorAll(".response")].map((elm) => {
+  //   if (elm.nextSibling.tagName == "BR") {
+  //     elm.nextSibling.remove();
+  //   }
+  // });
 
   moduleParams.questName = questName;
   return true;
