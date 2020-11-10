@@ -61,6 +61,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     contents = contents.replace(/{"name":"(\w*)"}/, fQuestName);
     function fQuestName(group, name) {
       questName = name;
+      moduleParams.questName = name;
       return "";
     }
   } else {
