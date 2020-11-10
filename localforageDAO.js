@@ -1,10 +1,8 @@
 import { textboxinput, radioAndCheckboxUpdate } from "./questionnaire.js";
 
-export async function retrieveFromLocalForage(questName) {
+export async function restoreResults(results) {
   // get the results from localforage...
-  let results = await localforage.getItem(questName);
 
-  if (results == null) results = {};
 
   // retrieved the results... now lets fill the form..
   Object.keys(results).forEach((qid) => {

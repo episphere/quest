@@ -9,7 +9,7 @@ import {
   parseSSN,
   parsePhoneNumber,
 } from "./questionnaire.js";
-import { retrieveFromLocalForage } from "./localforageDAO.js";
+import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
 
 export let transform = function () {
@@ -628,13 +628,18 @@ transform.render = async (obj, divId, previousResults = {}) => {
         console.log("retrieve module name===",moduleParams.questName);
         if (userData[moduleParams.questName]) {
           questObj = userData[moduleParams.questName];
+          console.log("questObj===",questObj);
+          await restoreResults(questObj);
         }
       }
     } else {
       // a retrieve function is not defined use
       // the default which pull the values out of
       // localforage...
-      await retrieveFromLocalForage(questName);
+      let results = await localforage.getItem(questName);
+
+      if (results == null) results = {};
+      await restoreResults(results);
     }
   }
 
