@@ -625,8 +625,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const response = await retrieve();
       if (response.code === 200) {
         const userData = response.data;
-        if (userData[questName]) {
-          questObj = userData[questName];
+        console.log("retrieve module name===",moduleParams.questName);
+        if (userData[moduleParams.questName]) {
+          questObj = userData[moduleParams.questName];
         }
       }
     } else {
