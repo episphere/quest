@@ -412,7 +412,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // SAME thing but this time with a textarea...
 
     // replace (XX) with a radio button...
-    questText = questText.replace(/<br>/g,"<br>\n")
+    questText = questText.replace(/<br>/g,"<br>\n");
     questText = questText.replace(
       /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g,
       fRadio
