@@ -857,7 +857,6 @@ function getResults(element) {
 // x is the questionnaire text
 
 function displayIf(txt) {
-  var inputDisplayIf = txt;
   //refactored to displayIf from parse
   function replaceValue(x) {
     if (typeof x === "string") { 
@@ -925,7 +924,7 @@ function displayIf(txt) {
       // splice start at callEnd-5, remove 6, add the calculated value...
       stack.splice(callEnd - 5, 6, tmpValue);
     } else {
-      throw { Message: "Bad Displayif Function: " + inputDisplayIf, Stack: stack };
+      throw { Message: "Bad Displayif Function: " + txt, Stack: stack };
     }
   }
   return stack[0];
