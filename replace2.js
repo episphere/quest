@@ -435,7 +435,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       } else {
         elVar = name;
       }
-      radioName = elVar;
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
