@@ -19,6 +19,7 @@ export let transform = function () {
 const validation = {};
 let questName = "Questionnaire";
 
+
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
@@ -85,7 +86,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/\n/g, "\u001f");
-
   contents = contents.replace(regEx, function (
     page,
     questID,
@@ -201,9 +201,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|SSN\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSN);
     function fSSN(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSN");
-      return `<input type='text' ${options} class="SSN" inputmode="numeric" maxlength="11" pattern="[0-9]{3}-?[0-9]{2}-?[0-9]{4}" placeholder="_ _ _-_ _-_ _ _ _"></input>`;
+      return `<input type='text' ${options} id="SSN" class="SSN" inputmode="numeric" maxlength="11" pattern="[0-9]{3}-?[0-9]{2}-?[0-9]{4}"   placeholder="_ _ _-_ _-_ _ _ _"></input>`;
     }
 
+
+  
     // replace |SSNsm| with SSN input
     questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
@@ -271,6 +273,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       </select>`;
     }
 
+
     function guaranteeIdSet(options, inputType = "inp") {
       if (options == undefined) {
         options = "";
@@ -322,7 +325,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
           options = options + " " + o;
         }
       }
-      return `<input type='number' step='any' name='${questID}' ${options} ></input>`;
+      //onkeypress forces whole numbers
+      return `<input type='number' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options} ></input>`;
     }
 
     // replace |__| or [text box:xxx] with an input box...
@@ -412,6 +416,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // SAME thing but this time with a textarea...
 
     // replace (XX) with a radio button...
+
     questText = questText.replace(/<br>/g,"<br>\n");
     questText = questText.replace(
       /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g,
@@ -430,11 +435,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
       } else {
         elVar = name;
       }
+      radioName = elVar;
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
       return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
+
 
     // replace [XX] with checkbox
     questText = questText.replace(
@@ -519,6 +526,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     return rv;
   });
+
 
   // handle the display if case...
   contents = contents.replace(
@@ -738,6 +746,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   let SSNInputs = [...divElement.querySelectorAll(".SSN")];
   SSNInputs.forEach((inputElement) => {
     inputElement.addEventListener("keyup", parseSSN);
+
   });
 
   let phoneInputs = [...divElement.querySelectorAll("input[type='tel']")];

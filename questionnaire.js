@@ -52,6 +52,7 @@ export function textBoxInput(event) {
 }
 
 export function parseSSN(event) {
+  console.log("SSN EVENT ", event);
   if (event.type == "keyup") {
     let element = event.target;
     let val = element.value.replace(/\D/g, "");
@@ -284,9 +285,32 @@ export function rbAndCbClick(event) {
   // however we call radioAndCheckboxUpdate directly..
   if (inputElement) {
     radioAndCheckboxUpdate(inputElement);
+    radioAndCheckboxClearTextInput(inputElement);
   }
 }
 
+export function radioAndCheckboxClearTextInput(inputElement) {
+  let parent = document.getElementById(inputElement.name);
+  console.log("parent", parent);
+
+  for (var i = 0; i < parent.childNodes.length; i++) {
+    if (parent.childNodes[i].className == "response") {
+      console.log("parent.childNodes[i]", parent.childNodes[i]);
+      let radioLevel = parent.childNodes[i];
+      for (var j = 0; j < radioLevel.childNodes.length; j++) {
+        if ((radioLevel.childNodes[j].type == "radio" || radioLevel.childNodes[j].type == "checkbox") && !radioLevel.childNodes[j].checked) {
+          let inputBox = radioLevel.getElementsByTagName('input');
+          if (inputBox[1]) {
+            inputBox[1].value = '';
+            inputBox[1].disabled;
+          }
+        }
+      }
+    }        
+}
+
+
+}
 export function radioAndCheckboxUpdate(inputElement) {
   if (!inputElement) return;
   clearSelection(inputElement);
