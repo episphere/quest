@@ -289,20 +289,24 @@ export function rbAndCbClick(event) {
   }
 }
 
+//for when radio/checkboxes have input fields, only enable input fields when they are selected
 export function radioAndCheckboxClearTextInput(inputElement) {
   let parent = document.getElementById(inputElement.name);
-  console.log("parent", parent);
 
   for (var i = 0; i < parent.childNodes.length; i++) {
     if (parent.childNodes[i].className == "response") {
-      console.log("parent.childNodes[i]", parent.childNodes[i]);
       let radioLevel = parent.childNodes[i];
       for (var j = 0; j < radioLevel.childNodes.length; j++) {
         if ((radioLevel.childNodes[j].type == "radio" || radioLevel.childNodes[j].type == "checkbox") && !radioLevel.childNodes[j].checked) {
           let inputBox = radioLevel.getElementsByTagName('input');
           if (inputBox[1]) {
-            inputBox[1].value = '';
-            inputBox[1].disabled;
+            inputBox[1].value = "";
+            inputBox[1].disabled = true;
+          }
+        } else if ((radioLevel.childNodes[j].type == "radio" || radioLevel.childNodes[j].type == "checkbox") && radioLevel.childNodes[j].checked) {
+          let inputBox = radioLevel.getElementsByTagName('input');
+          if (inputBox[1]) {
+            inputBox[1].disabled = false;
           }
         }
       }

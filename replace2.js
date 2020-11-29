@@ -295,6 +295,59 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<img src=https://$1 height=$2 width=$3>"
     );
 
+    // replace (XX) with a radio button...
+    var isRadioCheckboxResponse = false;
+    questText = questText.replace(/<br>/g,"<br>\n");
+    questText = questText.replace(
+      /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g,
+      fRadio
+    );
+    function fRadio(containsGroup, value, name, labelID, condition, label) {
+      let displayIf = "";
+      if (condition == undefined) {
+        displayIf = "";
+      } else {
+        displayIf = `${condition}`;
+      }
+      let elVar = "";
+      if (name == undefined) {
+        elVar = questID;
+      } else {
+        elVar = name;
+      }
+      if (labelID == undefined) {
+        labelID = `${elVar}_${value}_label`;
+      }
+      isRadioCheckboxResponse= true;
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
+    }
+
+
+    // replace [XX] with checkbox
+    questText = questText.replace(
+      /\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
+      fCheck
+    );
+    function fCheck(containsGroup, value, name, labelID, condition, label) {
+      let displayIf = "";
+      if (condition == undefined) {
+        displayIf = "";
+      } else {
+        displayIf = `${condition}`;
+      }
+      let elVar = "";
+      if (name == undefined) {
+        elVar = questID;
+      } else {
+        elVar = name;
+      }
+      if (labelID == undefined) {
+        labelID = `${elVar}_${value}_label`;
+      }
+      isRadioCheckboxResponse= true;
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
+    }
+
     // replace |time| with a time input
     questText = questText.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
     function fTime(x, opts) {
@@ -325,6 +378,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
           options = options + " " + o;
         }
       }
+      if (isRadioCheckboxResponse) {
+        options = options + " disabled ";
+      }
       //onkeypress forces whole numbers
       return `<input type='number' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options} ></input>`;
     }
@@ -341,6 +397,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fText(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "txt");
+      if (isRadioCheckboxResponse) {
+        options = options + " disabled ";
+      }
       return `<input type='text'  name='${questID}' ${options}></input>`;
     }
 
@@ -353,7 +412,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
       } else {
         elId = z1;
       }
-      return `<textarea id='${elId}' style="resize:auto;"></textarea>`;
+      let options = "";
+      if (isRadioCheckboxResponse) {
+        options = options + " disabled ";
+      }
+      return `<textarea id='${elId}' ${options} style="resize:auto;"></textarea>`;
     }
 
     // replace #YNP with Yes No input
@@ -415,56 +478,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
     // SAME thing but this time with a textarea...
 
-    // replace (XX) with a radio button...
-
-    questText = questText.replace(/<br>/g,"<br>\n");
-    questText = questText.replace(
-      /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g,
-      fRadio
-    );
-    function fRadio(containsGroup, value, name, labelID, condition, label) {
-      let displayIf = "";
-      if (condition == undefined) {
-        displayIf = "";
-      } else {
-        displayIf = `${condition}`;
-      }
-      let elVar = "";
-      if (name == undefined) {
-        elVar = questID;
-      } else {
-        elVar = name;
-      }
-      if (labelID == undefined) {
-        labelID = `${elVar}_${value}_label`;
-      }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
-    }
-
-
-    // replace [XX] with checkbox
-    questText = questText.replace(
-      /\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
-      fCheck
-    );
-    function fCheck(containsGroup, value, name, labelID, condition, label) {
-      let displayIf = "";
-      if (condition == undefined) {
-        displayIf = "";
-      } else {
-        displayIf = `${condition}`;
-      }
-      let elVar = "";
-      if (name == undefined) {
-        elVar = questID;
-      } else {
-        elVar = name;
-      }
-      if (labelID == undefined) {
-        labelID = `${elVar}_${value}_label`;
-      }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
-    }
+    
 
     questText = questText.replace(/\|(displayif=.+?)\|(.*?)\|/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
