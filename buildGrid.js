@@ -1,4 +1,4 @@
-export const grid_replace_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
+export const grid_replace_regex = /\|grid(\!|\?)*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
 
 export function firstFun(event) {
   event.preventDefault();
@@ -47,9 +47,19 @@ function buildHtml(grid_obj) {
     });
     small_format += "</div>";
   });
+  let gridPrompt = "hardedit='false' softedit='false'";
+
+  if (grid_obj.prompt){
+    if (grid_obj.prompt === '!'){
+      gridPrompt = "hardedit='true' softedit='false'";
+    }
+    else if (grid_obj.prompt === '?'){
+      gridPrompt = "hardedit='false' softedit='true'";
+    }
+  }
   //remove , from display if for form if it exists
   grid_obj.args = grid_obj.args.replace(",displayif"," displayif");
-  let html_text = `<form ${grid_obj.args} class="container question" hardedit="false" softedit="false">
+  let html_text = `<form ${grid_obj.args} class="container question" ${gridPrompt}>
   ${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">
   ${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
   <div class="container">
@@ -78,15 +88,16 @@ export function parseGrid(text) {
   let grid_obj = {};
   //  look for key elements of the text
   // |grid|id=xxx|shared_text|questions|response|
-  let grid_regex = /\|grid\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/;
+  let grid_regex = /\|grid(\!|\?)*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/;
   let grid_match = text.match(grid_regex);
   if (grid_match) {
     grid_obj = {
       original: grid_match[0],
-      args: grid_match[1],
-      shared_text: grid_match[2],
-      question_text: grid_match[3],
-      shared_response: grid_match[4],
+      prompt: grid_match[1],
+      args: grid_match[2],
+      shared_text: grid_match[3],
+      question_text: grid_match[4],
+      shared_response: grid_match[5],
       questions: [],
       responses: [],
     };
