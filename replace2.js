@@ -396,7 +396,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
       fText
     );
     function fText(fullmatch, opts) {
-      const { options, elementId } = guaranteeIdSet(opts, "txt");
+      let { options, elementId } = guaranteeIdSet(opts, "txt");
+      
       if (isRadioCheckboxResponse) {
         options = options + " disabled ";
       }
