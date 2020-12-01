@@ -297,9 +297,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     //regex to test if there are input as a part of radio or checkboxes
     //    /(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g
-    var isRadioCheckboxResponse = false;
+    var radioCheckboxAndInput = false;
     if (questText.match(/(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g)) {
-      isRadioCheckboxResponse = true;
+      radioCheckboxAndInput = true;
+      questOpts = questOpts+ " radioCheckboxAndInput";
     }
      // replace (XX) with a radio button...
     questText = questText.replace(/<br>/g,"<br>\n");
@@ -381,7 +382,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           options = options + " " + o;
         }
       }
-      if (isRadioCheckboxResponse) {
+      if (radioCheckboxAndInput) {
         options = options + " disabled ";
       }
       //onkeypress forces whole numbers
@@ -401,7 +402,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fText(fullmatch, opts) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
       
-      if (isRadioCheckboxResponse) {
+      if (radioCheckboxAndInput) {
         options = options + " disabled ";
       }
       return `<input type='text'  name='${questID}' ${options}></input>`;
@@ -417,7 +418,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         elId = z1;
       }
       let options = "";
-      if (isRadioCheckboxResponse) {
+      if (radioCheckboxAndInput) {
         options = options + " disabled ";
       }
       return `<textarea id='${elId}' ${options} style="resize:auto;"></textarea>`;

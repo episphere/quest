@@ -459,6 +459,12 @@ function showModal(norp, store) {
       .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
     let hasNoResponses =
       getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0;
+
+    if (norp.form.hasAttribute("radioCheckboxAndInput")){
+      if (!radioCbHasAllAnswers(norp.form)){
+        hasNoResponses = true;
+      }
+    }
     // let tempVal = 0;
     // if (hasNoResponses) {
     //   tempVal = 0;
@@ -813,7 +819,24 @@ function checkValid(questionElement) {
     return questionElement.checkValidity();
   }
 }
-
+//check if radio/checkboxes with inputs attached has all of the required values
+//does a double loop through of each radio/checbox, if checked then the following inputs must not have a empty value
+export function radioCbHasAllAnswers(questionElement) {
+  let hasAllAnswers = false;
+  for (let i=0; i<questionElement.length-1;i++){
+      if ((questionElement[i].type === "checkbox" || questionElement[i].type === "radio")&& questionElement[i].checked){
+        for (let j=i+1; j<questionElement.length-1;j++){
+          if (questionElement[j].type === "checkbox" || questionElement[j].type === "radio" || questionElement[j].type === "submit") {
+            hasAllAnswers = true;
+            break;
+          } else if ((questionElement[j].type === "number" || questionElement[j].type === "text" || questionElement[j].type === "date" || questionElement[j].type === "email") && questionElement[j].value===""){
+            return false;
+          }
+        }
+      }
+  }
+  return hasAllAnswers;
+}
 export function getSelected(questionElement) {
   // look for radio boxes, checkboxes, and  hidden elements
   // for checked items.  Return all checked items.
