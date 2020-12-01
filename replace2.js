@@ -295,8 +295,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
       "<img src=https://$1 height=$2 width=$3>"
     );
 
-    // replace (XX) with a radio button...
+    //regex to test if there are input as a part of radio or checkboxes
+    //    /(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g
     var isRadioCheckboxResponse = false;
+    if (questText.match(/(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g)) {
+      isRadioCheckboxResponse = true;
+    }
+     // replace (XX) with a radio button...
     questText = questText.replace(/<br>/g,"<br>\n");
     questText = questText.replace(
       /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g,
@@ -318,7 +323,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
-      isRadioCheckboxResponse= true;
       return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
@@ -344,7 +348,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
-      isRadioCheckboxResponse= true;
       return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
