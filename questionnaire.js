@@ -465,6 +465,13 @@ function showModal(norp, store) {
         hasNoResponses = true;
       }
     }
+
+    if (norp.form.hasAttribute("grid")){
+      if (!gridHasAllAnswers(norp.form)){
+        hasNoResponses = true;
+      }
+      
+    }
     // let tempVal = 0;
     // if (hasNoResponses) {
     //   tempVal = 0;
@@ -818,6 +825,25 @@ function checkValid(questionElement) {
   } else {
     return questionElement.checkValidity();
   }
+}
+
+//check if grids has all answers
+export function gridHasAllAnswers(questionElement) {
+  let gridRows = questionElement.querySelectorAll("[gridrow]");
+  for (let i =0; i<gridRows.length; i++){
+    let gridCells = gridRows[i].querySelectorAll("[gridcell]");
+    let rowHasAnswer = false;
+    for (let j =0; j<gridCells.length; j++){
+      if (gridCells[j].checked){
+        rowHasAnswer = true;
+      }
+    }
+    if (!rowHasAnswer){
+      return false;
+    }
+    
+  }
+  return true;
 }
 //check if radio/checkboxes with inputs attached has all of the required values
 //does a double loop through of each radio/checbox, if checked then the following inputs must not have a empty value

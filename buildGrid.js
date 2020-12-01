@@ -32,9 +32,9 @@ function buildHtml(grid_obj) {
     
     let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
 
-    grid_table_body += `<div id="${question.id}" ${displayif} class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
+    grid_table_body += `<div id="${question.id}" ${displayif} gridrow class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" grid class="grid-input-element show-button"/></div>`;
+      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" grid class="grid-input-element show-button"/></div>`;
     });
     grid_table_body += "</div>";
   });
@@ -59,7 +59,7 @@ function buildHtml(grid_obj) {
   }
   //remove , from display if for form if it exists
   grid_obj.args = grid_obj.args.replace(",displayif"," displayif");
-  let html_text = `<form ${grid_obj.args} class="container question" ${gridPrompt}>
+  let html_text = `<form ${grid_obj.args} class="container question" grid ${gridPrompt}>
   ${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">
   ${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
   <div class="container">
