@@ -831,16 +831,19 @@ function checkValid(questionElement) {
 export function gridHasAllAnswers(questionElement) {
   let gridRows = questionElement.querySelectorAll("[gridrow]");
   for (let i =0; i<gridRows.length; i++){
-    let gridCells = gridRows[i].querySelectorAll("[gridcell]");
-    let rowHasAnswer = false;
-    for (let j =0; j<gridCells.length; j++){
-      if (gridCells[j].checked){
-        rowHasAnswer = true;
+    if (gridRows[i].style.display != "none") {
+      let gridCells = gridRows[i].querySelectorAll("[gridcell]");
+      let rowHasAnswer = false;
+      for (let j =0; j<gridCells.length; j++){
+        if (gridCells[j].checked){
+          rowHasAnswer = true;
+        }
+      }
+      if (!rowHasAnswer){
+        return false;
       }
     }
-    if (!rowHasAnswer){
-      return false;
-    }
+
     
   }
   return true;
