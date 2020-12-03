@@ -853,12 +853,12 @@ export function gridHasAllAnswers(questionElement) {
 export function radioCbHasAllAnswers(questionElement) {
   let hasAllAnswers = false;
   for (let i=0; i<questionElement.length-1;i++){
-      if ((questionElement[i].type === "checkbox" || questionElement[i].type === "radio")&& questionElement[i].checked){
+      if ((questionElement[i].type === "checkbox" || questionElement[i].type === "radio") && questionElement[i].checked){
         for (let j=i+1; j<questionElement.length-1;j++){
           if (questionElement[j].type === "checkbox" || questionElement[j].type === "radio" || questionElement[j].type === "submit") {
             hasAllAnswers = true;
             break;
-          } else if ((questionElement[j].type === "number" || questionElement[j].type === "text" || questionElement[j].type === "date" || questionElement[j].type === "email") && questionElement[j].value===""){
+          } else if ((questionElement[j].type === "number" || questionElement[j].type === "text" || questionElement[j].type === "date" || questionElement[j].type === "email") && questionElement[j].value==="" && questionElement[i].style.display != "none"){
             return false;
           }
         }
