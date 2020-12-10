@@ -553,7 +553,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
 
-  const prafulFunc = (completionCallback) => {
+  const prafulFunc = (completionCallback) => new Promise((resolve) => {
     // Create progress bar.
     const progressBarParent = document.createElement("div")
     progressBarParent.id = "progressBarParent"
@@ -585,10 +585,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
         progressBar.style.width = `${percentCompleted}%`
         window.requestAnimationFrame(() => renderSplitContents(i+1, completionCallback))
       } else {
-        completionCallback()
+        resolve(completionCallback())
       }
     })(0, completionCallback)
-  }
+  })
   
   const completionCallback = () => {
     // Callback for after DOM update is complete.
@@ -656,7 +656,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     `
   }
 
-  prafulFunc(completionCallback)
+  await prafulFunc(completionCallback)
 
   // if (obj.url && obj.url.split("&").includes("run")) {
   //   if (document.querySelector(".question") != null) {
