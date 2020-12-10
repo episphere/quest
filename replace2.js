@@ -544,8 +544,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     return rv;
   });
-
-
   // handle the display if case...
   contents = contents.replace(
     /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,
@@ -554,68 +552,111 @@ transform.render = async (obj, divId, previousResults = {}) => {
   
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
-  // add the HTML/HEAD/BODY tags...
-  document.getElementById(divId).innerHTML =
-    contents +
-    `
-  <div class="modal" id="softModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div id="modalBody" class="modal-body">
-              <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
-          </div>
-          <div id="softModalFooter" class="modal-footer">
-              <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
-              <button type="button" id=modalCloseButton class="btn btn-light" data-dismiss="modal">Answer the Question</button>
-          </div>
-          </div>
-      </div>
-  </div>
-  <div class="modal" id="hardModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Response Required</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Answer the Question</button>
-          </div>
-          </div>
-      </div>
-  </div>
-  <div class="modal" id="softModalResponse" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div id="modalResponseBody" class="modal-body">
-              <p>There is an error with this response. Is this correct?</p>
-          </div>
-          <div id="softModalResponseFooter" class="modal-footer">
-              <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
-              <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
-          </div>
-          </div>
-      </div>
-  </div>
+
+  const prafulFunc = (completionCallback) => {
+    // Create progress bar.
+    const progressBarParent = document.createElement("div")
+    progressBarParent.id = "progressBarParent"
+    progressBarParent.style.display = "flex"
+    progressBarParent.style.flexWrap = "wrap"
+    progressBarParent.style.height = "0.3rem"
+    progressBarParent.style.margin = "-0.5rem -15px 0.2rem -15px"
+    
+    const progressBar = document.createElement("div")
+    progressBar.id = "progressBar"
+    progressBar.style.width = "0%"
+    progressBar.style.height = "100%"
+    progressBar.style.backgroundColor = "#007bff"    
+    progressBar.style.borderTopRightRadius = "0.25rem"
+    progressBar.style.borderBottomRightRadius = "0.25rem"
+
+    progressBarParent.appendChild(progressBar)
+    document.getElementById("tool").insertBefore(progressBarParent, document.getElementById("legendDiv").nextElementSibling)
+    
+    // Split up the contents string into pieces of 400000 characters length each, then add them incrementally to the DOM.
+    const contentsWithoutLinebreaks = contents.replace(/\r?\n|\r/g, ""); // Remove newlines to reduce contentsArr size.
+    let contentsArr = contentsWithoutLinebreaks.match(/.{1,400000}/g); // Splice contents
+
+
+    (async function renderSplitContents (i, completionCallback) {
+      if (i < contentsArr.length) {
+        document.getElementById(divId).innerHTML += contentsArr[i]
+        const percentCompleted = ((i + 1) * 100)/contentsArr.length 
+        progressBar.style.width = `${percentCompleted}%`
+        window.requestAnimationFrame(() => renderSplitContents(i+1, completionCallback))
+      } else {
+        completionCallback()
+      }
+    })(0, completionCallback)
+  }
   
-  `;
+  const completionCallback = () => {
+    // Callback for after DOM update is complete.
+    console.log("Rendering complete.")
+    progressBarParent.style.visibility = "hidden"
+    // add the HTML/HEAD/BODY tags...
+    document.getElementById(divId).innerHTML += 
+    `
+    <div class="modal" id="softModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Response Requested</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
+            </div>
+            <div id="softModalFooter" class="modal-footer">
+                <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
+                <button type="button" id=modalCloseButton class="btn btn-light" data-dismiss="modal">Answer the Question</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="hardModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Response Required</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Answer the Question</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="softModalResponse" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Response Requested</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="modalResponseBody" class="modal-body">
+                <p>There is an error with this response. Is this correct?</p>
+            </div>
+            <div id="softModalResponseFooter" class="modal-footer">
+                <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
+                <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    `
+  }
+
+  prafulFunc(completionCallback)
 
   // if (obj.url && obj.url.split("&").includes("run")) {
   //   if (document.querySelector(".question") != null) {
@@ -647,7 +688,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   async function fillForm(retrieve) {
     let questObj = {};
     let tempObj = {};
-
     if (retrieve) {
       const response = await retrieve();
       if (response.code === 200) {
@@ -664,7 +704,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // the default which pull the values out of
       // localforage...
       let results = await localforage.getItem(questName);
-
       if (results == null) results = {};
       await restoreResults(results);
     }
