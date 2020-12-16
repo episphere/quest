@@ -580,7 +580,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     (async function renderSplitContents (i, completionCallback) {
       if (i < contentsArr.length) {
-        document.getElementById(divId).innerHTML += contentsArr[i]
+        document.getElementById(divId).insertAdjacentHTML("beforeend", contentsArr[i])
         const percentCompleted = ((i + 1) * 100)/contentsArr.length 
         progressBar.style.width = `${percentCompleted}%`
         window.requestAnimationFrame(() => renderSplitContents(i+1, completionCallback))
@@ -595,7 +595,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     console.log("Rendering complete.")
     progressBarParent.style.visibility = "hidden"
     // add the HTML/HEAD/BODY tags...
-    document.getElementById(divId).innerHTML += 
+    document.getElementById(divId).insertAdjacentHTML("beforeend", 
     `
     <div class="modal" id="softModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -653,7 +653,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
             </div>
         </div>
     </div>
-    `
+    `)
   }
 
   await prafulFunc(completionCallback)
