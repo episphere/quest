@@ -576,9 +576,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // Split up the contents string into pieces of 400000 characters length each, then add them incrementally to the DOM.
     const contentsWithoutLinebreaks = contents.replace(/\r?\n|\r/g, ""); // Remove newlines to reduce contentsArr size.
     let contentsArr = contentsWithoutLinebreaks.match(/.{1,400000}/g); // Splice contents
-
-
-    (async function renderSplitContents (i, completionCallback) {
+    
+    (function renderSplitContents (i, completionCallback) {
       if (i < contentsArr.length) {
         document.getElementById(divId).insertAdjacentHTML("beforeend", contentsArr[i])
         const percentCompleted = ((i + 1) * 100)/contentsArr.length 
