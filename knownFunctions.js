@@ -46,6 +46,13 @@ export const knownFunctions = {
     if (y==='false'){
       y=false;
     }
+    if (y==='_TODAY_') {
+      var date = new Date();
+      var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+                    .toISOString()
+                    .split("T")[0];
+      y=dateString;
+    }
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
   doesNotEqual: function (x, y) {
@@ -58,6 +65,13 @@ export const knownFunctions = {
     }
     if (y==='false'){
       y=false;
+    }
+    if (y==='_TODAY_') {
+      var date = new Date();
+      var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+                    .toISOString()
+                    .split("T")[0];
+      y=dateString;
     }
     return Array.isArray(x) ? !x.includes(y) : x != y;
   },
