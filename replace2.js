@@ -164,8 +164,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
       return `<span forId='${forId}' optional='${optional}'>${forId}</span>`;
     }
-    //adding displayif with nested questions. nested display if uses ||
-    questText = questText.replace(/\|\|(displayif=.+?)\|(.*?)\|\|/g, fDisplayIf);
+    //adding displayif with nested questions. nested display if uses !| to |!
+    questText = questText.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
       text = text.replace(/\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g,fNum);
       text = text.replace(/\|popup\|([\S][^|]+[\S])\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g, fPopover);
