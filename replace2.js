@@ -18,11 +18,12 @@ export let transform = function () {
 
 const validation = {};
 let questName = "Questionnaire";
-
+let rootElement;
 
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
+  rootElement = divId;
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -925,13 +926,13 @@ export function stopSubmit(event) {
 
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
-    previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
+    previousClicked(buttonClicked, moduleParams.renderObj.retrieve, rootElement);
   } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
     event.target.value = undefined;
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
-    nextClick(buttonClicked, moduleParams.renderObj.store);
+    nextClick(buttonClicked, moduleParams.renderObj.store, rootElement);
   }
 }
 
