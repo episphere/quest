@@ -631,7 +631,8 @@ async function nextPage(norp, store, rootElement) {
   // nextElement.scrollIntoView();
   displayQuestion(nextElement);
   // nextElement.scrollIntoView();
-  document.getElementById(rootElement).scrollIntoView();
+  // document.getElementById(rootElement).scrollIntoView();
+  window.scrollTo(0,0);
 }
 
 function exitLoop(nextElement) {
@@ -763,7 +764,8 @@ export async function previousClicked(norp, retrieve, rootElement) {
 
   updateTreeInLocalForage();
   // prevElement.parentElement.scrollIntoView();
-  document.getElementById(rootElement).scrollIntoView();
+  //document.getElementById(rootElement).scrollIntoView();
+  window.scrollTo(0,0);
   return prevElement;
 }
 
