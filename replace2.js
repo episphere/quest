@@ -298,7 +298,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     //regex to test if there are input as a part of radio or checkboxes
     //    /(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g
     var radioCheckboxAndInput = false;
-    if (questText.match(/(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g)) {
+    if (questText.match(/(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)/g)) {
       radioCheckboxAndInput = true;
       questOpts = questOpts+ " radioCheckboxAndInput";
     }
@@ -512,7 +512,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // handle skips
     questText = questText.replace(
-      /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,
+      /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^>]*?)<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
     questText = questText.replace(
