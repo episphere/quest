@@ -554,7 +554,7 @@ async function nextPage(norp, store) {
     questionQueue.next();
   }
   let questName = moduleParams.questName;
-
+  let responses;
   tempObj[questionElement.id] = questionElement.value;
   questRes = tempObj;
   if (store && questionElement.value) {
@@ -577,6 +577,7 @@ async function nextPage(norp, store) {
       .then((allResponses) => {
         // allResposes really should be defined at this point. If it wasn't
         // previously in LF, the previous block should have created it...
+        responses = allResponses;
         localforage.setItem(questName, allResponses, () => {
           console.log(
             "... Response stored in LF: " + questName,
@@ -629,6 +630,20 @@ async function nextPage(norp, store) {
   //hide the current question
   questionElement.classList.remove("active");
   // nextElement.scrollIntoView();
+  if (nextQuestionId.value==="END"){
+    if (store && questionElement.value) {
+      let formData = {};
+      formData[`${questName}.COMPLETED`] = true;
+      formData[`${questName}.COMPLETED_TS`] = new Date();
+      store(formData);
+    } else {
+      
+      responses[`${questName}.COMPLETED`] = true;
+      responses[`${questName}.COMPLETED_TS`] = new Date();
+      localforage.setItem(questName, responses, () => {
+      });
+    }
+  }
   displayQuestion(nextElement);
   //nextElement.scrollIntoView();
 }
