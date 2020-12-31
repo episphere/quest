@@ -11,7 +11,6 @@ import {
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
-
 export let transform = function () {
   // init
 };
@@ -705,8 +704,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // if this is the first time the user attempt
     // the questionnaire, the tree will not be in
     // the localForage...
+
     if (tree) {
       questionQueue.loadFromVanillaObject(tree);
+    } else {
+      questionQueue.clear();
     }
     setActive(questionQueue.currentNode.value);
   });
