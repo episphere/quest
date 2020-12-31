@@ -396,7 +396,7 @@ function handleXOR(inputElement) {
   return valueObj;
 }
 
-export function nextClick(norp, store) {
+export function nextClick(norp, store, rootElement) {
   // Because next button does not have ID, modal will pass-in ID of question
   // norp needs to be next button element
   if (typeof norp == "string") {
@@ -415,11 +415,11 @@ export function nextClick(norp, store) {
         return null;
       } else {
         //handle the soft and hard edits...
-        showModal(norp, store);
+        showModal(norp, store, rootElement);
       }
     });
   } else {
-    showModal(norp, store);
+    showModal(norp, store, rootElement);
   }
 }
 
@@ -443,7 +443,7 @@ function setNumberOfQuestionsInModal(num, norp, store, soft) {
   $("#softModal").modal("toggle");
 }
 // show modal function
-function showModal(norp, store) {
+function showModal(norp, store, rootElement) {
   if (
     norp.form.getAttribute("softedit") == "true" ||
     norp.form.getAttribute("hardedit") == "true"
@@ -509,7 +509,7 @@ function showModal(norp, store) {
     //   nextPage(norp, store);
     // }
   }
-  nextPage(norp, store);
+  nextPage(norp, store, rootElement);
 }
 
 let questRes = {};
@@ -539,7 +539,7 @@ function getNextQuestionId(currentFormElement) {
 }
 
 // norp == next or previous button (which ever is clicked...)
-async function nextPage(norp, store) {
+async function nextPage(norp, store, rootElement) {
   // The root is defined as null, so if the question is not the same as the
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
@@ -554,7 +554,7 @@ async function nextPage(norp, store) {
     questionQueue.next();
   }
   let questName = moduleParams.questName;
-
+  let responses;
   tempObj[questionElement.id] = questionElement.value;
   questRes = tempObj;
   if (store && questionElement.value) {
@@ -577,6 +577,7 @@ async function nextPage(norp, store) {
       .then((allResponses) => {
         // allResposes really should be defined at this point. If it wasn't
         // previously in LF, the previous block should have created it...
+        responses = allResponses;
         localforage.setItem(questName, allResponses, () => {
           console.log(
             "... Response stored in LF: " + questName,
@@ -629,8 +630,24 @@ async function nextPage(norp, store) {
   //hide the current question
   questionElement.classList.remove("active");
   // nextElement.scrollIntoView();
+  if (nextQuestionId.value==="END"){
+    if (store && questionElement.value) {
+      let formData = {};
+      formData[`${questName}.COMPLETED`] = true;
+      formData[`${questName}.COMPLETED_TS`] = new Date();
+      store(formData);
+    } else {
+      
+      responses[`${questName}.COMPLETED`] = true;
+      responses[`${questName}.COMPLETED_TS`] = new Date();
+      localforage.setItem(questName, responses, () => {
+      });
+    }
+  }
   displayQuestion(nextElement);
-  //nextElement.scrollIntoView();
+  // nextElement.scrollIntoView();
+  // document.getElementById(rootElement).scrollIntoView();
+  window.scrollTo(0,0);
 }
 
 function exitLoop(nextElement) {
@@ -746,7 +763,7 @@ export function displayQuestion(nextElement) {
   return nextElement;
 }
 
-export async function previousClicked(norp, retrieve) {
+export async function previousClicked(norp, retrieve, rootElement) {
   // get the previousElement...
   let pv = questionQueue.previous();
   while (pv.value.value.substring(0, 9) == "_CONTINUE") {
@@ -761,7 +778,9 @@ export async function previousClicked(norp, retrieve) {
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
   updateTreeInLocalForage();
-  //prevElement.parentElement.scrollIntoView();
+  // prevElement.parentElement.scrollIntoView();
+  //document.getElementById(rootElement).scrollIntoView();
+  window.scrollTo(0,0);
   return prevElement;
 }
 

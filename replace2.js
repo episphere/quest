@@ -17,11 +17,12 @@ export let transform = function () {
 
 const validation = {};
 let questName = "Questionnaire";
-
+let rootElement;
 
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
+  rootElement = divId;
   let contents = "";
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -154,7 +155,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
 
     // replace {$id} with span tag
-    questText = questText.replace(/\{\$(\w+)(?::([^\s]+.*))?\}/g, fID);
+    questText = questText.replace(/\{\$(\w+):?([a-zA-Z0-9 ,.!?"-]*)\}/g, fID);
     function fID(fullmatch, forId, optional) {
       if (optional == undefined) {
         optional = "";
@@ -162,6 +163,35 @@ transform.render = async (obj, divId, previousResults = {}) => {
         optional = optional;
       }
       return `<span forId='${forId}' optional='${optional}'>${forId}</span>`;
+    }
+    //adding displayif with nested questions. nested display if uses !| to |!
+    questText = questText.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
+    function fDisplayIf(containsGroup, condition, text) {
+      text = text.replace(/\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g,fNum);
+      text = text.replace(/\|popup\|([\S][^|]+[\S])\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g, fPopover);
+      text = text.replace(/\|@\|(?:([^\|\<]+[^\|]+)\|)?/g, fEmail);
+      text = text.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
+      text = text.replace(/\|tel\|(?:([^\|\<]+[^\|]+)\|)?/g, fPhone);
+      text = text.replace(/\|SSN\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSN);
+      text = text.replace(/\|state\|(?:([^\|\<]+[^\|]+)\|)?/g, fState);
+      text = text.replace(/\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
+      text = text.replace(/\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g, fCheck);
+      text = text.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
+      text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?/g,fText);
+      text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
+      text = text.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
+      text = text.replace(
+        /#YNP/g,
+        `(1) Yes
+         (0) No
+         (99) Prefer not to answer`
+      );
+      text = questText.replace(
+        /#YN/g,
+        `(1) Yes
+         (0) No`
+      );
+      return `<span class='displayif' ${condition}>${text}</span>`;
     }
 
     //replace |popup|buttonText|Title|text| with a popover
@@ -297,7 +327,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     //regex to test if there are input as a part of radio or checkboxes
     //    /(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g
     var radioCheckboxAndInput = false;
-    if (questText.match(/(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)\s*(?=(?:\[\d)|\n|<br>|$)/g)) {
+    if (questText.match(/(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)/g)) {
       radioCheckboxAndInput = true;
       questOpts = questOpts+ " radioCheckboxAndInput";
     }
@@ -483,7 +513,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // SAME thing but this time with a textarea...
 
     
-
+    //displayif with just texts
     questText = questText.replace(/\|(displayif=.+?)\|(.*?)\|/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
       return `<span class='displayif' ${condition}>${text}</span>`;
@@ -511,7 +541,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // handle skips
     questText = questText.replace(
-      /<input ([^>]*?)><\/input><label([^>]*?)>([^>]*?)\s*->\s*([^>]*?)<\/label>/g,
+      /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^>]*?)<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
     questText = questText.replace(
@@ -898,13 +928,13 @@ export function stopSubmit(event) {
 
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
-    previousClicked(buttonClicked, moduleParams.renderObj.retrieve);
+    previousClicked(buttonClicked, moduleParams.renderObj.retrieve, rootElement);
   } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
     event.target.value = undefined;
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
-    nextClick(buttonClicked, moduleParams.renderObj.store);
+    nextClick(buttonClicked, moduleParams.renderObj.store, rootElement);
   }
 }
 
