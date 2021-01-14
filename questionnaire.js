@@ -630,26 +630,22 @@ async function nextPage(norp, store, rootElement) {
   //hide the current question
   questionElement.classList.remove("active");
   // nextElement.scrollIntoView();
-  if (nextQuestionId.value==="END"){
-    if (store && questionElement.value) {
-      let formData = {};
-      formData[`${questName}.COMPLETED`] = true;
-      formData[`${questName}.COMPLETED_TS`] = new Date();
-      store(formData);
-    } else {
-      
-      responses[`${questName}.COMPLETED`] = true;
-      responses[`${questName}.COMPLETED_TS`] = new Date();
-      localforage.setItem(questName, responses, () => {
-      });
-    }
-  }
+
   displayQuestion(nextElement);
   // nextElement.scrollIntoView();
   // document.getElementById(rootElement).scrollIntoView();
   window.scrollTo(0,0);
 }
 
+export async function submitQuestionnaire(store, questName){
+  console.log("submit questionnaire clicked!");
+  if (store) {
+    let formData = {};
+    formData[`${questName}.COMPLETED`] = true;
+    formData[`${questName}.COMPLETED_TS`] = new Date();
+    store(formData);
+  } 
+}
 function exitLoop(nextElement) {
   if (nextElement.hasAttribute("firstquestion")) {
     let loopMax = document.getElementById(nextElement.getAttribute("loopmax"))

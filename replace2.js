@@ -8,6 +8,7 @@ import {
   displayQuestion,
   parseSSN,
   parsePhoneNumber,
+  submitQuestionnaire,
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
@@ -140,9 +141,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let prevButton =
       (endMatch && endMatch[1]) === "noback"
         ? ""
-        : "<input type='submit' class='previous' value='BACK'></input>";
+        : (questID==='END') ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" :"<input type='submit' class='previous' value='BACK'></input>";
 
-    let resetButton =
+    //debugger;
+    let resetButton = (questID==='END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Questionnaire'></input>"
+    :
       "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
     let nextButton = endMatch
@@ -584,8 +587,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
   // add the HTML/HEAD/BODY tags...
-  document.getElementById(divId).innerHTML =
-    contents +
+  document.getElementById(divId).innerHTML =/*html*/
+    contents + 
     `
   <div class="modal" id="softModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -644,6 +647,25 @@ transform.render = async (obj, divId, previousResults = {}) => {
       </div>
   </div>
   
+    <div class="modal" id="submitModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Submit Answers</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p id="submitModalBodyText">Are you sure you want to submit your answers</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal">Submit</button>
+          <button type="button" id="cancelModal" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        </div>
+        </div>
+    </div>
+  </div>
   `;
 
   // if (obj.url && obj.url.split("&").includes("run")) {
@@ -827,6 +849,18 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //   }
   // });
 
+  document.getElementById("submitModalButton").onclick = () => {
+    let lastBackButton =document.getElementById('lastBackButton');
+    if (lastBackButton){
+      lastBackButton.remove();
+    }
+    let submitButton =document.getElementById('submitButton');
+    if (submitButton){
+      submitButton.remove();
+    }
+    submitQuestionnaire(moduleParams.renderObj.store, questName);
+  };
+
   moduleParams.questName = questName;
   return true;
 };
@@ -932,6 +966,10 @@ export function stopSubmit(event) {
   } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
     event.target.value = undefined;
+  } else if (event.target.clickType == "Submit Questionnaire") {
+
+    $("#submitModal").modal("toggle");
+
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
     nextClick(buttonClicked, moduleParams.renderObj.store, rootElement);
