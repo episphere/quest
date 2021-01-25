@@ -614,7 +614,7 @@ async function nextPage(norp, store, rootElement) {
   while (nextElement.hasAttribute("displayif")) {
     // not sure what to do if the next element is is not a question ...
     if (nextElement.classList.contains("question")) {
-      let display = displayIf(nextElement.getAttribute("displayif"));
+      let display = evaluateCondition(nextElement.getAttribute("displayif"));
       if (display) break;
       if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
       let nextQuestionId = getNextQuestionId(nextElement);
@@ -691,7 +691,7 @@ export function displayQuestion(nextElement) {
       return x.hasAttribute("displayif");
     })
     .map((elm) => {
-      let f = displayIf(elm.getAttribute("displayif"));
+      let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? "inline" : "none";
     });
 
@@ -703,7 +703,7 @@ export function displayQuestion(nextElement) {
     .map((elm) => {
       for (let child of elm.children) {
         if (child.getAttribute("displayif")) {
-          let f = displayIf(child.getAttribute("displayif"));
+          let f = evaluateCondition(child.getAttribute("displayif"));
           if (!f) {
             child.setAttribute("style", "display:none !important");
           } else {
@@ -719,7 +719,7 @@ export function displayQuestion(nextElement) {
     if (attr) {
       let isnum = /^[\d\.]+$/.test(attr);
       if (!isnum) {
-        let tmpVal = displayIf(attr);
+        let tmpVal = evaluateCondition(attr);
         element.setAttribute(newAttrName, tmpVal);
       }
     }
@@ -815,7 +815,7 @@ function checkForSkips(questionElement) {
     if (!x.hasAttribute("if")) {
       return true;
     }
-    return displayIf(x.getAttribute("if"));
+    return evaluateCondition(x.getAttribute("if"));
   });
 
   // make an array of the Elements, not the input elments...
@@ -951,7 +951,7 @@ function getResults(element) {
 
 // x is the questionnaire text
 
-function displayIf(txt) {
+export function evaluateCondition(txt) {
   //refactored to displayIf from parse
   function replaceValue(x) {
     if (typeof x === "string") { 
