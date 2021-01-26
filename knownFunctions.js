@@ -94,7 +94,13 @@ export const knownFunctions = {
     if (typeof y == "string" && document.getElementById(y)) {
       y = document.getElementById(y).value;
     }
-    return x - y;
+    return parseInt(x) - parseInt(y);
+  },
+  sum: function (x, y) {
+    if (typeof y == "string" && document.getElementById(y)) {
+      y = document.getElementById(y).value;
+    }
+    return parseInt(x) + parseInt(y);
   },
   percentDiff: function (x, y) {
     if (x == "" || y == "") {
