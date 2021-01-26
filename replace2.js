@@ -142,11 +142,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let prevButton =
       (endMatch && endMatch[1]) === "noback"
         ? ""
-        : (questID==='END') ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" :"<input type='submit' class='previous' value='BACK'></input>";
+        : (questID === 'END') ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous' value='BACK'></input>";
 
     //debugger;
-    let resetButton = (questID==='END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Questionnaire'></input>"
-    :
+    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Questionnaire'></input>"
+      :
       "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
     let nextButton = endMatch
@@ -171,7 +171,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     //adding displayif with nested questions. nested display if uses !| to |!
     questText = questText.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
-      text = text.replace(/\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g,fNum);
+      text = text.replace(/\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g, fNum);
       text = text.replace(/\|popup\|([\S][^|]+[\S])\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g, fPopover);
       text = text.replace(/\|@\|(?:([^\|\<]+[^\|]+)\|)?/g, fEmail);
       text = text.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
@@ -181,7 +181,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       text = text.replace(/\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
       text = text.replace(/\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g, fCheck);
       text = text.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
-      text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?/g,fText);
+      text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?/g, fText);
       text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
       text = text.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
       text = text.replace(
@@ -238,7 +238,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
 
-  
+
     // replace |SSNsm| with SSN input
     questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
@@ -333,10 +333,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     var radioCheckboxAndInput = false;
     if (questText.match(/(\[|\()(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?(\)|\])\s*(.*?\|_.*?\|)/g)) {
       radioCheckboxAndInput = true;
-      questOpts = questOpts+ " radioCheckboxAndInput";
+      questOpts = questOpts + " radioCheckboxAndInput";
     }
-     // replace (XX) with a radio button...
-    questText = questText.replace(/<br>/g,"<br>\n");
+    // replace (XX) with a radio button...
+    questText = questText.replace(/<br>/g, "<br>\n");
     questText = questText.replace(
       /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g,
       fRadio
@@ -406,7 +406,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       //let maxReplace = evalueateCondition("isDefined(AGE,5)");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionList = options.split(" ");
-      for (let i=0; i<optionList.length; i++) {
+      for (let i = 0; i < optionList.length; i++) {
         let o = optionList[i];
         if (minRegex.test(o)) {
 
@@ -452,7 +452,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fText(fullmatch, opts) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
-      
+
       if (radioCheckboxAndInput) {
         options = options + " disabled ";
       }
@@ -534,7 +534,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
     // SAME thing but this time with a textarea...
 
-    
+
     //displayif with just texts
     questText = questText.replace(/\|(displayif=.+?)\|(.*?)\|/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
@@ -555,10 +555,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(
       /<\s*#NR\s*->\s*([A-Z_][A-Z0-9_#]*)\s*>/g,
       "<input type='hidden' class='noresponse' id='" +
-        questID +
-        "_NR' name='" +
-        questID +
-        "' skipTo=$1 checked>"
+      questID +
+      "_NR' name='" +
+      questID +
+      "' skipTo=$1 checked>"
     );
 
     // handle skips
@@ -570,8 +570,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
       /<textarea ([^>]*)><\/textarea>\s*->\s*([^\s<]+)/g,
       "<textarea $1 skipTo=$2></textarea>"
     );
-    questText = questText.replace(/<\/div><br>/g,"</div>");
-    
+    questText = questText.replace(/<\/div><br>/g, "</div>");
+
     // If reset is needed only for radio buttons then uncomment out the next lines
     // if (!questText.includes('input type=\'radio\'')){
     //   resetButton = '';
@@ -602,12 +602,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
     /\[DISPLAY IF\s*([A-Z][A-Z0-9+]*)\s*=\s*\(([\w,\s]+)\)\s*\]\s*<div (.*?)>/g,
     "<div $3 showIfId='$1' values='$2'>"
   );
-  
+
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
   // add the HTML/HEAD/BODY tags...
   document.getElementById(divId).innerHTML =/*html*/
-    contents + 
+    contents +
     `
   <div class="modal" id="softModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -722,10 +722,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const response = await retrieve();
       if (response.code === 200) {
         const userData = response.data;
-        console.log("retrieve module name===",moduleParams.questName);
+        console.log("retrieve module name===", moduleParams.questName);
         if (userData[moduleParams.questName]) {
           questObj = userData[moduleParams.questName];
-          console.log("questObj===",questObj);
+          console.log("questObj===", questObj);
           await restoreResults(questObj);
         }
       }
@@ -869,12 +869,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // });
 
   document.getElementById("submitModalButton").onclick = () => {
-    let lastBackButton =document.getElementById('lastBackButton');
-    if (lastBackButton){
+    let lastBackButton = document.getElementById('lastBackButton');
+    if (lastBackButton) {
       lastBackButton.remove();
     }
-    let submitButton =document.getElementById('submitButton');
-    if (submitButton){
+    let submitButton = document.getElementById('submitButton');
+    if (submitButton) {
       submitButton.remove();
     }
     submitQuestionnaire(moduleParams.renderObj.store, questName);
@@ -913,6 +913,14 @@ function unrollLoops(txt) {
     disIfIDs = disIfIDs.map((x) => x.id);
     let newIds = ids.map((x) => x.id);
 
+    // find all ids defined within the loop,
+    // note: textboxes are an outlier that needs
+    //       to be fixed.
+    let idsInLoop = Array.from(x.txt.matchAll(/\|[\w\s=]*id=(\w+)|___\|\s*(\w+)|textbox:\s*(\w+)/g)).map(x => {
+      return x[1] ? x[1] : (x[2] ? x[2] : x[3])
+    })
+    console.log(idsInLoop)
+
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
@@ -920,18 +928,25 @@ function unrollLoops(txt) {
       // replace all instances of the question ids with id_#
       ids.map(
         (id) =>
-          (currentText = currentText.replace(
-            new RegExp("\\b" + id.id + "\\b", "g"),
-            `${id.id}_${loopIndx}`
-          ))
+        (currentText = currentText.replace(
+          new RegExp("\\b" + id.id + "\\b", "g"),
+          `${id.id}_${loopIndx}`
+        ))
       );
       ids.map(
         (id) =>
-          (currentText = currentText.replace(
-            new RegExp("\\b" + id.id + "_", "g"),
-            `${id.id}_${loopIndx}_`
-          ))
+        (currentText = currentText.replace(
+          new RegExp("\\b" + id.id + "_", "g"),
+          `${id.id}_${loopIndx}_`
+        ))
       );
+
+      //replace all idsInLoop in the loop with {$id_$loopIndx}
+      idsInLoop.forEach(id => {
+        currentText = currentText.replace(new RegExp(`${id}`, "g"), `${id}_${loopIndx}`);
+      })
+
+
       // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
 
       // disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
