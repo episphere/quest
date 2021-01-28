@@ -32,7 +32,7 @@ function buildHtml(grid_obj) {
     
     let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
 
-    grid_table_body += `<div id="${question.id}" ${displayif} gridrow class="d-flex align-items-stretch"><div class="col d-flex align-items-center justify-content-center border">${question.question_text}</div>`;
+    grid_table_body += `<div id="${question.id}" ${displayif} gridrow class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" grid class="grid-input-element show-button"/></div>`;
     });
