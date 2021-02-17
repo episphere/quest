@@ -154,7 +154,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
 
     // replace user profile variables...
-    questText = questText.replace(/\{\$u:(\w+)}/, (all, varid) => {
+    questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
       return `<span name='${varid}'>${previousResults[varid]}</span>`;
     });
 
