@@ -899,7 +899,7 @@ export function getSelected(questionElement) {
 
   var rv2 = [
     ...questionElement.querySelectorAll(
-      "input[type='number'], input[type='text'], input[type='date'], input[type='email'], input[type='tel'], textarea, option"
+      "input[type='number'], input[type='text'], input[type='date'], input[type='email'], input[type='time'], input[type='tel'], textarea, option"
     ),
   ];
 
