@@ -139,8 +139,11 @@ export function textboxinput(inputElement) {
     // handles SSN auto-format
     parseSSN(inputElement);
   }
-
-  let span1 = inputElement.nextElementSibling.firstChild;
+  let span1 = null;
+  if (inputElement && inputElement.nextElementSibling && inputElement.nextElementSibling.firstChild){
+    span1 = inputElement.nextElementSibling.firstChild;
+  }
+  
   if (span1 != null) {
     span1.style.color = "red";
 
