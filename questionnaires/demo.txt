@@ -1,8 +1,11 @@
 [BACK]Background Information
 
 [B0] Demographics
-|__| Name
-|__| Address
+
+Name
+|__| 
+Address
+|__| 
 
 [B1] How old are you today?
 |__|__| Age
