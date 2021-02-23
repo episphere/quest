@@ -2,10 +2,8 @@
 
 [B0] Demographics
 
-Name
-|__| 
-Address
-|__| 
+Name |__| 
+Address |__| 
 
 [B1] How old are you today?
 |__|__|
