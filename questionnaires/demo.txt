@@ -2,13 +2,11 @@
 
 [B0] Demographics
 
-Name
-|__| 
-Address
-|__| 
+Name |__| 
+Address |__| 
 
 [B1] How old are you today?
-|__|__| Age
+|__|__|
 
 [B2] What is the highest level of school that you have completed?
 [] Grade school (grades 1-8)
