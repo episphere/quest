@@ -665,7 +665,7 @@ function exitLoop(nextElement) {
 export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
-    if (elm.tagName == "LABEL") {
+    if (elm && elm.tagName == "LABEL") {
       x.innerHTML = elm.innerHTML;
     } else {
       x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
