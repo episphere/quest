@@ -159,6 +159,14 @@
             document.getElementById('markup').style.display = 'none'
             changeLogic("ActiveLogic.css")
         }
+        let styleRegex = /^style=([^&\s]+)/
+        let styleIndx = location.hash.split("&").findIndex( (x)=> styleRegex.exec(x) )
+        if (styleIndx > -1){
+            let styleSheet = location.hash.split("&")[styleIndx].match(styleRegex)[1]
+            console.log(styleSheet)
+            changeStyle(styleSheet)
+        }
+
         let myTree ={};
        
     </script>
