@@ -154,7 +154,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
 
     // replace user profile variables...
-    questText = questText.replace(/\{\$u:(\w+)}/, (all, varid) => {
+    questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
       return `<span name='${varid}'>${previousResults[varid]}</span>`;
     });
 
@@ -1018,7 +1018,7 @@ function resetChildren(nodes) {
   for (let node of nodes) {
     if (node.type === "radio" || node.type === "checkbox") {
       node.checked = false;
-    } else if (node.type === "text") {
+    } else if (node.type === "text" || node.type === "time" || node.type === "date") {
       node.value = "";
     }
   }
