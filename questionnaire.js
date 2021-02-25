@@ -647,6 +647,7 @@ export async function submitQuestionnaire(store, questName){
     formData[`${questName}.COMPLETED`] = true;
     formData[`${questName}.COMPLETED_TS`] = new Date();
     store(formData);
+    location.reload();
   } 
 }
 function exitLoop(nextElement) {
