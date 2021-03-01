@@ -823,15 +823,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
   ];
 
   textInputs.forEach((inputElement) => {
-    let div = document.createElement("div");
-    let span = document.createElement("span");
-    span.innerText = " ";
-    span.style.height = "inherit";
-    div.appendChild(span);
-    div.style.minHeight = "30px";
+    // let div = document.createElement("div");
+    // let span = document.createElement("span");
+    // span.innerText = " ";
+    // span.style.height = "inherit";
+    // div.appendChild(span);
+    // div.style.minHeight = "30px";
     inputElement.onfocusout = textBoxInput;
     inputElement.setAttribute("style", "size: 20 !important");
-    inputElement.insertAdjacentElement("afterend", div);
+    // inputElement.insertAdjacentElement("afterend", div);
   });
 
   let SSNInputs = [...divElement.querySelectorAll(".SSN")];
