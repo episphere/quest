@@ -580,13 +580,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
       <div class="row">
-        <div class="col-lg-5">
+        <div class="col-lg-5 col-md-3 col-sm-3">
           ${prevButton}
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-6 col-md-6 col-sm-6">
           ${resetButton}
         </div>
-        <div class="col-lg-1">
+        <div class="col-lg-1 col-md-3 col-sm-3">
           ${nextButton}
         </div>
       </div>

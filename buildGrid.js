@@ -64,13 +64,13 @@ function buildHtml(grid_obj) {
   ${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
   <div class="container">
     <div class="row">
-      <div class="col-lg-5">
+      <div class="col-lg-5 col-md-3 col-sm-3">
         <input type='submit' class='previous' value='BACK'/>
       </div>
-      <div class="col-lg-6">
+      <div class="col-lg-6 col-md-6 col-sm-3">
         <input type='submit' class='reset' value='RESET ANSWER'/>
       </div>
-      <div class="col-lg-1">
+      <div class="col-lg-1 col-md-3 col-sm-3">
         <input type='submit' class='next' value='NEXT'/>
       </div>
     </div>
