@@ -477,19 +477,18 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace #YNP with Yes No input
     questText = questText.replace(
-      /#YNP/g,
-      `(1) Yes
-       (0) No
-       (99) Prefer not to answer`
+      /#YNP/g, `<div class='response' style='margin-top:15px'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response' style='margin-top:15px'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div><div class='response' style='margin-top:15px'><input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer"></input><label for='${questID}_99'>Prefer not to answer</label></div>`
+      // `(1) Yes
+      //  (0) No
+      //  (99) Prefer not to answer`
     );
 
     // replace #YN with Yes No input
     questText = questText.replace(
-      /#YN/g,
-      `(1) Yes
-       (0) No`
+      /#YN/g,  `<div class='response' style='margin-top:15px'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response' style='margin-top:15px'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div>`
+      // `(1) Yes
+      //  (0) No`
     );
-
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
     questText = questText.replace(
