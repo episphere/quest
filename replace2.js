@@ -1000,7 +1000,7 @@ export function stopSubmit(event) {
   } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
     event.target.value = undefined;
-  } else if (event.target.clickType == "Submit Questionnaire") {
+  } else if (event.target.clickType == "Submit Survey") {
 
     $("#submitModal").modal("toggle");
 
