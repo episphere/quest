@@ -355,7 +355,8 @@ function clearSelection(inputElement) {
           break;
         default:
           element.value = element == inputElement ? inputElement.value : "";
-          element.nextElementSibling.children[0].innerText = "";
+          setFormValue(element.form, element.value, element.id);
+          if (element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
           element.form.classList.remove("invalid");
       }
     });
@@ -387,7 +388,7 @@ function handleXOR(inputElement) {
       x.checked = x.value == 99 ? false : x.checked;
     } else {
       x.value = "";
-      if (x.nextElementSibling.children[0].tagName == "SPAN") {
+      if (x.nextElementSibling.children.length !== 0 && x.nextElementSibling.children[0].tagName == "SPAN") {
         if (x.nextElementSibling.children[0].innerText.length != 0) {
           x.nextElementSibling.children[0].innerText = "";
           x.classList.remove("invalid");
