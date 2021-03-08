@@ -572,9 +572,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/<\/div><br>/g, "</div>");
 
     // If reset is needed only for radio buttons then uncomment out the next lines
-    // if (!questText.includes('input type=\'radio\'')){
-    //   resetButton = '';
-    // }
+    if (!questText.includes('input')){
+      resetButton = '';
+    }
 
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
