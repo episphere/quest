@@ -145,7 +145,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         : (questID === 'END') ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous' value='BACK'></input>";
 
     //debugger;
-    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Questionnaire'></input>"
+    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>"
       :
       "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
