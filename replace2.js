@@ -5,6 +5,7 @@ import {
   moduleParams,
   rbAndCbClick,
   textBoxInput,
+  // handleXOR, 
   displayQuestion,
   parseSSN,
   parsePhoneNumber,
@@ -572,7 +573,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/<\/div><br>/g, "</div>");
 
     // If reset is needed only for radio buttons then uncomment out the next lines
-    if (!questText.includes('input')){
+    if (!questText.includes('input') && (questID !== 'END')){
       resetButton = '';
     }
 
@@ -828,6 +829,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // span.style.height = "inherit";
     // div.appendChild(span);
     // div.style.minHeight = "30px";
+    // inputElement.onfocus = handleXOR(inputElement);
     inputElement.onfocusout = textBoxInput;
     inputElement.setAttribute("style", "size: 20 !important");
     // inputElement.insertAdjacentElement("afterend", div);
