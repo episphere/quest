@@ -146,7 +146,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         : (questID === 'END') ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous' value='BACK'></input>";
 
     //debugger;
-    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Questionnaire'></input>"
+    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>"
       :
       "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
@@ -573,9 +573,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/<\/div><br>/g, "</div>");
 
     // If reset is needed only for radio buttons then uncomment out the next lines
+
     if (!questText.includes('input') && (questID !== 'END')){
       resetButton = '';
     }
+
 
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
@@ -1001,7 +1003,7 @@ export function stopSubmit(event) {
   } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
     event.target.value = undefined;
-  } else if (event.target.clickType == "Submit Questionnaire") {
+  } else if (event.target.clickType == "Submit Survey") {
 
     $("#submitModal").modal("toggle");
 
