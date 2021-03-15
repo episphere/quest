@@ -678,7 +678,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
             </button>
         </div>
         <div class="modal-body">
-            <p id="submitModalBodyText">Are you sure you want to submit your answers</p>
+            <p id="submitModalBodyText">Are you sure you want to submit your answers?</p>
         </div>
         <div class="modal-footer">
           <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal">Submit</button>
