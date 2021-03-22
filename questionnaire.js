@@ -427,7 +427,8 @@ function clearSelection(inputElement) {
   let sameName = [
     ...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`),
   ].filter((x) => x.type != "hidden");
-  if (inputElement.value == 99) {
+  if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77 
+    || inputElement.value == 746038746 || inputElement.value == 178420302 ) {
     sameName.forEach((element) => {
       switch (element.type) {
         case "checkbox":
@@ -445,7 +446,7 @@ function clearSelection(inputElement) {
   } else {
     sameName.forEach((element) => {
       if (["checkbox", "radio"].includes(element.type))
-        element.checked = element.value == 99 ? false : element.checked;
+        element.checked = element.value == 99 || element.value == 88  || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
     });
   }
 }
@@ -467,7 +468,7 @@ export function handleXOR(inputElement) {
 
   sibs.forEach((x) => {
     if (["checkbox", "radio"].includes(x.type)) {
-      x.checked = x.value == 99 ? false : x.checked;
+      x.checked = x.value == 99 || x.value == 88 || x.value == 77 || x.value == 746038746 || x.value == 178420302 ? false : x.checked;
     } else {
       x.value = "";
       if (x.nextElementSibling.children.length !== 0 && x.nextElementSibling.children[0].tagName == "SPAN") {
