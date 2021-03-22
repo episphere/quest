@@ -731,8 +731,9 @@ export async function submitQuestionnaire(store, questName){
     formData[`${questName}.COMPLETED`] = 2;
     formData[`${questName}.COMPLETED_TS`] = new Date();
     try{
-      store(formData);
-      //location.reload();
+      store(formData).then(()=>{
+        location.reload();
+      });
     } catch (e){
       console.log("Store failed", e);
     }
