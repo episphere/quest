@@ -21,6 +21,7 @@ export let transform = function () {
 const validation = {};
 let questName = "Questionnaire";
 let rootElement;
+let final_obj = {}
 
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
@@ -96,6 +97,20 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questArgs,
     questText
   ) {
+
+
+    // console.log(page);
+    // console.log(questID);
+    // console.log(questOpts);
+    // console.log(questArgs);
+    // console.log(questText);
+
+    // if (!final_obj[questID]) {
+    //   final_obj[questID] = {}
+    //   final_obj[questID]['content'] = page;
+    //   final_obj[questID]['questOpts'] = 
+    // }
+
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
     questText = questText.replace(/\u001f/g, "\n");

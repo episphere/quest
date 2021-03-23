@@ -2,11 +2,77 @@ import { transform } from "./replace2.js";
 import { questionQueue, moduleParams } from "./questionnaire.js";
 
 let prevRes = {};
-
+let final_obj = {};
 async function startUp() {
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
+    let temp = ta.value;
+
+    let regEx = new RegExp(
+      "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
+      "g"
+    );
+  
+    console.log(temp);
+    temp = temp.replace(regEx, function (
+      page,
+      questID,
+      questOpts,
+      questArgs,
+      questText
+    ) {
+  
+  
+      console.log(page);
+      console.log(questID);
+      console.log(questOpts);
+      console.log(questArgs);
+      console.log(questText);
+      console.log(final_obj);
+      if (!final_obj[questID]) {
+        final_obj[questID] = {}
+        final_obj[questID]['page'] = page;
+        final_obj[questID]['questOpts'] = questOpts;
+        final_obj[questID]['questArgs'] = questArgs;
+        final_obj[questID]['questText'] = questText;
+      }
+      console.log(final_obj);
+    });
+    console.log(ta.value);
+
     transform.tout((previousResults) => {
+      // let temp = ta.value;
+
+      // let regEx = new RegExp(
+      //   "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
+      //   "g"
+      // );
+    
+      // console.log(temp);
+      // temp = temp.replace(regEx, function (
+      //   page,
+      //   questID,
+      //   questOpts,
+      //   questArgs,
+      //   questText
+      // ) {
+    
+    
+      //   console.log(page);
+      //   console.log(questID);
+      //   console.log(questOpts);
+      //   console.log(questArgs);
+      //   console.log(questText);
+      //   console.log(final_obj);
+      //   if (!final_obj[questID]) {
+      //     final_obj[questID] = {}
+      //     final_obj[questID]['page'] = page;
+      //     final_obj[questID]['questOpts'] = questOpts;
+      //     final_obj[questID]['questArgs'] = questArgs;
+      //     final_obj[questID]['questText'] = questText;
+      //   }
+      //   console.log(final_obj)
+      // });
       transform.render(
         {
           text: ta.value,
