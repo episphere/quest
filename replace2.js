@@ -339,7 +339,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace (XX) with a radio button...
     questText = questText.replace(/<br>/g, "<br>\n");
     questText = questText.replace(
-      /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g,
+      /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d*)\)|\n|<br>|$)/g,
       fRadio
     );
     function fRadio(containsGroup, value, name, labelID, condition, label) {
@@ -492,6 +492,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
+    console.log(questText)
     questText = questText.replace(
       /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([^<\n]+)?(<(?:input|textarea).*?<\/(?:input|textarea)>)(?:\s*->\s*(\w+))/g,
       cb1
