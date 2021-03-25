@@ -439,7 +439,7 @@ function clearSelection(inputElement) {
         default:
           element.value = element == inputElement ? inputElement.value : "";
           setFormValue(element.form, element.value, element.id);
-          if (element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
+          if (element.nextElementSibling && element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
           element.form.classList.remove("invalid");
       }
     });

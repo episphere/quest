@@ -492,7 +492,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
-    console.log(questText)
     questText = questText.replace(
       /([\[\(])(\w+)(?::(\w+))?(?:\|([^\|]+?))?[\]\)]([^<\n]+)?(<(?:input|textarea).*?<\/(?:input|textarea)>)(?:\s*->\s*(\w+))/g,
       cb1
