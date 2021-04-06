@@ -1,5 +1,5 @@
 {
   "url1": "https://episphere.github.io/quest/questionnaires/sherlockDemo.txt.txt",
-  "url2": "https://hzhao392.github.io/privatequest/testQuest.txt.txt",
-  "url3": "https://hzhao392.github.io/privatequest/hair.txt.txt"
+  "url2": "https://episphere.github.io/quest/questionnaires/testQuest.txt",
+  "url3": "https://episphere.github.io/quest/questionnaires/hair.txt"
 }
