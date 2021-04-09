@@ -28,12 +28,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.previousResults = previousResults;
   rootElement = divId;
   let contents = "";
+  let list_of_contents = []
+  let list_of_sub_modules;
+  let content = ""
   if (obj.text) contents = obj.text;
   if (obj.url) {
     moduleParams.config = await (await fetch(obj.url)).text();
-  }
-  if (obj.url) {
-    contents = await (await fetch(obj.url)).text();
+
+    console.log(obj.url)
+
     if (obj.activate) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -44,8 +47,47 @@ transform.render = async (obj, divId, previousResults = {}) => {
       link2.href = "https://episphere.github.io/quest/Style1.css";
       document.head.appendChild(link2);
     }
+
+    list_of_sub_modules = Object.values(JSON.parse(await (await fetch(obj.url)).text()))
+    console.log(list_of_sub_modules)
+ 
+  }
+  if (list_of_sub_modules) contents = await get_sub_module(list_of_sub_modules)
+
+  await replace(contents);
+
+  return true
+  
+  async function get_sub_module(sub_modules) {
+    let next_sub_module = sub_modules.shift();
+    let content = await (await fetch(next_sub_module)).text();
+    return content;
   }
 
+  // for (sub_module in list_of_sub_modules) {
+  //   console.log(list_of_sub_modules[sub_module])
+  //   contents = await (await fetch(list_of_sub_modules[sub_module])).text();
+  //   console.log(contents)
+
+
+
+  // list_of_sub_modules.forEach(async (sub_module) => {
+  //   console.log(sub_module)
+  //   content = await (await fetch(sub_module)).text();
+  //   console.log(content)
+    // list_of_contents.push(content);
+    // console.log(list_of_contents)
+  
+    // contents = content
+
+  // if (list_of_contents) {
+  //   console.log(list_of_contents)
+    // console.log(list_of_contents[0])
+  // }
+
+  async function replace(contents) {
+
+    console.log(contents)
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
 
@@ -168,6 +210,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let nextButton = endMatch
       ? ""
       : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
+
+    
+    // let nextButton = endMatch
+    //   ? (list_of_sub_modules.length > 0) ? await get_sub_module(list_of_sub_modules)
+    //   : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
@@ -713,6 +760,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   function setActive(id) {
     let active = document.getElementById(id);
+    console.log(active)
     if (!active) return;
 
     // remove active from all questions...
@@ -901,6 +949,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   moduleParams.questName = questName;
   return true;
+}
 };
 
 function unrollLoops(txt) {
