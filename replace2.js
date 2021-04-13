@@ -182,7 +182,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       text = text.replace(/\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
       text = text.replace(/\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g, fCheck);
       text = text.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
-      text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?/g, fText);
+      text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*?)/g, fText);
       text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
       text = text.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
       text = text.replace(
@@ -400,6 +400,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       fNum
     );
     function fNum(fullmatch, opts) {
+      let value = questText.split('<br>')[0]
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
       let maxRegex = /max(?![(a-z])/g;
@@ -439,7 +440,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         options = options + " disabled ";
       }
       //onkeypress forces whole numbers
-      return `<input type='number' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options} ></input>`;
+      return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options} ></input>`;
     }
 
     // replace |__| or [text box:xxx] with an input box...
@@ -448,17 +449,28 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let id = options ? options : `${questID}_text`;
       return `|__|id=${id} name=${questID}|`;
     }
+
+
     questText = questText.replace(
-      /\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?/g,
+      // /\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*)?/g,
+      /(.*)?\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?(.*)?/g,
       fText
     );
-    function fText(fullmatch, opts) {
+
+    function fText(fullmatch, value1, opts, value2) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
 
       if (radioCheckboxAndInput) {
         options = options + " disabled ";
       }
-      return `<input type='text'  name='${questID}' ${options}></input>`;
+
+      if (value1 && value1.includes('div')) return `${value1}<input type='text' aria-label='${value1.split('>').pop()}'name='${questID}' ${options}></input>${value2}`
+
+      if (value1 && value2) return `<span>${value1}</span><input type='text' aria-label='${value1} ${value2}' name='${questID}' ${options}></input><span>${value2}</span>`;
+      if (value1) return `<span>${value1}</span><input type='text' aria-label='${value1}' name='${questID}' ${options}></input>`;
+      if (value2) return `<input type='text' aria-label='${value2}' name='${questID}' ${options}></input><span>${value2}</span>`;
+
+      return `<input type='text' aria-label='${questText.split('<br>')[0]}' name='${questID}' ${options}></input>`;
     }
 
     // replace |___| with a textarea...
