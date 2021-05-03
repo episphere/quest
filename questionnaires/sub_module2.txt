@@ -1,0 +1,20 @@
+[INTRO2] Welcome to sub module 2
+
+[B1] What best describes your race? Select all that apply to you.
+[] American Indian or Alaska native
+[] Asian
+[] Black or African American
+[] Middle Eastern or North African
+[] Native Hawaiian or other Pacific Islander
+[] White
+[] Other ( specify ) [text box]
+[] Do not know
+[] Prefer not to answer
+
+[B2] What is your hobby?
+(1) Singing
+(2) Painting
+(3) Reading
+
+[END, end] This is the end of sub module 2. 
+
