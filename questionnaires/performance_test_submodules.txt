@@ -1,0 +1,5 @@
+{
+  "url1": "https://episphere.github.io/quest/questionnaires/sub_module1.txt",
+  "url2": "https://episphere.github.io/quest/questionnaires/sub_module2.txt",
+  "url3": "https://episphere.github.io/quest/questionnaires/sub_module3.txt"
+}
