@@ -1,4 +1,4 @@
-[Q12] This is a test 
+[C0] This is a test 
 
 [RACEETH?] Which categories describe you? Select all that apply. Note, you may select more than one group.
 [1] American Indian or Alaska Native
@@ -11,4 +11,4 @@
 [8] None of these fully describe me: Please describe [text box:RACEETH_OTHER]
 [99] Prefer not to answer
 
-[Q4,end] Thank you.
+[C3,end] Thank you.
