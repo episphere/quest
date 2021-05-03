@@ -1,0 +1,12 @@
+[INTRO3] Welcome to sub module 3
+
+[C1] do you like dogs
+#YN
+
+[C2] How old are you |__|__|id=age xor=c2| or what year were you born? |__|__|id=yob xor=c2|
+
+
+[C3] What is your favorite TV show |__|id=TV xor=c3| or who your favorite you-tuber? |__|id=yt xor=c3|
+
+
+[END, end] This is the end of sub module 3. Submit questionnaire? 
