@@ -13,12 +13,12 @@
 
 [Q4] How many licks to the center of a tootsie pop? |__|__|id=licks max=10|
 
-<loop max=10>
-[Q5,displayif=greaterThanOrEqual(licks,#loop)] Knock-Knock?
+
+[Q5] Knock-Knock?
 (1) come in.
 (2) go away.
 (3) come back later
-</loop>
+
 
 [WORKACTA] During the past 12 months, about how much time do you usually spend doing these activities while you 
 are at work? When thinking about your answers, please think about the time you spend at your job, 
