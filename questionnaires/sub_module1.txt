@@ -1,0 +1,30 @@
+{"name":"Performance_Module"} [INTRO] Welcome to the test for the sub module solution.
+
+[A1] Demographics
+
+Name |__| 
+
+[A2] How old are you today?
+|__|__|
+
+[A3] What is the highest level of school that you have completed?
+[] Grade school (grades 1-8)
+[] Some high school (grades 9-11)
+[] High school graduate or GED
+[] Some college
+[] Technical or trade school beyond high school
+[] Associate’s degree
+[] College graduate (Bachelor’s degree)
+[] Advanced degree (Master’s, Doctorate, etc.)
+[] Other ( specify ) [text box]
+
+[A4] What is your current marital/partner status?
+[] Never married
+[] Not married but living with partner
+[] Married
+[] Divorced
+[] Widowed
+[] Separated
+[] Prefer not to answer
+
+[END, end] This is the end of sub module 1.
