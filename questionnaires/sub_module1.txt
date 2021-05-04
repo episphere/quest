@@ -19,7 +19,7 @@ Name |__|
 [] Other ( specify ) [text box]
 
 [A4] What is your current marital/partner status?
-[] Never married
+[] Never married -> B2
 [] Not married but living with partner
 [] Married
 [] Divorced
