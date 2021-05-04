@@ -1,4 +1,4 @@
-[INTRO] Welcome to the test for the sub module solution.
+{"name":"performance_questionnaire"} [INTRO] Welcome to the test for the sub module solution.
 
 [A1] Demographics
 
