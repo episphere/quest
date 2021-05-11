@@ -1,13 +1,27 @@
 
 {
   "name": "performance_module",
-  "https://episphere.github.io/quest/questionnaires/sub_module1.txt": {
-    "end": false
-  },
-  "https://episphere.github.io/quest/questionnaires/sub_module2.txt": {
-    "end": false
-  },
-  "https://episphere.github.io/quest/questionnaires/sub_module3.txt": {
-    "end": true
-  }
+  
+  "sub_modules": [
+  
+      {
+      "https://episphere.github.io/quest/questionnaires/sub_module1.txt": {
+      "end": false
+      }
+      },
+      
+      {
+      "https://episphere.github.io/quest/questionnaires/sub_module2.txt": {
+        "end": false
+      }
+      },
+      
+      {
+      "https://episphere.github.io/quest/questionnaires/sub_module3.txt": {
+        "end": true
+      }
+      }
+      
+  ]
+  
 }
