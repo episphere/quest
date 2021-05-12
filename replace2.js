@@ -21,15 +21,25 @@ export let transform = function () {
 const validation = {};
 let questName = "Questionnaire";
 let rootElement;
-let final_obj = {}
+
+let list_of_sub_modules = [];
+let current_sub_module = 1;
+
+let total_sub_modules;
+let opened_sub_module;
+let contents = "";
+
 
 transform.render = async (obj, divId, previousResults = {}) => {
+
+  console.log(obj, divId)
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   rootElement = divId;
-  let contents = "";
+  
   let list_of_contents = []
-  let list_of_sub_modules;
+  
+  
   let content = ""
   if (obj.text) contents = obj.text;
   if (obj.url) {
@@ -48,46 +58,61 @@ transform.render = async (obj, divId, previousResults = {}) => {
       document.head.appendChild(link2);
     }
 
-    list_of_sub_modules = Object.values(JSON.parse(await (await fetch(obj.url)).text()))
+
+    let s = Object.values(JSON.parse(await (await fetch(obj.url)).text()))[1]
+    s.forEach(m => list_of_sub_modules.push(Object.values(m)[0]))
+
     console.log(list_of_sub_modules)
- 
-  }
-  if (list_of_sub_modules) contents = await get_sub_module(list_of_sub_modules)
+    total_sub_modules = list_of_sub_modules.length
+    opened_sub_module = new Array(total_sub_modules).fill(false)
+    console.log(opened_sub_module)
 
-  await replace(contents);
 
-  return true
+    let a = Object.values(JSON.parse(await (await fetch(obj.url)).text()))
+    console.log(a)
+    if (a[0].length !== 0) {
+      questName = a[0];
+      moduleParams.questName = questName;
+    }
+
+    let end_vals = []
+    s.forEach(m => end_vals.push(Object.values(m)[1]))
+    console.log(end_vals)
   
+
+  }
+ 
+  if (list_of_sub_modules.length > 0) {
+    contents = await get_sub_module(list_of_sub_modules)
+
+  opened_sub_module[current_sub_module-1] = true
+  console.log(opened_sub_module)
+  }
+
   async function get_sub_module(sub_modules) {
-    let next_sub_module = sub_modules.shift();
+    let next_sub_module = sub_modules[current_sub_module-1];
     let content = await (await fetch(next_sub_module)).text();
     return content;
   }
 
-  // for (sub_module in list_of_sub_modules) {
-  //   console.log(list_of_sub_modules[sub_module])
-  //   contents = await (await fetch(list_of_sub_modules[sub_module])).text();
-  //   console.log(contents)
-
-
-
-  // list_of_sub_modules.forEach(async (sub_module) => {
-  //   console.log(sub_module)
-  //   content = await (await fetch(sub_module)).text();
-  //   console.log(content)
-    // list_of_contents.push(content);
-    // console.log(list_of_contents)
+  await replace(divId, obj, contents, current_sub_module, opened_sub_module);
+  if (list_of_sub_modules.length === current_sub_module) return true
   
-    // contents = content
+  
+};
 
-  // if (list_of_contents) {
-  //   console.log(list_of_contents)
-    // console.log(list_of_contents[0])
-  // }
+export async function replace(divId, obj, contents, curr_sub_module = 0, opened_sub_module) {
 
-  async function replace(contents) {
+  if (curr_sub_module !== current_sub_module) {
+current_sub_module = curr_sub_module
+  }
 
     console.log(contents)
+
+    moduleParams.opened_sub_module = await localforage.getItem('opened_sub_module')
+    console.log(moduleParams.opened_sub_module)
+    if (!moduleParams.opened_sub_module) moduleParams.opened_sub_module = opened_sub_module
+    console.log(moduleParams.opened_sub_module)
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
 
@@ -112,8 +137,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return "";
     }
   } else {
-    questName = "Questionnaire";
+    if (!moduleParams.questName) {
+      questName = "Questionnaire";
+      moduleParams.questName = questName;
+    } else {
+      questName = moduleParams.questName
+    }
+     
   }
+  
   // first let's deal with breaking up questions..
   // a question starts with the [ID1] regex pattern
   // and end with the next pattern or the end of string...
@@ -141,17 +173,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   ) {
 
 
-    // console.log(page);
-    // console.log(questID);
-    // console.log(questOpts);
-    // console.log(questArgs);
-    // console.log(questText);
-
-    // if (!final_obj[questID]) {
-    //   final_obj[questID] = {}
-    //   final_obj[questID]['content'] = page;
-    //   final_obj[questID]['questOpts'] = 
-    // }
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
@@ -197,24 +218,25 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
     }
 
+
+ 
+
+
     let prevButton =
       (endMatch && endMatch[1]) === "noback"
         ? ""
-        : (questID === 'END') ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous' value='BACK'></input>";
-
+        : (questID === 'END' && list_of_sub_modules.length === curr_sub_module) ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous' value='BACK'></input>";
     //debugger;
-    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>"
-      :
-      "<input type='submit' class='reset' value='RESET ANSWER'></input>";
+
 
     let nextButton = endMatch
       ? ""
       : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
 
+
+      let resetButton = (questID === 'END' && list_of_sub_modules.length === 0 || list_of_sub_modules.length === curr_sub_module) ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>" : "<input type='submit' class='reset' value='RESET ANSWER'></input>";
+
     
-    // let nextButton = endMatch
-    //   ? (list_of_sub_modules.length > 0) ? await get_sub_module(list_of_sub_modules)
-    //   : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
@@ -759,6 +781,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // }
 
   function setActive(id) {
+    console.log(id)
     let active = document.getElementById(id);
     console.log(active)
     if (!active) return;
@@ -788,6 +811,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const response = await retrieve();
       if (response.code === 200) {
         const userData = response.data;
+        console.log(userData)
         console.log("retrieve module name===", moduleParams.questName);
         if (userData[moduleParams.questName]) {
           questObj = userData[moduleParams.questName];
@@ -800,19 +824,46 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // the default which pull the values out of
       // localforage...
       let results = await localforage.getItem(questName);
-
+      console.log(results)
       if (results == null) results = {};
       await restoreResults(results);
     }
   }
 
-  function resetTree() {
+  async function resetTree() {
     // make the appropriate question active...
     // don't bother if there are no questions...
     if (questions.length > 0) {
       let currentId = questionQueue.currentNode.value;
       let currentQuestion = divElement.querySelector(`[id=${currentId}]`);
       console.log("currentId", currentId);
+      console.log(opened_sub_module)
+      console.log(current_sub_module)
+      console.log(curr_sub_module)
+      let curr_element = document.getElementById(currentId)
+      let status_sub_module = await localforage.getItem("opened_sub_module")
+      console.log(status_sub_module)
+      // if (currentId && !curr_element && opened_sub_module.length > curr_sub_module && !opened_sub_module[curr_sub_module-1]) {
+        if (currentId && !curr_element && status_sub_module && status_sub_module.length > curr_sub_module && status_sub_module[curr_sub_module]) {
+        console.log('I am nowhere to be found')
+        call_next_sub_module()
+        
+      }
+
+
+      async function call_next_sub_module() {
+        console.log(list_of_sub_modules)
+        console.log(curr_sub_module)
+
+
+        let next_sub_module = list_of_sub_modules[curr_sub_module];
+        curr_sub_module++;
+        console.log(curr_sub_module)
+        let content = await (await fetch(next_sub_module)).text();
+        console.log(content)
+        // console.log(transform.render)
+        await replace(rootElement, obj, content, curr_sub_module)
+      }
       if (currentId) {
         console.log(` ==============>>>>  setting ${currentId} active`);
         setActive(currentId);
@@ -835,33 +886,37 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // wait for the objects to be retrieved,
   // then reset the tree.
   await fillForm(obj.retrieve);
-
   // get the tree from localforage...
   await localforage.getItem(questName + ".treeJSON").then((tree) => {
     // if this is the first time the user attempt
     // the questionnaire, the tree will not be in
     // the localForage...
-
+    console.log(tree)
     if (tree) {
       questionQueue.loadFromVanillaObject(tree);
     } else {
+      // console.log('isnide ')
       questionQueue.clear();
+      console.log(questionQueue)
     }
+    // console.log(questionQueue)
     setActive(questionQueue.currentNode.value);
   });
 
   resetTree();
-
+  // console.log(list_of_sub_modules)
   if (questions.length > 0) {
     let buttonToRemove = questions[0].querySelector(".previous");
-    if (buttonToRemove) {
+    if (buttonToRemove && curr_sub_module === 1) {
       buttonToRemove.remove();
     }
     buttonToRemove = [...questions].pop().querySelector(".next");
-    if (buttonToRemove) {
+    if (buttonToRemove && list_of_sub_modules.length === curr_sub_module) {
       buttonToRemove.remove();
     }
   }
+
+
 
   questions.forEach((question) => {
     question.onsubmit = stopSubmit;
@@ -936,6 +991,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // });
 
   document.getElementById("submitModalButton").onclick = () => {
+    console.log('Inside submit modal')
     let lastBackButton = document.getElementById('lastBackButton');
     if (lastBackButton) {
       lastBackButton.remove();
@@ -947,10 +1003,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
     submitQuestionnaire(moduleParams.renderObj.store, questName);
   };
 
-  moduleParams.questName = questName;
+  // moduleParams.questName = questName;
   return true;
 }
-};
 
 function unrollLoops(txt) {
   // all the questions in the loops...
@@ -1064,17 +1119,18 @@ export function stopSubmit(event) {
 
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
-    previousClicked(buttonClicked, moduleParams.renderObj.retrieve, rootElement);
+    console.log(buttonClicked)
+    previousClicked(buttonClicked, moduleParams.renderObj.retrieve, rootElement, moduleParams.renderObj, moduleParams.previousResults, list_of_sub_modules, current_sub_module, moduleParams.opened_sub_module);
   } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
     event.target.value = undefined;
   } else if (event.target.clickType == "Submit Survey") {
-
     $("#submitModal").modal("toggle");
 
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
-    nextClick(buttonClicked, moduleParams.renderObj.store, rootElement);
+    console.log(buttonClicked)
+    nextClick(buttonClicked, moduleParams.renderObj.store, rootElement, moduleParams.renderObj, moduleParams.previousResults, list_of_sub_modules, current_sub_module, moduleParams.opened_sub_module);
   }
 }
 

@@ -1,6 +1,7 @@
 import { Tree } from "./tree.js";
 import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
+import { replace } from './replace2.js'
 
 export const moduleParams = {};
 
@@ -483,18 +484,20 @@ export function handleXOR(inputElement) {
   return valueObj;
 }
 
-export function nextClick(norp, store, rootElement) {
+export function nextClick(norp, store, rootElement, obj, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module) {
   // Because next button does not have ID, modal will pass-in ID of question
   // norp needs to be next button element
   if (typeof norp == "string") {
     norp = document.getElementById(norp).querySelector(".next");
   }
-
+  console.log(norp.form)
   let reqElms = [];
   reqElms = [...norp.form.children].filter((elm) => elm.dataset.required);
+  console.log(reqElms)
   if (reqElms.length > 0) {
     reqElms.forEach((elm) => {
       let span = elm.nextElementSibling.firstChild;
+      console.log(span)
       if (elm.value.length == 0) {
         span.style.color = "red";
         span.innerText = "Please fill out this field.";
@@ -502,11 +505,11 @@ export function nextClick(norp, store, rootElement) {
         return null;
       } else {
         //handle the soft and hard edits...
-        showModal(norp, store, rootElement);
+        showModal(norp, store, rootElement, obj, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module);
       }
     });
   } else {
-    showModal(norp, store, rootElement);
+    showModal(norp, store, rootElement, obj, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module);
   }
 }
 
@@ -530,7 +533,7 @@ function setNumberOfQuestionsInModal(num, norp, store, soft) {
   $("#softModal").modal("toggle");
 }
 // show modal function
-function showModal(norp, store, rootElement) {
+function showModal(norp, store, rootElement, obj, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module) {
   if (
     norp.form.getAttribute("softedit") == "true" ||
     norp.form.getAttribute("hardedit") == "true"
@@ -596,46 +599,66 @@ function showModal(norp, store, rootElement) {
     //   nextPage(norp, store);
     // }
   }
-  nextPage(norp, store, rootElement);
+  nextPage(norp, store, rootElement, obj, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module);
 }
 
 let questRes = {};
 let tempObj = {};
 
-async function updateTreeInLocalForage() {
+async function updateTreeInLocalForage(opened_sub_module) {
   let questName = moduleParams.questName;
   await localforage.setItem(questName + ".treeJSON", questionQueue);
+  console.log(opened_sub_module)
+  if (opened_sub_module) await localforage.setItem("opened_sub_module", opened_sub_module);
 }
 
-function getNextQuestionId(currentFormElement) {
+async function getNextQuestionId(currentFormElement, obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module) {
   // get the next question from the questionQueue
   // if it exists... otherwise get the next look at the
   // markdown and get the question follows.
+  console.log(questionQueue)
   let nextQuestionNode = questionQueue.next();
+  console.log(nextQuestionNode)
   if (nextQuestionNode.done) {
     // We are at the end of the question queue...
     // get the next element from the markdown...
     let tmp = currentFormElement.nextElementSibling;
+    console.log(tmp.id)
+    if (tmp.id === 'softModal') {
+      opened_sub_module[current_sub_module] = true
+      updateTreeInLocalForage(opened_sub_module);
+      await call_next_sub_module(obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module)
+      let p = document.getElementById('root')
+      console.log(p)
+      let nextElement = p.firstChild
+      questionQueue.add(nextElement.id);
+    } else {
+      questionQueue.add(tmp.id);
+    }
+
     // we are at a question that should be displayed add it to the queue and
     // make it the current node.
-    questionQueue.add(tmp.id);
+    // questionQueue.add(tmp.id);
     nextQuestionNode = questionQueue.next();
+    console.log(nextQuestionNode)
+    console.log(nextQuestionNode.value)
   }
 
   return nextQuestionNode.value;
 }
 
 // norp == next or previous button (which ever is clicked...)
-async function nextPage(norp, store, rootElement) {
+async function nextPage(norp, store, rootElement, obj, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module) {
   // The root is defined as null, so if the question is not the same as the
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
   // and call next().
-
   let questionElement = norp.form;
+  // console.group(questionElement)
   if (checkValid(questionElement) == false) {
     return null;
   }
+  console.log(questionQueue)
   if (questionQueue.isEmpty()) {
     questionQueue.add(questionElement.id);
     questionQueue.next();
@@ -673,38 +696,41 @@ async function nextPage(norp, store, rootElement) {
         });
       });
 
-    //       let tempObj = {};
-    //   tempObj = await localforage.getItem(questName);
-    //   if (tempObj[norp.parentElement.id]) {
-    //     tempObj[norp.parentElement.id] = norp.parentElement.value;
-    //   } else {
-    //     tempObj[norp.parentElement.id] = {};
-    //     tempObj[norp.parentElement.id] = norp.parentElement.value;
-    //   }
-    //   localforage.setItem(questName, tempObj);
-    // } else {
-    //   localforage.setItem(questName, questRes);
-    // }
+    
   }
 
   // check if we need to add questions to the question queue
-  checkForSkips(questionElement);
-
-  let nextQuestionId = getNextQuestionId(questionElement);
+  checkForSkips(questionElement, obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module);
+  console.log(questionElement.value)
+  
+  let nextQuestionId = await getNextQuestionId(questionElement, obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module);
   // get the actual HTML element.
-  let nextElement = document.getElementById(nextQuestionId.value);
+  console.log(nextQuestionId.value)
+  let nextElement;
+  if (!document.getElementById(nextQuestionId.value)) {
+    opened_sub_module[current_sub_module] = true
+    updateTreeInLocalForage(opened_sub_module);
+    await call_next_sub_module(obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module)
+    let p = document.getElementById('root')
+    console.log(p)
+    nextElement = p.firstChild
+  } else {
+    nextElement = document.getElementById(nextQuestionId.value);
+  }
 
+
+  console.log(nextElement)
   nextElement = exitLoop(nextElement);
 
   // before we add the next question to the queue...
   // check for the displayif status...
-  while (nextElement.hasAttribute("displayif")) {
+  while (nextElement && nextElement.hasAttribute("displayif")) {
     // not sure what to do if the next element is is not a question ...
     if (nextElement.classList.contains("question")) {
       let display = evaluateCondition(nextElement.getAttribute("displayif"));
       if (display) break;
       if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
-      let nextQuestionId = getNextQuestionId(nextElement);
+      let nextQuestionId = await getNextQuestionId(nextElement, obj, rootElement, previousResults, list_of_sub_modules, current_sub_module);
       nextElement = document.getElementById(nextQuestionId.value);
       nextElement = exitLoop(nextElement);
     } else {
@@ -718,10 +744,25 @@ async function nextPage(norp, store, rootElement) {
   questionElement.classList.remove("active");
   // nextElement.scrollIntoView();
 
-  displayQuestion(nextElement);
+  displayQuestion(nextElement, opened_sub_module);
   // nextElement.scrollIntoView();
   // document.getElementById(rootElement).scrollIntoView();
   window.scrollTo(0,0);
+}
+
+
+async function call_next_sub_module(obj, rootElement, previousResults, sub_modules, current_sub_module, opened_sub_module) {
+  console.log(current_sub_module)
+  console.log(opened_sub_module)
+  console.log(obj, previousResults)
+  let next_sub_module = sub_modules[current_sub_module];
+  current_sub_module++;
+  console.log(opened_sub_module)
+  console.log(current_sub_module)
+
+  let content = await (await fetch(next_sub_module)).text();
+  console.log(content)
+  await replace(rootElement, obj, content, current_sub_module, opened_sub_module)
 }
 
 export async function submitQuestionnaire(store, questName){
@@ -741,7 +782,7 @@ export async function submitQuestionnaire(store, questName){
   } 
 }
 function exitLoop(nextElement) {
-  if (nextElement.hasAttribute("firstquestion")) {
+  if (nextElement && nextElement.hasAttribute("firstquestion")) {
     let loopMax = document.getElementById(nextElement.getAttribute("loopmax"))
       .value;
     let firstQuestion = nextElement.getAttribute("firstquestion");
@@ -756,7 +797,7 @@ function exitLoop(nextElement) {
   return nextElement;
 }
 
-export function displayQuestion(nextElement) {
+export function displayQuestion(nextElement, opened_sub_module) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
     if (elm && elm.tagName == "LABEL") {
@@ -853,13 +894,30 @@ export function displayQuestion(nextElement) {
   return nextElement;
 }
 
-export async function previousClicked(norp, retrieve, rootElement) {
+export async function previousClicked(norp, retrieve, rootElement, obj, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module) {
   // get the previousElement...
+
+  console.log(questionQueue)
   let pv = questionQueue.previous();
   while (pv.value.value.substring(0, 9) == "_CONTINUE") {
     pv = questionQueue.previous();
   }
-  let prevElement = document.getElementById(pv.value.value);
+  console.log(pv.value.value)
+  let prevElement
+
+  if (pv.value.value === 'END' || !document.getElementById(pv.value.value)) {
+    // CALL PREVIOUS SUB MODULE
+    // questionQueue.previous()
+    console.log(moduleParams.questName)
+    updateTreeInLocalForage(opened_sub_module);
+    await call_previous_sub_module(obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module)
+    prevElement = document.getElementById(pv.value.value)
+    console.log(prevElement)
+  }
+  else {
+  prevElement = document.getElementById(pv.value.value);
+  } 
+
   norp.form.classList.remove("active");
   prevElement.classList.add("active");
 
@@ -874,9 +932,23 @@ export async function previousClicked(norp, retrieve, rootElement) {
   return prevElement;
 }
 
+async function call_previous_sub_module(obj, rootElement, previousResults, sub_modules, current_sub_module, opened_sub_module) {
+  console.log(current_sub_module)
+  console.log(opened_sub_module)
+  console.log(obj, previousResults)
+  current_sub_module--;
+  // opened_sub_module[current_sub_module] = false
+  console.log(opened_sub_module)
+  let next_sub_module = sub_modules[current_sub_module-1];
+  let content = await (await fetch(next_sub_module)).text();
+  console.log(content)
+  await replace(rootElement, obj, content, current_sub_module, opened_sub_module)
+}
+
+
 // this function just adds questions to the
 // question queue.  It always returns null;
-function checkForSkips(questionElement) {
+function checkForSkips(questionElement, obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module) {
   // get selected responses
   let selectedElements = getSelected(questionElement);
 
@@ -922,6 +994,9 @@ function checkForSkips(questionElement) {
 
   // add all the selected elements with the skipTo attribute to the question queue
   if (ids.length > 0) {
+    console.log(ids)
+
+
     questionQueue.add(ids);
   }
 
