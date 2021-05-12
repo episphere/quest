@@ -16,5 +16,5 @@
 (2) Painting
 (3) Reading
 
-[END2, end] This is the end of sub module 2. 
+[END, end] This is the end of sub module 2. 
 
