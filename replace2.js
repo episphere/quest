@@ -400,7 +400,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       fNum
     );
     function fNum(fullmatch, opts) {
-      let value = questText.split('<br>')[0]
+
+      let value = questText.startsWith('<br>') ? questText.split('<br>')[0] : ''
+       
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
       let maxRegex = /max(?![(a-z])/g;
