@@ -27,4 +27,4 @@ Name |__|
 [] Separated
 [] Prefer not to answer
 
-[END1, end] This is the end of sub module 1.
+[END, end] This is the end of sub module 1.
