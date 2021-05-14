@@ -1,0 +1,182 @@
+
+[SECTION5] <b>Education and Occupation</b>
+
+The following questions ask for more background information about you, including information about your education and work.
+
+[EDU?] What is the highest level of school that you have completed?
+(0) Grade school (grades 1-8)
+(1) Some high school (grades 9-11), no diploma
+(2) High school graduate or GED
+(3) Some college, no degree
+(4) Technical or trade school after high school
+(5) Associate’s degree
+(6) College graduate (Bachelor’s degree)
+(7) Advanced degree (Master’s, Doctorate, etc.)
+(55) Other: Please describe [text box: EDU_TB]
+
+[STUDENT?] Are you currently enrolled in school?
+(0) No
+(1) Yes, full-time student
+(2) Yes, part-time student
+
+[WORK?] Do you currently work for pay (full-time or part-time)?
+(1) Yes -> WORK3
+(0) No -> WORK2
+
+[WORK2?] Which of these best describes your current employment status?
+(0) Retired
+(1) A homemaker
+(2) Unemployed
+(3) Unable to work (disabled)
+(55) Other
+(99) Prefer not to answer
+< -> WORK6 >
+
+[WORK3?]  What is your current job title? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
+|__|id=WORK3 size=50|
+
+[OCCUPTN1?]
+
+[EMPLYR1?] What was your employer’s name for this job?
+|__|size=50|
+< -> BSNSSTYP1 >
+
+[BSNSSTYP1?] What type of business was this? (Select all that apply.)
+[0] Manufacturing
+[1] A retail store
+[2] Wholesale or distributor
+[3] A service provider
+[4] Construction
+[5] Mining
+[6] Farming
+[7] Fishing
+[8] Forestry
+[9] Government
+[10] Military
+[11] A shipyard
+[55] Some other type of business [text box:BSNSSTYP1_TB]
+[77] Don’t Know
+< -> EMPLYRSRVCE1 >
+
+[EMPLYRSRVCE1?] What products were made, or services provided, by this employer?  If multiple, please provide the product/services related to your work unit. For example: automotive parts, residential home construction, accounting services, pharmaceutical research.
+|___| -> WORK4
+< #NR -> WORK7 >
+
+[WORK4?] How many years have you worked in that job {$WORK3}?
+|__|__|min=0 max=99| #Years
+< -> WORK5 >
+
+[WORK5?] Is this your longest-held job?
+(1) Yes  -> INCOME
+(0) No -> WORK7
+< #NR -> WORK7 >
+
+[WORK6?] Have you ever worked for pay (full-time or part-time)?
+(1) Yes -> WORK7
+(0) No -> INCOME
+< #NR -> INCOME >
+
+[WORK7?] What was your longest-held job? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
+|__|id=WORK7 size=50|
+< -> OCCUPTN2 >
+
+[OCCUPTN2?]
+
+[EMPLYR2?] What was your employer’s name for your longest-held job?
+|__|size=50|
+< -> BSNSSTYP2 >
+
+[BSNSSTYP2?] What type of business was this? (Select all that apply.)
+[0] Manufacturing
+[1] A retail store
+[2] Wholesale or distributor
+[3] A service provider
+[4] Construction
+[5] Mining
+[6] Farming
+[7] Fishing
+[8] Forestry
+[9] Government
+[10] Military
+[11] A shipyard
+[55] Some other type of business [text box:BSNSSTYP2_TB]
+[77] Don’t Know
+< -> EMPLYRSRVCE2 >
+
+[EMPLYRSRVCE2?] What products were made, or services provided, by this employer? If multiple, please provide the product/services related to your work unit. For example: automotive parts, residential home construction, accounting services, pharmaceutical research.
+|___|
+< -> WORK8 >
+
+[WORK8?] How many years did you work in that job?
+|__|__|min=0 max=isDefined(AGE,age)| #Years
+
+[DAYSWORK?] During the <b>past 12 months</b>, about how many days per week did you typically work for pay?
+(0) None
+(1) 1 day
+(2) 2 days
+(3) 3 days
+(4) 4 days
+(5) 5 days
+(6) 6 days
+(7) 7 days
+
+[INCOME?] Which of these options best describes your household’s total combined family income for the <b>past 12 months</b>? This should include money earned from all places: job wages, rent from properties, investment income, social security, disability and/or veteran’s benefits, unemployment benefits, workman’s compensation, child support payments, alimony, and so on. Answer with the amount before taxes.
+(0) Less than $10,000/year
+(1) $10,000–$24,999/year
+(2) $25,000–$34,999/year
+(3) $35,000–$49,999/year
+(4) $50,000–$74,999/year
+(5) $75,000–$99,999/year
+(6) $100,000–$149,999/year
+(7) $150,000–$199,999/year
+(8) $200,000 or more/year
+(77) Don’t know
+(99) Prefer not to answer
+
+[PPLHOUSE?] How many people currently live in your household? Please include yourself in the total number. (Include students living away at school, deployed military, etc.)
+|__|__|id=PPLHOUSE_NUM min=0 max=99| #People living in household
+(99) Prefer not to answer
+
+[INTROCNT] <b>Other Contact Information</b>
+
+We would like to keep in touch with you during your time in the study. Please share more contact information so we can reach you in the future.
+
+[ALTADDRESS1?] When you joined this study, you gave us your mailing address. Are there any other mailing addresses that you use?
+(1) Yes -> ALTADDRESS2
+(0) No -> ALTCONTACT1
+
+[ALTADDRESS2?] What is the address?
+Line 1 (Street, PO Box, Rural Route)
+|__|required id=ALTADDRESS2_LINE1|
+Line 2 (Apartment, Suite, Unit, Building)
+|__|id=ALTADDRESS2_LINE2|
+City
+|__|required id=ALTADDRESS2_CITY|
+State
+|state|id=ALTADDRESS2_STATE|
+Zip
+|__|id=ALTADDRESS2_ZIP|
+
+[ALTCONTACT1?] Sometimes we find that people have moved when we try to contact them again. It would be helpful if you could give us the contact details of someone close to you (such as a relative or friend) who would be willing for us to contact them if we are unable to reach you. Please leave this section blank if you do not wish to provide these extra contact details.
+
+First name
+|__|id=ALTCONTACT1_FNAME|
+Last name
+|__|id=ALTCONTACT1_LNAME|
+< -> ALTCONTACT2 >
+
+[ALTCONTACT2?] How can we reach this person?
+Mobile Phone
+|tel|id=ALTCONTACT2_MOBILE|
+
+Home Phone
+|tel|id=ALTCONTACT2_HOME|
+
+Email
+|@|id=ALTCONTACT2_EMAIL|
+
+[QXAUTHOR1?] Who completed this survey section?
+(0) Completed by study participant
+(1) Completed by someone else on behalf of study participant
+
+[END,end]  Thank you for completing the questionnaire.
