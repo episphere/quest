@@ -1,4 +1,4 @@
-[INTROM1] Welcome! This survey is split into sections. Each section has questions that ask you about a wide range of topics. Our goal is to collect information about your medical history, family, work, and health behaviors. You can answer all of the questions in each survey section at one time, or answer some questions, pause, and return to answer the rest later. If you pause, your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.
+[INTROM1] Welcome, {$u:firstName}! This survey is split into sections. Each section has questions that ask you about a wide range of topics. Our goal is to collect information about your medical history, family, work, and health behaviors. You can answer all of the questions in each survey section at one time, or answer some questions, pause, and return to answer the rest later. If you pause, your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.
 For some questions, you may see a word or phrase that appears as a button. Clicking the button will show more information that might help you answer the question. Here is an |popup|example.|example|This is an example of how additional information will be displayed.|
 Let’s get started.
 
@@ -11,7 +11,7 @@ Please remember that we protect your privacy. We remove information that can ide
 
 [AGECOR!] To start, please tell us a bit about yourself.
 
-Based on the information you provided when you enrolled in this study, you are years old today. Is that correct?
+Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
 (0) No -> AGE
 (1) Yes -> MARITAL
 
