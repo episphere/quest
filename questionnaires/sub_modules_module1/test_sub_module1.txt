@@ -11,7 +11,7 @@ Please remember that we protect your privacy. We remove information that can ide
 
 [AGECOR!] To start, please tell us a bit about yourself.
 
-Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
+Based on the information you provided when you enrolled in this study, you are years old today. Is that correct?
 (0) No -> AGE
 (1) Yes -> MARITAL
 
