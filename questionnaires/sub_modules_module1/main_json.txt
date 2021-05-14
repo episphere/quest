@@ -1,0 +1,27 @@
+{
+  "name": "Module1",
+  
+  "sub_modules": [
+  
+      {
+      "url": "https://episphere.github.io/quest/questionnaires/sub_modules_module1/test_sub_module1.txt",
+      "end": false
+      },
+      
+      {
+      "url": "https://episphere.github.io/quest/questionnaires/sub_modules_module1/test_sub_module2.txt",
+      "end": false
+      },
+      
+      {
+      "url": "https://episphere.github.io/quest/questionnaires/sub_modules_module1/test_sub_module3.txt",
+      "end": false
+      },
+     
+      {
+      "url": "https://episphere.github.io/quest/questionnaires/sub_modules_module1/test_sub_module4.txt",
+      "end": true
+      }
+  ]
+  
+}
