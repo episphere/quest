@@ -769,7 +769,7 @@ async function call_next_sub_module(obj, rootElement, previousResults, sub_modul
   // fetch the contents for the next sub module and send it to the replace function 
   let content = await (await fetch(next_sub_module)).text();
   console.log(content)
-  await replace(rootElement, obj, content, current_sub_module, opened_sub_module)
+  await replace(rootElement, obj, content, current_sub_module, opened_sub_module, previousResults)
 }
 
 export async function submitQuestionnaire(store, questName){
@@ -951,7 +951,7 @@ async function call_previous_sub_module(obj, rootElement, previousResults, sub_m
   // fetch the contents of the previous sub module and send it to the replace function to render it
   let content = await (await fetch(next_sub_module)).text();
   console.log(content)
-  await replace(rootElement, obj, content, current_sub_module, opened_sub_module)
+  await replace(rootElement, obj, content, current_sub_module, opened_sub_module, previousResults)
 }
 
 

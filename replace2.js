@@ -105,7 +105,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     return content;
   }
 
-  await replace(divId, obj, contents, current_sub_module, opened_sub_module);
+  await replace(divId, obj, contents, current_sub_module, opened_sub_module, previousResults);
 
 
   // if you have reached the end of the sub modules, then return true
@@ -114,7 +114,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
   
 };
 
-export async function replace(divId, obj, contents, curr_sub_module = 0, opened_sub_module) {
+export async function replace(divId, obj, contents, curr_sub_module = 0, opened_sub_module, previousResults) {
+
+  console.log(previousResults)
 
   if (curr_sub_module !== current_sub_module) {
 current_sub_module = curr_sub_module
