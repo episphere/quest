@@ -606,6 +606,8 @@ let questRes = {};
 let tempObj = {};
 
 async function updateTreeInLocalForage(opened_sub_module) {
+
+  // update the questname.treejson and opened_sub_module(status whether ever opened or not) in localforage
   let questName = moduleParams.questName;
   await localforage.setItem(questName + ".treeJSON", questionQueue);
   console.log(opened_sub_module)
@@ -624,6 +626,8 @@ async function getNextQuestionId(currentFormElement, obj, rootElement, previousR
     // get the next element from the markdown...
     let tmp = currentFormElement.nextElementSibling;
     console.log(tmp.id)
+
+    // if it is the last question of a sub_module, then call the next sub module, update the status of opened sub module in the localforage and add the first question to the question queue
     if (tmp.id === 'softModal') {
       opened_sub_module[current_sub_module] = true
       updateTreeInLocalForage(opened_sub_module);
@@ -707,6 +711,9 @@ async function nextPage(norp, store, rootElement, obj, previousResults, list_of_
   // get the actual HTML element.
   console.log(nextQuestionId.value)
   let nextElement;
+
+  // if we don't find the next element in the document, then call the next sub module, update the status of opened sub module in the localforage and add the first question to the question queue
+
   if (!document.getElementById(nextQuestionId.value)) {
     opened_sub_module[current_sub_module] = true
     updateTreeInLocalForage(opened_sub_module);
@@ -750,16 +757,16 @@ async function nextPage(norp, store, rootElement, obj, previousResults, list_of_
   window.scrollTo(0,0);
 }
 
-
+// function to call the next sub module
 async function call_next_sub_module(obj, rootElement, previousResults, sub_modules, current_sub_module, opened_sub_module) {
-  console.log(current_sub_module)
-  console.log(opened_sub_module)
-  console.log(obj, previousResults)
+
+  // get link for the next sub module and update the number of the opened sub module
   let next_sub_module = sub_modules[current_sub_module];
   current_sub_module++;
   console.log(opened_sub_module)
   console.log(current_sub_module)
 
+  // fetch the contents for the next sub module and send it to the replace function 
   let content = await (await fetch(next_sub_module)).text();
   console.log(content)
   await replace(rootElement, obj, content, current_sub_module, opened_sub_module)
@@ -905,9 +912,10 @@ export async function previousClicked(norp, retrieve, rootElement, obj, previous
   console.log(pv.value.value)
   let prevElement
 
+  // if the previous question id is 'END' or the previous question is not present in the document, then it is the last question of the previous sub module, hence, call the previous sub module
+
   if (pv.value.value === 'END' || !document.getElementById(pv.value.value)) {
     // CALL PREVIOUS SUB MODULE
-    // questionQueue.previous()
     console.log(moduleParams.questName)
     updateTreeInLocalForage(opened_sub_module);
     await call_previous_sub_module(obj, rootElement, previousResults, list_of_sub_modules, current_sub_module, opened_sub_module)
@@ -932,14 +940,15 @@ export async function previousClicked(norp, retrieve, rootElement, obj, previous
   return prevElement;
 }
 
+// function to call the previous sub module
+
 async function call_previous_sub_module(obj, rootElement, previousResults, sub_modules, current_sub_module, opened_sub_module) {
-  console.log(current_sub_module)
-  console.log(opened_sub_module)
-  console.log(obj, previousResults)
+   // update the currently open sub module number
   current_sub_module--;
-  // opened_sub_module[current_sub_module] = false
   console.log(opened_sub_module)
   let next_sub_module = sub_modules[current_sub_module-1];
+
+  // fetch the contents of the previous sub module and send it to the replace function to render it
   let content = await (await fetch(next_sub_module)).text();
   console.log(content)
   await replace(rootElement, obj, content, current_sub_module, opened_sub_module)

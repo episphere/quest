@@ -4,10 +4,21 @@ import { questionQueue, moduleParams } from "./questionnaire.js";
 let prevRes = {};
 let final_obj = {};
 async function startUp() {
+  // var sub = document.getElementById("json_url")
+  // console.log(sub)
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
 
     console.log(ta.value);
+
+    // if (ta.value.startsWith('{')) {
+
+    //   console.log('Hi there')
+
+    //   ta.value = ''
+
+
+    // }
 
     transform.tout((previousResults) => {
          
@@ -27,6 +38,7 @@ async function startUp() {
 
   ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
   var q = (location.search + location.hash).replace(/[\#\?]/g, "");
+  console.log(q)
   if (q.length > 3) {
     if (!q.startsWith("config")) {
       ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css

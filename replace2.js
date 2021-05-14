@@ -22,17 +22,20 @@ const validation = {};
 let questName = "Questionnaire";
 let rootElement;
 
+// list of sub modules contains the links to the sub modules
 let list_of_sub_modules = [];
+// current sub module stores the number of the sub module that is currrently being rendered
 let current_sub_module = 1;
 
+// total sub modules
 let total_sub_modules;
+// opened sub module stores the boolean value for each of the sub modules representing whether the sub modules were ever opened
 let opened_sub_module;
 let contents = "";
 
 
 transform.render = async (obj, divId, previousResults = {}) => {
 
-  console.log(obj, divId)
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   rootElement = divId;
@@ -58,35 +61,42 @@ transform.render = async (obj, divId, previousResults = {}) => {
       document.head.appendChild(link2);
     }
 
-
+    // populate the list of sub modules with the respective links
     let s = Object.values(JSON.parse(await (await fetch(obj.url)).text()))[1]
     s.forEach(m => list_of_sub_modules.push(Object.values(m)[0]))
 
     console.log(list_of_sub_modules)
     total_sub_modules = list_of_sub_modules.length
+
+    // currently none of the sub modules are open
     opened_sub_module = new Array(total_sub_modules).fill(false)
     console.log(opened_sub_module)
 
 
     let a = Object.values(JSON.parse(await (await fetch(obj.url)).text()))
     console.log(a)
+
+    // if there is a name for the sub module, populate the questname
     if (a[0].length !== 0) {
       questName = a[0];
       moduleParams.questName = questName;
     }
 
     let end_vals = []
+
+    // populate the end values for each sub module
     s.forEach(m => end_vals.push(Object.values(m)[1]))
     console.log(end_vals)
   
 
   }
- 
+
+  // update the contents and opened_sub_module only if there are sub modules in the list
   if (list_of_sub_modules.length > 0) {
     contents = await get_sub_module(list_of_sub_modules)
 
-  opened_sub_module[current_sub_module-1] = true
-  console.log(opened_sub_module)
+    opened_sub_module[current_sub_module-1] = true
+    console.log(opened_sub_module)
   }
 
   async function get_sub_module(sub_modules) {
@@ -96,6 +106,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
   }
 
   await replace(divId, obj, contents, current_sub_module, opened_sub_module);
+
+
+  // if you have reached the end of the sub modules, then return true
   if (list_of_sub_modules.length === current_sub_module) return true
   
   
@@ -109,9 +122,12 @@ current_sub_module = curr_sub_module
 
     console.log(contents)
 
+    // get the status of the opened sub modules from the localforage
     moduleParams.opened_sub_module = await localforage.getItem('opened_sub_module')
-    console.log(moduleParams.opened_sub_module)
+
+    // if there is no status of the opened sub modules in the localforage
     if (!moduleParams.opened_sub_module) moduleParams.opened_sub_module = opened_sub_module
+
     console.log(moduleParams.opened_sub_module)
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
@@ -137,6 +153,8 @@ current_sub_module = curr_sub_module
       return "";
     }
   } else {
+
+    // if there is no questname defined, use 'questionnaire' to store in localforage, else use the existing one
     if (!moduleParams.questName) {
       questName = "Questionnaire";
       moduleParams.questName = questName;
@@ -221,7 +239,7 @@ current_sub_module = curr_sub_module
 
  
 
-
+    // if we reach the end of the sub modules, then it is the lastbackbutton
     let prevButton =
       (endMatch && endMatch[1]) === "noback"
         ? ""
@@ -234,7 +252,8 @@ current_sub_module = curr_sub_module
       : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
 
 
-      let resetButton = (questID === 'END' && list_of_sub_modules.length === 0 || list_of_sub_modules.length === curr_sub_module) ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>" : "<input type='submit' class='reset' value='RESET ANSWER'></input>";
+    // if it is a single sub module, or we reach the end of sub modules, then reset button is replaced by 'submit survey' button
+    let resetButton = (questID === 'END' && list_of_sub_modules.length === 0 || list_of_sub_modules.length === curr_sub_module) ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>" : "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
     
 
@@ -781,9 +800,9 @@ current_sub_module = curr_sub_module
   // }
 
   function setActive(id) {
-    console.log(id)
+
     let active = document.getElementById(id);
-    console.log(active)
+
     if (!active) return;
 
     // remove active from all questions...
@@ -811,7 +830,7 @@ current_sub_module = curr_sub_module
       const response = await retrieve();
       if (response.code === 200) {
         const userData = response.data;
-        console.log(userData)
+        
         console.log("retrieve module name===", moduleParams.questName);
         if (userData[moduleParams.questName]) {
           questObj = userData[moduleParams.questName];
@@ -841,9 +860,10 @@ current_sub_module = curr_sub_module
       console.log(current_sub_module)
       console.log(curr_sub_module)
       let curr_element = document.getElementById(currentId)
+
       let status_sub_module = await localforage.getItem("opened_sub_module")
       console.log(status_sub_module)
-      // if (currentId && !curr_element && opened_sub_module.length > curr_sub_module && !opened_sub_module[curr_sub_module-1]) {
+        // if we do not find the next element from the document and we had opened the next sub module earlier(by checking the status of sub module from localforage), then call the next sub module
         if (currentId && !curr_element && status_sub_module && status_sub_module.length > curr_sub_module && status_sub_module[curr_sub_module]) {
         console.log('I am nowhere to be found')
         call_next_sub_module()
@@ -855,13 +875,15 @@ current_sub_module = curr_sub_module
         console.log(list_of_sub_modules)
         console.log(curr_sub_module)
 
-
+        // get the link to the next sub module
         let next_sub_module = list_of_sub_modules[curr_sub_module];
+        // update the number of sub module currently open
         curr_sub_module++;
         console.log(curr_sub_module)
         let content = await (await fetch(next_sub_module)).text();
         console.log(content)
-        // console.log(transform.render)
+        // fetch the content and call replace with the new content
+
         await replace(rootElement, obj, content, curr_sub_module)
       }
       if (currentId) {
@@ -907,10 +929,14 @@ current_sub_module = curr_sub_module
   // console.log(list_of_sub_modules)
   if (questions.length > 0) {
     let buttonToRemove = questions[0].querySelector(".previous");
+
+    // remove the previous button if it is the first question of the first sub module
     if (buttonToRemove && curr_sub_module === 1) {
       buttonToRemove.remove();
     }
     buttonToRemove = [...questions].pop().querySelector(".next");
+
+    // remove the next button if it is the last question of the last sub module
     if (buttonToRemove && list_of_sub_modules.length === curr_sub_module) {
       buttonToRemove.remove();
     }

@@ -34,6 +34,10 @@
                 <h3>Questionnaire Options</h3>
                 <input id="file" type="file" style="margin-top: 15px;" onchange="onFileSelected(event)">
                 <br>
+                <!-- <span>Enter URL for json sub modules:</span>
+                <input id="json_url" style="margin-top: 10px;">
+                <input type="submit" onclick="submitjson()"></input>
+                <br> -->
                 <span>Enter URL:</span>
                 <input id="url" style="margin-top: 10px;" onchange="submitURL()">
                 <input type="submit" onclick="submitURL()"></input>
@@ -137,6 +141,12 @@
             location.reload()
         }
     </script>
+    <!-- <script>
+        function submitjson(){
+            var sub = document.getElementById("json_url").value
+            console.log(sub)
+        }
+    </script> -->
     <script>
         function onFileSelected(event){
             let file = event.target.files[0]
