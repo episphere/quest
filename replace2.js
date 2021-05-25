@@ -123,7 +123,6 @@ current_sub_module = curr_sub_module
   }
 
     console.log(contents)
-
     // get the status of the opened sub modules from the localforage
     moduleParams.opened_sub_module = await localforage.getItem('opened_sub_module')
 
@@ -180,10 +179,10 @@ current_sub_module = curr_sub_module
     "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
     "g"
   );
-
+  
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
-  contents = contents.replace(/\n/g, "\u001f");
+  contents = contents.replace(/(?:\r\n|\r|\n)/g, "\u001f");
   contents = contents.replace(regEx, function (
     page,
     questID,
@@ -191,8 +190,7 @@ current_sub_module = curr_sub_module
     questArgs,
     questText
   ) {
-
-
+    
 
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
@@ -684,7 +682,7 @@ current_sub_module = curr_sub_module
       resetButton = '';
     }
 
-
+    
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
       <div class="row">
