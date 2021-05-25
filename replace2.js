@@ -1035,7 +1035,6 @@ current_sub_module = curr_sub_module
 }
 
 function unrollLoops(txt) {
-  debugger
   // all the questions in the loops...
   // each element in res is a loop in the questionnaire...
   let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gm;
