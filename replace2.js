@@ -48,6 +48,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   contents = contents.replace(grid_replace_regex, parseGrid);
 
   // then we must unroll the loops...
+  
   contents = unrollLoops(contents);
 
   contents = contents.replace(/#currentYear/g, new Date().getFullYear());
@@ -98,7 +99,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
     // questText = questText.replace(/\/\/.*\n/g, "");
     questText = questText.replace(/\u001f/g, "\n");
-    questText = questText.replace(/\n/g, "<br>");
+    questText = questText.replace(/(?:\r\n|\r|\n)/g, "<br>");
     questText = questText.replace(/\[_#\]/g, "");
     let counter = 1;
     questText = questText.replace(/\[\]/g, function (x) {
@@ -905,7 +906,7 @@ function unrollLoops(txt) {
   // all the questions in the loops...
   // each element in res is a loop in the questionnaire...
   let loopRegex = /<loop max=(\d+)\s*>(.*?)<\/loop>/gm;
-  txt = txt.replace(/\n/g, "\xa9");
+  txt = txt.replace(/(?:\r\n|\r|\n)/g, "\xa9");
   let res = [...txt.matchAll(loopRegex)].map(function (x, indx) {
     return { cnt: x[1], txt: x[2], indx: indx + 1, orig: x[0] };
   });
