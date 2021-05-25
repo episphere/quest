@@ -1,0 +1,898 @@
+
+[SECTION4] <b>Family History</b>
+
+[FAMHISTINTRO] The next questions are about your family history. These questions ask about your parents, siblings, and children, and their health histories. Please remember that you can skip any questions that you are not comfortable answering.
+
+[D_535621923?] Were you adopted or a foster child?
+(104430631) No
+(353358909) Yes
+< #NR -> D_992987417 >
+
+[D_992987417?] Were you born a twin, triplet, or other multiple?
+(104430631) No
+(353358909) Yes, identical twins
+(288105839) Yes, fraternal twins (not identical)
+(626558982) Yes, triplets or higher multiple birth
+< #NR -> MOM >
+
+[MOM] The next questions ask about your family and if people in your family have had <b>cancer</b>.
+< -> D_170440011>
+
+[D_170440011?] <b>Parents</b>
+
+Is your biological mother still living?
+(104430631) No -> D_422714611
+(353358909) Yes -> D_354326265
+(178420302) Don’t know -> D_276353712
+< #NR -> D_276353712 >
+
+[D_354326265?] How old is your mother today?
+|__|__|__|id=D_378988419 minval=max(isDefined(D_150344905,age),5) max=125| Mother’s age
+[178420302] Don’t know
+< -> D_276353712 >
+
+[D_422714611?] At what age did your mother die?
+|__|__|__|id-MOMDEATH_NUM min=5 max=125| Mother’s age
+[178420302] Don’t know
+< #NR -> D_276353712 >
+
+[D_276353712?] |displayif=equals(D_170440011,353358909)|Has a doctor or other health professional ever said that your mother has or had any type of <b>cancer</b>?| |displayif=or(equals(D_170440011,104430631),or(equals(D_170440011,178420302),equals(D_170440011,undefined)))|Did a doctor or other health professional ever say that your mother had any type of <b>cancer</b>?|
+(104430631) No -> D_367374606
+(353358909) Yes -> D_814510313
+(178420302) Don’t know -> D_367374606
+< #NR -> D_367374606 >
+
+[D_814510313?] Which type(s) of <b>cancer</b>? Select all that apply.
+[939782495] Anal -> D_259397450
+[135725957] Bladder -> D_528753070
+[518416174] Brain -> D_683981980
+[847945207] Breast -> D_402548942
+[283025574] Cervical -> D_247198016
+[942970912] Colon/rectal -> D_891925519
+[596122041] Esophageal -> D_317093647
+[489400183] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.) -> D_684692228
+[863246236] Kidney -> D_671347092
+[607793249] Leukemia (blood and bone marrow) -> D_875221479
+[532172400] Liver -> D_186170949
+[754745617] Lung or bronchial -> D_726451917
+[665036297] Non-Hodgkin’s lymphoma -> D_213545903
+[200837530] Lymphoma -> D_765903702
+[990319383] Melanoma (skin) -> D_773974223
+[487917585] Non-melanoma skin (basal or squamous) -> D_433604862
+[603181162] Ovarian -> D_521369040
+[482225200] Pancreatic -> D_497311092
+[764891959] Stomach -> D_625249910
+[139822395] Thyroid -> D_838564850
+[723614811] Uterine (endometrial) -> D_633764113
+[618107598] Another type of cancer: Please describe [text box: D_677702321] -> D_882263738
+[660424548] I know they had cancer, but don’t know what type -> D_671308090
+< #NR -> D_367374606 >
+
+[D_259397450?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,939782495))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>anal cancer</b>?
+|__|__|__|xor=MOMCANC3A id=D_610682728 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3A id=D_413373359 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_528753070 >
+
+[D_528753070?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,135725957))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>bladder cancer</b>?
+|__|__|__|xor=MOMCANC3B id=D_453541419 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3B id=D_109977403 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_683981980 >
+
+[D_683981980?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,518416174))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>brain cancer</b>?
+|__|__|__|xor=MOMCANC3C id=D_959143767 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3C id=D_277009302 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_402548942 >
+
+[D_402548942?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,847945207))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>breast cancer</b>?
+|__|__|__|xor=MOMCANC3D id=D_388289687 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3D id=D_734800333 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_247198016 >
+
+[D_247198016?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,283025574))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>cervical cancer</b>?
+|__|__|__|xor=MOMCANC3E id=D_169302755 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3E id=D_385040556 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_891925519 >
+
+[D_891925519?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,942970912))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>colon/rectal cancer</b>?
+|__|__|__|xor=MOMCANC3F id=D_985487786 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3F id=D_270796664 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_317093647 >
+
+[D_317093647?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,596122041))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>esophageal cancer</b>?
+ |__|__|__|xor=MOMCANC3F id=D_492448557 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3G id=D_492448557 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_684692228 >
+
+[D_684692228?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,489400183))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>head and neck cancer</b>?
+|__|__|__|xor=MOMCANC3H id=D_983373946 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3H id=D_599506109 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_671347092 >
+
+[D_671347092?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,863246236))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>kidney cancer</b>?
+|__|__|__|xor=MOMCANC3I id=D_838759794 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3I id=D_752235407 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_875221479 >
+
+[D_875221479?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,607793249))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>leukemia</b>?
+|__|__|__|xor=MOMCANC3J id=D_547104738 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3J id=D_379026574 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_186170949 >
+
+[D_186170949?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,532172400))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>liver cancer</b>?
+|__|__|__|xor=MOMCANC3K id=D_388374840 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3K id=D_358704664 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_726451917 >
+
+[D_726451917?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,754745617))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lung or bronchial cancer</b>?
+|__|__|__|xor=MOMCANC3L id=D_596241685 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3L id=D_121874737 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_213545903 >
+
+[D_213545903?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,665036297))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-Hodgkin’s lymphoma</b>?
+|__|__|__|xor=MOMCANC3M id=D_541724401 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3M id=D_205864986 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_765903702 >
+
+[D_765903702?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,200837530))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lymphoma</b>?
+|__|__|__|xor=MOMCANC3N id=D_874054245 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3N id=D_418180335 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_773974223 >
+
+[D_773974223?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,990319383))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>melanoma</b>?
+|__|__|__|xor=MOMCANC3O id=D_141144552 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3O id=D_440607185 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_433604862 >
+
+[D_433604862?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,487917585))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-melanoma skin cancer</b>?
+|__|__|__|xor=MOMCANC3P id=D_289706761 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3P id=D_605453103 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_521369040 >
+
+[D_521369040?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,603181162))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>ovarian cancer</b>?
+|__|__|__|xor=MOMCANC3Q id=D_973394396 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3Q id=D_665582429 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_497311092 >
+
+[D_497311092?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,482225200))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>pancreatic cancer</b>?
+|__|__|__|xor=MOMCANC3R id=D_524645358 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3R id=D_592006986 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_625249910 >
+
+[D_625249910?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,764891959))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>stomach cancer</b>?
+|__|__|__|xor=MOMCANC3S id=D_162638173 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3S id=D_889983189 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_838564850 >
+
+[D_838564850?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,139822395))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>thyroid cancer</b>?
+|__|__|__|xor=MOMCANC3T id=D_397846140 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3T id=D_214233290 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_633764113 >
+
+[D_633764113?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,723614811))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>uterine cancer</b>?
+|__|__|__|xor=MOMCANC3U id=D_656295184 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3U id=D_692482321 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_882263738 >
+
+[D_882263738?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,618107598))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had |displayif=doesNotEqual(D_677702321,"")|<b>{$D_677702321}</b>||displayif=equals(D_677702321,"")|<b>another type of cancer</b>| ?
+|__|__|__|xor=MOMCANC3V id=D_918309234 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3V id=D_604877545 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_671308090 >
+
+[D_671308090?,displayif=and(equals(D_170440011,353358909),equals(D_814510313,660424548))] How old was your mother when they were <b>first</b> told by a doctor or other health professional that they have or had <b>cancer</b>?
+|__|__|__|xor=MOMCANC3W id=D_183037954 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=MOMCANC3W id=D_888515115 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_367374606 >
+
+[D_367374606?] Is your biological father still living?
+(104430631) No -> D_628078826
+(353358909) Yes -> D_178774803
+(178420302) Don’t know -> D_659784914
+< #NR -> D_659784914 >
+
+[D_178774803?] How old is your father today?
+|__|__|__|id=D_334956961 minval=max(isDefined(D_150344905,age),5) max=125| Father’s age
+[178420302] Don’t know
+< -> D_659784914 >
+
+[D_628078826?] At what age did your father die?
+|__|__|__|id=D_517670352 min=5 max=125| Father’s age
+[178420302] Don’t know
+< #NR -> D_659784914 >
+
+[D_659784914?] |displayif=equals(D_367374606,353358909)|Has a doctor or other health professional ever said that your father has or had any type of <b>cancer</b>?||displayif=or(equals(D_367374606,104430631),or(equals(D_367374606,178420302),equals(D_367374606,undefined)))|Did a doctor or other health professional ever say that your father  had any type of <b>cancer</b>?|
+(104430631) No -> SIB
+(353358909) Yes -> D_173240848
+(178420302) Don’t know -> SIB
+< #NR -> SIB >
+
+[D_173240848?] Which type(s) of <b>cancer</b>? Select all that apply.
+[516207605] Anal -> D_345146692
+[710338315] Bladder -> D_243443318
+[985337468] Brain -> D_610382315
+[134508650] Breast -> D_135519371
+[973093289] Colon/rectal -> D_785019074
+[966265248] Esophageal -> D_152885579
+[193139957] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.) -> D_692910565
+[222996161] Kidney -> D_522464057
+[934913558] Leukemia (blood and bone marrow) -> D_808655074
+[678720087] Liver -> D_659627058
+[210004486] Lung or bronchial -> D_370198527
+[946271712] Non-Hodgkin’s lymphoma -> D_291855684
+[117774832] Lymphoma -> D_413536735
+[824650810] Melanoma (skin) -> D_210325948
+[489370336] Non-melanoma skin (basal or squamous) -> D_193297280
+[701932585] Pancreatic -> D_121502359
+[295976386] Prostate -> D_489402657
+[730819933] Stomach -> D_727260639
+[248374037] Testicular -> D_359291056
+[311662905] Thyroid -> D_968841976
+[191104654] Another type of cancer: Please describe [text box: D_195093589] -> D_864981804
+[967938316] I know they had cancer, but don’t know what type -> D_499434567
+
+[D_345146692?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,516207605))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>anal cancer</b>?
+|__|__|__|xor=DADCANC3A id=D_120646060 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3A id=D_980685446 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_243443318 >
+
+[D_243443318?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,710338315))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>bladder cancer</b>?
+|__|__|__|xor=DADCANC3B id=D_796923959 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3B id=D_927451815 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_610382315 >
+
+[D_610382315?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,985337468))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>brain cancer</b>?
+|__|__|__|xor=DADCANC3C id=D_688933594 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3C id=D_648084034 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_135519371 >
+
+[D_135519371?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,134508650))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>breast cancer</b>?
+|__|__|__|xor=DADCANC3D id=D_400162033 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3D id=D_385423193 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_785019074 >
+
+[D_785019074?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,973093289))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>colon/rectal cancer</b>?
+|__|__|__|xor=DADCANC3E id=D_326343894 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3E id=D_440948417 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_152885579 >
+
+[D_152885579?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,966265248))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>esophageal cancer</b>?
+|__|__|__|xor=DADCANC3F id=D_733347323 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3F id=D_497657524 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_692910565 >
+
+[D_692910565?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,193139957))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>head and neck cancer</b>?
+|__|__|__|xor=DADCANC3G id=D_345313558 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3G id=D_695129126 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_522464057 >
+
+[D_522464057?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,222996161))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>kidney cancer</b>?
+|__|__|__|xor=DADCANC3H id=D_540892360 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3H id=D_737478230 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_808655074 >
+
+[D_808655074?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,934913558))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>leukemia</b>?
+|__|__|__|xor=DADCANC3I id=D_989148071 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3I id=D_178661553 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_659627058 >
+
+[D_659627058?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,678720087))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>liver cancer</b>?
+|__|__|__|xor=DADCANC3J id=D_829692074 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3J id=D_991371613 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_370198527 >
+
+[D_370198527?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,210004486))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lung or bronchial cancer</b>?
+|__|__|__|xor=DADCANC3K id=D_260972338 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3K id=D_331562964 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_291855684 >
+
+[D_291855684?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,946271712))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-Hodgkin’s lymphoma</b>?
+|__|__|__|xor=DADCANC3L id=D_877901263 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3L id=D_238799612 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_413536735 >
+
+[D_413536735?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,117774832))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lymphoma</b>?
+|__|__|__|xor=DADCANC3M id=D_404242396 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3M id=D_140497026 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_210325948 >
+
+[D_210325948?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,824650810))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>melanoma</b>?
+|__|__|__|xor=DADCANC3N id=D_167852044 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3N id=D_219945811 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_193297280 >
+
+[D_193297280?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,489370336))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-melanoma skin cancer</b>?
+|__|__|__|xor=DADCANC3O id=D_854361219 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3O id=D_791071736 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_121502359 >
+
+[D_121502359?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,701932585))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>pancreatic cancer</b>?
+|__|__|__|xor=DADCANC3P id=D_320619944 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3P id=D_222019920 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_489402657 >
+
+[D_489402657?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,295976386))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>prostate cancer</b>?
+|__|__|__|xor=DADCANC3Q id=D_429252206 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3Q id=D_462925081 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_727260639 >
+
+[D_727260639?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,730819933))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>stomach cancer</b>?
+|__|__|__|xor=DADCANC3R id=D_193601028 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3R id=D_400751267 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_359291056 >
+
+[D_359291056?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,248374037))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>testicular cancer</b>?
+|__|__|__|xor=DADCANC3S id=D_567975304 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3S id=D_296501787 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_968841976 >
+
+[D_968841976?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,311662905))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>thyroid cancer</b>?
+|__|__|__|xor=DADCANC3T id=D_708853698 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3T id=D_315421706 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_864981804 >
+
+[D_864981804?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,191104654))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had |displayif=doesNotEqual(D_195093589,"")|<b>{$D_195093589}</b>||displayif=equals(D_195093589,"")|<b>another type of cancer</b>| ?
+|__|__|__|xor=DADCANC3U id=D_958275484 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3U id=D_672937779 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> D_499434567 >
+
+[D_499434567?,displayif=and(equals(D_367374606,353358909),equals(D_173240848,967938316))] How old was your father when they were <b>first</b> told by a doctor or other health professional that they have or had <b>cancer</b>?
+|__|__|__|xor=DADCANC3V id=D_511732607 min=0 max=isDefined(D_150344905,age)| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:
+|__|__|__|__|xor=DADCANC3V id=D_854558887 minval=difference(difference(#currentYear,isDefined(D_150344905,age)),1) max=#currentYear| Year of diagnosis
+< #NR -> SIB >
+
+[SIB] <b>Siblings</b>
+
+The next questions are about your siblings (brothers and sisters), including those who are no longer living. Please include full siblings (share the same biological mother and father), and half-siblings (share the same biological mother or father). Please do not include adopted or step siblings.
+
+[D_694265648?] How many siblings do you have, including full and half-siblings?
+|__|__|id=D_694265648 min=0 max=25| #Siblings
+
+[SIBCONFIRM] You told us that you have |displayif=isNotDefined(D_694265648,0)|0| {$D_694265648} sibling|displayif=or(equals(D_694265648,0),or(isNotDefined(D_694265648,0),greaterThanOrEqual(D_694265648,2)))|s|, including full and half-siblings.
+
+If this is <b>not</b> correct, please select the “Back” button to update your response. If this is correct, please select the “Next” button to move forward.
+
+<loop max=25>
+
+[D_406098499?|firstquestion=#loop loopmax=D_694265648|] For your |displayif=equals(#loop,1)|oldest||displayif=greaterThan(#loop,1)|next oldest| sibling, please create a nickname or share initials that we can use to refer to this sibling again in future surveys.
+
+|__|
+
+[D_579563781?] Thinking of |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your ||displayif=and(doesNotEqual(isNotDefined(D_406098499,false),false),greaterThan(#loop,1))|next ||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|oldest sibling|, what biological sex was this sibling assigned at birth?
+(536341288) Female
+(654207589) Male
+(576796184) Intersex or other
+(178420302) Don’t know
+
+[D_807431780?,displayif=doesNotEqual(D_992987417,104430631)]You said you were born a twin, triplet, or other multiple. Is this sibling your twin, triplet, or multiple?
+(353358909) Yes -> D_890637099
+(104430631) No
+
+[D_589588769?] Is |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| a…
+(555374628) Full sibling
+(871673221) Half sibling, same mother
+(198654048) Half sibling, same father
+
+[D_890637099?] Is |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| still living?
+(353358909) Yes -> D_869387390
+(104430631) No -> D_537137982
+(178420302) Don’t know
+< -> D_607773106 >
+
+[D_869387390?] How old is |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| today?
+|__|__|__|id=D_478706011 min=0 max=125| Sibling’s age
+[178420302] Don’t know
+
+[D_537137982?] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they died?
+|__|__|__|id=D_338020179 min=0 max=125| Sibling’s age
+[178420302] Don’t know
+
+[D_607773106?]|displayif=equals(D_890637099,353358909)|Has||displayif=doesNotEqual(D_890637099,353358909)|Did| a doctor or other health professional ever |displayif=equals(D_890637099,353358909)|told||displayif=doesNotEqual(D_890637099,353358909)|tell| |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| that they |displayif=equals(D_890637099,353358909)|have or |had any type of <b>cancer</b>?
+(104430631) No -> _CONTINUE
+(353358909) Yes -> D_578895128
+(178420302) Don't know -> _CONTINUE
+< #NR -> _CONTINUE >
+
+[D_578895128?] Which type(s) of <b>cancer</b>? Select all that apply.
+[247280146] Anal -> D_384881609
+[978181631] Bladder -> D_483975329
+[593622020] Brain -> D_570279754
+[254709325] Breast -> D_907590067
+[268302153] Cervical -> D_860112841
+[764189047] Colon/rectal -> D_158354252
+[279425216] Esophageal -> D_654594205
+[411660199] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or skin cancers.) -> D_550722030
+[496560214] Kidney -> D_142912472
+[653059616] Leukemia (blood and bone marrow) -> D_158409298
+[847915042] Liver -> D_529744595
+[820098422] Lung or bronchial -> D_315987564
+[789944114] Non-Hodgkin’s lymphoma -> D_852278004
+[844710773] Lymphoma -> D_391972881
+[747086784] Melanoma (skin) -> D_259089008
+[318663022] Non-melanoma skin (basal or squamous) -> D_209771602
+[197862400] Ovarian -> D_682651189
+[541652775] Pancreatic -> D_750994269
+[898847037] Prostate -> D_700889863
+[711620228] Stomach -> D_990114799
+[273304342] Testicular -> D_195363361
+[966947727] Thyroid -> D_216840563
+[639029928] Uterine (endometrial) -> D_514034680
+[698581196] Another type of cancer: Please describe [text box: D_957429734] -> D_247160067
+[178035206] I know my sibling had cancer, but don’t know what type -> D_312545873
+< -> _CONTINUE >
+
+[D_384881609?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>anal cancer</b>?
+|__|__|__|__|xor=SIBCANC3A id=D_510529171 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3A id=D_649482083 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_483975329?,displayif=equals(D_890637099,353358909)]How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>bladder cancer</b>?
+|__|__|__|__|xor=SIBCANC3B id=D_603180043 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3B id=D_830244671 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_570279754?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>brain cancer</b>?
+|__|__|__|__|xor=SIBCANC3C id=D_138097365 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=SIBCANC3C id=D_358401051 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear| Year of diagnosis
+
+
+[D_907590067?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>breast cancer</b>?
+|__|__|__|__|xor=SIBCANC3D id=D_650332509 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3D id=D_932489634 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_860112841?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>cervical cancer</b>?
+|__|__|__|__|xor=SIBCANC3E id=D_842731701 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=SIBCANC3E id=D_263703032 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear| Year of diagnosis
+
+[D_158354252?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>colon/rectal cancer</b>?
+|__|__|__|__|xor=SIBCANC3F id=D_899435964 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3F id=D_973110368 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_654594205?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>esophageal cancer</b>?
+|__|__|__|__|xor=SIBCANC3G id=D_301293668 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3G id=D_355636351 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_550722030?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>head and neck cancer</b>?
+|__|__|__|__|xor=SIBCANC3H id=D_225886624 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3H id=D_957985997 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_142912472?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>kidney cancer</b>?
+|__|__|__|__|xor=SIBCANC3I id=D_239465377 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3I id=D_273406875 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_158409298?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>leukemia</b>?
+|__|__|__|__|xor=SIBCANC3J id=D_167405019 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=SIBCANC3J id=D_796283680 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear| Year of diagnosis
+
+[D_529744595?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>liver cancer</b>?
+|__|__|__|__|xor=SIBCANC3K id=D_194878968 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3K id=D_758058429 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_315987564?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lung or bronchial cancer</b>?
+|__|__|__|__|xor=SIBCANC3L id=D_894869147 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3L id=D_718578254 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_852278004?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-Hodgkin’s lymphoma</b>?
+|__|__|__|__|xor=SIBCANC3M id=D_742703036 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3M id=D_378416726 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_391972881?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lymphoma</b>?
+|__|__|__|__|xor=SIBCANC3N id=D_779428217 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3N id=D_306261647 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_259089008?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>melanoma</b>?
+|__|__|__|__|xor=SIBCANC3O id=D_230633094 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3O id=D_962468280 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_209771602?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-melanoma skin cancer</b>?
+|__|__|__|__|xor=SIBCANC3P id=D_320895201 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3P id=D_407586710 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_682651189?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>ovarian cancer</b>?
+|__|__|__|__|xor=SIBCANC3Q id=D_260447694 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3Q id=D_169843483 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_750994269?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>pancreatic cancer</b>?
+|__|__|__|__|xor=SIBCANC3R id=D_413033387 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3R id=D_123052136 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_700889863?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>prostate cancer</b>?
+|__|__|__|__|xor=SIBCANC3S id=D_960076770 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3S id=D_678850998 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_990114799?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>stomach cancer</b>?
+|__|__|__|__|xor=SIBCANC3T id=D_244198411 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3T id=D_944234755 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_195363361?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>testicular cancer</b>?
+|__|__|__|__|xor=SIBCANC3U id=D_459513552 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3U id=D_880128119 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_216840563?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>thyroid cancer</b>?
+|__|__|__|__|xor=SIBCANC3V id=D_367854451 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3V id=D_753912404 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_514034680?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>uterine cancer</b>?
+|__|__|__|__|xor=SIBCANC3W id=D_607640595 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=SIBCANC3W id=D_638209807 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear| Year of diagnosis
+
+
+[D_247160067?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had |displayif=equals(isNotDefined(D_957429734,false),false)|<b>{$D_957429734}</b>||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|<b>another type of cancer</b>|?
+|__|__|__|__|xor=SIBCANC3X id=D_808732744 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3X id=D_708505439 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+[D_312545873?,displayif=equals(D_890637099,353358909)] How old was |displayif=equals(isNotDefined(D_406098499,false),false)|{$D_406098499}||displayif=doesNotEqual(isNotDefined(D_406098499,false),false)|your sibling| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>cancer</b>?
+|__|__|__|__|xor=SIBCANC3Y id=D_458680879 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__|  xor=SIBCANC3Y id=D_460380328 minval=difference(difference(#currentYear,isDefined(D_478706011,125)),1) max=#currentYear|Year of diagnosis
+
+</loop>
+
+[CHILD] <b>Children</b>
+
+The next questions are about your children, including those who are no longer
+ living. Please include all adopted and step children, as well as your biological children.
+
+[D_446999144?] How many children do you have?
+|__|__|id=D_446999144 min=0 max=25| #Children
+< -> CHILDCONFIRM >
+
+[CHILDCONFIRM] You told us that you have |displayif=isNotDefined(D_446999144,0)|0| {$D_446999144} child|displayif=or(equals(D_446999144,0),or(isNotDefined(D_446999144,0),greaterThanOrEqual(D_446999144,2)))|ren|, including biological, adopted, and step children.
+
+If this is <b>not</b> correct, please select the “Back” button to update your response. If this is correct, please select the “Next” button to move forward.
+
+<loop max=25>
+
+[D_714001034?|firstquestion=#loop loopmax=D_446999144|] For your |displayif=equals(#loop,1)|oldest||displayif=greaterThan(#loop,1)|next oldest| child, please create a nickname or share initials that we can use to refer to this child again in future surveys.
+|__|
+
+
+[D_887697329?] Thinking of |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child|, what biological sex was this child assigned at birth?
+(536341288) Female
+(654207589) Male
+(576796184) Intersex or other
+(178420302) Don’t know
+
+[D_473529484?,displayif=doesNotEqual(D_446999144,0)] Was this child born a twin, triplet, or other multiple?
+(353358909)	Yes
+(104430631)	No
+
+
+[D_873968217?] Is |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child|…
+(709650750) Your biological child
+(810290359) Adopted
+(509607548) A step child
+
+[D_418392907?] Is |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| still living?
+(353358909) Yes -> D_640010727
+(104430631) No -> D_236590500
+(178420302) Don’t know
+< -> D_718867914 >
+
+[D_640010727?] How old is |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| today?
+|__|__|id=D_299300933 min=1 max=125| Child’s age
+[958239616] Less than 1 year old
+[178420302] Don’t know
+
+[D_236590500?] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when |displayif=equals(D_887697329,654207589)|he||displayif=equals(D_887697329,536341288)|she||displayif=or(equals(D_887697329,576796184),or(equals(D_887697329,178420302),equals(D_887697329,undefined)))|they| died?
+|__|__|id=D_182786508 min=1 max=125| Child’s age
+[958239616] Less than 1 year old
+[178420302] Don’t know
+< -> D_718867914 >
+
+[D_718867914?]|displayif=equals(D_418392907,353358909)|Has||displayif=doesNotEqual(D_418392907,353358909)|Did| a doctor or other health professional ever |displayif=equals(D_418392907,353358909)|told||displayif=doesNotEqual(D_418392907,353358909)|tell| |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your sibling| that they |displayif=equals(D_418392907,353358909)|have or |had any type of <b>cancer</b>?
+(104430631) No -> _CONTINUE
+(353358909) Yes -> D_812370563
+(178420302) Don't know -> _CONTINUE
+< #NR -> _CONTINUE >
+
+[D_812370563?] Which type(s) of <b>cancer</b>? Select all that apply.
+[541893218] Anal -> D_900939817
+[810161505] Bladder -> D_938150507
+[622370641] Brain -> D_601211723
+[679317902] Breast -> D_861788020
+[146323064] Cervical -> D_204425387
+[148055668] Colon/rectal -> D_558929585
+[573529409] Esophageal -> D_233764880
+[374751254] Head and neck (Including cancers of the mouth, sinuses, nose, or throat. Not including brain or  skin cancers.) -> D_905145893
+[746527572] Kidney -> D_473190270
+[742312655] Leukemia (blood and bone marrow) -> D_483735587
+[924966896] Liver -> D_331759900
+[260344877] Lung or bronchial -> D_513077276
+[921975725] Non-Hodgkin’s lymphoma -> D_519974530
+[540972951] Lymphoma -> D_907776050
+[109795483] Melanoma (skin) -> D_271684775
+[222010840] Non-melanoma skin (basal or squamous) -> D_252160589
+[573112450] Ovarian -> D_774774759
+[886012460] Pancreatic -> D_127257956
+[925558172] Prostate -> D_496917282
+[742238819] Stomach -> D_908129316
+[996458336] Testicular -> D_795003496
+[179559655] Thyroid -> D_969177591
+[525998037] Uterine (endometrial) -> D_116065851
+[511202456] Another type of cancer: Please describe [text box: D_933110091] -> D_278159347
+[698908929] I know my child had cancer, but don’t know what type -> D_845219872
+< -> _CONTINUE >
+
+[D_900939817?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>anal cancer</b>?
+|__|__|__|__|xor=CHILDCANC3A id=D_603938149 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3A id=D_501239434 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_938150507?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>bladder cancer</b>?
+|__|__|__|__|xor=CHILDCANC3B id=D_354436205 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3B id=D_108359825 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+
+[D_601211723?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>brain cancer</b>?
+|__|__|__|__|xor=CHILDCANC3C id=D_780070895 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3C id=D_567419874 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+
+[D_861788020?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>breast cancer</b>?
+|__|__|__|__|xor=CHILDCANC3D id=D_601077153 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3D id=D_755243811 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+
+[D_204425387?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>cervical cancer</b>?
+|__|__|__|__|xor=CHILDCANC3E id=D_571878079 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3E id=D_817830684 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_558929585?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>colon/rectal cancer</b>?
+|__|__|__|__|xor=CHILDCANC3F id=D_388130858 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3F id=D_804601443 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+
+[D_233764880?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>esophageal cancer</b>?
+|__|__|__|__|xor=CHILDCANC3G id=D_446624061 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3G id=D_811915727 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+
+[D_905145893?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>head and neck cancer</b>?
+|__|__|__|__|xor=CHILDCANC3H id=D_114042143 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3H id=D_778001130 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_473190270?,displayif=equals(D_418392907,353358909)]  How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>kidney cancer</b>?
+|__|__|__|__|xor=CHILDCANC3I id=D_568360291 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3I id=D_954022335 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+
+[D_483735587?,displayif=equals(D_418392907,353358909)]  How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>leukemia</b>?
+|__|__|__|__|xor=CHILDCANC3J id=D_711224139 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3J id=D_640489106 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+
+[D_331759900?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>liver cancer</b>?
+|__|__|__|__|xor=CHILDCANC3K id=D_160930045 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3K id=D_614641556 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_513077276?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lung or bronchial cancer</b>?
+|__|__|__|__|xor=CHILDCANC3L id=D_381106518 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3L id=D_183751424 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+[D_519974530?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-Hodgkin’s lymphoma</b>?
+|__|__|__|__|xor=CHILDCANC3M id=D_813143322 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3M id=D_526342365 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_907776050?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>lymphoma</b>?
+|__|__|__|__|xor=CHILDCANC3N id=D_735764211 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3N id=D_159321856 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_271684775?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>melanoma</b>?
+|__|__|__|__|xor=CHILDCANC3O id=D_711213420 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3O id=D_980148812 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_252160589?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>non-melanoma skin cancer</b>?
+|__|__|__|__|xor=CHILDCANC3P id=D_704011008 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3P id=D_812959109 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_774774759?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>ovarian cancer</b>?
+|__|__|__|__|xor=CHILDCANC3Q id=D_650144607 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3Q id=D_806191740 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+[D_127257956?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>pancreatic cancer</b>?
+|__|__|__|__|xor=CHILDCANC3R id=D_823938694 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3R id=D_249763782 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_496917282?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>prostate cancer</b>?
+|__|__|__|__|xor=CHILDCANC3S id=D_531639940 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3S id=D_485849300 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_908129316?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>stomach cancer</b>?
+|__|__|__|__|xor=CHILDCANC3T id=D_849706420 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3T id=D_271352384 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_795003496?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>testicular cancer</b>?
+|__|__|__|__|xor=CHILDCANC3U id=D_474499646 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3U id=D_819907500 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+[D_969177591?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>thyroid cancer</b>?
+|__|__|__|__|xor=CHILDCANC3V id=D_985262460 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3V id=D_112978735 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_116065851?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>uterine cancer</b>?
+|__|__|__|__|xor=CHILDCANC3W id=D_368502744 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3W id=D_579956297 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_278159347?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had |displayif=doesNotEqual(D_933110091,"")|<b>{$D_933110091}</b>||displayif=equals(D_933110091,"")|<b>another type of cancer</b>|?
+|__|__|__|__|xor=CHILDCANC3X id=D_404289423 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3X id=D_171238071 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+[D_845219872?,displayif=equals(D_418392907,353358909)] How old was |displayif=equals(isNotDefined(D_714001034,false),false)|{$D_714001034}||displayif=doesNotEqual(isNotDefined(D_714001034,false),false)|your child| when they were <b>first</b> told by a doctor or other health professional that they have or had <b>cancer</b>?
+|__|__|__|__|xor=CHILDCANC3Y id=D_843649258 min=0 max=125| Age at diagnosis
+
+Or, if it is easier to remember the year, enter that here:   |__|__|__|__| xor=CHILDCANC3Y id=D_449224715 minval=difference(difference(#currentYear,isDefined(D_299300933,125)),1) max=#currentYear|Year of diagnosis
+
+
+</loop>
+
+
+[SECTION5] <b>Education and Occupation</b>
+
+The following questions ask for more background information about you, including information about your education and work.

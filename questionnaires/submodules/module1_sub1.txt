@@ -1,0 +1,195 @@
+{"name":"D_726699695"} [INTROM1] Welcome, {$u:firstName}! This survey is split into sections. Each section has questions that ask you about a wide range of topics. Our goal is to collect information about your medical history, family, work, and health behaviors. You can answer all of the questions in each survey section at one time, or answer some questions, pause, and return to answer the rest later. If you pause, your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.
+For some questions, you may see a word or phrase that appears as a button. Clicking the button will show more information that might help you answer the question. Here is an |popup|example.|example|This is an example of how additional information will be displayed.|
+Let’s get started.
+
+[INTROBAC] First, we are interested in learning some general information about you, your medical history, and your family history. This information will help us better understand your current health status. It will also help us understand how your health may be different from the health of other people.
+
+Please remember that we protect your privacy. We remove information that can identify you from your survey answers before we share them with researchers.
+
+<b>Background Information</b>
+[SECTION1]
+
+[AGECOR!] To start, please tell us a bit about yourself.
+
+Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
+(0) No -> AGE
+(1) Yes -> MARITAL
+
+[AGE!] How old are you today?
+Age: |__|__|min=40 max=70|
+
+[MARITAL?] Are you now married, widowed, divorced, separated, never married, or living with a partner?
+(0) Never Married
+(1) Not married but living with partner
+(2) Married
+(3) Divorced
+(4) Widowed
+(5) Separated
+(99) Prefer not to answer
+< #NR -> RACEETH >
+
+[RACEETH?] Which categories describes you? Select all that apply. Note, you may select more than one group.
+[0] American Indian or Alaska Native  -> RACEETH2
+[1] Asian  -> RACEETH3
+[2] Black, African American, or African -> RACEETH4
+[3] Hispanic, Latino, or Spanish -> RACEETH5
+[4] Middle Eastern or North African -> RACEETH6
+[5] Native Hawaiian or other Pacific Islander -> RACEETH7
+[6] White -> RACEETH8
+[55] None of these fully describe me: Please describe [text box:RACEETH_TB]
+[99] Prefer not to answer
+< #NR -> LANG >
+
+[RACEETH2?,displayif=equals(RACEETH,0)] Which of these categories describes you best? Select all that apply.
+[0] American Indian
+[1] Alaska Native
+[2] Central or South American Indian
+[55] None of these fully describe me: Please describe [text box: RACEETH2_TB]
+[99] Prefer not to answer
+< #NR -> RACEETH3 >
+
+[RACEETH3?,displayif=equals(RACEETH,1)] Which of these categories describes you best? Select all that apply.
+[0] Asian Indian
+[1] Cambodian
+[2] Chinese
+[3] Filipino
+[4] Hmong
+[5] Japanese
+[6] Korean
+[7] Pakistani
+[8] Vietnamese
+[55] None of these fully describe me: Please describe [text box:RACEETH3_TB]
+[99] Prefer not to answer
+< #NR -> RACEETH4 >
+
+[RACEETH4?,displayif=equals(RACEETH,2)] Which of these categories describes you best? Select all that apply.
+[0] African American
+[1] Barbadian
+[2] Caribbean
+[3] Ethiopian
+[4] Ghanaian
+[5] Haitian
+[6] Jamaican
+[7] Liberian
+[8] Nigerian
+[9] Somali
+[10] South African
+[55] None of these fully describe me: Please describe [text box:RACEETH4_TB]
+[99] Prefer not to answer
+< #NR -> RACEETH5 >
+
+[RACEETH5?,displayif=equals(RACEETH,3)] Which of these categories describes you best? Select all that apply.
+[0] Colombian
+[1] Cuban
+[2] Dominican
+[3] Ecuadorian
+[4] Honduran
+[5] Mexican or Mexican American
+[6] Puerto Rican
+[7] Salvadoran
+[8] Spanish
+[55] None of these fully describe me: Please describe [text box:RACEETH5_TB]
+[99] Prefer not to answer
+< #NR -> RACEETH6 >
+
+[RACEETH6?,displayif=equals(RACEETH,4)] Which of these categories describes you best? Select all that apply.
+[0] Afghan
+[1] Algerian
+[2] Egyptian
+[3] Iranian
+[4] Iraqi
+[5] Israeli
+[6] Lebanese
+[7] Moroccan
+[8] Syrian
+[9] Tunisian
+[55] None of these fully describe me: Please describe [text box: RACEETH6_TB]
+[99] Prefer not to answer
+< #NR -> RACEETH7 >
+
+[RACEETH7?,displayif=equals(RACEETH,5)] Which of these categories describes you best? Select all that apply.
+[0] Chamorro
+[1] Chuukese
+[2] Fijian
+[3] Marshallese
+[4] Native Hawaiian
+[5] Palauan
+[6] Samoan
+[7] Tahitian
+[8] Tongan
+[55] None of these fully describe me: Please describe [text box: RACEETH7_TB]
+[99] Prefer not to answer
+< #NR -> RACEETH8 >
+
+[RACEETH8?,displayif=equals(RACEETH,6)] Which of these categories describes you best? Select all that apply.
+[0] Dutch
+[1] English
+[2] European
+[3] French
+[4] German
+[5] Irish
+[6] Italian
+[7] Norwegian
+[8] Polish
+[9] Scottish
+[10] Spanish
+[55] None of these fully describe me: Please describe [text box:RACE_ETH8]
+[99] Prefer not to answer
+< #NR -> LANG >
+
+[LANG?] When you were a child, what language(s) did you <b>first</b> learn at home? Select all that apply.
+[0] English
+[1] Spanish
+[2] Spanish Creole
+[3] French
+[4] French Creole
+[5] Italian
+[6] Portuguese
+[7] German
+[8] Russian
+[9] Polish
+[10] Hindi
+[11] Chinese
+[12] Korean
+[13] Vietnamese
+[14] Tagalog
+[15] Ilocano
+[16] Japanese
+[17] Arabic
+[55] Other language(s): Please describe [text box:LANG_TB]
+< #NR -> SEX >
+
+[SEX!] Later questions in this survey will ask about surgeries and medical procedures, including to the sex organs you were born with. We want to ask questions that will make sense for you.
+
+What was your biological sex assigned at birth?
+(1) Male -> GEN
+(0) Female -> GEN
+(2) Intersex or other -> SEX2
+
+[SEX2!,displayif=equals(SEX,2)] Please select the body parts that you were born with.
+[0] Penis
+[1] Testes
+[2] Prostate
+[3] Vagina
+[4] Cervix
+[5] Uterus
+[6] Ovaries
+[7] Fallopian Tubes
+
+[GEN?] Do you think of yourself as:
+(1) Male
+(0) Female
+(2) Transgender Male/Trans Man/Female-to-Male (FTM)
+(3) Transgender Female/Trans Woman/Male-to-Female (MTF)
+(4) Genderqueer, not exclusively male or female
+(55) Additional gender category: Please describe [text box:GEN_TB]
+(99) Prefer not to answer
+< #NR -> SEXORIENT >
+
+[SEXORIENT?] Do you think of yourself as:
+(0) Straight or heterosexual
+(1) Lesbian, gay, or homosexual 
+(2) Bisexual
+(55) Something else: Please describe [text box:SEXORIENT_TB]
+(99) Prefer not to answer
+< #NR -> INTROMH >
