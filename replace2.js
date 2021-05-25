@@ -44,7 +44,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       document.head.appendChild(link2);
     }
   }
-
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
 
@@ -85,10 +84,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
     "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
     "g"
   );
-
+  
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
-  contents = contents.replace(/\n/g, "\u001f");
+  contents = contents.replace(/(?:\r\n|\r|\n)/g, "\u001f");
   contents = contents.replace(regEx, function (
     page,
     questID,
@@ -593,7 +592,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       resetButton = '';
     }
 
-
+    
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
       <div class="row">
