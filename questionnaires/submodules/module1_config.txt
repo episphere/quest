@@ -1,14 +1,24 @@
 {
   "name": "D_726699695",
   "sub_modules": [
-
+  
       {
-      "url": "http://localhost:5001/questionnaires/submodules/module1_concept_sub3.txt",
+      "url": "https://raw.githubusercontent.com/jonasalmeida/privatequest/master/submodules/module1_concept_sub1.txt?token=ANWUEPKCR4DXN5PIBRGQJOLAWWDW4",
+      "end": false
+      },
+      
+      {
+      "url": "https://raw.githubusercontent.com/jonasalmeida/privatequest/master/submodules/module1_concept_sub2.txt?token=ANWUEPMEIPZHNB6AI657NUTAWWDXA",
+      "end": false
+      },
+      
+      {
+      "url": "https://raw.githubusercontent.com/jonasalmeida/privatequest/master/submodules/module1_concept_sub3.txt?token=ANWUEPNVANXDQXZVXXFLS5TAWWDXE",
       "end": false
       },
      
       {
-      "url": "http://localhost:5001/questionnaires/submodules/module1_concept_sub4.txt",
+      "url": "https://raw.githubusercontent.com/jonasalmeida/privatequest/master/submodules/module1_concept_sub4.txt?token=ANWUEPIYFC2VHWQQXQJY4D3AWWDXI",
       "end": true
       }
   ]
