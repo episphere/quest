@@ -48,7 +48,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   if (obj.url) {
     moduleParams.config = await (await fetch(obj.url)).text();
 
-    console.log(obj.url)
 
     if (obj.activate) {
       const link = document.createElement("link");
@@ -60,33 +59,47 @@ transform.render = async (obj, divId, previousResults = {}) => {
       link2.href = "https://episphere.github.io/quest/Style1.css";
       document.head.appendChild(link2);
     }
-
-    // populate the list of sub modules with the respective links
-    let s = Object.values(JSON.parse(await (await fetch(obj.url)).text()))[1]
-    s.forEach(m => list_of_sub_modules.push(Object.values(m)[0]))
-
-    console.log(list_of_sub_modules)
-    total_sub_modules = list_of_sub_modules.length
-
-    // currently none of the sub modules are open
-    opened_sub_module = new Array(total_sub_modules).fill(false)
-    console.log(opened_sub_module)
-
-
-    let a = Object.values(JSON.parse(await (await fetch(obj.url)).text()))
-    console.log(a)
-
-    // if there is a name for the sub module, populate the questname
-    if (a[0].length !== 0) {
-      questName = a[0];
-      moduleParams.questName = questName;
+    let isSubModule = false;
+    try {
+      JSON.parse(moduleParams.config);
+      isSubModule = true;
+    } catch (e) {
+      isSubModule = false;
+    }
+    // not a submodule obj.url
+    if (!isSubModule) {
+      contents = moduleParams.config;
+    } else {
+      console.log(obj.url)
+    
+      // populate the list of sub modules with the respective links
+      let s = Object.values(JSON.parse(await (await fetch(obj.url)).text()))[1]
+      s.forEach(m => list_of_sub_modules.push(Object.values(m)[0]))
+  
+      console.log(list_of_sub_modules)
+      total_sub_modules = list_of_sub_modules.length
+  
+      // currently none of the sub modules are open
+      opened_sub_module = new Array(total_sub_modules).fill(false)
+      console.log(opened_sub_module)
+  
+  
+      let a = Object.values(JSON.parse(await (await fetch(obj.url)).text()))
+      console.log(a)
+  
+      // if there is a name for the sub module, populate the questname
+      if (a[0].length !== 0) {
+        questName = a[0];
+        moduleParams.questName = questName;
+      }
+  
+      let end_vals = []
+  
+      // populate the end values for each sub module
+      s.forEach(m => end_vals.push(Object.values(m)[1]))
+      console.log(end_vals)
     }
 
-    let end_vals = []
-
-    // populate the end values for each sub module
-    s.forEach(m => end_vals.push(Object.values(m)[1]))
-    console.log(end_vals)
   
 
   }
@@ -245,8 +258,6 @@ current_sub_module = curr_sub_module
       (endMatch && endMatch[1]) === "noback"
         ? ""
         : (questID === 'END' && list_of_sub_modules.length === curr_sub_module) ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous' value='BACK'></input>";
-    //debugger;
-
 
     let nextButton = endMatch
       ? ""
@@ -937,8 +948,8 @@ current_sub_module = curr_sub_module
     }
     buttonToRemove = [...questions].pop().querySelector(".next");
 
-    // remove the next button if it is the last question of the last sub module
-    if (buttonToRemove && list_of_sub_modules.length === curr_sub_module) {
+    // remove the next button if it is the last question of the last sub module or if its a stand alone module so list_of_sub_modules.length == 0
+    if (buttonToRemove && list_of_sub_modules.length <= curr_sub_module) {
       buttonToRemove.remove();
     }
   }
