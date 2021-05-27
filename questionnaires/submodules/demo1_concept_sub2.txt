@@ -1,0 +1,11 @@
+[INTROMH] <b>Medical History</b>
+
+The next set of questions asks about medical conditions you may have or had in the past. Please answer “yes” to these questions <b>only if a doctor or other health professional</b> has told you that you have or had the condition. If you answer “yes,” you will also be asked how old you were when a doctor or health professional told you that you have or had the condition. If it is easier to remember, you can instead share the year you were told that you have or had the condition.
+
+We also ask about certain medical procedures you may have had.
+
+[D_537153788?] <b>Cancer</b>
+
+Has a doctor or other health professional ever told you that you have or had <b>non-melanoma skin cancer</b>?
+(353358909) Yes 
+(104430631) No

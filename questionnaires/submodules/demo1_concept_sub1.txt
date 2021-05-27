@@ -1,0 +1,16 @@
+{"name":"D_726699695"} [INTROM1] Welcome, {$u:firstName}! This survey is split into sections. Each section has questions that ask you about a wide range of topics. Our goal is to collect information about your medical history, family, work, and health behaviors. You can answer all of the questions in each survey section at one time, or answer some questions, pause, and return to answer the rest later. If you pause, your answers will be saved and you can pick up where you left off. You can also skip any questions that you do not want to answer.
+For some questions, you may see a word or phrase that appears as a button. Clicking the button will show more information that might help you answer the question. Here is an |popup|example.|example|This is an example of how additional information will be displayed.|
+Let’s get started.
+
+[INTROBAC] First, we are interested in learning some general information about you, your medical history, and your family history. This information will help us better understand your current health status. It will also help us understand how your health may be different from the health of other people.
+
+Please remember that we protect your privacy. We remove information that can identify you from your survey answers before we share them with researchers.
+
+<b>Background Information</b>
+[SECTION1]
+
+[D_479353866!] To start, please tell us a bit about yourself.
+
+Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
+(104430631) No 
+(353358909) Yes 

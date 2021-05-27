@@ -1,14 +1,174 @@
+[D_412624121?] What is the highest level of school that you have completed?
+(978204320) Grade school (grades 1-8)
+(984519506) Some high school (grades 9-11), no diploma
+(404564707) High school graduate or GED
+(432193665) Some college, no degree
+(890756124) Technical or trade school after high school
+(766964355) Associate’s degree
+(875342283) College graduate (Bachelor’s degree)
+(598242454) Advanced degree (Master’s, Doctorate, etc.)
+(438483626) Other: Please describe [text box: D_940387701]
+
+[D_784967158?] Are you currently enrolled in school?
+(104430631) No
+(551525967) Yes, full-time student
+(738284740) Yes, part-time student
+
+[D_613744428?] Do you currently work for pay (full-time or part-time)?
+(353358909) Yes -> D_627122657
+(104430631) No -> D_114529380
+
+[D_114529380?] Which of these best describes your current employment status?
+(584368278) Retired
+(475665841) A homemaker
+(656816477) Unemployed
+(756948639) Unable to work (disabled)
+(438483626) Other
+(746038746) Prefer not to answer
+< -> D_403258164 >
+
+[D_627122657?]  What is your current job title? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
+|__|id=D_627122657 size=50|
+
+[D_761310265?]
+
+[D_434316600?] What was your employer’s name for this job?
+|__|size=50|
+< -> D_700374192 >
+
+[D_700374192?] What type of business was this? (Select all that apply.)
+[641572847] Manufacturing
+[592592455] A retail store
+[711138281] Wholesale or distributor
+[596792238] A service provider
+[133362151] Construction
+[372993567] Mining
+[620577362] Farming
+[580409149] Fishing
+[867237640] Forestry
+[698814077] Government
+[751475124] Military
+[308286913] A shipyard
+[745065357] Some other type of business [text box:D_923333992]
+[362104337] Don’t Know
+< -> D_868232409 >
+
+[D_868232409?] What products were made, or services provided, by this employer?  If multiple, please provide the product/services related to your work unit. For example: automotive parts, residential home construction, accounting services, pharmaceutical research.
+|___| -> D_739294356
+< #NR -> D_118061122 >
+
+[D_739294356?] How many years have you worked in that job {$D_627122657}?
+|__|__|min=0 max=99| #Years
+< -> D_847533056 >
+
+[D_847533056?] Is this your longest-held job?
+(353358909) Yes  -> D_759004335
+(104430631) No -> D_118061122
+< #NR -> D_118061122 >
+
+[D_403258164?] Have you ever worked for pay (full-time or part-time)?
+(353358909) Yes -> D_118061122
+(104430631) No -> D_759004335
+< #NR -> D_759004335 >
+
+[D_118061122?] What was your longest-held job? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
+|__|id=D_118061122 size=50|
+< -> D_279637054 >
+
+[D_279637054?]
+
+[D_988878019?] What was your employer’s name for your longest-held job?
+|__|size=50|
+< -> D_530742915 >
+
+[D_530742915?] What type of business was this? (Select all that apply.)
+[730338896] Manufacturing
+[777378451] A retail store
+[328718340] Wholesale or distributor
+[204067509] A service provider
+[884766248] Construction
+[553237701] Mining
+[547793554] Farming
+[200748093] Fishing
+[413336496] Forestry
+[449093151] Government
+[454263183] Military
+[274169783] A shipyard
+[883468127] Some other type of business [text box:D_739237614]
+[427583219] Don’t Know
+< -> D_233198706 >
+
+[D_233198706?] What products were made, or services provided, by this employer? If multiple, please provide the product/services related to your work unit. For example: automotive parts, residential home construction, accounting services, pharmaceutical research.
+|___|
+< -> D_686172464 >
+
+[D_686172464?] How many years did you work in that job?
+|__|__|min=0 max=isDefined(D_150344905,age)| #Years
+
+[D_842657297?] During the <b>past 12 months</b>, about how many days per week did you typically work for pay?
+(503218834) None
+(632371391) 1 day
+(709969190) 2 days
+(928753604) 3 days
+(686379250) 4 days
+(107714591) 5 days
+(689829953) 6 days
+(164282814) 7 days
+
+[D_759004335?] Which of these options best describes your household’s total combined family income for the <b>past 12 months</b>? This should include money earned from all places: job wages, rent from properties, investment income, social security, disability and/or veteran’s benefits, unemployment benefits, workman’s compensation, child support payments, alimony, and so on. Answer with the amount before taxes.
+(374508062) Less than $10,000/year
+(976555124) $10,000–$24,999/year
+(745561936) $25,000–$34,999/year
+(209571450) $35,000–$49,999/year
+(212249150) $50,000–$74,999/year
+(777814771) $75,000–$99,999/year
+(922395188) $100,000–$149,999/year
+(913602274) $150,000–$199,999/year
+(530094502) $200,000 or more/year
+(178420302) Don’t know
+(746038746) Prefer not to answer
+
+[D_641651634?] How many people currently live in your household? Please include yourself in the total number. (Include students living away at school, deployed military, etc.)
+|__|__|id=D_173508724 min=0 max=99| #People living in household
+(363470193) Prefer not to answer
+
+[INTROCNT] <b>Other Contact Information</b>
+
+We would like to keep in touch with you during your time in the study. Please share more contact information so we can reach you in the future.
+
+[D_646504105?] When you joined this study, you gave us your mailing address. Are there any other mailing addresses that you use?
+(353358909) Yes -> D_532931946
+(104430631) No -> D_986275155
+
+[D_532931946?] What is the address?
+Line 1 (Street, PO Box, Rural Route)
+|__|required id=D_284580415|
+Line 2 (Apartment, Suite, Unit, Building)
+|__|id=D_728926441|
+City
+|__|required id=D_907038282|
+State
+|state|id=D_970839481|
+Zip
+|__|id=D_379899229|
+
+[D_986275155?] Sometimes we find that people have moved when we try to contact them again. It would be helpful if you could give us the contact details of someone close to you (such as a relative or friend) who would be willing for us to contact them if we are unable to reach you. Please leave this section blank if you do not wish to provide these extra contact details.
+
+First name
+|__|id=D_661719912|
+Last name
+|__|id=D_801653230|
+< -> D_285718391 >
+
 [D_285718391?] How can we reach this person?
 Mobile Phone
 |tel|id=D_286149234|
 
-[D_627122657?]  What is your current job title? Please be descriptive. For example, high school math teacher, emergency room nurse, automobile painter.
-|__|id=D_739294356 size=50|	
+Home Phone
+|tel|id=D_318130543|
 
-[D_761310265?]
-
-[D_986275155?] Sometimes we find that people have moved when we try to contact them again. It would be helpful if you could give us the contact details of someone close to you (such as a relative or friend) who would be willing for us to contact them if we are unable to reach you. Please leave this section blank if you do not wish to provide these extra contact details.
-
+Email
+|@|id=D_750097000|
 
 [D_431721131?] Who completed this survey section?
 (589702540) Completed by study participant
