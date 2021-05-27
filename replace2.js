@@ -38,6 +38,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
+  moduleParams.soccer = obj.soccer;
   rootElement = divId;
   
   let list_of_contents = []
@@ -70,34 +71,26 @@ transform.render = async (obj, divId, previousResults = {}) => {
     if (!isSubModule) {
       contents = moduleParams.config;
     } else {
-      console.log(obj.url)
-    
+
       // populate the list of sub modules with the respective links
       let s = Object.values(JSON.parse(await (await fetch(obj.url)).text()))[1]
       s.forEach(m => list_of_sub_modules.push(Object.values(m)[0]))
-  
-      console.log(list_of_sub_modules)
+
+
       total_sub_modules = list_of_sub_modules.length
-  
       // currently none of the sub modules are open
       opened_sub_module = new Array(total_sub_modules).fill(false)
-      console.log(opened_sub_module)
-  
-  
+
       let a = Object.values(JSON.parse(await (await fetch(obj.url)).text()))
-      console.log(a)
-  
       // if there is a name for the sub module, populate the questname
+
       if (a[0].length !== 0) {
         questName = a[0];
         moduleParams.questName = questName;
       }
-  
       let end_vals = []
-  
       // populate the end values for each sub module
       s.forEach(m => end_vals.push(Object.values(m)[1]))
-      console.log(end_vals)
     }
 
   
@@ -109,7 +102,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     contents = await get_sub_module(list_of_sub_modules)
 
     opened_sub_module[current_sub_module-1] = true
-    console.log(opened_sub_module)
   }
 
   async function get_sub_module(sub_modules) {
@@ -129,20 +121,20 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 export async function replace(divId, obj, contents, curr_sub_module = 0, opened_sub_module, previousResults) {
 
-  console.log(previousResults)
+
+  
 
   if (curr_sub_module !== current_sub_module) {
 current_sub_module = curr_sub_module
   }
 
-    console.log(contents)
+
     // get the status of the opened sub modules from the localforage
     moduleParams.opened_sub_module = await localforage.getItem('opened_sub_module')
 
     // if there is no status of the opened sub modules in the localforage
     if (!moduleParams.opened_sub_module) moduleParams.opened_sub_module = opened_sub_module
 
-    console.log(moduleParams.opened_sub_module)
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
 
@@ -265,7 +257,7 @@ current_sub_module = curr_sub_module
 
 
     // if it is a single sub module, or we reach the end of sub modules, then reset button is replaced by 'submit survey' button
-    let resetButton = (questID === 'END' && list_of_sub_modules.length === 0 || list_of_sub_modules.length === curr_sub_module) ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>" : "<input type='submit' class='reset' value='RESET ANSWER'></input>";
+    let resetButton = (questID === 'END' && (list_of_sub_modules.length === 0 || list_of_sub_modules.length === curr_sub_module)) ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>" : "<input type='submit' class='reset' value='RESET ANSWER'></input>";
 
     
 
@@ -843,10 +835,9 @@ current_sub_module = curr_sub_module
       if (response.code === 200) {
         const userData = response.data;
         
-        console.log("retrieve module name===", moduleParams.questName);
+
         if (userData[moduleParams.questName]) {
           questObj = userData[moduleParams.questName];
-          console.log("questObj===", questObj);
           await restoreResults(questObj);
         }
       }
@@ -855,7 +846,7 @@ current_sub_module = curr_sub_module
       // the default which pull the values out of
       // localforage...
       let results = await localforage.getItem(questName);
-      console.log(results)
+
       if (results == null) results = {};
       await restoreResults(results);
     }
@@ -867,14 +858,9 @@ current_sub_module = curr_sub_module
     if (questions.length > 0) {
       let currentId = questionQueue.currentNode.value;
       let currentQuestion = divElement.querySelector(`[id=${currentId}]`);
-      console.log("currentId", currentId);
-      console.log(opened_sub_module)
-      console.log(current_sub_module)
-      console.log(curr_sub_module)
       let curr_element = document.getElementById(currentId)
 
       let status_sub_module = await localforage.getItem("opened_sub_module")
-      console.log(status_sub_module)
         // if we do not find the next element from the document and we had opened the next sub module earlier(by checking the status of sub module from localforage), then call the next sub module
         if (currentId && !curr_element && status_sub_module && status_sub_module.length > curr_sub_module && status_sub_module[curr_sub_module]) {
         console.log('I am nowhere to be found')
@@ -884,16 +870,13 @@ current_sub_module = curr_sub_module
 
 
       async function call_next_sub_module() {
-        console.log(list_of_sub_modules)
-        console.log(curr_sub_module)
+        console.log("call_next_sub_module call_next_sub_module call_next_sub_module")
 
         // get the link to the next sub module
         let next_sub_module = list_of_sub_modules[curr_sub_module];
         // update the number of sub module currently open
         curr_sub_module++;
-        console.log(curr_sub_module)
         let content = await (await fetch(next_sub_module)).text();
-        console.log(content)
         // fetch the content and call replace with the new content
 
         await replace(rootElement, obj, content, curr_sub_module)
@@ -925,13 +908,11 @@ current_sub_module = curr_sub_module
     // if this is the first time the user attempt
     // the questionnaire, the tree will not be in
     // the localForage...
-    console.log(tree)
     if (tree) {
       questionQueue.loadFromVanillaObject(tree);
     } else {
       // console.log('isnide ')
       questionQueue.clear();
-      console.log(questionQueue)
     }
     // console.log(questionQueue)
     setActive(questionQueue.currentNode.value);
@@ -1029,7 +1010,6 @@ current_sub_module = curr_sub_module
   // });
 
   document.getElementById("submitModalButton").onclick = () => {
-    console.log('Inside submit modal')
     let lastBackButton = document.getElementById('lastBackButton');
     if (lastBackButton) {
       lastBackButton.remove();
@@ -1041,6 +1021,9 @@ current_sub_module = curr_sub_module
     submitQuestionnaire(moduleParams.renderObj.store, questName);
   };
 
+
+  if (moduleParams.soccer instanceof Function )
+    moduleParams.soccer();
   // moduleParams.questName = questName;
   return true;
 }
@@ -1080,7 +1063,7 @@ function unrollLoops(txt) {
     let idsInLoop = Array.from(x.txt.matchAll(/\|[\w\s=]*id=(\w+)|___\|\s*(\w+)|textbox:\s*(\w+)/g)).map(x => {
       return x[1] ? x[1] : (x[2] ? x[2] : x[3])
     })
-    console.log(idsInLoop)
+
 
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
@@ -1157,7 +1140,6 @@ export function stopSubmit(event) {
 
   if (event.target.clickType == "BACK") {
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
-    console.log(buttonClicked)
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve, rootElement, moduleParams.renderObj, moduleParams.previousResults, list_of_sub_modules, current_sub_module, moduleParams.opened_sub_module);
   } else if (event.target.clickType == "RESET ANSWER") {
     resetChildren(event.target.elements);
@@ -1167,7 +1149,6 @@ export function stopSubmit(event) {
 
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
-    console.log(buttonClicked)
     nextClick(buttonClicked, moduleParams.renderObj.store, rootElement, moduleParams.renderObj, moduleParams.previousResults, list_of_sub_modules, current_sub_module, moduleParams.opened_sub_module);
   }
 }
