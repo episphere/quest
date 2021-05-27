@@ -674,6 +674,8 @@ async function nextPage(norp, store, rootElement, obj, previousResults, list_of_
   if (store && questionElement.value) {
     let formData = {};
     formData[`${questName}.${questionElement.id}`] = questionElement.value;
+    
+    previousResults[questionElement.id] = questionElement.value;  //added this so results carry from one submodule to next
     store(formData);
   } else {
     let tmp = await localforage
@@ -692,6 +694,7 @@ async function nextPage(norp, store, rootElement, obj, previousResults, list_of_
         // allResposes really should be defined at this point. If it wasn't
         // previously in LF, the previous block should have created it...
         responses = allResponses;
+        
         localforage.setItem(questName, allResponses, () => {
           console.log(
             "... Response stored in LF: " + questName,

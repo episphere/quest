@@ -9,3 +9,13 @@ We also ask about certain medical procedures you may have had.
 Has a doctor or other health professional ever told you that you have or had <b>non-melanoma skin cancer</b>?
 (353358909) Yes 
 (104430631) No
+
+[D_725626004?]<b>Urinary and Reproductive System Problems</b>
+
+Has a doctor or other health professional ever told you that you have or had any of these conditions? Select all that apply.
+[509721537,displayif=or(equals(D_407056417,536341288),and(equals(D_407056417,576796184),equals(D_750420077,578416151)))] Uterine Fibroids 
+[863286658,displayif=or(equals(D_407056417,536341288),and(equals(D_407056417,576796184),equals(D_750420077,578416151)))] Endometriosis 
+[386524148,displayif=or(equals(D_407056417,536341288),and(equals(D_407056417,576796184),equals(D_750420077,434651539)))] Polycystic Ovary Syndrome (PCOS) -
+[937208760,displayif=or(equals(D_407056417,654207589),and(equals(D_407056417,576796184),equals(D_750420077,700100953)))] Enlarged Prostate 
+[746542057] Fibrocystic Breast, or other Benign Breast Disease 
+[522161060] I have <b>not</b> had any of these conditions 

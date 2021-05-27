@@ -14,3 +14,20 @@ Please remember that we protect your privacy. We remove information that can ide
 Based on the information you provided when you enrolled in this study, you are {$u:age} years old today. Is that correct?
 (104430631) No 
 (353358909) Yes 
+
+[D_407056417!] Later questions in this survey will ask about surgeries and medical procedures, including to the sex organs you were born with. We want to ask questions that will make sense for you.
+
+What was your biological sex assigned at birth?
+(654207589) Male -> D_289664241
+(536341288) Female -> D_289664241
+(576796184) Intersex or other -> D_750420077
+
+[D_750420077!,displayif=equals(D_407056417,576796184)] Please select the body parts that you were born with.
+[582784267] Penis
+[751402477] Testes
+[700100953] Prostate
+[846483618] Vagina
+[505282171] Cervix
+[578416151] Uterus
+[434651539] Ovaries
+[108025529] Fallopian Tubes
