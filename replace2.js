@@ -25,6 +25,7 @@ let rootElement;
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
+  moduleParams.soccer = obj.soccer;
   rootElement = divId;
   let contents = "";
   if (obj.text) contents = obj.text;
@@ -898,6 +899,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
     submitQuestionnaire(moduleParams.renderObj.store, questName);
   };
 
+  if (moduleParams.soccer instanceof Function )
+    moduleParams.soccer();
   moduleParams.questName = questName;
   return true;
 };
