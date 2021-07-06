@@ -814,6 +814,8 @@ export function displayQuestion(nextElement) {
       let isnum = /^[\d\.]+$/.test(attr);
       if (!isnum) {
         let tmpVal = evaluateCondition(attr);
+        console.log('------------exchanged Vals-----------------')
+        console.log(`${element} , ${attrName} , ${newAttrName} , ${tmpVal}`)
         element.setAttribute(newAttrName, tmpVal);
       }
     }
