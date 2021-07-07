@@ -114,19 +114,10 @@ export function parsePhoneNumber(event) {
 }
 
 export function callExchangeValues(nextElement){
-  [...nextElement.querySelectorAll("input[minval]")].forEach((element) => {
-    exchangeValue(element, "minval", "data-min");
-  });
-  [...nextElement.querySelectorAll("input[maxval]")].forEach((element) =>
-    exchangeValue(element, "maxval", "data-max")
-  );
-
-  [...nextElement.querySelectorAll("input[data-min]")].forEach((element) =>
-    exchangeValue(element, "data-min", "data-min")
-  );
-  [...nextElement.querySelectorAll("input[data-max]")].forEach((element) => {
-    exchangeValue(element, "data-max", "data-max");
-  });
+    exchangeValue(nextElement, "minval", "data-min");
+    exchangeValue(nextElement, "maxval", "data-max")
+    exchangeValue(nextElement, "data-min", "data-min")
+    exchangeValue(nextElement, "data-max", "data-max");
 }
 
 export function textboxinput(inputElement) {
