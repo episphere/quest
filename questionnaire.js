@@ -5,7 +5,7 @@ import { removeQuestion } from "./localforageDAO.js";
 export const moduleParams = {};
 
 let script = document.createElement("script");
-script.src = "https://episphere.github.io/quest/math.min.js";
+script.src = "https://episphere.github.io/quest/math.js";
 document.body.appendChild(script);
 
 // The questionQueue is an Tree which contains
@@ -113,11 +113,11 @@ export function parsePhoneNumber(event) {
   // }
 }
 
-export function callExchangeValues(nextElement){
-    exchangeValue(nextElement, "minval", "data-min");
-    exchangeValue(nextElement, "maxval", "data-max")
-    exchangeValue(nextElement, "data-min", "data-min")
-    exchangeValue(nextElement, "data-max", "data-max");
+export function callExchangeValues(nextElement) {
+  exchangeValue(nextElement, "minval", "data-min");
+  exchangeValue(nextElement, "maxval", "data-max")
+  exchangeValue(nextElement, "data-min", "data-min")
+  exchangeValue(nextElement, "data-max", "data-max");
 }
 
 function exchangeValue(element, attrName, newAttrName) {
@@ -162,12 +162,12 @@ export function textboxinput(inputElement) {
   }
   let span1 = null;
   let div1 = null;
-  if (inputElement && inputElement.nextElementSibling && inputElement.nextElementSibling.firstChild){
+  if (inputElement && inputElement.nextElementSibling && inputElement.nextElementSibling.firstChild) {
     span1 = inputElement.nextElementSibling.firstChild;
     div1 = inputElement.nextElementSibling;
   }
 
-  
+
   // if (span1 != null) {
   //   span1.style.color = "red";
   if (['text', 'number', 'email', 'tel', 'date', 'time'].includes(inputElement.type)) {
@@ -195,7 +195,7 @@ export function textboxinput(inputElement) {
               span1 = inputElement.nextElementSibling.firstChild;
               span1.style.color = "red";
             }
-            
+
             span1.innerText =
               `Value must be greater than or equal to ` +
               inputElement.getAttribute("data-min") +
@@ -417,8 +417,8 @@ export function radioAndCheckboxClearTextInput(inputElement) {
           }
         }
       }
-    }        
-}
+    }
+  }
 
 
 }
@@ -449,8 +449,8 @@ function clearSelection(inputElement) {
   let sameName = [
     ...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`),
   ].filter((x) => x.type != "hidden");
-  if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77 
-    || inputElement.value == 746038746 || inputElement.value == 178420302 ) {
+  if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77
+    || inputElement.value == 746038746 || inputElement.value == 178420302) {
     sameName.forEach((element) => {
       switch (element.type) {
         case "checkbox":
@@ -468,7 +468,7 @@ function clearSelection(inputElement) {
   } else {
     sameName.forEach((element) => {
       if (["checkbox", "radio"].includes(element.type))
-        element.checked = element.value == 99 || element.value == 88  || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
+        element.checked = element.value == 99 || element.value == 88 || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
     });
   }
 }
@@ -533,9 +533,8 @@ export function nextClick(norp, store, rootElement) {
 }
 
 function setNumberOfQuestionsInModal(num, norp, store, soft) {
-  let prompt = `There ${num > 1 ? "are" : "is"} ${num} question${
-    num > 1 ? "s" : ""
-  } unanswered on this page. `;
+  let prompt = `There ${num > 1 ? "are" : "is"} ${num} question${num > 1 ? "s" : ""
+    } unanswered on this page. `;
   if (!soft) {
     document.getElementById(
       "hardModalBodyText"
@@ -569,17 +568,17 @@ function showModal(norp, store, rootElement) {
     let hasNoResponses =
       getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0;
 
-    if (norp.form.hasAttribute("radioCheckboxAndInput")){
-      if (!radioCbHasAllAnswers(norp.form)){
+    if (norp.form.hasAttribute("radioCheckboxAndInput")) {
+      if (!radioCbHasAllAnswers(norp.form)) {
         hasNoResponses = true;
       }
     }
 
-    if (norp.form.hasAttribute("grid")){
-      if (!gridHasAllAnswers(norp.form)){
+    if (norp.form.hasAttribute("grid")) {
+      if (!gridHasAllAnswers(norp.form)) {
         hasNoResponses = true;
       }
-      
+
     }
     // let tempVal = 0;
     // if (hasNoResponses) {
@@ -743,24 +742,24 @@ async function nextPage(norp, store, rootElement) {
   displayQuestion(nextElement);
   // nextElement.scrollIntoView();
   // document.getElementById(rootElement).scrollIntoView();
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
 
-export async function submitQuestionnaire(store, questName){
+export async function submitQuestionnaire(store, questName) {
   console.log("submit questionnaire clicked!");
   if (store) {
     let formData = {};
     formData[`${questName}.COMPLETED`] = true;
     formData[`${questName}.COMPLETED_TS`] = new Date();
-    try{
-      store(formData).then(()=>{
+    try {
+      store(formData).then(() => {
         location.reload();
       });
-    } catch (e){
+    } catch (e) {
       console.log("Store failed", e);
     }
 
-  } 
+  }
 }
 function exitLoop(nextElement) {
   if (nextElement.hasAttribute("firstquestion")) {
@@ -894,7 +893,7 @@ export async function previousClicked(norp, retrieve, rootElement) {
   updateTreeInLocalForage();
   // prevElement.parentElement.scrollIntoView();
   //document.getElementById(rootElement).scrollIntoView();
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
   return prevElement;
 }
 
@@ -963,21 +962,21 @@ function checkValid(questionElement) {
 //check if grids has all answers
 export function gridHasAllAnswers(questionElement) {
   let gridRows = questionElement.querySelectorAll("[gridrow]");
-  for (let i =0; i<gridRows.length; i++){
+  for (let i = 0; i < gridRows.length; i++) {
     if (gridRows[i].style.display != "none") {
       let gridCells = gridRows[i].querySelectorAll("[gridcell]");
       let rowHasAnswer = false;
-      for (let j =0; j<gridCells.length; j++){
-        if (gridCells[j].checked){
+      for (let j = 0; j < gridCells.length; j++) {
+        if (gridCells[j].checked) {
           rowHasAnswer = true;
         }
       }
-      if (!rowHasAnswer){
+      if (!rowHasAnswer) {
         return false;
       }
     }
 
-    
+
   }
   return true;
 }
@@ -985,17 +984,17 @@ export function gridHasAllAnswers(questionElement) {
 //does a double loop through of each radio/checbox, if checked then the following inputs must not have a empty value
 export function radioCbHasAllAnswers(questionElement) {
   let hasAllAnswers = false;
-  for (let i=0; i<questionElement.length-1;i++){
-      if ((questionElement[i].type === "checkbox" || questionElement[i].type === "radio") && questionElement[i].checked){
-        for (let j=i+1; j<questionElement.length-1;j++){
-          if (questionElement[j].type === "checkbox" || questionElement[j].type === "radio" || questionElement[j].type === "submit") {
-            hasAllAnswers = true;
-            break;
-          } else if ((questionElement[j].type === "number" || questionElement[j].type === "text" || questionElement[j].type === "date" || questionElement[j].type === "email") && questionElement[j].value==="" && questionElement[i].style.display != "none"){
-            return false;
-          }
+  for (let i = 0; i < questionElement.length - 1; i++) {
+    if ((questionElement[i].type === "checkbox" || questionElement[i].type === "radio") && questionElement[i].checked) {
+      for (let j = i + 1; j < questionElement.length - 1; j++) {
+        if (questionElement[j].type === "checkbox" || questionElement[j].type === "radio" || questionElement[j].type === "submit") {
+          hasAllAnswers = true;
+          break;
+        } else if ((questionElement[j].type === "number" || questionElement[j].type === "text" || questionElement[j].type === "date" || questionElement[j].type === "email") && questionElement[j].value === "" && questionElement[i].style.display != "none") {
+          return false;
         }
       }
+    }
   }
   return hasAllAnswers;
 }
@@ -1072,20 +1071,20 @@ function getResults(element) {
 export function evaluateCondition(txt) {
   //refactored to displayIf from parse
   function replaceValue(x) {
-    if (typeof x === "string") { 
-      let element = document.getElementById(x); 
+    if (typeof x === "string") {
+      let element = document.getElementById(x);
       if (element != null) {
-          if (element.hasAttribute('grid') && (element.type === "radio" || element.type === "checkbox")){
-            //for displayif conditions with grid elements
-              x = element.checked ? 1 : 0;
+        if (element.hasAttribute('grid') && (element.type === "radio" || element.type === "checkbox")) {
+          //for displayif conditions with grid elements
+          x = element.checked ? 1 : 0;
+        }
+        else {
+          let tmpVal = x;
+          x = document.getElementById(x).value;
+          if (typeof x == "object" && Array.isArray(x) != true) {
+            x = x[tmpVal];
           }
-          else {
-            let tmpVal = x;
-            x = document.getElementById(x).value;
-            if (typeof x == "object" && Array.isArray(x) != true) {
-              x = x[tmpVal];
-            }
-          }
+        }
 
       } else {
         //look up by name
