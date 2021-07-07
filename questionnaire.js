@@ -120,6 +120,20 @@ export function callExchangeValues(nextElement){
     exchangeValue(nextElement, "data-max", "data-max");
 }
 
+function exchangeValue(element, attrName, newAttrName) {
+  let attr = element.getAttribute(attrName);
+  if (attr) {
+    let isnum = /^[\d\.]+$/.test(attr);
+    if (!isnum) {
+      let tmpVal = evaluateCondition(attr);
+      console.log('------------exchanged Vals-----------------')
+      console.log(`${element} , ${attrName} , ${newAttrName} , ${tmpVal}`)
+      element.setAttribute(newAttrName, tmpVal);
+    }
+  }
+  return element;
+}
+
 export function textboxinput(inputElement) {
   /////////// To change all max attributes to input element ///////////
   // [...inputElement.parentElement.parentElement.children]
@@ -816,7 +830,7 @@ export function displayQuestion(nextElement) {
     });
 
   // check min/max for variable substitution in validation
-  function exchangeValue(element, attrName, newAttrName) {
+  /*function exchangeValue(element, attrName, newAttrName) {
     let attr = element.getAttribute(attrName);
     if (attr) {
       let isnum = /^[\d\.]+$/.test(attr);
@@ -828,7 +842,7 @@ export function displayQuestion(nextElement) {
       }
     }
     return element;
-  }
+  }*/
   //Replacing all default HTML form validations with datasets
 
   [...nextElement.querySelectorAll("input[required]")].forEach((element) => {
