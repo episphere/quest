@@ -49,7 +49,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   contents = contents.replace(grid_replace_regex, parseGrid);
 
   // then we must unroll the loops...
-  
+
   contents = unrollLoops(contents);
 
   contents = contents.replace(/#currentYear/g, new Date().getFullYear());
@@ -86,7 +86,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
     "g"
   );
-  
+
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/(?:\r\n|\r|\n)/g, "\u001f");
@@ -181,7 +181,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       text = text.replace(/\|SSN\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSN);
       text = text.replace(/\|state\|(?:([^\|\<]+[^\|]+)\|)?/g, fState);
       text = text.replace(/\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
-      text = text.replace(/\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g, fCheck);
+      text = text.replace(/\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g, fCheck);
       text = text.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
       text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*?)/g, fText);
       text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
@@ -366,11 +366,17 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace [XX] with checkbox
     questText = questText.replace(
-      /\[(\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
+      /\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
       fCheck
     );
-    function fCheck(containsGroup, value, name, labelID, condition, label) {
+    function fCheck(containsGroup, value, noneOfTheOthers, name, labelID, condition, label) {
       let displayIf = "";
+      let clearValues = "";
+      if (noneOfTheOthers) {
+        clearValues = "data-reset=true"
+      } else {
+        clearValues = ""
+      }
       if (condition == undefined) {
         displayIf = "";
       } else {
@@ -385,7 +391,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' ${clearValues}></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace |time| with a time input
@@ -403,7 +409,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fNum(fullmatch, opts) {
 
       let value = questText.startsWith('<br>') ? questText.split('<br>')[0] : ''
-       
+
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
       let maxRegex = /max(?![(a-z])/g;
@@ -502,7 +508,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace #YN with Yes No input
     questText = questText.replace(
-      /#YN/g,  `<div class='response' style='margin-top:15px'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response' style='margin-top:15px'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div>`
+      /#YN/g, `<div class='response' style='margin-top:15px'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response' style='margin-top:15px'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div>`
       // `(1) Yes
       //  (0) No`
     );
@@ -590,11 +596,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // If reset is needed only for radio buttons then uncomment out the next lines
 
-    if (!questText.includes('input') && (questID !== 'END')){
+    if (!questText.includes('input') && (questID !== 'END')) {
       resetButton = '';
     }
 
-    
+
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
       <div class="row">
@@ -899,7 +905,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     submitQuestionnaire(moduleParams.renderObj.store, questName);
   };
 
-  if (moduleParams.soccer instanceof Function )
+  if (moduleParams.soccer instanceof Function)
     moduleParams.soccer();
   moduleParams.questName = questName;
   return true;

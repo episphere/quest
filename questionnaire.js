@@ -449,8 +449,14 @@ function clearSelection(inputElement) {
   let sameName = [
     ...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`),
   ].filter((x) => x.type != "hidden");
-  if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77
-    || inputElement.value == 746038746 || inputElement.value == 178420302) {
+  /*   if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77
+      || inputElement.value == 746038746 || inputElement.value == 178420302) { */
+
+  /* 
+  if this is a "none of the above", go through all elements with the same name
+  and mark them as "false" or clear the text values
+  */
+  if (inputElement.dataset.reset) {
     sameName.forEach((element) => {
       switch (element.type) {
         case "checkbox":
@@ -466,9 +472,12 @@ function clearSelection(inputElement) {
       }
     });
   } else {
+    // otherwise if this as another element with the same name and is marked as "none of the above"  clear that.
+    // don't clear everything though because you are allowed to have multiple choices.
     sameName.forEach((element) => {
       if (["checkbox", "radio"].includes(element.type))
-        element.checked = element.value == 99 || element.value == 88 || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
+        element.checked = element.dataset.reset ? false : element.checked
+      //element.checked = element.value == 99 || element.value == 88 || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
     });
   }
 }
