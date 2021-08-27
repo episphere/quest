@@ -1,0 +1,27 @@
+[PAINREL1]
+Have you ever taken any of these medications at least 4 times a month for 6 months or longer? Select all that apply.
+[0|babyAsprin] Baby or low-dose aspirin (81 mg or less) -> PAINREL2_1
+[1|regAsprin] Regular or extra strength aspirin (such as Bufferin® or Anacin®) -> PAINREL2_2
+[2|ibuprofen]Ibuprofen (such as Motrin® or Advil®) -> PAINREL2_3
+[3|acet] Acetaminophen (such as Tylenol®) -> PAINREL2_4
+[4|naproxen] Naproxen (such as Naprosyn®, Anaprox®, or Aleve®) -> PAINREL2_5
+[5|celecoxib] Celebrex® (Celecoxib) -> PAINREL2_6
+[6|painReliever] Prescription pain relievers containing opioids (such as hydrocodone (such as Vicodin®, Lorcet®, Lortab®, or Norco®), oxycodone (such as OxyContin® or Percocet®), morphine (such as Kadian® or Avinza®), Fentanyl, codeine,tramadol, methadone, oxymorphone, hydromorphone (Dilaudid®), or meperidine (Demerol®)) -> PAINREL2_7
+[88*] None of the above
+< -> PAINREL8 >
+
+[PAINREL2_1?] During the time(s) that you were taking baby or low-dose aspirin (81 mg or less), about how many days per week OR per month did you take it?
+
+#Days PER Week |__|__|xor=PAINREL2_1 id=BABYASPRINWEEK min=1 max=7|
+Or, if it is easier to remember days per month, enter that here:
+#Days PER Month |__|__| xor=PAINREL2_1 id=BABYASPRINMONTH min=1 max=31|
+
+< -> PAINREL3_1 >
+
+[PAINREL3_1?] On the days that you took baby or low-dose aspirin (81 mg or less), about how many pills did you take per day, on most days?
+
+#Pills per day |__|__|id=PAINREL3_1A min=1 max=99|
+[77*] Don’t know
+< -> PAINREL4_1 >
+
+[PAINREL4_1]  END OF TEST

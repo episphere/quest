@@ -392,9 +392,10 @@ export function textboxinput(inputElement) {
 
   clearSelection(inputElement);
   let value = handleXOR(inputElement);
-  let id = inputElement.getAttribute("xor")
-    ? inputElement.getAttribute("xor")
-    : inputElement.id;
+  let id = inputElement.id
+//  let id = inputElement.getAttribute("xor")
+//    ? inputElement.getAttribute("xor")
+//    : inputElement.id;
   value = value ? value : inputElement.value;
 
   setFormValue(inputElement.form, value, id);
@@ -526,7 +527,7 @@ export function handleXOR(inputElement) {
       valueObj[x.id] = x.value;
     }
   });
-  return valueObj;
+  return valueObj[inputElement.id];
 }
 
 export function nextClick(norp, store, rootElement) {
