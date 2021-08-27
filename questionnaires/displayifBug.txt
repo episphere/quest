@@ -1,0 +1,25 @@
+{"name":"displayIfBug"}
+[HOMEADD1_1?] What is the full street address of the place where you live now?
+
+Street number |__|__|id=STNUM min=0 max=999999|
+Full Street name |__|id=FULLST|
+Apartment, suite, unit, building, etc. |__|__|id=APT|
+City |__|id=CITY|
+State/Province |__|id=ST|
+Zip code |__|__|id=ZIP min=0|
+Country |__|id=COUNTRY|
+
+[HOMEADD2_1?,displayif=or(or(isNotDefined(CITY,false),isNotDefined(ST,false)),or(isNotDefined(ZIP,false),isNotDefined(COUNTRY,false)))] Please provide the following information:
+|displayif=doesNotEqual(isDefined(CITY,-1),-1)|City: <i>{$CITY}</i>|
+|displayif=equals(isDefined(CITY,-1),-1)|City: |
+|__|id=CITY_FOLLOWUP displayif=isNotDefined(CITY,false)|
+|displayif=doesNotEqual(isDefined(ST,-1),-1)|State/Province: <i>{$ST}</i>|
+|displayif=equals(isDefined(ST,-1),-1)|State/Province: |
+|__|id=ST_FOLLOWUP displayif=isNotDefined(ST,false)|
+|displayif=doesNotEqual(isDefined(ZIP,-1),-1)|Zip code: <i>{$ZIP}</i>|
+|displayif=equals(isDefined(ST,-1),-1)|Zip code: |
+|__|__|id=ZIP_FOLLOWUP min=0 displayif=isNotDefined(ZIP,false)|
+|displayif=doesNotEqual(isDefined(COUNTRY,-1),-1)|Country: <i>{$COUNTRY}</i>|
+|displayif=equals(isDefined(ST,-1),-1)|Country: |
+|__|id=COUNTRY_FOLLOWUP displayif=isNotDefined(COUNTRY,false)|
+(77) Don't know

@@ -1,0 +1,30 @@
+{"name":"issue338"}
+[INTRO_I338]
+This Questionnaire module is designed to demonstrate and exemplify Quest issue 338.
+
+[Q0]
+city |__|id=CURSCHCITY|
+state/province |__|id=CURSCHST|
+Zip  |__|id=CURSCHZIP|
+Country |__|id=CURSCHCOUNTRY|
+
+
+[Q1]
+let's update the results...:
+
+City: |displayif=exists("CURSCHCITY")|{$CURSCHCITY}|
+|__|id=CURSCHCITY_FOLLOWUP displayif=doesNotExist("CURSCHCITY")|
+
+State/Province: |displayif=exists("CURSCHST")| {$CURSCHST}|
+|__|id=CURSCHST_FOLLOWUP displayif=doesNotExist("CURSCHST")|
+
+|displayif=exists("CURSCHZIP") |Zip code: {$CURSCHZIP}|
+|displayif=doesNotExist("CURSCHZIP") |Zip code: |
+|__|id=CURSCHZIP_FOLLOWUP min=0 displayif=doesNotExist("CURSCHZIP")|
+
+|displayif=exists("CURSCHCOUNTRY")|Country: {$CURSCHCOUNTRY}|
+|displayif=doesNotExist("CURSCHCOUNTRY")|Country: |
+|__|id=CURSCHCOUNTRY_FOLLOWUP displayif=doesNotExist("CURSCHCOUNTRY")|
+(77) Don't know
+
+[END] Thank you
