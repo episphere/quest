@@ -206,6 +206,7 @@ export function textboxinput(inputElement) {
               span.style.height = "inherit";
               div.appendChild(span);
               div.style.minHeight = "30px";
+              div.classList.add('validation-container');
               inputElement.insertAdjacentElement("afterend", div);
               span1 = inputElement.nextElementSibling.firstChild;
               span1.style.color = "red";
@@ -230,6 +231,7 @@ export function textboxinput(inputElement) {
               span.style.height = "inherit";
               div.appendChild(span);
               div.style.minHeight = "30px";
+              div.classList.add('validation-container');
               inputElement.insertAdjacentElement("afterend", div);
               span1 = inputElement.nextElementSibling.firstChild;
               span1.style.color = "red";
@@ -241,7 +243,7 @@ export function textboxinput(inputElement) {
             inputElement.classList.add("invalid");
             inputElement.form.classList.add("invalid");
           } else {
-            if (span1) {
+            if (span1 && div1.classList.contains('validation-container')) {
               div1.parentNode.removeChild(div1);
             }
             if ([...inputElement.classList].includes("invalid")) {
@@ -250,7 +252,7 @@ export function textboxinput(inputElement) {
             }
           }
         } else {
-          if (span1) {
+          if (span1 && div1.classList.contains('validation-container')) {
             div1.parentNode.removeChild(div1);
           }
           if ([...inputElement.classList].includes("invalid")) {
@@ -270,6 +272,7 @@ export function textboxinput(inputElement) {
             span.style.height = "inherit";
             div.appendChild(span);
             div.style.minHeight = "30px";
+            div.classList.add('validation-container');
             inputElement.insertAdjacentElement("afterend", div);
             span1 = inputElement.nextElementSibling.firstChild;
             span1.style.color = "red";
@@ -280,7 +283,7 @@ export function textboxinput(inputElement) {
           inputElement.form.classList.add("invalid");
           inputElement.form.noValidate = true;
         } else {
-          if (span1) {
+          if (span1  && div1.classList.contains('validation-container')) {
             div1.parentNode.removeChild(div1);
           }
           if ([...inputElement.classList].includes("invalid")) {
@@ -288,7 +291,7 @@ export function textboxinput(inputElement) {
             inputElement.form.classList.remove("invalid");
           }
           //inputElement.form.noValidate = false;
-        }
+        } 
         break;
 
       case "tel":
@@ -300,6 +303,7 @@ export function textboxinput(inputElement) {
             span.style.height = "inherit";
             div.appendChild(span);
             div.style.minHeight = "30px";
+            div.classList.add('validation-container');
             inputElement.insertAdjacentElement("afterend", div);
             span1 = inputElement.nextElementSibling.firstChild;
             span1.style.color = "red";
@@ -310,7 +314,7 @@ export function textboxinput(inputElement) {
           inputElement.form.classList.add("invalid");
           inputElement.form.noValidate = true;
         } else {
-          if (span1) {
+          if (span1  && div1.classList.contains('validation-container')) {
             div1.parentNode.removeChild(div1);
           }
           if ([...inputElement.classList].includes("invalid")) {
@@ -334,6 +338,7 @@ export function textboxinput(inputElement) {
             span.style.height = "inherit";
             div.appendChild(span);
             div.style.minHeight = "30px";
+            div.classList.add('validation-container');
             inputElement.insertAdjacentElement("afterend", div);
             span1 = inputElement.nextElementSibling.firstChild;
             span1.style.color = "red";
@@ -355,6 +360,7 @@ export function textboxinput(inputElement) {
             span.style.height = "inherit";
             div.appendChild(span);
             div.style.minHeight = "30px";
+            div.classList.add('validation-container');
             inputElement.insertAdjacentElement("afterend", div);
             span1 = inputElement.nextElementSibling.firstChild;
             span1.style.color = "red";
@@ -365,7 +371,7 @@ export function textboxinput(inputElement) {
           inputElement.form.classList.remove("invalid");
           inputElement.form.noValidate = true;
         } else {
-          if (span1) {
+          if (span1  && div1.classList.contains('validation-container')) {
             div1.parentNode.removeChild(div1);
           }
           if ([...inputElement.classList].includes("invalid")) {
