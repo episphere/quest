@@ -1,0 +1,10 @@
+
+[INTROSITTING]<b>Sitting</b>
+
+The next questions ask about the time you spent outside of work over the <b>past 12 months</b>.
+
+[SITTING] During the <b>past 12 months</b>, about how many <b>hours per day</b> did you usually spend doing each of these activities |displayif=equals(WORK,1)|outside of work|?
+
+|grid?|id="grid_SITTING"|Typical hours per DAY|[ [SITTINGA] Driving or sitting in a car, bus or train. <i>This includes commuting to and from work.</i>; [SITTINGB] Sitting and watching television shows, movies, or other video content on a television, tablet, phone, or computer; [SITTINGC] Sitting and browsing the internet, playing video games, using social media, or using any other apps or programs on a tablet, phone, computer, or television; [SITTINGD] Other sitting outside of work (such as for reading, crafts, and hobbies);]|(0:None) (1:Less 30 min.) (2:30 min.) (3: 45 min.) (4: 1 hr.) (5: 1 to 2.9 hrs.) (6: 3 to 4.9 hrs.) (7: 5 to 6.9 hrs.) (8: 7 to 8.9 hrs.) (9: 9 hrs. or more)|
+
+[END,end="end"] Thank you! Have a nice day :)

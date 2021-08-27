@@ -8,6 +8,21 @@ let script = document.createElement("script");
 script.src = "https://episphere.github.io/quest/math.js";
 document.body.appendChild(script);
 
+window.addEventListener("load", (event) => {
+  math.import({
+    exists: function (x) {
+      if (!x) return false;
+      let element = document.getElementById(x);
+      return (!!element && !!element.value)
+    },
+    doesNotExist: function (x) {
+      if (!x) return true;
+      let element = document.getElementById(x);
+      return (!element || !element.value)
+    }
+  })
+})
+
 // The questionQueue is an Tree which contains
 // the question ids in the order they should be displayed.
 export const questionQueue = new Tree();
@@ -127,7 +142,7 @@ function exchangeValue(element, attrName, newAttrName) {
     if (!isnum) {
       let tmpVal = evaluateCondition(attr);
       console.log('------------exchanged Vals-----------------')
-      console.log(`${element} , ${attrName} , ${newAttrName} , ${tmpVal}`)
+      console.log(`${element}, ${attrName}, ${newAttrName}, ${tmpVal}`)
       element.setAttribute(newAttrName, tmpVal);
     }
   }
@@ -431,7 +446,7 @@ export function radioAndCheckboxUpdate(inputElement) {
     // get all checkboxes with the same name attribute...
     selectedValue = Array.from(
       inputElement.form.querySelectorAll(
-        `input[type="checkbox"][name=${inputElement.name}]`
+        `input[type = "checkbox"][name = ${inputElement.name}]`
       )
     )
       .filter((x) => x.checked)
@@ -447,7 +462,7 @@ export function radioAndCheckboxUpdate(inputElement) {
 function clearSelection(inputElement) {
   if (!inputElement.form || !inputElement.name) return;
   let sameName = [
-    ...inputElement.form.querySelectorAll(`input[name=${inputElement.name}]`),
+    ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}]`),
   ].filter((x) => x.type != "hidden");
   /*   if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77
       || inputElement.value == 746038746 || inputElement.value == 178420302) { */
@@ -789,10 +804,14 @@ function exitLoop(nextElement) {
 export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let elm = document.getElementById(x.getAttribute("forid"));
-    if (elm && elm.tagName == "LABEL") {
-      x.innerHTML = elm.innerHTML;
+    if (elm) {
+      if (elm.tagName == "LABEL") {
+        x.innerHTML = elm.innerHTML;
+      } else {
+        x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
+      }
     } else {
-      x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
+      x.innerHTML = (x.hasAttribute("optional")) ? x.getAttribute("optional") : x.getAttribute("forid")
     }
   });
 
@@ -816,7 +835,7 @@ export function displayQuestion(nextElement) {
     })
     .map((elm) => {
       let f = evaluateCondition(elm.getAttribute("displayif"));
-      elm.style.display = f ? "inline" : "none";
+      elm.style.display = f ? null : "none";
     });
 
   //check if grid elements needs to be shown
@@ -829,9 +848,9 @@ export function displayQuestion(nextElement) {
         if (child.getAttribute("displayif")) {
           let f = evaluateCondition(child.getAttribute("displayif"));
           if (!f) {
-            child.setAttribute("style", "display:none !important");
+            child.style.display = "none" //child.setAttribute("style", "display:none !important");
           } else {
-            child.setAttribute("style", "display:inline");
+            child.style.display = null //child.setAttribute("style", "display:inline");
           }
         }
       }
@@ -1078,6 +1097,12 @@ function getResults(element) {
 // x is the questionnaire text
 
 export function evaluateCondition(txt) {
+  let mjsfun = ['exists', "doesNotExist"]
+  if (mjsfun.some(f => txt.startsWith(f))) {
+    let v = math.evaluate(txt)
+    console.log(`${txt} ==> ${v}`)
+    return v
+  }
   //refactored to displayIf from parse
   function replaceValue(x) {
     if (typeof x === "string") {
