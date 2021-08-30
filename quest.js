@@ -22,16 +22,28 @@ async function startUp() {
   };
 
   ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
-  var q = (location.search + location.hash).replace(/[\#\?]/g, "");
-  if (q.length > 3) {
-    if (!q.startsWith("config")) {
-      ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
-    } else {
-      moduleParams.config = config;
-      ta.value = await (await fetch(config.markdown)).text();
-    }
-    ta.onkeyup();
+  // handle the Search params with the URLSearchParam API instead of a string...
+  let params = new URLSearchParams(location.search)
+  if (params.has("config")) {
+    moduleParams.config = config;
+    ta.value = await (await fetch(config.markdown)).text();
   }
+  if (location.hash.length > 1) {
+    console.log(location.hash.substring(1))
+    ta.value = await (await fetch(location.hash.substring(1))).text();
+    ta.onkeyup()
+  }
+
+  /*var q = (location.search + location.hash).replace(/[\#\?]/g, "");
+    if (q.length > 3) {
+      if (!q.startsWith("config")) {
+        ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
+      } else {
+        moduleParams.config = config;
+        ta.value = await (await fetch(config.markdown)).text();
+      }
+      ta.onkeyup();
+    } */
   ta.style.width =
     parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 
@@ -79,7 +91,7 @@ function clearLocalForage() {
 
   questionQueue.clear();
 
-  prevRes ={};
+  prevRes = {};
 }
 
 transform.tout = function (fun, tt = 500) {
