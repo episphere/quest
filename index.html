@@ -156,7 +156,8 @@
         }
     </script>
     <script>
-        if(location.hash.split('&').includes('run')){
+        let searchParams=new URLSearchParams(location.search)
+        if(location.hash.split('&').includes('run')||searchParams.has('run')){
             document.getElementById('navBar').style.display = 'none'
             document.getElementById('loadSaveDiv').style.display ='none'
             document.getElementById('stylingDiv').style.display ='none'
@@ -170,6 +171,8 @@
             let styleSheet = location.hash.split("&")[styleIndx].match(styleRegex)[1]
             console.log(styleSheet)
             changeStyle(styleSheet)
+        }else if (searchParams.has('style')){
+            changeStyle(searchParams.get('style'))
         }
 
         let myTree ={};
