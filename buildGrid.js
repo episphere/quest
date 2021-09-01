@@ -18,6 +18,15 @@ export function toggle_grid(event) {
   otherElement.checked = element.checked;
 
   element.form.value[otherElement.name] = element.form.value[element.name];
+
+  const isElementSmall = element.dataset.isSmallGridCell === "1";
+  const isOtherElementSmall = otherElement.dataset.isSmallGridCell === "1";
+  if (isElementSmall) {
+    delete element.form.value[element.name];
+  }
+  if (isOtherElementSmall) {
+    delete element.form.value[otherElement.name];
+  }  
 }
 
 function buildHtml(grid_obj) {
@@ -42,7 +51,7 @@ function buildHtml(grid_obj) {
   grid_obj.questions.forEach((question) => {
     small_format += `<div id="${question.id}_sm"><div class="py-4">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      small_format += `<div class="text-center"><input type="${resp.type}" grid class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
+      small_format += `<div class="text-center"><input data-is-small-grid-cell="1" type="${resp.type}" grid class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
     small_format += "</div>";
   });
