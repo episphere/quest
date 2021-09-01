@@ -19,16 +19,14 @@ export function toggle_grid(event) {
 
   element.form.value[otherElement.name] = element.form.value[element.name];
 
-  const isElementGridCell = element.dataset.isGridCell === "1";
-  const isOtherElementGridCell = otherElement.dataset.isGridCell === "1";
-  if (!isElementGridCell) {
+  const isElementSmall = element.dataset.isSmallGridCell === "1";
+  const isOtherElementSmall = otherElement.dataset.isSmallGridCell === "1";
+  if (isElementSmall) {
     delete element.form.value[element.name];
   }
-  
-  if (!isOtherElementGridCell) {
+  if (isOtherElementSmall) {
     delete element.form.value[otherElement.name];
-  }
-
+  }  
 }
 
 function buildHtml(grid_obj) {
@@ -44,7 +42,7 @@ function buildHtml(grid_obj) {
 
     grid_table_body += `<div id="${question.id}" ${displayif} gridrow class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input  data-is-grid-cell="1" gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" aria-label='(${question.question_text}, ${resp.text})' grid class="grid-input-element show-button"/></div>`;
+      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" aria-label='(${question.question_text}, ${resp.text})' grid class="grid-input-element show-button"/></div>`;
     });
     grid_table_body += "</div>";
   });
@@ -53,7 +51,7 @@ function buildHtml(grid_obj) {
   grid_obj.questions.forEach((question) => {
     small_format += `<div id="${question.id}_sm"><div class="py-4">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      small_format += `<div class="text-center"><input type="${resp.type}" grid class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
+      small_format += `<div class="text-center"><input data-is-small-grid-cell="1" type="${resp.type}" grid class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
     small_format += "</div>";
   });
