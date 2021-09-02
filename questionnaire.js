@@ -397,14 +397,18 @@ export function textboxinput(inputElement) {
   }
 
   clearSelection(inputElement);
-  let value = handleXOR(inputElement);
+  let { value, sibs } = handleXOR(inputElement);
   let id = inputElement.id
-//  let id = inputElement.getAttribute("xor")
-//    ? inputElement.getAttribute("xor")
-//    : inputElement.id;
   value = value ? value : inputElement.value;
-
   setFormValue(inputElement.form, value, id);
+
+  sibs.forEach((sib) => {
+    const { form, id } = sib;
+    if (id in form.value) {
+      delete form.value[id];
+    }
+  });
+  
 }
 
 // onInput/Change handler for radio/checkboxex
@@ -529,11 +533,11 @@ export function handleXOR(inputElement) {
           x.nextElementSibling.children[0].innerText = "";
           x.classList.remove("invalid");
         }
-      }
-      valueObj[x.id] = x.value;
+      } 
+       valueObj[x.id] = x.value;
     }
   });
-  return valueObj[inputElement.id];
+  return { value: valueObj[inputElement.id], sibs};
 }
 
 export function nextClick(norp, store, rootElement) {
