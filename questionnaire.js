@@ -402,7 +402,7 @@ export function textboxinput(inputElement) {
   value = value ? value : inputElement.value;
   setFormValue(inputElement.form, value, id);
 
-  // clear other previous value if they exist
+  // delete all other xor field values that were set
   sibs?.forEach((sib) => {
     const { form, id } = sib;
     if (id in form.value) {
