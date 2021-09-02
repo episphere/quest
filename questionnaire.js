@@ -402,7 +402,8 @@ export function textboxinput(inputElement) {
   value = value ? value : inputElement.value;
   setFormValue(inputElement.form, value, id);
 
-  sibs.forEach((sib) => {
+  // clear other previous value if they exist
+  sibs?.forEach((sib) => {
     const { form, id } = sib;
     if (id in form.value) {
       delete form.value[id];
