@@ -283,7 +283,7 @@ export function textboxinput(inputElement) {
           inputElement.form.classList.add("invalid");
           inputElement.form.noValidate = true;
         } else {
-          if (span1  && div1.classList.contains('validation-container')) {
+          if (span1 && div1.classList.contains('validation-container')) {
             div1.parentNode.removeChild(div1);
           }
           if ([...inputElement.classList].includes("invalid")) {
@@ -291,7 +291,7 @@ export function textboxinput(inputElement) {
             inputElement.form.classList.remove("invalid");
           }
           //inputElement.form.noValidate = false;
-        } 
+        }
         break;
 
       case "tel":
@@ -314,7 +314,7 @@ export function textboxinput(inputElement) {
           inputElement.form.classList.add("invalid");
           inputElement.form.noValidate = true;
         } else {
-          if (span1  && div1.classList.contains('validation-container')) {
+          if (span1 && div1.classList.contains('validation-container')) {
             div1.parentNode.removeChild(div1);
           }
           if ([...inputElement.classList].includes("invalid")) {
@@ -371,7 +371,7 @@ export function textboxinput(inputElement) {
           inputElement.form.classList.remove("invalid");
           inputElement.form.noValidate = true;
         } else {
-          if (span1  && div1.classList.contains('validation-container')) {
+          if (span1 && div1.classList.contains('validation-container')) {
             div1.parentNode.removeChild(div1);
           }
           if ([...inputElement.classList].includes("invalid")) {
@@ -397,19 +397,11 @@ export function textboxinput(inputElement) {
   }
 
   clearSelection(inputElement);
-  let { value, sibs } = handleXOR(inputElement);
+  let value = handleXOR(inputElement);
   let id = inputElement.id
   value = value ? value : inputElement.value;
   setFormValue(inputElement.form, value, id);
 
-  // delete all other xor field values that were set
-  sibs?.forEach((sib) => {
-    const { form, id } = sib;
-    if (id in form.value) {
-      delete form.value[id];
-    }
-  });
-  
 }
 
 // onInput/Change handler for radio/checkboxex
@@ -525,6 +517,9 @@ export function handleXOR(inputElement) {
   );
 
   sibs.forEach((x) => {
+    if (inputElement.form.value) {
+      delete inputElement.form.value[x.id]
+    }
     if (["checkbox", "radio"].includes(x.type)) {
       x.checked = x.value == 99 || x.value == 88 || x.value == 77 || x.value == 746038746 || x.value == 178420302 ? false : x.checked;
     } else {
@@ -534,11 +529,11 @@ export function handleXOR(inputElement) {
           x.nextElementSibling.children[0].innerText = "";
           x.classList.remove("invalid");
         }
-      } 
-       valueObj[x.id] = x.value;
+      }
+      valueObj[x.id] = x.value;
     }
   });
-  return { value: valueObj[inputElement.id], sibs};
+  return valueObj[inputElement.id];
 }
 
 export function nextClick(norp, store, rootElement) {
