@@ -19,6 +19,11 @@ window.addEventListener("load", (event) => {
       if (!x) return true;
       let element = document.getElementById(x);
       return (!element || !element.value)
+    },
+    noneExist: function (...ids) {
+      // if you give me no ids, none of them exist therefore true...
+      // loop through all the ids of any exists then return false...
+      return ids.map(id => math.doesNotExist(id)).every(x => x)
     }
   })
 })
@@ -1104,7 +1109,7 @@ function getResults(element) {
 // x is the questionnaire text
 
 export function evaluateCondition(txt) {
-  let mjsfun = ['exists', "doesNotExist"]
+  let mjsfun = ['exists', "doesNotExist", "noneExist"]
   if (mjsfun.some(f => txt.startsWith(f))) {
     let v = math.evaluate(txt)
     console.log(`${txt} ==> ${v}`)
