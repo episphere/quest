@@ -53,7 +53,6 @@ function numberOfInputs(element) {
 }
 
 function setFormValue(form, value, id) {
-  console.log(`setting form value ${id} to ${value}`)
   if (numberOfInputs(form) == 1) {
     form.value = value;
   } else {
