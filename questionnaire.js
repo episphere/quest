@@ -53,6 +53,7 @@ function numberOfInputs(element) {
 }
 
 function setFormValue(form, value, id) {
+  console.log(`setting form value ${id} to ${value}`)
   if (numberOfInputs(form) == 1) {
     form.value = value;
   } else {
@@ -494,7 +495,7 @@ function clearSelection(inputElement) {
           break;
         default:
           element.value = element == inputElement ? inputElement.value : "";
-          setFormValue(element.form, element.value, element.id);
+          if(element.value !== "") setFormValue(element.form, element.value, element.id);
           if (element.nextElementSibling && element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
           element.form.classList.remove("invalid");
           break;
@@ -509,17 +510,7 @@ function clearSelection(inputElement) {
       if (["checkbox", "radio"].includes(element.type)) {
         element.checked = element.dataset.reset ? false : element.checked
       }
-          const key1 = inputElement.id;
-          const key2 = element.id;
-          const vals = {...inputElement.form?.value} ?? {};
-
-          if(key1 in vals){
-            delete inputElement.form.value[key1];
-          }
-
-          if(key2 in vals){
-            delete inputElement.form.value[key2];
-          }
+         
       //element.checked = element.value == 99 || element.value == 88 || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
     });
   }
