@@ -494,13 +494,14 @@ function clearSelection(inputElement) {
           break;
         default:
           element.value = element == inputElement ? inputElement.value : "";
-          if(element.value !== "") setFormValue(element.form, element.value, element.id);
+          setFormValue(element.form, element.value, element.id);
           if (element.nextElementSibling && element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
           element.form.classList.remove("invalid");
+          delete inputElement.form.value[element.id];
           break;
       }
 
-
+     
     });
   } else {
     // otherwise if this as another element with the same name and is marked as "none of the above"  clear that.
@@ -508,8 +509,16 @@ function clearSelection(inputElement) {
     sameName.forEach((element) => {
       if (["checkbox", "radio"].includes(element.type)) {
         element.checked = element.dataset.reset ? false : element.checked
+        const key1 = element.id;
+        const key2 = element.name;
+        const vals = inputElement?.form?.value ?? {};
+        if(key1 in vals) {
+          delete vals[key1];
+        } 
+        if(key2 in vals) {
+          delete vals[key2];
+        }
       }
-         
       //element.checked = element.value == 99 || element.value == 88 || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
     });
   }
