@@ -371,12 +371,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fCheck(containsGroup, value, noneOfTheOthers, name, labelID, condition, label) {
       let displayIf = "";
-      let clearValues = "";
-      if (noneOfTheOthers) {
-        clearValues = "data-reset=true"
-      } else {
-        clearValues = ""
-      }
+      let clearValues = noneOfTheOthers  ? "data-reset=true" : "";
       if (condition == undefined) {
         displayIf = "";
       } else {
