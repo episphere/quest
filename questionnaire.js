@@ -24,6 +24,13 @@ window.addEventListener("load", (event) => {
       // if you give me no ids, none of them exist therefore true...
       // loop through all the ids of any exists then return false...
       return ids.map(id => math.doesNotExist(id)).every(x => x)
+    },
+    valueEquals: function (id, value) {
+      // if id is not passed in return FALSE
+      if (!id) return false;
+      let element = document.getElementById(id);
+      // if the element does not exist return FALSE
+      return (!!element && (element.value == value))
     }
   })
 })
@@ -474,7 +481,7 @@ function clearSelection(inputElement) {
     ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}]`),
   ].filter((x) => x.type != "hidden");
 
- 
+
   /*   if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77
       || inputElement.value == 746038746 || inputElement.value == 178420302) { */
 
@@ -482,10 +489,10 @@ function clearSelection(inputElement) {
   if this is a "none of the above", go through all elements with the same name
   and mark them as "false" or clear the text values
   */
- 
+
   if (inputElement.dataset.reset) {
     sameName.forEach((element) => {
-      
+
       switch (element.type) {
         case "checkbox":
           element.checked = element == inputElement ? element.checked : false;
@@ -501,7 +508,7 @@ function clearSelection(inputElement) {
           break;
       }
 
-     
+
     });
   } else {
     // otherwise if this as another element with the same name and is marked as "none of the above"  clear that.
@@ -512,10 +519,10 @@ function clearSelection(inputElement) {
         const key1 = element.id;
         const key2 = element.name;
         const vals = inputElement?.form?.value ?? {};
-        if(key1 in vals) {
+        if (vals.hasOwnProperty(key1)) {
           delete vals[key1];
-        } 
-        if(key2 in vals) {
+        }
+        if (vals.hasOwnProperty(key2)) {
           delete vals[key2];
         }
       }
@@ -1127,7 +1134,7 @@ function getResults(element) {
 // x is the questionnaire text
 
 export function evaluateCondition(txt) {
-  let mjsfun = ['exists', "doesNotExist", "noneExist"]
+  let mjsfun = ['exists', "doesNotExist", "noneExist", "valueEquals"]
   if (mjsfun.some(f => txt.startsWith(f))) {
     let v = math.evaluate(txt)
     console.log(`${txt} ==> ${v}`)
