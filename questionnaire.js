@@ -514,8 +514,8 @@ function clearSelection(inputElement) {
     // otherwise if this as another element with the same name and is marked as "none of the above"  clear that.
     // don't clear everything though because you are allowed to have multiple choices.
     sameName.forEach((element) => {
-      if (["checkbox", "radio"].includes(element.type)) {
-        element.checked = element.dataset.reset ? false : element.checked
+      if (element.dataset.reset) {
+        element.checked = false
         const key1 = element.id;
         const key2 = element.name;
         const vals = inputElement?.form?.value ?? {};
