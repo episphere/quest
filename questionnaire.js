@@ -8,30 +8,42 @@ let script = document.createElement("script");
 script.src = "https://episphere.github.io/quest/math.js";
 document.body.appendChild(script);
 
+export const myFunctions = {
+  exists: function (x) {
+    if (!x) return false;
+    let element = document.getElementById(x);
+    return (!!element && !!element.value)
+  },
+  doesNotExist: function (x) {
+    if (!x) return true;
+    let element = document.getElementById(x);
+    return (!element || !element.value)
+  },
+  noneExist: function (...ids) {
+    // if you give me no ids, none of them exist therefore true...
+    // loop through all the ids of any exists then return false...
+    return ids.map(id => math.doesNotExist(id)).every(x => x)
+  },
+  valueEquals: function (id, value) {
+    // if id is not passed in return FALSE
+    if (!id) return false;
+    let element = document.getElementById(id);
+    // if the element does not exist return FALSE
+    return (!!element && (element.value == value))
+  },
+  valueIsOneOf: function (id, ...values) {
+    if (myFunctions.doesNotExist(id)) return false;
+    // compare as strings so "1" == 1
+    values = values.map(v => v.toString())
+    let element = document.getElementById(id);
+
+    return Array.from(element.value).some(v => values.includes(v))
+  }
+}
+
 window.addEventListener("load", (event) => {
   math.import({
-    exists: function (x) {
-      if (!x) return false;
-      let element = document.getElementById(x);
-      return (!!element && !!element.value)
-    },
-    doesNotExist: function (x) {
-      if (!x) return true;
-      let element = document.getElementById(x);
-      return (!element || !element.value)
-    },
-    noneExist: function (...ids) {
-      // if you give me no ids, none of them exist therefore true...
-      // loop through all the ids of any exists then return false...
-      return ids.map(id => math.doesNotExist(id)).every(x => x)
-    },
-    valueEquals: function (id, value) {
-      // if id is not passed in return FALSE
-      if (!id) return false;
-      let element = document.getElementById(id);
-      // if the element does not exist return FALSE
-      return (!!element && (element.value == value))
-    }
+    myFunctions
   })
 })
 
@@ -1135,7 +1147,7 @@ function getResults(element) {
 // x is the questionnaire text
 
 export function evaluateCondition(txt) {
-  let mjsfun = ['exists', "doesNotExist", "noneExist", "valueEquals"]
+  let mjsfun = ['exists', "doesNotExist", "noneExist", "valueEquals", "valueIsOneOf"]
   if (mjsfun.some(f => txt.startsWith(f))) {
     let v = math.evaluate(txt)
     console.log(`${txt} ==> ${v}`)
