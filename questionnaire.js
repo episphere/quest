@@ -517,14 +517,15 @@ function clearSelection(inputElement) {
       if (element.dataset.reset) {
         element.checked = false
         const key1 = element.id;
-        const key2 = element.name;
         const vals = inputElement?.form?.value ?? {};
         if (vals.hasOwnProperty(key1)) {
           delete vals[key1];
         }
-        if (vals.hasOwnProperty(key2)) {
-          delete vals[key2];
-        }
+        //if (element.type ==)
+        //        const key2 = element.name;
+        //        if (vals.hasOwnProperty(key2)) {
+        //          delete vals[key2];
+        //        }
       }
       //element.checked = element.value == 99 || element.value == 88 || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
     });
