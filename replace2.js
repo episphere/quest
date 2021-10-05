@@ -849,7 +849,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // div.appendChild(span);
     // div.style.minHeight = "30px";
     // inputElement.onfocus = handleXOR(inputElement);
-    inputElement.onfocusout = textBoxInput;
+    inputElement.onchange = textBoxInput;
+    inputElement.onkeyup = textBoxInput;
     inputElement.setAttribute("style", "size: 20 !important");
     // inputElement.insertAdjacentElement("afterend", div);
   });
