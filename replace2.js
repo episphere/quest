@@ -843,8 +843,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
   ];
 
   textInputs.forEach((inputElement) => {
-    inputElement.onchange = debounce(textBoxInput, 600);
-    inputElement.onkeyup = debounce(textBoxInput, 600);
+    inputElement.onchange = debounce(textBoxInput, 700);
+    inputElement.onkeyup = debounce(textBoxInput, 1000);
     inputElement.setAttribute("style", "size: 20 !important");
   });
 
