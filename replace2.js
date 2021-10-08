@@ -14,6 +14,7 @@ import {
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
+import { debounce } from "./debounce.js";
 export let transform = function () {
   // init
 };
@@ -842,17 +843,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
   ];
 
   textInputs.forEach((inputElement) => {
-    // let div = document.createElement("div");
-    // let span = document.createElement("span");
-    // span.innerText = " ";
-    // span.style.height = "inherit";
-    // div.appendChild(span);
-    // div.style.minHeight = "30px";
-    // inputElement.onfocus = handleXOR(inputElement);
-    inputElement.onchange = textBoxInput;
-    inputElement.onkeyup = textBoxInput;
+    inputElement.onchange = debounce(textBoxInput, 600);
+    inputElement.onkeyup = debounce(textBoxInput, 600);
     inputElement.setAttribute("style", "size: 20 !important");
-    // inputElement.insertAdjacentElement("afterend", div);
   });
 
   let SSNInputs = [...divElement.querySelectorAll(".SSN")];
@@ -1045,4 +1038,4 @@ function resetChildren(nodes) {
       node.value = "";
     }
   }
-}
+} 
