@@ -5,7 +5,7 @@ import {
   moduleParams,
   rbAndCbClick,
   textBoxInput,
-  // handleXOR, 
+  handleXOR,
   displayQuestion,
   parseSSN,
   parsePhoneNumber,
@@ -371,7 +371,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     );
     function fCheck(containsGroup, value, noneOfTheOthers, name, labelID, condition, label) {
       let displayIf = "";
-      let clearValues = noneOfTheOthers  ? "data-reset=true" : "";
+      let clearValues = noneOfTheOthers ? "data-reset=true" : "";
       if (condition == undefined) {
         displayIf = "";
       } else {
@@ -849,11 +849,16 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // div.appendChild(span);
     // div.style.minHeight = "30px";
     // inputElement.onfocus = handleXOR(inputElement);
-    inputElement.onchange = textBoxInput;
-    inputElement.onkeyup = textBoxInput;
+    //inputElement.onchange = textBoxInput;
+    inputElement.onblur = textBoxInput;
     inputElement.setAttribute("style", "size: 20 !important");
     // inputElement.insertAdjacentElement("afterend", div);
   });
+
+  // for each element with an xor, handle the xor on keydown
+  Array.from(document.querySelectorAll("[xor]")).forEach(xorElement => {
+    xorElement.addEventListener("keydown", () => handleXOR(xorElement));
+  })
 
   let SSNInputs = [...divElement.querySelectorAll(".SSN")];
   SSNInputs.forEach((inputElement) => {
