@@ -12,12 +12,12 @@ export const myFunctions = {
   exists: function (x) {
     if (!x) return false;
     let element = document.getElementById(x);
-    return (!!element && !!element.value)
+    return (!!element && !!element.value) || moduleParams.previousResults.hasOwnProperty(x)
   },
   doesNotExist: function (x) {
     if (!x) return true;
     let element = document.getElementById(x);
-    return (!element || !element.value)
+    return (!element || !element.value) && !moduleParams.previousResults.hasOwnProperty(x)
   },
   noneExist: function (...ids) {
     // if you give me no ids, none of them exist therefore true...
@@ -35,9 +35,17 @@ export const myFunctions = {
     if (myFunctions.doesNotExist(id)) return false;
     // compare as strings so "1" == 1
     values = values.map(v => v.toString())
-    let element = document.getElementById(id);
 
-    return Array.from(element.value).some(v => values.includes(v))
+    let test_values = math._value(id);
+    if (Array.isArray(test_values)) {
+      return (test_values.some(v => values.includes(v)))
+    }
+    return values.includes(test_values)
+  },
+  _value: function (x) {
+    if (!math.exists(x)) return null
+    let element = document.getElementById(x);
+    return (element) ? element.value : moduleParams.previousResults[x]
   }
 }
 
