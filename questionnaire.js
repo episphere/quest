@@ -889,18 +889,16 @@ export function displayQuestion(nextElement) {
     });
 
   //check if grid elements needs to be shown
-  [...nextElement.children]
-    .filter((x) => {
-      return x.hasAttribute("redertypegrid");
-    })
+  Array.from(nextElement.querySelectorAll("[data-grid]"))
     .map((elm) => {
       for (let child of elm.children) {
         if (child.getAttribute("displayif")) {
           let f = evaluateCondition(child.getAttribute("displayif"));
-          if (!f) {
-            child.style.display = "none" //child.setAttribute("style", "display:none !important");
+          if (child.dataset.gridrow) {
+            child.classList.add((f) ? "d-flex" : "collapse")
+            child.classList.remove((f) ? "collapse" : "d-flex")
           } else {
-            child.style.display = null //child.setAttribute("style", "display:inline");
+            child.style.display = (f) ? null : "none"
           }
         }
       }
