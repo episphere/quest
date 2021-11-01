@@ -26,7 +26,7 @@ export function toggle_grid(event) {
   }
   if (isOtherElementSmall) {
     delete element.form.value[otherElement.name];
-  }  
+  }
 }
 
 function buildHtml(grid_obj) {
@@ -40,7 +40,7 @@ function buildHtml(grid_obj) {
   grid_obj.questions.forEach((question) => {
     let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
 
-    grid_table_body += `<div id="${question.id}" ${displayif} gridrow class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border">${question.question_text}</div>`;
+    grid_table_body += `<div id="${question.id}" ${displayif} data-gridrow=true class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" aria-label='(${question.question_text}, ${resp.text})' grid class="grid-input-element show-button"/></div>`;
     });
@@ -49,27 +49,28 @@ function buildHtml(grid_obj) {
 
   let small_format = "";
   grid_obj.questions.forEach((question) => {
-    small_format += `<div id="${question.id}_sm"><div class="py-4">${question.question_text}</div>`;
+    let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
+    small_format += `<div id="${question.id}_sm" ${displayif}><div class="py-4">${question.question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      small_format += `<div class="text-center"><input data-is-small-grid-cell="1" type="${resp.type}" grid class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
+      small_format += `<div class="text-center"><input data-is-small-grid-cell="1" type="${resp.type}" class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
     small_format += "</div>";
   });
   let gridPrompt = "hardedit='false' softedit='false'";
 
-  if (grid_obj.prompt){
-    if (grid_obj.prompt === '!'){
+  if (grid_obj.prompt) {
+    if (grid_obj.prompt === '!') {
       gridPrompt = "hardedit='true' softedit='false'";
     }
-    else if (grid_obj.prompt === '?'){
+    else if (grid_obj.prompt === '?') {
       gridPrompt = "hardedit='false' softedit='true'";
     }
   }
   //remove , from display if for form if it exists
-  grid_obj.args = grid_obj.args.replace(",displayif"," displayif");
+  grid_obj.args = grid_obj.args.replace(",displayif", " displayif");
   let html_text = `<form ${grid_obj.args} class="container question" grid ${gridPrompt}>
-  ${grid_obj.shared_text}<div class="d-none d-lg-block" redertypegrid style="background-color: rgb(193,225,236)">
-  ${grid_head}${grid_table_body}</div><div class="d-lg-none">${small_format}</div>
+  ${grid_obj.shared_text}<div class="d-none d-lg-block" data-grid="large" style="background-color: rgb(193,225,236)">
+  ${grid_head}${grid_table_body}</div><div class="d-lg-none" data-grid="small">${small_format}</div>
   <div class="container">
     <div class="row">
       <div class="col-lg-5 col-md-3 col-sm-3">
@@ -116,8 +117,8 @@ export function parseGrid(text) {
 
     for (const match of question_matches) {
       let displayIf = '';
-      if (match[2]){
-        displayIf = match[2].replace(",displayif=","");
+      if (match[2]) {
+        displayIf = match[2].replace(",displayif=", "");
       }
       let question_obj = { id: match[1], question_text: match[4], displayif: displayIf };
       grid_obj.questions.push(question_obj);
