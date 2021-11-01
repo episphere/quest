@@ -22,14 +22,25 @@ export const myFunctions = {
   noneExist: function (...ids) {
     // if you give me no ids, none of them exist therefore true...
     // loop through all the ids of any exists then return false...
-    return ids.map(id => math.doesNotExist(id)).every(x => x)
+    return ids.every(id => math.doesNotExist(id))
+  },
+  someExist: function (...ids) {
+    return ids.some(id => math.exists(id))
+  },
+  allExist: function (...ids) {
+    return ids.every(id => math.exists(id))
+  },
+  _value: function (x) {
+    if (!math.exists(x)) return null
+    let element = document.getElementById(x);
+    return (element) ? element.value : moduleParams.previousResults[x]
   },
   valueEquals: function (id, value) {
     // if id is not passed in return FALSE
-    if (!id) return false;
-    let element = document.getElementById(id);
+    if (math.doesNotExist(id)) return false;
+    let elenent_value = math._value(id);
     // if the element does not exist return FALSE
-    return (!!element && (element.value == value))
+    return (element_value == value)
   },
   valueIsOneOf: function (id, ...values) {
     if (myFunctions.doesNotExist(id)) return false;
@@ -41,11 +52,6 @@ export const myFunctions = {
       return (test_values.some(v => values.includes(v)))
     }
     return values.includes(test_values)
-  },
-  _value: function (x) {
-    if (!math.exists(x)) return null
-    let element = document.getElementById(x);
-    return (element) ? element.value : moduleParams.previousResults[x]
   }
 }
 
