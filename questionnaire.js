@@ -12,6 +12,7 @@ export const myFunctions = {
   exists: function (x) {
     if (!x) return false;
     let element = document.getElementById(x);
+    // note !! converts "truthy" values
     return (!!element && !!element.value) || moduleParams.previousResults.hasOwnProperty(x)
   },
   doesNotExist: function (x) {
@@ -38,7 +39,7 @@ export const myFunctions = {
   valueEquals: function (id, value) {
     // if id is not passed in return FALSE
     if (math.doesNotExist(id)) return false;
-    let elenent_value = math._value(id);
+    let element_value = math._value(id);
     // if the element does not exist return FALSE
     return (element_value == value)
   },
@@ -52,7 +53,15 @@ export const myFunctions = {
       return (test_values.some(v => values.includes(v)))
     }
     return values.includes(test_values)
-  }
+  },
+  isSelected: function (id) {
+    // if the id doesnt exist, the ?.checked returns undefined.
+    // !!undefined == false.
+    return (!!document.getElementById(id)?.checked)
+  },
+  someSelected: function (...ids) {
+    return (ids.some(id => math.isSelected(id)))
+  },
 }
 
 window.addEventListener("load", (event) => {
