@@ -62,8 +62,30 @@ export const myFunctions = {
   someSelected: function (...ids) {
     return (ids.some(id => math.isSelected(id)))
   },
+  // defaultValue accepts an Id and a value or a Id/Value
+  // If only 1 default value is given, first it looks it up
+  // if it does not exist assume it is a value...
+  // If 2 default values are given, look up the first, if it
+  // does not exist, return the second as a value...
+  valueOrDefault: function (x, ...defaultValue) {
+    let v = math._value(x)
+    if (v === null && defaultValue.length > 0) {
+      v = math._value(defaultValue[0])
+    }
+    if (v === null) {
+      if (defaultValue.length == 1) {
+        return (defaultValue[0])
+      }
+      if (defaultValue.length > 1) {
+        return (defaultValue[1])
+      }
+    }
+
+    return (v)
+  }
 }
 
+window.myFunctions = myFunctions;
 window.addEventListener("load", (event) => {
   math.import({
     myFunctions
@@ -1168,7 +1190,7 @@ function getResults(element) {
 // x is the questionnaire text
 
 export function evaluateCondition(txt) {
-  let mjsfun = ['exists', "doesNotExist", "noneExist", "valueEquals", "valueIsOneOf"]
+  let mjsfun = Object.getOwnPropertyNames(myFunctions)
   if (mjsfun.some(f => txt.startsWith(f))) {
     let v = math.evaluate(txt)
     console.log(`${txt} ==> ${v}`)
