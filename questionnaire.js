@@ -117,6 +117,7 @@ function numberOfInputs(element) {
 }
 
 function setFormValue(form, value, id) {
+  if (value === "") return
   if (numberOfInputs(form) == 1) {
     form.value = value;
   } else {
@@ -593,6 +594,11 @@ export function handleXOR(inputElement) {
   if (!inputElement.hasAttribute("xor")) {
     return inputElement.value;
   }
+  // if the user tabbed through the xor, Dont clear anything
+  if (!["checkbox", "radio"].includes(inputElement.type) && inputElement.value.length == 0) {
+    return null;
+  }
+
 
   let valueObj = {};
   valueObj[inputElement.id] = inputElement.value;
@@ -609,7 +615,7 @@ export function handleXOR(inputElement) {
       delete inputElement.form.value[x.id]
     }
     if (["checkbox", "radio"].includes(x.type)) {
-      x.checked = x.value == 99 || x.value == 88 || x.value == 77 || x.value == 746038746 || x.value == 178420302 ? false : x.checked;
+      x.checked = x.dataset.reset ? false : x.checked;
     } else {
       x.value = "";
       if (x.nextElementSibling.children.length !== 0 && x.nextElementSibling.children[0].tagName == "SPAN") {
