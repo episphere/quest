@@ -69,18 +69,26 @@ export const myFunctions = {
   // does not exist, return the second as a value...
   valueOrDefault: function (x, ...defaultValue) {
     let v = math._value(x)
-    if (v === null && defaultValue.length > 0) {
-      v = math._value(defaultValue[0])
-    }
-    if (v === null) {
-      if (defaultValue.length == 1) {
-        return (defaultValue[0])
-      }
-      if (defaultValue.length > 1) {
-        return (defaultValue[1])
-      }
-    }
 
+    let indx = 0;
+    while (v == null && defaultValue.length > indx) {
+      v = math._value(defaultValue[indx])
+      if (v == null) indx++
+    }
+    if (v == null) v = defaultValue[defaultValue.length - 1]
+    /*
+        if (v === null && defaultValue.length > 0) {
+          v = math._value(defaultValue[0])
+        }
+        if (v === null) {
+          if (defaultValue.length == 1) {
+            return (defaultValue[0])
+          }
+          if (defaultValue.length > 1) {
+            return (defaultValue[1])
+          }
+        }
+    */
     return (v)
   }
 }
@@ -940,19 +948,12 @@ export function displayQuestion(nextElement) {
     });
 
   //check if grid elements needs to be shown
-  Array.from(nextElement.querySelectorAll("[data-grid]"))
+  Array.from(nextElement.querySelectorAll("[data-gridrow][displayif]"))
     .map((elm) => {
-      for (let child of elm.children) {
-        if (child.getAttribute("displayif")) {
-          let f = evaluateCondition(child.getAttribute("displayif"));
-          if (child.dataset.gridrow) {
-            child.classList.add((f) ? "d-flex" : "collapse")
-            child.classList.remove((f) ? "collapse" : "d-flex")
-          } else {
-            child.style.display = (f) ? null : "none"
-          }
-        }
-      }
+      console.log(" ========> GRIDROW/DIF", elm)
+      let f = evaluateCondition(elm.getAttribute("displayif"));
+      elm.classList.add((f) ? "d-flex" : "collapse")
+      elm.classList.remove((f) ? "collapse" : "d-flex")
     });
 
   // check min/max for variable substitution in validation
@@ -1197,6 +1198,7 @@ function getResults(element) {
 
 export function evaluateCondition(txt) {
   let mjsfun = Object.getOwnPropertyNames(myFunctions)
+  console.log("evaluateCondition: ===>", txt)
   if (mjsfun.some(f => txt.startsWith(f))) {
     let v = math.evaluate(txt)
     console.log(`${txt} ==> ${v}`)
@@ -1274,3 +1276,4 @@ export function evaluateCondition(txt) {
   }
   return stack[0];
 }
+window.evaluateCondition = evaluateCondition
