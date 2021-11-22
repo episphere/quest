@@ -1,3 +1,5 @@
+import { moduleParams } from "./questionnaire.js";
+
 export const grid_replace_regex = /\|grid(\!|\?)*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
 
 export function firstFun(event) {
@@ -112,7 +114,7 @@ export function parseGrid(text) {
     };
     //need to account for displayif 
     //let question_regex = /\[([A-Z][A-Z0-9_]*)\](.*?);\s*(?=[\[\]])/g;     
-    let question_regex = /\[([A-Z][A-Z0-9_]*)(,displayif=.*?\(([A-Z_][A-Z0-9_#]*),.*?\))*\](.*?);\s*(?=[\[\]])/g;
+    let question_regex = /\[([A-Z][A-Z0-9_]*)(,displayif=[^\]]+)?\](.*?)[;\]]/g;
     let question_matches = grid_obj.question_text.matchAll(question_regex);
 
     for (const match of question_matches) {
@@ -120,7 +122,16 @@ export function parseGrid(text) {
       if (match[2]) {
         displayIf = match[2].replace(",displayif=", "");
       }
-      let question_obj = { id: match[1], question_text: match[4], displayif: displayIf };
+      let question_text = match[3];
+      // replace {$u:xxxx}
+      question_text = question_text.replace(/\{\$u:(\w+)}/g, (all, varid) => {
+        return `${moduleParams.previousResults[varid]}`;
+      });
+      // replace {$e:f(x)}
+      question_text = question_text.replace(/\{\$e:([^\}]+)\}/g, (all, expression) => {
+        return `${math.evaluate(expression)}`;
+      });
+      let question_obj = { id: match[1], question_text: question_text, displayif: displayIf };
       grid_obj.questions.push(question_obj);
     }
 
