@@ -946,7 +946,12 @@ export function displayQuestion(nextElement) {
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? null : "none";
     });
-
+  // check for displayif spans...
+  Array.from(nextElement.querySelectorAll("span[displayif]"))
+    .map(elm => {
+      let f = evaluateCondition(elm.getAttribute("displayif"));
+      elm.style.display = f ? null : "none";
+    });
   //check if grid elements needs to be shown
   Array.from(nextElement.querySelectorAll("[data-gridrow][displayif]"))
     .map((elm) => {
