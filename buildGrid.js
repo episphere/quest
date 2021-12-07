@@ -123,9 +123,9 @@ export function parseGrid(text) {
         displayIf = match[2].replace(",displayif=", "");
       }
       let question_text = match[3];
-      // replace {$u:xxxx}
-      question_text = question_text.replace(/\{\$u:(\w+)}/g, (all, varid) => {
-        return `${moduleParams.previousResults[varid]}`;
+      // replace {$xxxx} or {$u:xxxx} 
+      question_text = question_text.replace(/\{\$(?:u:)?(\w+)}/g, (all, varid) => {
+        return math._value(varid);
       });
       // replace {$e:f(x)}
       question_text = question_text.replace(/\{\$e:([^\}]+)\}/g, (all, expression) => {
