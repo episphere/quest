@@ -912,6 +912,9 @@ function exitLoop(nextElement) {
 
 export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
+    let defaultValue = x.getAttribute("optional")
+    x.innerHTML = math.valueOrDefault(x.getAttribute("forid"), defaultValue)
+    /*
     let elm = document.getElementById(x.getAttribute("forid"));
     if (elm) {
       if (elm.tagName == "LABEL") {
@@ -922,6 +925,7 @@ export function displayQuestion(nextElement) {
     } else {
       x.innerHTML = (x.hasAttribute("optional")) ? x.getAttribute("optional") : x.getAttribute("forid")
     }
+    */
   });
 
   Array.from(
