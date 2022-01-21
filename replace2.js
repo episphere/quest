@@ -340,31 +340,91 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
     // replace (XX) with a radio button...
     questText = questText.replace(/<br>/g, "<br>\n");
-    questText = questText.replace(
-      /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d*)\)|\n|<br>|$)/g,
-      fRadio
-    );
-    function fRadio(containsGroup, value, name, labelID, condition, label) {
-      let displayIf = "";
-      if (condition == undefined) {
-        displayIf = "";
-      } else {
-        displayIf = `${condition}`;
+
+    // buttons can have a displayif that contains recursive
+    // parentheses.  Regex in JS currently does not support
+    // recursive pattern matching.  So, I look for the start
+    // of the radio button, a left parenthesis, with a digit
+    // along with other optional arguments.  the handleButton
+    // function returns the entire string that gets matched, 
+    // similar to string.replace
+    function handleButton(match) {
+      console.table(match);
+      let value = match[1];
+      let radioElementName = !!match[2] ? match[2] : questID;
+      let labelID = !!match[3] ? match[3] : `${radioElementName}_${value}_label`;
+
+      // finds real end
+      let cnt = 0;
+      let end = 0;
+      for (let i = match.index; i < match.input.length; i++) {
+        if (match.input[i] == "(") cnt++;
+        if (match.input[i] == ")") cnt--;
+        if (match.input[i] == "\n") break;
+        //if (match.input[i] == "\n") throw new SyntaxError("parenthesis mismatch near ", match[0]);
+
+        end = i + 1;
+        if (cnt == 0) break;
       }
-      let elVar = "";
-      if (name == undefined) {
-        elVar = questID;
-      } else {
-        elVar = name;
-      }
-      if (labelID == undefined) {
-        labelID = `${elVar}_${value}_label`;
-      }
-      return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
+      let display_if = !!match[4] ? match.input.substring(match.input.indexOf(match[4]), end - 1).trim() : "";
+      let label_end = match.input.substring(end).search(/\n|(?:<br>)/) + end;
+      let label = match.input.substring(end, label_end);
+      let replacement = `<div class='response' style='margin-top:15px' displayif='${display_if}'><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
+      return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
+    }
+    /*
+      \((\d+)       Required: (value
+      (?:\:(\w+))?  an optional :name for the input
+      (?:\|(\w+))?  an optional |label
+      (?:,displayif=([^)]*))?  an optional display if.. up to the first close parenthesis
+      (\s*\))     Required: close paren with optional space in front.
+    */
+    let buttonRegex = /\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,displayif=([^)]*))?(\s*\))/;
+    for (let match = questText.match(buttonRegex); !!match; match = questText.match(buttonRegex)) {
+      questText = handleButton(match);
     }
 
+    /*
+        // replace [XX] with checkbox
+        let rbRegEx = new RegExp(''
+          + /\((\d*)(?:\:(\w+))?/.source                    // ( digits with a potential * and :name
+          + /(?:\|(\w+))?(?:,(displayif=.+\))?)?\)/.source // |label and optional displayif close )
+          + /(.*?)(?=(?:\(\d*)\)|\n|<br>|$)/.source         // go to the end of the line or next rb
+          , 'g')
+        questText = questText.replace(rbRegEx, fRadio)
+        //questText = questText.replace(
+        //  /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d*)\)|\n|<br>|$)/g,
+        //  fRadio
+        //);
+        function fRadio(containsGroup, value, name, labelID, condition, label) {
+          let displayIf = "";
+          if (condition == undefined) {
+            displayIf = "";
+          } else {
+            displayIf = `${condition}`;
+          }
+          let elVar = "";
+          if (name == undefined) {
+            elVar = questID;
+          } else {
+            elVar = name;
+          }
+          if (labelID == undefined) {
+            labelID = `${elVar}_${value}_label`;
+          }
+          return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
+        }
+    */
 
     // replace [XX] with checkbox
+    // The "displayif" is reading beyond the end of the pattern ( displayif=.... )
+    // let cbRegEx = new RegExp(''
+    //   + /\[(d*)(\*)?(?:\:(\w+))?/.source              // (digits with a potential * and :name
+    //   + /(?:\|(\w+))?/.source                         // an optional id for the label
+    //   + /(?:,(displayif=.+?\))?)?/.source             // an optional displayif
+    //   + /\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/         // go to the end of the line or next [
+    // )
+    //questText = questText.replace(cbRegEx, fCheck)
     questText = questText.replace(
       /\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
       fCheck
