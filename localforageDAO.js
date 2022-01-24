@@ -6,7 +6,7 @@ export async function restoreResults(results) {
 
   // retrieved the results... now lets fill the form..
   Object.keys(results).forEach((qid) => {
-    function handleCB() {}
+    function handleCB() { }
 
     let formElement = document.querySelector("#" + qid);
     // not sure have a non-question would be here
@@ -56,9 +56,9 @@ export async function restoreResults(results) {
       if (Array.isArray(results[qid])) {
         getFromRbCb(qid, results[qid]);
       } else {
-        console.log(	
-          "...  for KEY ",	
-          qid,	
+        console.log(
+          "...  for KEY ",
+          qid,
           " ...1 WE HAVE AN OBJECT!!!  ... ",
           Object.keys(results[qid]),
           Object.values(results[qid])
@@ -87,6 +87,12 @@ export async function restoreResults(results) {
               if (resObject[xorElement.id])
                 xorElement.value = resObject[xorElement.id];
             });
+            handled = true;
+          }
+          // check for mulitple radio buttons on 1 page...
+          let multiq = formElement.querySelector(`input[name=${resKey}][value=${CSS.escape(resObject)}]`)
+          if (multiq) {
+            multiq.checked = true
             handled = true;
           }
           if (!handled && typeof resObject == "string") {

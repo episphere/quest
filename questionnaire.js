@@ -495,7 +495,9 @@ export function rbAndCbClick(event) {
 
 //for when radio/checkboxes have input fields, only enable input fields when they are selected
 export function radioAndCheckboxClearTextInput(inputElement) {
-  let parent = document.getElementById(inputElement.name);
+  // this fails when the element name is not the same as the question id...
+  //let parent = document.getElementById(inputElement.name);
+  let parent = inputElement.form
 
   for (var i = 0; i < parent.childNodes.length; i++) {
     if (parent.childNodes[i].className == "response") {
