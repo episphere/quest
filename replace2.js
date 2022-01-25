@@ -370,7 +370,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // you have displayif={displayif} displayif will be false if empty.
       let display_if = !!match[4] ? match.input.substring(match.input.indexOf(match[4]), end - 1).trim() : "";
       display_if = (!!display_if) ? `displayif=${display_if}` : ""
-      let label_end = match.input.substring(end).search(/\n|(?:<br>)/) + end;
+      let label_end = match.input.substring(end).search(/\n|(?:<br>|$)/) + end;
       let label = match.input.substring(end, label_end);
       let replacement = `<div class='response' style='margin-top:15px' '${display_if}'><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
       return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
