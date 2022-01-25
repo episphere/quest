@@ -975,6 +975,18 @@ transform.render = async (obj, divId, previousResults = {}) => {
   return true;
 };
 
+function ordinal(a) {
+  if (Number.isInteger(a)) {
+    switch (a % 10) {
+      case 1: return (a == 11 ? `${a}th` : `${a}st`);
+      case 2: return (a == 12 ? `${a}th` : `${a}nd`);
+      case 3: return (a == 13 ? `${a}th` : `${a}rd`);
+      default: return (`${a}th`)
+    }
+  }
+  return ""
+
+}
 function unrollLoops(txt) {
   // all the questions in the loops...
   // each element in res is a loop in the questionnaire...
@@ -1037,7 +1049,7 @@ function unrollLoops(txt) {
         currentText = currentText.replace(new RegExp(`${id}`, "g"), `${id}_${loopIndx}`);
       })
 
-
+      currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
       // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
 
       // disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
