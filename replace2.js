@@ -349,7 +349,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // function returns the entire string that gets matched, 
     // similar to string.replace
     function handleButton(match) {
-      console.table(match);
       let value = match[1];
       let radioElementName = !!match[2] ? match[2] : questID;
       let labelID = !!match[3] ? match[3] : `${radioElementName}_${value}_label`;
@@ -531,8 +530,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
         options = options + " disabled ";
       }
 
-      if (value1 && value1.includes('div')) return `${value1}<input type='text' aria-label='${value1.split('>').pop()}'name='${questID}' ${options}></input>${value2}`
+      // if value1 or 2 contains an apostrophe, convert it to
+      // and html entity.  This may need to be preformed in other parts
+      // the code.
+      value1 = value1?.replace(/'/g,"&apos;")
+      value2 = value2?.replace(/'/g,"&apos;")
 
+      if (value1 && value1.includes('div')) return `${value1}<input type='text' aria-label='${value1.split('>').pop()}'name='${questID}' ${options}></input>${value2}`
       if (value1 && value2) return `<span>${value1}</span><input type='text' aria-label='${value1} ${value2}' name='${questID}' ${options}></input><span>${value2}</span>`;
       if (value1) return `<span>${value1}</span><input type='text' aria-label='${value1}' name='${questID}' ${options}></input>`;
       if (value2) return `<input type='text' aria-label='${value2}' name='${questID}' ${options}></input><span>${value2}</span>`;
@@ -1022,7 +1026,6 @@ function unrollLoops(txt) {
     let idsInLoop = Array.from(x.txt.matchAll(/\|[\w\s=]*id=(\w+)|___\|\s*(\w+)|textbox:\s*(\w+)/g)).map(x => {
       return x[1] ? x[1] : (x[2] ? x[2] : x[3])
     })
-    console.log(idsInLoop)
 
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
