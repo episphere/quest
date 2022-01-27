@@ -360,18 +360,20 @@ transform.render = async (obj, divId, previousResults = {}) => {
         if (match.input[i] == "(") cnt++;
         if (match.input[i] == ")") cnt--;
         if (match.input[i] == "\n") break;
-        //if (match.input[i] == "\n") throw new SyntaxError("parenthesis mismatch near ", match[0]);
-
+        //if (match.input[i] == "\n")throw new SyntaxError("parenthesis mismatch near ", match[0]);
+        
         end = i + 1;
         if (cnt == 0) break;
       }
+      
       // need to have the displayif=... in the variable display_if otherwise if
       // you have displayif={displayif} displayif will be false if empty.
-      let display_if = !!match[4] ? match.input.substring(match.input.indexOf(match[4]), end - 1).trim() : "";
+      let radioButtonMetaData = match.input.substring(match.index, end);
+      let display_if = !!match[4] ? radioButtonMetaData.substring(radioButtonMetaData.indexOf(match[4]), radioButtonMetaData.length - 1).trim() : "";
       display_if = (!!display_if) ? `displayif=${display_if}` : ""
       let label_end = match.input.substring(end).search(/\n|(?:<br>|$)/) + end;
       let label = match.input.substring(end, label_end);
-      let replacement = `<div class='response' style='margin-top:15px' '${display_if}'><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
+      let replacement = `<div class='response' style='margin-top:15px' ${display_if}><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
       return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
     }
     /*
