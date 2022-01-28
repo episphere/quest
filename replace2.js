@@ -536,7 +536,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // have a text element in a RB/CB question that is not part of
       // a RB/CB it is always disabled
       //if (radioCheckboxAndInput) {
-      if ((value1.includes("<input type='radio'")) || (value1.includes("<input type='checkbox'"))) {
+      if ((value1?.includes("<input type='radio'")) || (value1?.includes("<input type='checkbox'"))) {
         options = options + " disabled ";
       }
 
