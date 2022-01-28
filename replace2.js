@@ -361,11 +361,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
         if (match.input[i] == ")") cnt--;
         if (match.input[i] == "\n") break;
         //if (match.input[i] == "\n")throw new SyntaxError("parenthesis mismatch near ", match[0]);
-        
+
         end = i + 1;
         if (cnt == 0) break;
       }
-      
+
       // need to have the displayif=... in the variable display_if otherwise if
       // you have displayif={displayif} displayif will be false if empty.
       let radioButtonMetaData = match.input.substring(match.index, end);
@@ -374,6 +374,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let label_end = match.input.substring(end).search(/\n|(?:<br>|$)/) + end;
       let label = match.input.substring(end, label_end);
       let replacement = `<div class='response' style='margin-top:15px' ${display_if}><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
+      console.log("radioButtonMarkDown: \n\t", radioButtonMetaData)
+      console.log("Label: \n\t", label)
+      console.log("replacement text: \n\t", replacement)
+      console.log(match.input.substring(label_end))
       return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
     }
     /*
@@ -528,20 +532,27 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fText(fullmatch, value1, opts, value2) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
 
-      if (radioCheckboxAndInput) {
+      // this sets all text elements disabled.  however, if you
+      // have a text element in a RB/CB question that is not part of
+      // a RB/CB it is always disabled
+      //if (radioCheckboxAndInput) {
+      if ((value1.includes("<input type='radio'")) || (value1.includes("<input type='checkbox'"))) {
         options = options + " disabled ";
       }
 
       // if value1 or 2 contains an apostrophe, convert it to
       // and html entity.  This may need to be preformed in other parts
-      // the code.
-      value1 = value1?.replace(/'/g,"&apos;")
-      value2 = value2?.replace(/'/g,"&apos;")
+      // the code. As it turns out.  This causes a problem.  Only change the values in the aria-label.
+      // if you have (1) xx |__| text with  ' in it.
+      // then the apostrophe is put in the aria-label screwing up the rendering 
+      // value1 = value1?.replace(/'/g, "&apos;")
+      // value2 = value2?.replace(/'/g, "&apos;")
 
-      if (value1 && value1.includes('div')) return `${value1}<input type='text' aria-label='${value1.split('>').pop()}'name='${questID}' ${options}></input>${value2}`
-      if (value1 && value2) return `<span>${value1}</span><input type='text' aria-label='${value1} ${value2}' name='${questID}' ${options}></input><span>${value2}</span>`;
-      if (value1) return `<span>${value1}</span><input type='text' aria-label='${value1}' name='${questID}' ${options}></input>`;
-      if (value2) return `<input type='text' aria-label='${value2}' name='${questID}' ${options}></input><span>${value2}</span>`;
+      // this is really ugly..  What is going on here?
+      if (value1 && value1.includes('div')) return `${value1}<input type='text' aria-label='${value1.split('>').pop().replace(/'/g, "&apos;")}'name='${questID}' ${options}></input>${value2}`
+      if (value1 && value2) return `<span>${value1}</span><input type='text' aria-label='${value1.replace(/'/g, "&apos;")} ${value2.replace(/'/g, "&apos;")}' name='${questID}' ${options}></input><span>${value2}</span>`;
+      if (value1) return `<span>${value1}</span><input type='text' aria-label='${value1.replace(/'/g, "&apos;")}' name='${questID}' ${options}></input>`;
+      if (value2) return `<input type='text' aria-label='${value2.replace(/'/g, "&apos;")}' name='${questID}' ${options}></input><span>${value2}</span>`;
 
       return `<input type='text' aria-label='${questText.split('<br>')[0]}' name='${questID}' ${options}></input>`;
     }
