@@ -8,13 +8,14 @@ export function firstFun(event) {
 export function toggle_grid(event) {
   event.preventDefault();
   let element = event.target;
-  let id_regex = /(^.*?)(_sm)?(_.*$)/;
+  let id_regex = /(^.*?)(_sm)?(_\d+$)/;
   let tmp = element.id.match(id_regex);
   // tmp MUST match!!!
   if (!tmp) {
     console.error("ERROR in [grid] toggle_grid!!!  Bad element id!\n", element);
     return;
   }
+  console.log(element)
   let otherid = tmp[2] ? tmp[1] + tmp[3] : tmp[1] + "_sm" + tmp[3];
   let otherElement = document.getElementById(otherid);
   otherElement.checked = element.checked;
