@@ -8,6 +8,10 @@ let script = document.createElement("script");
 script.src = "https://episphere.github.io/quest/math.js";
 document.body.appendChild(script);
 
+// Note: these function make explicit
+// use of the fact that the DOM stores information.
+// be careful  the DOM and the localforage become
+// mis-aligned.
 export const myFunctions = {
   exists: function (x) {
     if (!x) return false;
@@ -499,6 +503,25 @@ export function radioAndCheckboxClearTextInput(inputElement) {
   //let parent = document.getElementById(inputElement.name);
   let parent = inputElement.form
 
+  // get all responses that have an input text box (can be number, date ..., not radio/checkbox)
+  let responses = [...parent.querySelectorAll(".response")]
+    .filter(resp => resp.querySelectorAll("input:not([type=radio]):not([type=checkbox])").length)
+    .filter(resp => resp.querySelectorAll("input[type=radio],input[type=checkbox]").length)
+
+  // if the checkbox is selected, make sure the input box is enable
+  // if the checkbox is not selected, make disable it and clear the value...
+  // Note: things that can go wrong.. if a response has more than one text box.
+  responses.forEach(resp => {
+    let text_box = resp.querySelector("input:not([type=radio]):not([type=checkbox])")
+    let checkbox = resp.querySelector("input[type=radio],input[type=checkbox]")
+    text_box.disabled = !checkbox.checked
+    if (!checkbox.checked) {
+      text_box.value = ""
+      delete inputElement.form.value[text_box.id]
+    }
+  })
+
+  /*
   for (var i = 0; i < parent.childNodes.length; i++) {
     if (parent.childNodes[i].className == "response") {
       let radioLevel = parent.childNodes[i];
@@ -518,6 +541,7 @@ export function radioAndCheckboxClearTextInput(inputElement) {
       }
     }
   }
+  */
 
 
 }
