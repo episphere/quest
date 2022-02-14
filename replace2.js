@@ -52,6 +52,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   contents = unrollLoops(contents);
 
+  // #issue 378, note: getMonth 0=Jan,  need to add 1
+  contents = contents.replace(/#currentMonthStr/g, ["Jan", "Feb", "Mar", 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][new Date().getMonth()]);
+  contents = contents.replace(/#currentMonth/g, new Date().getMonth() + 1);
   contents = contents.replace(/#currentYear/g, new Date().getFullYear());
   // hey, lets de-lint the contents..
   // convert (^|\n{2,}Q1. to [Q1]
