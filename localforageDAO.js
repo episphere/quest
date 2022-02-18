@@ -6,7 +6,22 @@ export async function restoreResults(results) {
 
   // retrieved the results... now lets fill the form..
   Object.keys(results).forEach((qid) => {
-    function handleCB() { }
+    function handleString(questionElement, id, value) {
+      // check if we have a radiobutton/checkbox...
+      let element = questionElement.querySelector(`[name='${id}'][value='${value}']`)
+      if (element) {
+        element.checked = true
+        radioAndCheckboxUpdate(element)
+        return
+      }
+      // check for some kind of input element...
+      element = questionElement.querySelector(`[id='${id}']`);
+      if (element) {
+        element.value = value
+      }
+
+      console.log("==========  dont know how to handle this  ==========", questionElement, id, value)
+    }
 
     let formElement = document.querySelector("#" + qid);
     // not sure have a non-question would be here
@@ -41,6 +56,19 @@ export async function restoreResults(results) {
         textboxinput(element);
       }
 
+      // we should return from here...
+      // then we should handle the ARRAY case.
+      // which is likely a combobox...
+      //   create a handleArray function...
+      // then we should handle the Object case
+      //   again create a handleObject function
+      //   that can be called recursively to handle
+      //   any potential depth of the results JSON.
+      //   also, handleObject should call handleString,
+      //   handleArray and handleObject.
+      //   Unfortunately, we need handleArray/handleString to
+      //   handle a potential null id for the case where
+      //   the results is simply a string or an array.
       // CASE 2: we have an object...
     } else {
       function getFromRbCb(rbCbName, result) {
@@ -73,6 +101,9 @@ export async function restoreResults(results) {
           }
           let resObject = results[qid][resKey];
           let handled = false;
+          if (typeof resObject == 'string') {
+            handleString(formElement, resKey, resObject)
+          }
           if (Array.isArray(resObject)) {
             getFromRbCb(resKey, resObject);
             handled = true;
@@ -90,7 +121,7 @@ export async function restoreResults(results) {
             handled = true;
           }
           // check for mulitple radio buttons on 1 page...
-          let multiq = formElement.querySelector(`input[name=${resKey}][value=${CSS.escape(resObject)}]`)
+          let multiq = formElement.querySelector(`input[name='${resKey}'][value='${CSS.escape(resObject)}']`)
           if (multiq) {
             multiq.checked = true
             handled = true;

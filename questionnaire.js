@@ -5,7 +5,8 @@ import { removeQuestion } from "./localforageDAO.js";
 export const moduleParams = {};
 
 let script = document.createElement("script");
-script.src = "https://episphere.github.io/quest/math.js";
+//script.src = "https://episphere.github.io/quest/math.js";
+script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"
 document.body.appendChild(script);
 
 // Note: these function make explicit
@@ -16,13 +17,16 @@ export const myFunctions = {
   exists: function (x) {
     if (!x) return false;
     let element = document.getElementById(x);
+    if (!element && x.includes('.')) {
+      let array = x.split('.')
+      return math.exists(`${array[0]}`)
+    }
+
     // note !! converts "truthy" values
     return (!!element && !!element.value) || moduleParams.previousResults.hasOwnProperty(x)
   },
   doesNotExist: function (x) {
-    if (!x) return true;
-    let element = document.getElementById(x);
-    return (!element || !element.value) && !moduleParams.previousResults.hasOwnProperty(x)
+    return !math.exists(x)
   },
   noneExist: function (...ids) {
     // if you give me no ids, none of them exist therefore true...
@@ -37,8 +41,16 @@ export const myFunctions = {
   },
   _value: function (x) {
     if (!math.exists(x)) return null
+
     let element = document.getElementById(x);
-    return (element) ? element.value : moduleParams.previousResults[x]
+    let returnValue = (element) ? element.value : moduleParams.previousResults[x]
+    if (!returnValue) {
+      let array = x.split('.')
+      let obj = math._value(array[0])
+      returnValue = (obj) ? obj[array[1]] : null;
+      console.log("last chance to fix... ", returnValue)
+    }
+    return returnValue
   },
   valueEquals: function (id, value) {
     // if id is not passed in return FALSE

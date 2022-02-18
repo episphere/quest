@@ -164,7 +164,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
 
     // replace {$id} with span tag
-    questText = questText.replace(/\{\$(\w+):?([a-zA-Z0-9 ,.!?"-]*)\}/g, fID);
+    questText = questText.replace(/\{\$(\w+(?:\.\w+)?):?([a-zA-Z0-9 ,.!?"-]*)\}/g, fID);
     function fID(fullmatch, forId, optional) {
       if (optional == undefined) {
         optional = "";
