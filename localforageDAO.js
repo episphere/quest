@@ -12,12 +12,14 @@ export async function restoreResults(results) {
       if (element) {
         element.checked = true
         radioAndCheckboxUpdate(element)
-        return
+        return;
       }
       // check for some kind of input element...
       element = questionElement.querySelector(`[id='${id}']`);
       if (element) {
         element.value = value
+        textboxinput(element);
+        return;
       }
 
       console.log("==========  dont know how to handle this  ==========", questionElement, id, value)
@@ -103,6 +105,7 @@ export async function restoreResults(results) {
           let handled = false;
           if (typeof resObject == 'string') {
             handleString(formElement, resKey, resObject)
+            handled = true;
           }
           if (Array.isArray(resObject)) {
             getFromRbCb(resKey, resObject);
