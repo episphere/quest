@@ -94,7 +94,7 @@ textarea + label {
 }
 
 input[type="number"] {
-  display: block;
+  display: initial;
   margin-top: 10px;
 }
 
@@ -103,7 +103,7 @@ input[type="number"] + label {
 }
 
 input[type="text"] {
-  display: block;
+  display: initial;
 }
 
 input[type="text"] + label {

@@ -28,7 +28,12 @@ async function startUp() {
     moduleParams.config = config;
     ta.value = await (await fetch(config.markdown)).text();
   }
-  if (location.hash.length > 1) {
+  if (params.has("url")) {
+    let url = params.get("url")
+    console.log(url)
+    ta.value = await (await fetch(url)).text();
+    ta.onkeyup()
+  } else if (location.hash.length > 1) {
     console.log(location.hash.substring(1))
     ta.value = await (await fetch(location.hash.substring(1))).text();
     ta.onkeyup()
