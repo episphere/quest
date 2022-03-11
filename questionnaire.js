@@ -17,8 +17,8 @@ export const myFunctions = {
   exists: function (x) {
     if (!x) return false;
     let element = document.getElementById(x);
-    if (!element && x.includes('.')) {
-      let array = x.split('.')
+    if (!element && x.toString().includes('.')) {
+      let array = x.toString().split('.')
       return math.exists(`${array[0]}`)
     }
 
