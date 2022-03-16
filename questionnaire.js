@@ -70,6 +70,34 @@ export const myFunctions = {
     }
     return values.includes(test_values)
   },
+  /**
+   * checks whether the value for id is 
+   * between the values of lowerLimit and upperLimit inclusively
+   * lowerLimit <= value(id) <= upperlimit
+   * 
+   * if you pass in an array of ids, it uses the first id that exists.  The
+   * array is passed into valueOrDefault.
+   * 
+   * @param  {Number} lowerLimit The lowest acceptable value
+   * @param  {Number} upperLimit the highest acceptable value
+   * @param  {Array}  ids   An array of values, passed into valueOrDefault.
+   * @return {boolean}     is lowerLimit <= value(id) <= upperLimit
+   */
+  valueIsBetween: function (lowerLimit, upperLimit, ...ids) {
+    console.log(`VIB:  {$lowerLimit} {$ids}  {$lowerLimit}`)
+    if (lowerLimit === undefined || upperLimit === undefined || ids === undefined) return false;
+
+    let value = undefined;
+    value = (ids.length > 1) ? myFunctions.valueOrDefault(ids.shift(), ids) : myFunctions._value(ids.shift())
+    console.log(`VIB:  {$value}`)
+    // for this function to work, value, lowerLimit, and 
+    // upperLimit MUST be numeric....
+    if (!isNaN(value) && !isNaN(lowerLimit) && !isNaN(value)) {
+      console.log(`VIB:  `, (parseFloat(lowerLimit) <= value && parseFloat(value <= upperLimit)))
+      return (parseFloat(lowerLimit) <= value && parseFloat(value) <= upperLimit)
+    }
+    return false
+  },
   isSelected: function (id) {
     // if the id doesnt exist, the ?.checked returns undefined.
     // !!undefined == false.
