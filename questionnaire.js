@@ -44,7 +44,10 @@ export const myFunctions = {
 
     let element = document.getElementById(x);
     let returnValue = (element) ? element.value : moduleParams.previousResults[x]
-    if (!returnValue) {
+    // ISSUE 383... if the value is "0", we get a falsy value,
+    // which leads to an infinite loop.  if rv is null or undefined 
+    // we catch it now..., but zeros are ok...
+    if (returnValue == null) {
       let array = x.split('.')
       let obj = math._value(array[0])
       returnValue = (obj) ? obj[array[1]] : null;
@@ -1304,8 +1307,9 @@ export function evaluateCondition(txt) {
         x = temp1 ? temp1.value : x;
         // ***** if it's neither... look in the previous module *****
         if (!temp1) {
-          temp1 = moduleParams.previousResults[x];
-          x = temp1 ? temp1 : x;
+          // ISSUE 383: when moduleParams.previousResults[x] is 0.  It is FALSE and you 
+          // dont replace the key with the value.
+          x = moduleParams.previousResults.hasOwnProperty(x) ? moduleParams.previousResults[x] : x;
         }
       }
     }
