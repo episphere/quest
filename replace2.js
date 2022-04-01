@@ -646,7 +646,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // handle skips
     questText = questText.replace(
-      /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^>]*?)<\/label>/g,
+      //      /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^>]*?)<\/label>/g,
+      /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^<\s]*?)\s*<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
     questText = questText.replace(
