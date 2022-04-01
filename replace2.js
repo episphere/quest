@@ -484,10 +484,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
-      //      let maxRegex = /max(?![(a-z])/g;
-      //      let minRegex = /min(?![(a-z])/g;
 
-      //let maxReplace = evalueateCondition("isDefined(AGE,5)");
+      options = options.replaceAll('\"', "\'");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionObj = paramSplit(options)
       if (optionObj.hasOwnProperty("min")) {
@@ -496,35 +494,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (optionObj.hasOwnProperty("max")) {
         options = options + ` data-max="${optionObj.max}"`
       }
-
-      //     let optionList = options.split(" ");
-      //     for (let i = 0; i < optionList.length; i++) {
-      //       let o = optionList[i];
-      //      if (minRegex.test(o)) {
-
-      // let minReplace = o.replace("min=", "");
-      // let existingVal = o;
-      // if (isNaN(parseInt(minReplace))){   //if the max min values are a method then evaluate it 
-      //   let renderedVal = "min="+evaluateCondition(minReplace);
-      //   options = options.replace(existingVal, renderedVal);
-      //   o=renderedVal;
-      // }
-      //          o = o.replace(minRegex, "data-min");
-      //          options = options + " " + o;
-      //        }
-      //        if (maxRegex.test(o)) {
-      // let maxReplace = o.replace("max=", "");
-      // let existingVal = o;
-      // if (isNaN(parseInt(maxReplace))){ //if the max min values are a method then evaluate it 
-      //   let renderedVal = "max="+evaluateCondition(maxReplace);
-      //   options = options.replace(existingVal, renderedVal);
-      //   o=renderedVal;
-      // }
-
-      //          o = o.replace(maxRegex, "data-max");
-      //          options = options + " " + o;
-      //       }
-      //     }
       if (radioCheckboxAndInput) {
         options = options + " disabled ";
       }
