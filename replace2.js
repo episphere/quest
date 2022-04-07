@@ -619,9 +619,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 
     //displayif with just texts
-    questText = questText.replace(/\|(displayif=.+?)\|(.*?)\|/g, fDisplayIf);
+    questText = questText.replace(/\|displayif=(.+?)\|(.*?)\|/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
-      return `<span class='displayif' ${condition}>${text}</span>`;
+      condition = condition.replaceAll('\"', "\'");
+      return `<span class='displayif' displayif="${condition}">${text}</span>`;
     }
 
     // replace next question  < -> > with hidden...
