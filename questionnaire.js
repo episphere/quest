@@ -639,7 +639,9 @@ function clearSelection(inputElement) {
           setFormValue(element.form, element.value, element.id);
           if (element.nextElementSibling && element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
           element.form.classList.remove("invalid");
-          delete inputElement.form.value[element.id];
+          if(inputElement.form.value){
+            delete inputElement.form.value[element.id];
+          }
           break;
       }
 
