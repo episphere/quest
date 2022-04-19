@@ -699,6 +699,8 @@ export function handleXOR(inputElement) {
         if (x.nextElementSibling.children[0].innerText.length != 0) {
           x.nextElementSibling.children[0].innerText = "";
           x.classList.remove("invalid");
+          x.form.classList.remove('invalid');
+          x.nextElementSibling.remove();
         }
       }
       valueObj[x.id] = x.value;
