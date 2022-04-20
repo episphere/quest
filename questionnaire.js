@@ -652,19 +652,24 @@ function clearSelection(inputElement) {
     // don't clear everything though because you are allowed to have multiple choices.
     sameName.forEach((element) => {
       if (element.dataset.reset) {
+        //uncheck reset value
         element.checked = false
-        const key1 = element.id;
-        const vals = inputElement?.form?.value ?? {};
-        if (vals.hasOwnProperty(key1)) {
-          delete vals[key1];
+        
+        //removing speciically the reset value from the array of checkboxes checked
+        //removing from forms.value
+        const key1 = element.name;
+        const elementValue = element.value;
+        const vals = element.form?.value ?? {};
+        if (vals.hasOwnProperty(key1) && Array.isArray(vals[key1])) {
+            let index = vals[key1].indexOf(elementValue) 
+            if(index != -1){
+              vals[key1].splice(index, 1)
+            }
+            if(vals[key1].length == 0){
+              delete vals[key1]
+            }
         }
-        //if (element.type ==)
-        //        const key2 = element.name;
-        //        if (vals.hasOwnProperty(key2)) {
-        //          delete vals[key2];
-        //        }
       }
-      //element.checked = element.value == 99 || element.value == 88 || element.value == 77 || element.value == 746038746 || element.value == 178420302 ? false : element.checked;
     });
   }
 }
