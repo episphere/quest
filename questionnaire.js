@@ -1083,7 +1083,7 @@ export function displayQuestion(nextElement) {
   return nextElement;
 }
 
-export async function previousClicked(norp, retrieve, rootElement) {
+export async function previousClicked(norp, retrieve, store, rootElement) {
   // get the previousElement...
   let pv = questionQueue.previous();
   while (pv.value.value.substring(0, 9) == "_CONTINUE") {
