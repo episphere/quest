@@ -639,7 +639,7 @@ function clearSelection(inputElement) {
           setFormValue(element.form, element.value, element.id);
           if (element.nextElementSibling && element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
           element.form.classList.remove("invalid");
-          if(inputElement.form.value){
+          if (inputElement.form.value) {
             delete inputElement.form.value[element.id];
           }
           break;
@@ -661,13 +661,13 @@ function clearSelection(inputElement) {
         const elementValue = element.value;
         const vals = element.form?.value ?? {};
         if (vals.hasOwnProperty(key1) && Array.isArray(vals[key1])) {
-            let index = vals[key1].indexOf(elementValue) 
-            if(index != -1){
-              vals[key1].splice(index, 1)
-            }
-            if(vals[key1].length == 0){
-              delete vals[key1]
-            }
+          let index = vals[key1].indexOf(elementValue)
+          if (index != -1) {
+            vals[key1].splice(index, 1)
+          }
+          if (vals[key1].length == 0) {
+            delete vals[key1]
+          }
         }
       }
     });
@@ -879,7 +879,7 @@ async function nextPage(norp, store, rootElement) {
 
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
-  if (questionElement.value){
+  if (questionElement.value) {
     if (store) {
       let formData = {};
       formData[`${questName}.${questionElement.id}`] = questionElement.value;
@@ -1093,8 +1093,10 @@ export async function previousClicked(norp, retrieve, rootElement) {
   norp.form.classList.remove("active");
   prevElement.classList.add("active");
 
-  if (retrieve) {
+  if (retrieve && store) {
     const response = await retrieve();
+    delete response[moduleParams.questName, norp.form.id]
+    store(response)
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
   updateTreeInLocalForage();
