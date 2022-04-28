@@ -1097,8 +1097,11 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
     const response = await retrieve();
     if (response.code == 200) {
       console.log("setting... ", moduleParams.questName, "=== ", response.data[moduleParams.questName][norp.form.id])
-      response.data[moduleParams.questName][norp.form.id] = ""
-      store(response.data)
+      let formData = {};
+      formData[`${moduleParams.questName}.${norp.form.id}`] = "";
+      store(formData);
+      //      response.data[moduleParams.questName][norp.form.id] = ""
+      //      store(response.data)
     }
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
