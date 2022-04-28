@@ -1099,7 +1099,7 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
       console.log("setting... ", moduleParams.questName, "=== ", response.data[moduleParams.questName][norp.form.id])
       let formData = {};
       formData[moduleParams.questName] = response.data[moduleParams.questName]
-      delete formData[`${moduleParams.questName}.${norp.form.id}`];
+      delete formData[moduleParams.questName][norp.form.id];
       store(formData);
       //      response.data[moduleParams.questName][norp.form.id] = ""
       //      store(response.data)
