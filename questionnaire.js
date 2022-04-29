@@ -835,8 +835,12 @@ let questRes = {};
 let tempObj = {};
 
 async function updateTreeInLocalForage() {
+  if (!('questName' in moduleParams)) {
+    // We dont have questName yet, don't bother saving the tree yet...
+    return
+  }
   let questName = moduleParams.questName;
-  await localforage.setItem(questName + ".treeJSON", questionQueue);
+  await localforage.setItem(questName + ".treeJSON", questionQueue.toJSON());
 }
 
 function getNextQuestionId(currentFormElement) {
@@ -1369,3 +1373,4 @@ export function evaluateCondition(txt) {
   return stack[0];
 }
 window.evaluateCondition = evaluateCondition
+window.questionQueue = questionQueue

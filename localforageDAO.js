@@ -155,7 +155,9 @@ export async function restoreResults(results) {
 export async function removeQuestion(questName, qid) {
   let results = await localforage.getItem(questName);
 
-  delete results[qid];
+  if (results && results[qid]) {
+    delete results[qid];
+  }
 
   localforage.setItem(questName, results);
 }

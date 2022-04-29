@@ -95,7 +95,8 @@ export class Tree {
       return { value: value, children: kidsValue };
     }
 
-    let obj = nodeJSON(this.rootNode);
+    let obj = {}
+    obj.rootNode = nodeJSON(this.rootNode);
     obj.currentNode = this.currentNode.value;
     let json = JSON.stringify(obj);
     return json;
@@ -121,7 +122,7 @@ export class Tree {
       });
     }
 
-    addKids(this.rootNode, object.children);
+    addKids(this.rootNode, object.rootNode.children);
   }
   static fromJSON(json) {
     let object = JSON.parse(json);
