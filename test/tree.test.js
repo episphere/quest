@@ -1,8 +1,10 @@
 import { Tree } from "../tree.js";
-
+/*
 beforeEach(function () {
   console.log("...next!!!");
 });
+*/
+
 describe("Tree tests", function () {
   describe("Tree creation", function () {
     console.log("TREE CREATE...");
@@ -127,13 +129,19 @@ describe("Tree tests", function () {
     myTree.next(); // Q5 is the currentNode...
 
     it("should be able to save to localforage", async function () {
-      await localforage.clear();
+      await localforage.removeItem("QuestionTree").catch((r) => console.log(r));
       await localforage.setItem("QuestionTree", myTree.toJSON());
       const json = await localforage.getItem("QuestionTree");
       assert.strictEqual(json, myTree.toJSON());
     })
   });
 
+  after(() => {
+    console.log("... cleaning up localforage")
+    localforage.removeItem("QuestionTree").then(() => {
+      console.log("... localforage cleaned")
+    })
+  })
 });
 
 describe("ISSUE 86: Previous Node", function () {

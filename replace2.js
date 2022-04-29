@@ -863,7 +863,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // the localForage...
 
     if (tree) {
-      questionQueue.loadFromVanillaObject(JSON.parse(tree));
+      questionQueue.loadFromVanillaObject(tree);
     } else {
       questionQueue.clear();
     }

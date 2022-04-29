@@ -840,7 +840,10 @@ async function updateTreeInLocalForage() {
     return
   }
   let questName = moduleParams.questName;
-  await localforage.setItem(questName + ".treeJSON", questionQueue.toJSON());
+
+  // do you want a JSON string or a JS Object in LF???
+  // await localforage.setItem(questName + ".treeJSON", questionQueue.JSON());
+  await localforage.setItem(questName + ".treeJSON", questionQueue.toVanillaObject());
 }
 
 function getNextQuestionId(currentFormElement) {
