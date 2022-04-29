@@ -113,7 +113,7 @@ export class Tree {
       if (kidsArray.length == 0) return;
       kidsArray.forEach((kid) => {
         let kidNode = new TreeNode(kid.value);
-        if (object.currentNode.value == kidNode.value) {
+        if (object.currentNode == kidNode.value) {
           thisObj.currentNode = kidNode;
         }
         node.addChild(kidNode);
@@ -121,7 +121,7 @@ export class Tree {
       });
     }
 
-    addKids(this.rootNode, object.rootNode.children);
+    addKids(this.rootNode, object.children);
   }
   static fromJSON(json) {
     let object = JSON.parse(json);
