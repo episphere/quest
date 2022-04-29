@@ -1,6 +1,7 @@
 import { Tree } from "./tree.js";
 import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
+import { validateInput } from "./validate.js"
 
 export const moduleParams = {};
 
@@ -300,213 +301,10 @@ export function textboxinput(inputElement) {
     // handles SSN auto-format
     parseSSN(inputElement);
   }
-  let span1 = null;
-  let div1 = null;
-  if (inputElement && inputElement.nextElementSibling && inputElement.nextElementSibling.firstChild) {
-    span1 = inputElement.nextElementSibling.firstChild;
-    div1 = inputElement.nextElementSibling;
-  }
 
-
-  // if (span1 != null) {
-  //   span1.style.color = "red";
   if (['text', 'number', 'email', 'tel', 'date', 'time'].includes(inputElement.type)) {
     console.log(inputElement.type);
-
-    switch (inputElement.type) {
-      //Please fill out this field.
-      case "number":
-        if (inputElement.value != "") {
-          callExchangeValues(inputElement)
-          if (
-            inputElement.dataset.min &&
-            math.evaluate(
-              `${inputElement.value} < ${inputElement.getAttribute("data-min")}`
-            )
-          ) {
-            if (!span1) {
-              let div = document.createElement("div");
-              let span = document.createElement("span");
-              span.innerText = " ";
-              span.style.height = "inherit";
-              div.appendChild(span);
-              div.style.minHeight = "30px";
-              div.classList.add('validation-container');
-              inputElement.insertAdjacentElement("afterend", div);
-              span1 = inputElement.nextElementSibling.firstChild;
-              span1.style.color = "red";
-            }
-
-            span1.innerText =
-              `Value must be greater than or equal to ` +
-              inputElement.getAttribute("data-min") +
-              ".";
-            inputElement.classList.add("invalid");
-            inputElement.form.classList.add("invalid");
-          } else if (
-            inputElement.dataset.max &&
-            math.evaluate(
-              `${inputElement.value} > ${inputElement.getAttribute("data-max")}`
-            )
-          ) {
-            if (!span1) {
-              let div = document.createElement("div");
-              let span = document.createElement("span");
-              span.innerText = " ";
-              span.style.height = "inherit";
-              div.appendChild(span);
-              div.style.minHeight = "30px";
-              div.classList.add('validation-container');
-              inputElement.insertAdjacentElement("afterend", div);
-              span1 = inputElement.nextElementSibling.firstChild;
-              span1.style.color = "red";
-            }
-            span1.innerText =
-              `Value must be less than or equal to ` +
-              inputElement.getAttribute("data-max") +
-              ".";
-            inputElement.classList.add("invalid");
-            inputElement.form.classList.add("invalid");
-          } else {
-            if (span1 && div1.classList.contains('validation-container')) {
-              div1.parentNode.removeChild(div1);
-            }
-            if ([...inputElement.classList].includes("invalid")) {
-              inputElement.classList.remove("invalid");
-              inputElement.form.classList.remove("invalid");
-            }
-          }
-        } else {
-          if (span1 && div1.classList.contains('validation-container')) {
-            div1.parentNode.removeChild(div1);
-          }
-          if ([...inputElement.classList].includes("invalid")) {
-            inputElement.classList.remove("invalid");
-            inputElement.form.classList.remove("invalid");
-          }
-        }
-        break;
-
-      case "email":
-        let emailRegEx = /\S+@\S+\.\S+/;
-        if (inputElement.value != "" && !emailRegEx.test(inputElement.value)) {
-          if (!span1) {
-            let div = document.createElement("div");
-            let span = document.createElement("span");
-            span.innerText = " ";
-            span.style.height = "inherit";
-            div.appendChild(span);
-            div.style.minHeight = "30px";
-            div.classList.add('validation-container');
-            inputElement.insertAdjacentElement("afterend", div);
-            span1 = inputElement.nextElementSibling.firstChild;
-            span1.style.color = "red";
-          }
-          span1.innerText =
-            "Please enter an email address in this format: user@example.com.";
-          inputElement.classList.add("invalid");
-          inputElement.form.classList.add("invalid");
-          inputElement.form.noValidate = true;
-        } else {
-          if (span1 && div1.classList.contains('validation-container')) {
-            div1.parentNode.removeChild(div1);
-          }
-          if ([...inputElement.classList].includes("invalid")) {
-            inputElement.classList.remove("invalid");
-            inputElement.form.classList.remove("invalid");
-          }
-          //inputElement.form.noValidate = false;
-        }
-        break;
-
-      case "tel":
-        if (inputElement.value != "" && inputElement.value.length < 12) {
-          if (!span1) {
-            let div = document.createElement("div");
-            let span = document.createElement("span");
-            span.innerText = " ";
-            span.style.height = "inherit";
-            div.appendChild(span);
-            div.style.minHeight = "30px";
-            div.classList.add('validation-container');
-            inputElement.insertAdjacentElement("afterend", div);
-            span1 = inputElement.nextElementSibling.firstChild;
-            span1.style.color = "red";
-          }
-          span1.innerText =
-            "Please enter a phone number in this format: 999-999-9999.";
-          inputElement.classList.add("invalid");
-          inputElement.form.classList.add("invalid");
-          inputElement.form.noValidate = true;
-        } else {
-          if (span1 && div1.classList.contains('validation-container')) {
-            div1.parentNode.removeChild(div1);
-          }
-          if ([...inputElement.classList].includes("invalid")) {
-            inputElement.classList.remove("invalid");
-            inputElement.form.classList.remove("invalid");
-          }
-          //inputElement.form.noValidate = false;
-        }
-        break;
-
-      case "text":
-        if (
-          inputElement.value != "" &&
-          [...inputElement.classList].includes("SSN") &&
-          !inputElement.value.match("[0-9]{3}-?[0-9]{2}-?[0-9]{4}")
-        ) {
-          if (!span1) {
-            let div = document.createElement("div");
-            let span = document.createElement("span");
-            span.innerText = " ";
-            span.style.height = "inherit";
-            div.appendChild(span);
-            div.style.minHeight = "30px";
-            div.classList.add('validation-container');
-            inputElement.insertAdjacentElement("afterend", div);
-            span1 = inputElement.nextElementSibling.firstChild;
-            span1.style.color = "red";
-          }
-          span1.innerText =
-            "Please enter a Social Security Number in this format: 999-99-9999.";
-          inputElement.classList.add("invalid");
-          inputElement.form.classList.remove("invalid");
-          inputElement.form.noValidate = true;
-        } else if (
-          inputElement.value != "" &&
-          [...inputElement.classList].includes("SSNsm") &&
-          !inputElement.value.match("[0-9]{4}")
-        ) {
-          if (!span1) {
-            let div = document.createElement("div");
-            let span = document.createElement("span");
-            span.innerText = " ";
-            span.style.height = "inherit";
-            div.appendChild(span);
-            div.style.minHeight = "30px";
-            div.classList.add('validation-container');
-            inputElement.insertAdjacentElement("afterend", div);
-            span1 = inputElement.nextElementSibling.firstChild;
-            span1.style.color = "red";
-          }
-          span1.innerText =
-            "Please enter the last four digits of a Social Security Number in this format: 9999.";
-          inputElement.classList.add("invalid");
-          inputElement.form.classList.remove("invalid");
-          inputElement.form.noValidate = true;
-        } else {
-          if (span1 && div1.classList.contains('validation-container')) {
-            div1.parentNode.removeChild(div1);
-          }
-          if ([...inputElement.classList].includes("invalid")) {
-            inputElement.classList.remove("invalid");
-            inputElement.form.classList.remove("invalid");
-          }
-          //inputElement.form.noValidate = false;
-        }
-        break;
-    }
+    validateInput(inputElement)
   }
 
   // what is going on here...
@@ -526,7 +324,6 @@ export function textboxinput(inputElement) {
   let id = inputElement.id
   value = value ? value : inputElement.value;
   setFormValue(inputElement.form, value, id);
-
 }
 
 // onInput/Change handler for radio/checkboxex
@@ -563,31 +360,8 @@ export function radioAndCheckboxClearTextInput(inputElement) {
       delete inputElement.form.value[text_box.id]
     }
   })
-
-  /*
-  for (var i = 0; i < parent.childNodes.length; i++) {
-    if (parent.childNodes[i].className == "response") {
-      let radioLevel = parent.childNodes[i];
-      for (var j = 0; j < radioLevel.childNodes.length; j++) {
-        if ((radioLevel.childNodes[j].type == "radio" || radioLevel.childNodes[j].type == "checkbox") && !radioLevel.childNodes[j].checked) {
-          let inputBox = radioLevel.getElementsByTagName('input');
-          if (inputBox[1]) {
-            inputBox[1].value = "";
-            inputBox[1].disabled = true;
-          }
-        } else if ((radioLevel.childNodes[j].type == "radio" || radioLevel.childNodes[j].type == "checkbox") && radioLevel.childNodes[j].checked) {
-          let inputBox = radioLevel.getElementsByTagName('input');
-          if (inputBox[1]) {
-            inputBox[1].disabled = false;
-          }
-        }
-      }
-    }
-  }
-  */
-
-
 }
+
 export function radioAndCheckboxUpdate(inputElement) {
   if (!inputElement) return;
   clearSelection(inputElement);
