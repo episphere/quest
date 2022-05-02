@@ -802,12 +802,15 @@ export function displayQuestion(nextElement) {
       elm.style.display = f ? null : "none";
     });
   // check for displayif spans...
-  Array.from(nextElement.querySelectorAll("span[displayif]"))
+  Array.from(nextElement.querySelectorAll("span[displayif],div[displayif]"))
     .map(elm => {
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? null : "none";
     });
   //check if grid elements needs to be shown
+  // concern:: in the grid you can have style:none and class="d-flex"
+  // currently this SHOWS the row.  If this changes in the future,
+  // it may have to be fixed.
   Array.from(nextElement.querySelectorAll("[data-gridrow][displayif]"))
     .map((elm) => {
       console.log(" ========> GRIDROW/DIF", elm)
