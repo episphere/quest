@@ -1,8 +1,10 @@
 import { Tree } from "../tree.js";
-
+/*
 beforeEach(function () {
   console.log("...next!!!");
 });
+*/
+
 describe("Tree tests", function () {
   describe("Tree creation", function () {
     console.log("TREE CREATE...");
@@ -98,17 +100,22 @@ describe("Tree tests", function () {
     myTree.next();
     myTree.add("Q3");
     myTree.previous();
+
     it("should be at Q1", function () {
       assert.strictEqual(myTree.currentNode.value, "Q1");
+      myTree.add("Q2X");
+      myTree.ptree()
       let json = myTree.toJSON();
       let tree2 = Tree.fromJSON(json);
       assert.isOk(tree2);
       let tree2JSON = tree2.toJSON();
+      myTree.ptree()
+      tree2.ptree()
       assert.strictEqual(tree2JSON, json, "The two serialized trees should be identical...");
     });
   });
 
-  describe("Should be able to serialize the tree to localforage", async function () {
+  describe("Localforage Serialization", async function () {
     let myTree = new Tree();
     myTree.add("Q1");
     myTree.next();
@@ -121,12 +128,20 @@ describe("Tree tests", function () {
     myTree.add("Q5");
     myTree.next(); // Q5 is the currentNode...
 
-    await localforage.clear();
-    await localforage.setItem("QuestionTree", myTree.toJSON());
-    const json = await localforage.getItem("QuestionTree");
-    assert.strictEqual(json, myTree.toJSON());
-    console.log(json, "\n", myTree.toJSON());
+    it("should be able to save to localforage", async function () {
+      await localforage.removeItem("QuestionTree").catch((r) => console.log(r));
+      await localforage.setItem("QuestionTree", myTree.toJSON());
+      const json = await localforage.getItem("QuestionTree");
+      assert.strictEqual(json, myTree.toJSON());
+    })
   });
+
+  after(() => {
+    console.log("... cleaning up localforage")
+    localforage.removeItem("QuestionTree").then(() => {
+      console.log("... localforage cleaned")
+    })
+  })
 });
 
 describe("ISSUE 86: Previous Node", function () {

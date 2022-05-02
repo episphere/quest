@@ -88,17 +88,18 @@ export class Tree {
   isEmpty() {
     return this.rootNode.children.length == 0;
   }
-  toJSON() {
+
+  toVanillaObject() {
     function nodeJSON(child) {
       let value = child.value;
       let kidsValue = child.children.map((x) => nodeJSON(x));
       return { value: value, children: kidsValue };
     }
 
-    let obj = nodeJSON(this.rootNode);
+    let obj = {}
+    obj.rootNode = nodeJSON(this.rootNode);
     obj.currentNode = this.currentNode.value;
-    let json = JSON.stringify(obj);
-    return json;
+    return obj
   }
 
   loadFromVanillaObject(object) {
@@ -113,7 +114,7 @@ export class Tree {
       if (kidsArray.length == 0) return;
       kidsArray.forEach((kid) => {
         let kidNode = new TreeNode(kid.value);
-        if (object.currentNode.value == kidNode.value) {
+        if (object.currentNode == kidNode.value) {
           thisObj.currentNode = kidNode;
         }
         node.addChild(kidNode);
@@ -123,6 +124,7 @@ export class Tree {
 
     addKids(this.rootNode, object.rootNode.children);
   }
+
   static fromJSON(json) {
     let object = JSON.parse(json);
     let newTree = new Tree();
@@ -130,7 +132,10 @@ export class Tree {
     newTree.loadFromVanillaObject(object);
     return newTree;
   }
-
+  toJSON() {
+    let json = JSON.stringify(this.toVanillaObject());
+    return json;
+  }
   ptree() {
     console.log(" ============ TREE ===========");
     let node = this.rootNode.next();

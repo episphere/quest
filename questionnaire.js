@@ -609,8 +609,15 @@ let questRes = {};
 let tempObj = {};
 
 async function updateTreeInLocalForage() {
+  if (!('questName' in moduleParams)) {
+    // We dont have questName yet, don't bother saving the tree yet...
+    return
+  }
   let questName = moduleParams.questName;
-  await localforage.setItem(questName + ".treeJSON", questionQueue);
+
+  // do you want a JSON string or a JS Object in LF???
+  // await localforage.setItem(questName + ".treeJSON", questionQueue.JSON());
+  await localforage.setItem(questName + ".treeJSON", questionQueue.toVanillaObject());
 }
 
 function getNextQuestionId(currentFormElement) {
@@ -1143,3 +1150,4 @@ export function evaluateCondition(txt) {
   return stack[0];
 }
 window.evaluateCondition = evaluateCondition
+window.questionQueue = questionQueue

@@ -10,7 +10,6 @@ import {
   parseSSN,
   parsePhoneNumber,
   submitQuestionnaire,
-  evaluateCondition
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
