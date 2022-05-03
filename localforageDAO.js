@@ -78,9 +78,11 @@ export async function restoreResults(results) {
           formElement.querySelectorAll(`input[name=${rbCbName}]`)
         );
         checkboxElements.forEach((checkbox) => {
-          checkbox.checked = result.includes(checkbox.value);
+          if (result.includes(checkbox.value)) {
+            checkbox.checked = true;
+            radioAndCheckboxUpdate(checkbox);
+          }
         });
-        radioAndCheckboxUpdate(checkboxElements[0]);
       }
 
       if (Array.isArray(results[qid])) {
