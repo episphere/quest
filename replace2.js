@@ -17,7 +17,6 @@ export let transform = function () {
   // init
 };
 
-const validation = {};
 let questName = "Questionnaire";
 let rootElement;
 
@@ -33,6 +32,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.soccer = obj.soccer;
   rootElement = divId;
   let contents = "";
+
+  // allow the client to reset the tree...
+
   if (obj.text) contents = obj.text;
   if (obj.url) {
     moduleParams.config = await (await fetch(obj.url)).text();
@@ -831,7 +833,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // don't bother if there are no questions...
     if (questions.length > 0) {
       let currentId = questionQueue.currentNode.value;
-      let currentQuestion = divElement.querySelector(`[id=${currentId}]`);
       console.log("currentId", currentId);
       if (currentId) {
         console.log(` ==============>>>>  setting ${currentId} active`);
@@ -856,19 +857,24 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // then reset the tree.
   await fillForm(obj.retrieve);
 
-  // get the tree from localforage...
-  await localforage.getItem(questName + ".treeJSON").then((tree) => {
-    // if this is the first time the user attempt
-    // the questionnaire, the tree will not be in
-    // the localForage...
-
-    if (tree) {
-      questionQueue.loadFromVanillaObject(tree);
-    } else {
-      questionQueue.clear();
-    }
-    setActive(questionQueue.currentNode.value);
-  });
+  // get the tree from either 1) the client or 2) localforage..
+  // either way, we always use the version in LF...
+  if (obj.treeJSON) {
+    questionQueue.loadFromJSON(treeJSON)
+  } else {
+    await localforage.getItem(questName + ".treeJSON").then((tree) => {
+      // if this is the first time the user attempt
+      // the questionnaire, the tree will not be in
+      // the localForage...
+      if (tree) {
+        questionQueue.loadFromVanillaObject(tree);
+      } else {
+        questionQueue.clear();
+      }
+      // not sure this is needed.  resetTree set it active...
+      setActive(questionQueue.currentNode.value);
+    });
+  }
 
   resetTree();
 

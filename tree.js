@@ -132,10 +132,17 @@ export class Tree {
     newTree.loadFromVanillaObject(object);
     return newTree;
   }
+  loadFromJSON(json) {
+    this.clear()
+    let object = JSON.parse(json);
+    this.loadFromVanillaObject(object);
+  }
   toJSON() {
     let json = JSON.stringify(this.toVanillaObject());
     return json;
   }
+
+
   ptree() {
     console.log(" ============ TREE ===========");
     let node = this.rootNode.next();
@@ -252,7 +259,6 @@ class TreeNode {
 
   clearChildren() {
     this.children = [];
-    this.currentNode = this.rootNode;
   }
 
   removeChild(child) {
