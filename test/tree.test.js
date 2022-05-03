@@ -103,6 +103,9 @@ describe("Tree tests", function () {
 
     it("should be at Q1", function () {
       assert.strictEqual(myTree.currentNode.value, "Q1");
+    });
+
+    it("should be able to create a new tree from the JSON ", function () {
       myTree.add("Q2X");
       myTree.ptree()
       let json = myTree.toJSON();
@@ -111,6 +114,17 @@ describe("Tree tests", function () {
       let tree2JSON = tree2.toJSON();
       myTree.ptree()
       tree2.ptree()
+      assert.strictEqual(tree2JSON, json, "The two serialized trees should be identical...");
+    });
+
+    it("should be able to load JSON into an existing tree", function () {
+      const oldTree = new Tree
+
+      let json = myTree.toJSON();
+      oldTree.loadFromJSON(json)
+
+      assert.isOk(oldTree);
+      let tree2JSON = oldTree.toJSON();
       assert.strictEqual(tree2JSON, json, "The two serialized trees should be identical...");
     });
   });
@@ -142,6 +156,19 @@ describe("Tree tests", function () {
       console.log("... localforage cleaned")
     })
   })
+
+  describe("Clearing Trees", function () {
+    it("should be able to clear", function () {
+      let myTree = new Tree();
+      myTree.add("Q1");
+      myTree.next();
+      myTree.add(["Q2", "Q3", "Q4"]);
+      myTree.clear()
+
+      assert.strictEqual(myTree.currentNode, myTree.rootNode)
+      assert.strictEqual(myTree.rootNode.children.length, 0)
+    });
+  });
 });
 
 describe("ISSUE 86: Previous Node", function () {

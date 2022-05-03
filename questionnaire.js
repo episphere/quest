@@ -605,16 +605,22 @@ function showModal(norp, store, rootElement) {
   nextPage(norp, store, rootElement);
 }
 
-let questRes = {};
 let tempObj = {};
 
+async function updateTree() {
+  if (moduleParams.obj.updateTree) {
+    moduleParams.obj.updateTree(questionQueue)
+  }
+  updateTreeInLocalForage()
+}
+
 async function updateTreeInLocalForage() {
+  // We dont have questName yet, don't bother saving the tree yet...
   if (!('questName' in moduleParams)) {
-    // We dont have questName yet, don't bother saving the tree yet...
     return
   }
-  let questName = moduleParams.questName;
 
+  let questName = moduleParams.questName;
   // do you want a JSON string or a JS Object in LF???
   // await localforage.setItem(questName + ".treeJSON", questionQueue.JSON());
   await localforage.setItem(questName + ".treeJSON", questionQueue.toVanillaObject());
@@ -858,7 +864,7 @@ export function displayQuestion(nextElement) {
 
   // FINALLY...  update the tree in localForage...
   // First let's try NOT waiting for the function to return.
-  updateTreeInLocalForage();
+  updateTree();
 
   questionQueue.ptree();
   return nextElement;
@@ -887,7 +893,7 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
     }
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
-  updateTreeInLocalForage();
+  updateTree();
   // prevElement.parentElement.scrollIntoView();
   //document.getElementById(rootElement).scrollIntoView();
   window.scrollTo(0, 0);
