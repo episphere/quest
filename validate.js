@@ -8,10 +8,15 @@ export function validateInput(inputElement) {
         tel: validate_telephone,
         text: validate_text
     }
+
     if (inputElement.type in handlers) {
-        // if the value is blank, it is valid.
-        if (inputElement.value == "") {
-            clearValidationError(inputElement)
+        // clear any old validation error
+        clearValidationError(inputElement)
+        // if the value is blank, if required error, else it is valid.
+        if (inputElement.value.length == 0) {
+            if (inputElement.hasAttribute("data-required")) {
+                validationError(inputElement, "Please fill out this field.")
+            }
             return
         }
 
@@ -127,4 +132,5 @@ function validate_text(inputElement) {
             clearValidationError(inputElement)
         }
     }
+
 }

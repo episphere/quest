@@ -498,21 +498,10 @@ export function nextClick(norp, store, rootElement) {
   }
 
   // check that each required element is set...
-  let reqElms = [];
-  reqElms = [...norp.form.children].filter((elm) => elm.dataset.required);
-  if (reqElms.length > 0) {
-    let invalid = false;
-    reqElms.forEach((elm) => {
-      clearValidationError(elm)
-      if (elm.value.length == 0) {
-        validationError(elm, "Please fill out this field.")
-        invalid = true;
-        elm.focus();
-        return null;
-      }
-    });
-    if (invalid) return null;
-  }
+  norp.form.querySelectorAll("[data-required]").forEach((elm) => {
+    validateInput(elm)
+  });
+
   showModal(norp, store, rootElement);
 }
 
