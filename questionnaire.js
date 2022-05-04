@@ -662,7 +662,6 @@ async function nextPage(norp, store, rootElement) {
   let questName = moduleParams.questName;
   let responses;
   tempObj[questionElement.id] = questionElement.value;
-  //questRes = tempObj;
 
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
