@@ -22,7 +22,7 @@ export function validateInput(inputElement) {
     }
 }
 
-function clearValidationError(inputElement) {
+export function clearValidationError(inputElement) {
     if (inputElement &&
         inputElement.nextElementSibling.classList.contains('validation-container')) {
 
@@ -33,7 +33,7 @@ function clearValidationError(inputElement) {
         inputElement.form.classList.remove("invalid");
     }
 }
-function validationError(inputElement, errorMsg) {
+export function validationError(inputElement, errorMsg) {
     let errSpan = null
     let errDiv = null;
 

@@ -1,7 +1,7 @@
 import { Tree } from "./tree.js";
 import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
-import { validateInput } from "./validate.js"
+import { validateInput, validationError, clearValidationError } from "./validate.js"
 
 export const moduleParams = {};
 
@@ -497,24 +497,20 @@ export function nextClick(norp, store, rootElement) {
     norp = document.getElementById(norp).querySelector(".next");
   }
 
+  // check that each required element is set...
   let reqElms = [];
   reqElms = [...norp.form.children].filter((elm) => elm.dataset.required);
   if (reqElms.length > 0) {
     reqElms.forEach((elm) => {
-      let span = elm.nextElementSibling.firstChild;
+      clearValidationError(elm)
       if (elm.value.length == 0) {
-        span.style.color = "red";
-        span.innerText = "Please fill out this field.";
+        validationError(elm, "Please fill out this field.")
         elm.focus();
         return null;
-      } else {
-        //handle the soft and hard edits...
-        showModal(norp, store, rootElement);
       }
     });
-  } else {
-    showModal(norp, store, rootElement);
   }
+  showModal(norp, store, rootElement);
 }
 
 function setNumberOfQuestionsInModal(num, norp, store, soft) {
@@ -662,7 +658,6 @@ async function nextPage(norp, store, rootElement) {
   let questName = moduleParams.questName;
   let responses;
   tempObj[questionElement.id] = questionElement.value;
-  //questRes = tempObj;
 
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
