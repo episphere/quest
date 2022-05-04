@@ -501,14 +501,17 @@ export function nextClick(norp, store, rootElement) {
   let reqElms = [];
   reqElms = [...norp.form.children].filter((elm) => elm.dataset.required);
   if (reqElms.length > 0) {
+    let invalid = false;
     reqElms.forEach((elm) => {
       clearValidationError(elm)
       if (elm.value.length == 0) {
         validationError(elm, "Please fill out this field.")
+        invalid = true;
         elm.focus();
         return null;
       }
     });
+    if (invalid) return null;
   }
   showModal(norp, store, rootElement);
 }
