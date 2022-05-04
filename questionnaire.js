@@ -608,7 +608,7 @@ function showModal(norp, store, rootElement) {
 let tempObj = {};
 
 async function updateTree() {
-  if (moduleParams.obj.updateTree) {
+  if (moduleParams?.obj?.updateTree) {
     moduleParams.obj.updateTree(questionQueue)
   }
   updateTreeInLocalForage()
