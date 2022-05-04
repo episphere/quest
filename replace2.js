@@ -860,7 +860,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // get the tree from either 1) the client or 2) localforage..
   // either way, we always use the version in LF...
   if (obj.treeJSON) {
-    questionQueue.loadFromJSON(treeJSON)
+    questionQueue.loadFromJSON(obj.treeJSON)
   } else {
     await localforage.getItem(questName + ".treeJSON").then((tree) => {
       // if this is the first time the user attempt
