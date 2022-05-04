@@ -605,7 +605,7 @@ let tempObj = {};
 
 async function updateTree() {
   if (moduleParams?.renderObj?.updateTree) {
-    moduleParams.renderObj.updateTree(questionQueue)
+    moduleParams.renderObj.updateTree(moduleParams.questName, questionQueue)
   }
   updateTreeInLocalForage()
 }
