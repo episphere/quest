@@ -800,6 +800,11 @@ export function displayQuestion(nextElement) {
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? null : "none";
     });
+
+  //Sets the brs after non-displays to not show as well
+  nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) =>{
+    e.style="display: none"
+  })
   //check if grid elements needs to be shown
   // concern:: in the grid you can have style:none and class="d-flex"
   // currently this SHOWS the row.  If this changes in the future,
