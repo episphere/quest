@@ -6,6 +6,7 @@ export function validateInput(inputElement) {
         number: validate_number,
         email: validate_email,
         tel: validate_telephone,
+        date: validate_date,
         text: validate_text
     }
 
@@ -89,6 +90,31 @@ function validate_number(inputElement) {
         clearValidationError(inputElement)
     }
 
+}
+
+function validate_date(inputElement) {
+    console.log("in validate_date", inputElement)
+
+    let minDate = (inputElement.dataset.minDate) ? new Date(inputElement.dataset.minDate + "GMT") : undefined
+    let maxDate = (inputElement.dataset.maxDate) ? new Date(inputElement.dataset.maxDate + "GMT") : undefined
+    let selectedDate = new Date(inputElement.value)
+
+    console.log(
+        "minDate:", minDate.toUTCString(),
+        "\nmax Date:", maxDate.toUTCString(),
+        "\ninput Date:", selectedDate.toUTCString()
+    )
+
+    let before_min_date = minDate && selectedDate < minDate
+    let after_max_date = maxDate && selectedDate > maxDate
+
+    if (before_min_date) {
+        validationError(inputElement, `Date must be after ${minDate.getUTCMonth() + 1}/${minDate.getUTCDate()}/${minDate.getUTCFullYear()}`)
+    } else if (after_max_date) {
+        validationError(inputElement, `Date must be before ${maxDate.getUTCMonth() + 1}/${maxDate.getUTCDate()}/${maxDate.getUTCFullYear()}`)
+    } else {
+        clearValidationError(inputElement)
+    }
 }
 
 function validate_email(inputElement) {

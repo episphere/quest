@@ -231,7 +231,14 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace |date| with a date input
     questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
     function fDate(fullmatch, opts) {
-      const { options, elementId } = guaranteeIdSet(opts, "date");
+      let { options, elementId } = guaranteeIdSet(opts, "date");
+      let optionObj = paramSplit(options)
+      if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min))) {
+        options = options + ` data-min-date=${optionObj.min}`
+      }
+      if (optionObj.hasOwnProperty("max")) {
+        options = options + ` data-max-date=${optionObj.max}`
+      }
       return `<input type='date' ${options}></input>`;
     }
 
