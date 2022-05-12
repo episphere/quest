@@ -124,13 +124,12 @@ export function parseGrid(text) {
         displayIf = match[2].replace(",displayif=", "");
       }
       let question_text = match[3];
-      // replace {$xxxx} or {$u:xxxx} 
-      question_text = question_text.replace(/\{\$(?:u:)?(\w+)}/g, (all, varid) => {
-        return math._value(varid);
-      });
-      // replace {$e:f(x)}
-      question_text = question_text.replace(/\{\$e:([^\}]+)\}/g, (all, expression) => {
-        return `${math.evaluate(expression)}`;
+
+      // Issue 403: Dont evaluate the markdown expressions at render time.
+      // create a span with the markdown.  When it's time to display
+      // the value, then evaluate the markdown.
+      question_text = question_text.replace(/\{\$([ue]:)?([^}]+)}/g, (all, type, varid) => {
+        return `<span data-gridreplacetype=${type == "u" ? "_val" : "eval"} data-gridreplace=${varid}></span>`
       });
       let question_obj = { id: match[1], question_text: question_text, displayif: displayIf };
       grid_obj.questions.push(question_obj);

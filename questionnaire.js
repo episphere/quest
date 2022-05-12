@@ -802,16 +802,25 @@ export function displayQuestion(nextElement) {
     });
 
   //Sets the brs after non-displays to not show as well
-  nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) =>{
-    e.style="display: none"
+  nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
+    e.style = "display: none"
   })
+
+  // ISSUE: 403
+  // update {$e:}/{$u} and and {$} elements in grids when the user displays the question ...
+  Array.from(nextElement.querySelectorAll("[data-gridreplace]")).forEach((e) => {
+    if (e.dataset.gridreplacetype == "_val") {
+      e.innerText = math._value(e.dataset.gridreplace)
+    } else {
+      e.innerText = math.evaluate(e.dataset.gridreplace)
+    }
+  });
   //check if grid elements needs to be shown
   // concern:: in the grid you can have style:none and class="d-flex"
   // currently this SHOWS the row.  If this changes in the future,
   // it may have to be fixed.
   Array.from(nextElement.querySelectorAll("[data-gridrow][displayif]"))
     .map((elm) => {
-      console.log(" ========> GRIDROW/DIF", elm)
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.classList.add((f) ? "d-flex" : "collapse")
       elm.classList.remove((f) ? "collapse" : "d-flex")
