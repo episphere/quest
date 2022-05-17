@@ -132,6 +132,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // if so, remove the comma and go.  if not, set questArgs to blank...
     if (displayifMatch) {
       questArgs = displayifMatch[0];
+      questArgs = `displayif=${encodeURIComponent(displayifMatch[0].slice(displayifMatch[0].indexOf('=') + 1))}`
     } else if (endMatch) {
       questArgs = endMatch[0];
     } else {

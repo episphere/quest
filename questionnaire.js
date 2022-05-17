@@ -1,7 +1,7 @@
 import { Tree } from "./tree.js";
 import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
-import { validateInput, validationError, clearValidationError } from "./validate.js"
+import { validateInput } from "./validate.js"
 
 export const moduleParams = {};
 
@@ -1077,6 +1077,8 @@ function getResults(element) {
 
 export function evaluateCondition(txt) {
   let mjsfun = Object.getOwnPropertyNames(myFunctions)
+
+  txt = decodeURIComponent(txt)
   console.log("evaluateCondition: ===>", txt)
   // if someone passes (#currentYear - 2), this becomes 2022 - 2.
   // we need to evaluate this to 2020...
