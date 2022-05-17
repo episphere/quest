@@ -968,7 +968,7 @@ function checkValid(questionElement) {
 
 //check if grids has all answers
 export function gridHasAllAnswers(questionElement) {
-  let gridRows = questionElement.querySelectorAll("[gridrow]");
+  let gridRows = questionElement.querySelectorAll("[data-gridrow]");
   for (let i = 0; i < gridRows.length; i++) {
     if (gridRows[i].style.display != "none") {
       let gridCells = gridRows[i].querySelectorAll("[gridcell]");
