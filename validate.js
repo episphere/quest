@@ -30,7 +30,7 @@ export function validateInput(inputElement) {
 
 export function clearValidationError(inputElement) {
     if (inputElement &&
-        inputElement.nextElementSibling.classList.contains('validation-container')) {
+        inputElement.nextElementSibling?.classList.contains('validation-container')) {
 
         let errDiv = inputElement.nextElementSibling;
         errDiv.parentNode.removeChild(errDiv)
@@ -46,7 +46,7 @@ export function validationError(inputElement, errorMsg) {
     // either use the current error div
     // or create a new one...
     if (inputElement &&
-        inputElement.nextElementSibling.classList.contains('validation-container')) {
+        inputElement.nextElementSibling?.classList.contains('validation-container')) {
         errDiv = inputElement.nextElementSibling;
         errSpan = inputElement.nextElementSibling.firstChild;
     } else {
