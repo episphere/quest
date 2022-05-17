@@ -154,16 +154,16 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let prevButton =
       (endMatch && endMatch[1]) === "noback"
         ? ""
-        : (questID === 'END') ? "<input type='submit' class='previous' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous' value='BACK'></input>";
+        : (questID === 'END') ? "<input type='submit' class='previous w-100' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous w-100' value='BACK'></input>";
 
     //debugger;
     let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>"
       :
-      "<input type='submit' class='reset' value='RESET ANSWER'></input>";
+      "<input type='submit' class='reset w-100' value='RESET ANSWER'></input>";
 
     let nextButton = endMatch
       ? ""
-      : `<input type='submit' class='next' ${target} value='NEXT'></input>`;
+      : `<input type='submit' class='next w-100' ${target} value='NEXT'></input>`;
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
@@ -675,13 +675,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
     <div class="container">
       <div class="row">
-        <div class="col-lg-5 col-md-3 col-sm-3">
+        <div class="col-md-3 col-sm-12">
           ${prevButton}
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6">
+        <div class="col-md-6 col-sm-12">
           ${resetButton}
         </div>
-        <div class="col-lg-1 col-md-3 col-sm-3">
+        <div class=" col-md-3 col-sm-12">
           ${nextButton}
         </div>
       </div>
