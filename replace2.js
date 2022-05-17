@@ -356,8 +356,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       radioCheckboxAndInput = true;
       questOpts = questOpts + " radioCheckboxAndInput";
     }
-    // replace (XX) with a radio button...
+
     questText = questText.replace(/<br>/g, "<br>\n");
+
+    // replace (XX) with a radio button...
 
     // buttons can have a displayif that contains recursive
     // parentheses.  Regex in JS currently does not support
@@ -388,14 +390,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // you have displayif={displayif} displayif will be false if empty.
       let radioButtonMetaData = match.input.substring(match.index, end);
       let display_if = !!match[4] ? radioButtonMetaData.substring(radioButtonMetaData.indexOf(match[4]), radioButtonMetaData.length - 1).trim() : "";
-      display_if = (!!display_if) ? `displayif=${display_if}` : ""
+      display_if = (!!display_if) ? `displayif=${encodeURIComponent(display_if)}` : ""
       let label_end = match.input.substring(end).search(/\n|(?:<br>|$)/) + end;
       let label = match.input.substring(end, label_end);
       let replacement = `<div class='response' style='margin-top:15px' ${display_if}><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
-      console.log("radioButtonMarkDown: \n\t", radioButtonMetaData)
-      console.log("Label: \n\t", label)
-      console.log("replacement text: \n\t", replacement)
-      console.log(match.input.substring(label_end))
+
       return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
     }
     /*
@@ -410,38 +409,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       questText = handleButton(match);
     }
 
-    /*
-        // replace [XX] with checkbox
-        let rbRegEx = new RegExp(''
-          + /\((\d*)(?:\:(\w+))?/.source                    // ( digits with a potential * and :name
-          + /(?:\|(\w+))?(?:,(displayif=.+\))?)?\)/.source // |label and optional displayif close )
-          + /(.*?)(?=(?:\(\d*)\)|\n|<br>|$)/.source         // go to the end of the line or next rb
-          , 'g')
-        questText = questText.replace(rbRegEx, fRadio)
-        //questText = questText.replace(
-        //  /\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d*)\)|\n|<br>|$)/g,
-        //  fRadio
-        //);
-        function fRadio(containsGroup, value, name, labelID, condition, label) {
-          let displayIf = "";
-          if (condition == undefined) {
-            displayIf = "";
-          } else {
-            displayIf = `${condition}`;
-          }
-          let elVar = "";
-          if (name == undefined) {
-            elVar = questID;
-          } else {
-            elVar = name;
-          }
-          if (labelID == undefined) {
-            labelID = `${elVar}_${value}_label`;
-          }
-          return `<div class='response' style='margin-top:15px' ${displayIf}><input type='radio' name='${elVar}' value='${value}' id='${elVar}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
-        }
-    */
-
     // replace [XX] with checkbox
     // The "displayif" is reading beyond the end of the pattern ( displayif=.... )
     // let cbRegEx = new RegExp(''
@@ -452,7 +419,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // )
     //questText = questText.replace(cbRegEx, fCheck)
     questText = questText.replace(
-      /\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
+      /\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif\s*=\s*.+?\)\s*)?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
       fCheck
     );
     function fCheck(containsGroup, value, noneOfTheOthers, name, labelID, condition, label) {
@@ -461,7 +428,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (condition == undefined) {
         displayIf = "";
       } else {
-        displayIf = `${condition}`;
+        displayIf = `displayif=${encodeURIComponent(condition.slice(condition.indexOf('=') + 1))}`;
       }
       let elVar = "";
       if (name == undefined) {
