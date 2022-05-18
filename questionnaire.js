@@ -65,14 +65,14 @@ export const myFunctions = {
   },
   valueIsOneOf: function (id, ...values) {
     if (myFunctions.doesNotExist(id)) return false;
-    // compare as strings so "1" == 1
+    // compare as strings so "1" == "1"
     values = values.map(v => v.toString())
 
     let test_values = math._value(id);
     if (Array.isArray(test_values)) {
-      return (test_values.some(v => values.includes(v)))
+      return (test_values.some(v => values.includes(v.toString())))
     }
-    return values.includes(test_values)
+    return values.includes(test_values.toString())
   },
   /**
    * checks whether the value for id is 
