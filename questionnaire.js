@@ -810,9 +810,9 @@ export function displayQuestion(nextElement) {
   // update {$e:}/{$u} and and {$} elements in grids when the user displays the question ...
   Array.from(nextElement.querySelectorAll("[data-gridreplace]")).forEach((e) => {
     if (e.dataset.gridreplacetype == "_val") {
-      e.innerText = math._value(e.dataset.gridreplace)
+      e.innerText = math._value(decodeURIComponent(e.dataset.gridreplace))
     } else {
-      e.innerText = math.evaluate(e.dataset.gridreplace)
+      e.innerText = math.evaluate(decodeURIComponent(e.dataset.gridreplace))
     }
   });
   //check if grid elements needs to be shown

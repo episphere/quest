@@ -129,7 +129,7 @@ export function parseGrid(text) {
       // create a span with the markdown.  When it's time to display
       // the value, then evaluate the markdown.
       question_text = question_text.replace(/\{\$([ue]:)?([^}]+)}/g, (all, type, varid) => {
-        return `<span data-gridreplacetype=${type == "u" ? "_val" : "eval"} data-gridreplace=${varid}></span>`
+        return `<span data-gridreplacetype=${type == "u" ? "_val" : "eval"} data-gridreplace=${encodeURIComponent(varid)}></span>`
       });
       question_text = question_text.replace(' <span', '&nbsp;<span')
 
