@@ -104,7 +104,7 @@ export function parseGrid(text) {
   let grid_match = text.match(grid_regex);
   if (grid_match) {
     grid_obj = {
-      original: grid_match[0],  
+      original: grid_match[0],
       prompt: grid_match[1],
       args: grid_match[2],
       shared_text: grid_match[3],
@@ -132,8 +132,8 @@ export function parseGrid(text) {
         return `<span data-gridreplacetype=${type == "u" ? "_val" : "eval"} data-gridreplace=${varid}></span>`
       });
       question_text = question_text.replace(' <span', '&nbsp;<span')
-      
-      let question_obj = { id: match[1], question_text: question_text, displayif: displayIf };
+
+      let question_obj = { id: match[1], question_text: question_text, displayif: encodeURIComponent(displayIf) };
       grid_obj.questions.push(question_obj);
     }
 
