@@ -61,8 +61,26 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // #issue 378, note: getMonth 0=Jan,  need to add 1
   contents = contents.replace(/#currentMonthStr/g, ["Jan", "Feb", "Mar", 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][new Date().getMonth()]);
-  contents = contents.replace(/#currentMonth/g, new Date().getMonth() + 1);
-  contents = contents.replace(/#currentYear/g, new Date().getFullYear());
+  let current_date = new Date()
+  Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
+  contents = contents.replace(/#currentMonth/g, current_date.getMonth() + 1);
+  contents = contents.replace(/#currentYear/g, current_date.getFullYear());
+  // issue #405 need #today and today+/- n days...
+  contents = contents.replace(/#today(\s*[+\-]\s*\d+)?/g, function (match, offset) {
+    // if no (+/- offset) we want today...
+    if (!offset || offset.trim().length == 0) {
+      return current_date.toQuestFormat()
+    }
+
+    // otherwise +/- the offset in number of days...
+    offset = parseInt(offset.replace(/\s/g, ""));
+    let offset_date = new Date()
+    offset_date.setDate(offset_date.getDate() + offset)
+    return offset_date.toQuestFormat()
+  })
+
+  // questionnarie 
+
   // hey, lets de-lint the contents..
   // convert (^|\n{2,}Q1. to [Q1]
   // note:  the first question wont have the
