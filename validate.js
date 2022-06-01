@@ -99,11 +99,12 @@ function validate_date(inputElement) {
     let maxDate = (inputElement.dataset.maxDate) ? new Date(inputElement.dataset.maxDate + "GMT") : undefined
     let selectedDate = new Date(inputElement.value)
 
+    /*
     console.log(
         "minDate:", minDate.toUTCString(),
         "\nmax Date:", maxDate.toUTCString(),
         "\ninput Date:", selectedDate.toUTCString()
-    )
+    )*/
 
     let before_min_date = minDate && selectedDate < minDate
     let after_max_date = maxDate && selectedDate > maxDate
