@@ -23,6 +23,9 @@ export const myFunctions = {
       return math.exists(`${array[0]}`)
     }
 
+    // handle the array case (checkboxes)...
+    if (Array.isArray(element?.value)) return !!element.value.length
+
     // note !! converts "truthy" values
     return (!!element && !!element.value) || moduleParams.previousResults.hasOwnProperty(x)
   },

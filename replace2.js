@@ -625,7 +625,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       fHidden
     );
     function fHidden(containsGroup, ifArgs, skipTo) {
-      ifArgs = ifArgs == undefined ? "" : ` if=${ifArgs}`;
+      ifArgs = ifArgs == undefined ? "" : ` if=${encodeURIComponent(ifArgs)}`;
       return `<input type='hidden'${ifArgs} id='${questID}_skipto_${skipTo}' name='${questID}' skipTo=${skipTo} checked>`;
     }
 
