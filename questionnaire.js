@@ -124,20 +124,23 @@ export const myFunctions = {
       if (v == null) indx++
     }
     if (v == null) v = defaultValue[defaultValue.length - 1]
-    /*
-        if (v === null && defaultValue.length > 0) {
-          v = math._value(defaultValue[0])
-        }
-        if (v === null) {
-          if (defaultValue.length == 1) {
-            return (defaultValue[0])
-          }
-          if (defaultValue.length > 1) {
-            return (defaultValue[1])
-          }
-        }
-    */
     return (v)
+  },
+  // For a question in a loop, does the value of the response
+  // for ANY ITERATION equal a value from a given set. 
+  loopQuestionValueIsOneOf: function (id, ...values) {
+    // Loops append _n_n to the id, where n is an
+    // integer starting from 1...
+    for (let i = 1; ; i = i + 1) {
+      console.log(`vLQ: ${i}`)
+      let tmp_qid = `${id}_${i}_${i}`
+      // the Id does not exist, we've gone through
+      // all potential question and have not found
+      // a value in the set of "acceptable" values...
+      if (math.doesNotExist(tmp_qid)) return false;
+      if (math.valueIsOneOf(tmp_qid, ...values)) return true
+    }
+
   }
 }
 
@@ -702,7 +705,13 @@ async function nextPage(norp, store, rootElement) {
       let display = evaluateCondition(nextElement.getAttribute("displayif"));
       if (display) break;
       if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
-      let nextQuestionId = getNextQuestionId(nextElement);
+
+      let nextQuestionId = nextElement.dataset.nodisplay_skip;
+      if (nextElement.dataset.nodisplay_skip) {
+        questionQueue.add(nextElement.dataset.nodisplay_skip);
+      }
+      nextQuestionId = getNextQuestionId(nextElement);
+
       nextElement = document.getElementById(nextQuestionId.value);
       nextElement = exitLoop(nextElement);
     } else {

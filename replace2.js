@@ -981,9 +981,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
 function ordinal(a) {
   if (Number.isInteger(a)) {
     switch (a % 10) {
-      case 1: return (a == 11 ? `${a}th` : `${a}st`);
-      case 2: return (a == 12 ? `${a}th` : `${a}nd`);
-      case 3: return (a == 13 ? `${a}th` : `${a}rd`);
+      case 1: return ((a % 100) == 11 ? `${a}th` : `${a}st`);
+      case 2: return ((a % 100) == 12 ? `${a}th` : `${a}nd`);
+      case 3: return ((a % 100) == 13 ? `${a}th` : `${a}rd`);
       default: return (`${a}th`)
     }
   }
