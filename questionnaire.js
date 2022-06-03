@@ -132,7 +132,6 @@ export const myFunctions = {
     // Loops append _n_n to the id, where n is an
     // integer starting from 1...
     for (let i = 1; ; i = i + 1) {
-      console.log(`vLQ: ${i}`)
       let tmp_qid = `${id}_${i}_${i}`
       // the Id does not exist, we've gone through
       // all potential question and have not found
@@ -140,7 +139,24 @@ export const myFunctions = {
       if (math.doesNotExist(tmp_qid)) return false;
       if (math.valueIsOneOf(tmp_qid, ...values)) return true
     }
+  },
+  gridQuestionsValueIsOneOf: function (gridId, ...values) {
+    if (math.doesNotExist(gridId)) return false
+    let gridElement = document.getElementById(gridId)
+    if (!gridElement.hasAttribute("grid")) return false
 
+    values = values.map(v => v.toString())
+    let gridValues = math._value(gridId)
+    for (const gridQuestionId in gridValues) {
+      // even if there is only one value, force it into
+      // an array.  flatten it to make sure that it's a 1-d array
+      let test_values = [gridValues[gridQuestionId]].flat()
+      if (test_values.some(v => values.includes(v.toString()))) {
+        return true;
+      }
+
+    }
+    return false;
   }
 }
 
