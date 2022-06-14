@@ -910,7 +910,7 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
   }
   let prevElement = document.getElementById(pv.value.value);
   norp.form.classList.remove("active");
-  prevElement.classList.add("active");
+  displayQuestion(prevElement)
 
   if (retrieve && store) {
     const response = await retrieve();
