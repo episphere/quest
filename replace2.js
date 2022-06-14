@@ -1100,6 +1100,7 @@ export function stopSubmit(event) {
   event.preventDefault();
 
   if (event.target.clickType == "BACK") {
+    resetChildren(event.target.elements);
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
   } else if (event.target.clickType == "RESET ANSWER") {
@@ -1123,7 +1124,7 @@ function resetChildren(nodes) {
   for (let node of nodes) {
     if (node.type === "radio" || node.type === "checkbox") {
       node.checked = false;
-    } else if (node.type === "text" || node.type === "time" || node.type === "date") {
+    } else if (node.type === "text" || node.type === "time" || node.type === "date" || node.type === "number") {
       node.value = "";
     }
   }

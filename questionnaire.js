@@ -786,18 +786,6 @@ export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let defaultValue = x.getAttribute("optional")
     x.innerHTML = math.valueOrDefault(x.getAttribute("forid"), defaultValue)
-    /*
-    let elm = document.getElementById(x.getAttribute("forid"));
-    if (elm) {
-      if (elm.tagName == "LABEL") {
-        x.innerHTML = elm.innerHTML;
-      } else {
-        x.innerHTML = elm.value != "" ? elm.value : x.getAttribute("optional");
-      }
-    } else {
-      x.innerHTML = (x.hasAttribute("optional")) ? x.getAttribute("optional") : x.getAttribute("forid")
-    }
-    */
   });
 
   Array.from(
