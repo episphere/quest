@@ -74,18 +74,18 @@ function validate_number(inputElement) {
     let belowMin =
         inputElement.dataset.min &&
         math.evaluate(
-            `${inputElement.value} < ${inputElement.getAttribute("data-min")}`
+            `${inputElement.value} < ${inputElement.dataset.min}`
         )
     let aboveMax =
         inputElement.dataset.max &&
         math.evaluate(
-            `${inputElement.value} > ${inputElement.getAttribute("data-max")}`
+            `${inputElement.value} > ${inputElement.dataset.max}`
         )
 
     if (belowMin) {
-        validationError(inputElement, `Value must be greater than or equal to ${inputElement.getAttribute("data-min")}.`)
+        validationError(inputElement, `Value must be greater than or equal to ${inputElement.dataset.max}.`)
     } else if (aboveMax) {
-        validationError(inputElement, `Value must be less than or equal to ${inputElement.getAttribute("data-max")}.`)
+        validationError(inputElement, `Value must be less than or equal to ${inputElement.dataset.max}.`)
     } else {
         clearValidationError(inputElement)
     }
