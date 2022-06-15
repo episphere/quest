@@ -195,7 +195,9 @@ function numberOfInputs(element) {
 }
 
 function setFormValue(form, value, id) {
-  if (value === "") return
+  if (value === ""){
+    value = undefined
+  }
   if (numberOfInputs(form) == 1) {
     form.value = value;
   } else {
@@ -306,6 +308,8 @@ export function textboxinput(inputElement) {
   //   );
   ///////////////////////////////////////////////////////////////////////
   let evalBool = "";
+  console.log('lsjdbvSDKVBSvlkdbv')
+  console.log(inputElement.value)
   if (inputElement.getAttribute("modalif") && inputElement.value != "") {
     evalBool = math.evaluate(
       inputElement.getAttribute("modalif").replace(/value/, inputElement.value)
@@ -670,12 +674,13 @@ async function nextPage(norp, store, rootElement) {
     questionQueue.next();
   }
   let questName = moduleParams.questName;
-  let responses;
   tempObj[questionElement.id] = questionElement.value;
 
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
-  if (questionElement.value) {
+  //if (questionElement.value) {
+    console.log('ASldKVBASLVKBSDVISDBVLSKV')
+    console.log(questionElement.value)
     if (store) {
       let formData = {};
       formData[`${questName}.${questionElement.id}`] = questionElement.value;
@@ -690,13 +695,14 @@ async function nextPage(norp, store, rootElement) {
           }
           // set the value for the questionId...
           allResponses[questionElement.id] = questionElement.value;
-
+          if (questionElement.value === undefined){
+            delete allResponses[questionElement.id]
+          }
           return allResponses;
         })
         .then((allResponses) => {
           // allResposes really should be defined at this point. If it wasn't
           // previously in LF, the previous block should have created it...
-          responses = allResponses;
           localforage.setItem(questName, allResponses, () => {
             console.log(
               "... Response stored in LF: " + questName,
@@ -705,7 +711,8 @@ async function nextPage(norp, store, rootElement) {
           });
         });
     }
-  }
+  //}
+
 
   // check if we need to add questions to the question queue
   checkForSkips(questionElement);
