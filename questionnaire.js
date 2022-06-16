@@ -205,6 +205,10 @@ function setFormValue(form, value, id) {
       form.value = {};
     }
     form.value[id] = value;
+    if(value == undefined){
+      delete form.value[id]
+    }
+    
   }
 }
 
@@ -684,6 +688,13 @@ async function nextPage(norp, store, rootElement) {
     if (store) {
       let formData = {};
       formData[`${questName}.${questionElement.id}`] = questionElement.value;
+      console.log(formData)
+      /*if(questionElement.value == undefined){
+        formData[moduleParams.questName] = response.data[moduleParams.questName]
+      }*/
+      //formData[moduleParams.questName] = response.data[moduleParams.questName]
+      //delete formData[moduleParams.questName][norp.form.id];
+      //store(formData);
       store(formData);
     } else {
       let tmp = await localforage
