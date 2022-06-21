@@ -545,7 +545,7 @@ export function nextClick(norp, retrieve, store, rootElement) {
   showModal(norp, retrieve, store, rootElement);
 }
 
-function setNumberOfQuestionsInModal(num, norp, store, soft) {
+function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
   let prompt = `There ${num > 1 ? "are" : "is"} ${num} question${num > 1 ? "s" : ""
     } unanswered on this page. `;
   if (!soft) {
@@ -556,7 +556,7 @@ function setNumberOfQuestionsInModal(num, norp, store, soft) {
     return null;
   }
   let f1 = nextPage;
-  f1 = f1.bind(f1, norp, store);
+  f1 = f1.bind(f1, norp, retrieve, store);
   document.getElementById(
     "modalBodyText"
   ).innerText = `${prompt} Would you like to continue?`;
@@ -615,6 +615,7 @@ function showModal(norp, retrieve, store, rootElement) {
       setNumberOfQuestionsInModal(
         numBlankReponses,
         norp,
+        retrieve,
         store,
         norp.form.getAttribute("softedit") == "true"
       );
