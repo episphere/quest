@@ -699,15 +699,17 @@ async function nextPage(norp, retrieve, store, rootElement) {
     let formData = {};
       formData[`${questName}.${questionElement.id}`] = questionElement.value;
       console.log(formData)
-      if (retrieve && formData === undefined) {
+      if (retrieve && questionElement.value === undefined) {
         const response = await retrieve();
         let retrievedData = {};
-
+        console.log('this is what was retrieved')
+        console.log(response)
         //take the response and store the deleted version in the backend
         if(response){
           retrievedData[moduleParams.questName] = response.data[moduleParams.questName]
-          delete retrievedData[moduleParams.questName][norp.form.id];
-          console.log('this is what was retrieved')
+          console.log('here is what was extrapolated')
+          console.log(retrievedData)
+          delete retrievedData[moduleParams.questName][questionElement.id];
           console.log(retrievedData)
           await store(retrievedData);
           
