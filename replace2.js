@@ -1112,7 +1112,7 @@ export function stopSubmit(event) {
 
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
-    nextClick(buttonClicked, moduleParams.renderObj.store, rootElement);
+    nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
   }
 }
 

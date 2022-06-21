@@ -520,7 +520,7 @@ export function handleXOR(inputElement) {
   return valueObj[inputElement.id];
 }
 
-export function nextClick(norp, store, rootElement) {
+export function nextClick(norp, retrieve, store, rootElement) {
   // Because next button does not have ID, modal will pass-in ID of question
   // norp needs to be next button element
   if (typeof norp == "string") {
@@ -532,7 +532,7 @@ export function nextClick(norp, store, rootElement) {
     validateInput(elm)
   });
 
-  showModal(norp, store, rootElement);
+  showModal(norp, retrieve, store, rootElement);
 }
 
 function setNumberOfQuestionsInModal(num, norp, store, soft) {
@@ -554,7 +554,7 @@ function setNumberOfQuestionsInModal(num, norp, store, soft) {
   $("#softModal").modal("toggle");
 }
 // show modal function
-function showModal(norp, store, rootElement) {
+function showModal(norp, retrieve, store, rootElement) {
   if (
     norp.form.getAttribute("softedit") == "true" ||
     norp.form.getAttribute("hardedit") == "true"
@@ -620,7 +620,7 @@ function showModal(norp, store, rootElement) {
     //   nextPage(norp, store);
     // }
   }
-  nextPage(norp, store, rootElement);
+  nextPage(norp, retrieve, store, rootElement);
 }
 
 let tempObj = {};
@@ -663,7 +663,7 @@ function getNextQuestionId(currentFormElement) {
 }
 
 // norp == next or previous button (which ever is clicked...)
-async function nextPage(norp, store, rootElement) {
+async function nextPage(norp, retrieve, store, rootElement) {
   // The root is defined as null, so if the question is not the same as the
   // current value in the questionQueue. Add it.  Only the root should be effected.
   // NOTE: if the root has no children, add the current question to the queue
@@ -685,17 +685,29 @@ async function nextPage(norp, store, rootElement) {
   //if (questionElement.value) {
     console.log('ASldKVBASLVKBSDVISDBVLSKV')
     console.log(questionElement.value)
+    
+    
     if (store) {
       let formData = {};
       formData[`${questName}.${questionElement.id}`] = questionElement.value;
       console.log(formData)
-      /*if(questionElement.value == undefined){
-        formData[moduleParams.questName] = response.data[moduleParams.questName]
-      }*/
-      //formData[moduleParams.questName] = response.data[moduleParams.questName]
-      //delete formData[moduleParams.questName][norp.form.id];
-      //store(formData);
-      store(formData);
+      if (retrieve && questionElement.value === undefined) {
+        const response = await retrieve();
+        let retrievedData = {};
+        //take the response and store the deleted version in the backend
+        if(response){
+          retrievedData[moduleParams.questName] = response.data[moduleParams.questName]
+          delete retrievedData[moduleParams.questName][norp.form.id];
+          console.log('this is what was retrieved')
+          console.log(retrievedData)
+
+          await store(retrievedData);
+        }
+        await store(formData)
+      }
+      else{
+        await store(formData);
+      }
     } else {
       let tmp = await localforage
         .getItem(questName)
