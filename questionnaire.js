@@ -1,7 +1,7 @@
 import { Tree } from "./tree.js";
 import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
-import { validateInput } from "./validate.js"
+import { validateInput, validationError } from "./validate.js"
 
 export const moduleParams = {};
 
@@ -195,7 +195,7 @@ function numberOfInputs(element) {
 }
 
 function setFormValue(form, value, id) {
-  if (value === ""){
+  if (value === "") {
     value = undefined
   }
   if (numberOfInputs(form) == 1) {
@@ -205,10 +205,10 @@ function setFormValue(form, value, id) {
       form.value = {};
     }
     form.value[id] = value;
-    if(value == undefined){
+    if (value == undefined) {
       delete form.value[id]
     }
-    
+
   }
 }
 
@@ -283,10 +283,14 @@ export function parsePhoneNumber(event) {
 }
 
 export function callExchangeValues(nextElement) {
+  console.log("... cev In", nextElement.getAttribute("maxval"), nextElement.dataset.max, nextElement)
+  //  exchangeValue(nextElement, "min", "data-min");
+  //  exchangeValue(nextElement, "max", "data-max")
   exchangeValue(nextElement, "minval", "data-min");
   exchangeValue(nextElement, "maxval", "data-max")
   exchangeValue(nextElement, "data-min", "data-min")
   exchangeValue(nextElement, "data-max", "data-max");
+  console.log("... cev Out", nextElement.getAttribute("maxval"), nextElement.dataset.max, nextElement)
 }
 
 function exchangeValue(element, attrName, newAttrName) {
@@ -295,6 +299,12 @@ function exchangeValue(element, attrName, newAttrName) {
     let isnum = /^[\d\.]+$/.test(attr);
     if (!isnum) {
       let tmpVal = evaluateCondition(attr);
+      // note: tmpVal==tmpVal means that tmpVal is Not Nan
+      if (tmpVal == undefined || tmpVal == null || tmpVal != tmpVal) {
+        console.error(`Module Coding Error: Evaluating ${element.id}:${attrName} expression ${attr}  => ${tmpVal}`)
+        validationError(element, `Module Coding Error: ${element.id}:${attrName}`)
+        return
+      }
       console.log('------------exchanged Vals-----------------')
       console.log(`${element}, ${attrName}, ${newAttrName}, ${tmpVal}`)
       element.setAttribute(newAttrName, tmpVal);
@@ -683,45 +693,45 @@ async function nextPage(norp, store, rootElement) {
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
   //if (questionElement.value) {
-    console.log('ASldKVBASLVKBSDVISDBVLSKV')
-    console.log(questionElement.value)
-    if (store) {
-      let formData = {};
-      formData[`${questName}.${questionElement.id}`] = questionElement.value;
-      console.log(formData)
-      /*if(questionElement.value == undefined){
-        formData[moduleParams.questName] = response.data[moduleParams.questName]
-      }*/
-      //formData[moduleParams.questName] = response.data[moduleParams.questName]
-      //delete formData[moduleParams.questName][norp.form.id];
-      //store(formData);
-      store(formData);
-    } else {
-      let tmp = await localforage
-        .getItem(questName)
-        .then((allResponses) => {
-          // if their is not an object in LF create one that we will add later...
-          if (!allResponses) {
-            allResponses = {};
-          }
-          // set the value for the questionId...
-          allResponses[questionElement.id] = questionElement.value;
-          if (questionElement.value === undefined){
-            delete allResponses[questionElement.id]
-          }
-          return allResponses;
-        })
-        .then((allResponses) => {
-          // allResposes really should be defined at this point. If it wasn't
-          // previously in LF, the previous block should have created it...
-          localforage.setItem(questName, allResponses, () => {
-            console.log(
-              "... Response stored in LF: " + questName,
-              JSON.stringify(allResponses)
-            );
-          });
+  console.log('ASldKVBASLVKBSDVISDBVLSKV')
+  console.log(questionElement.value)
+  if (store) {
+    let formData = {};
+    formData[`${questName}.${questionElement.id}`] = questionElement.value;
+    console.log(formData)
+    /*if(questionElement.value == undefined){
+      formData[moduleParams.questName] = response.data[moduleParams.questName]
+    }*/
+    //formData[moduleParams.questName] = response.data[moduleParams.questName]
+    //delete formData[moduleParams.questName][norp.form.id];
+    //store(formData);
+    store(formData);
+  } else {
+    let tmp = await localforage
+      .getItem(questName)
+      .then((allResponses) => {
+        // if their is not an object in LF create one that we will add later...
+        if (!allResponses) {
+          allResponses = {};
+        }
+        // set the value for the questionId...
+        allResponses[questionElement.id] = questionElement.value;
+        if (questionElement.value === undefined) {
+          delete allResponses[questionElement.id]
+        }
+        return allResponses;
+      })
+      .then((allResponses) => {
+        // allResposes really should be defined at this point. If it wasn't
+        // previously in LF, the previous block should have created it...
+        localforage.setItem(questName, allResponses, () => {
+          console.log(
+            "... Response stored in LF: " + questName,
+            JSON.stringify(allResponses)
+          );
         });
-    }
+      });
+  }
   //}
 
 

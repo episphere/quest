@@ -1,5 +1,3 @@
-import { getSelected } from "./questionnaire.js";
-
 export const knownFunctions = {
   and: function (x, y) {
     return x && y;
@@ -40,18 +38,18 @@ export const knownFunctions = {
       return true;
     }
     y = y.replace(/\"/g, ""); //handle string comparison
-    if (y==='true'){    //handles truthy comparison
-      y=true;
+    if (y === 'true') {    //handles truthy comparison
+      y = true;
     }
-    if (y==='false'){
-      y=false;
+    if (y === 'false') {
+      y = false;
     }
-    if (y==='_TODAY_') {
+    if (y === '_TODAY_') {
       var date = new Date();
-      var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
-                    .toISOString()
-                    .split("T")[0];
-      y=dateString;
+      var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        .toISOString()
+        .split("T")[0];
+      y = dateString;
     }
     return Array.isArray(x) ? x.includes(y) : x == y;
   },
@@ -60,18 +58,18 @@ export const knownFunctions = {
       return false;
     }
     y = y.replace(/\"/g, ""); //handle string comparison
-    if (y==='true'){    //handles truthy comparison
-      y=true;
+    if (y === 'true') {    //handles truthy comparison
+      y = true;
     }
-    if (y==='false'){
-      y=false;
+    if (y === 'false') {
+      y = false;
     }
-    if (y==='_TODAY_') {
+    if (y === '_TODAY_') {
       var date = new Date();
-      var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
-                    .toISOString()
-                    .split("T")[0];
-      y=dateString;
+      var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        .toISOString()
+        .split("T")[0];
+      y = dateString;
     }
     return Array.isArray(x) ? !x.includes(y) : x != y;
   },
