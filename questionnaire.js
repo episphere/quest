@@ -693,12 +693,10 @@ async function nextPage(norp, retrieve, store, rootElement) {
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
   //if (questionElement.value) {
-    console.log('ASldKVBASLVKBSDVISDBVLSKV')
-    console.log(questionElement.value)
-    
-    
-    if (store) {
-      let formData = {};
+  console.log('ASldKVBASLVKBSDVISDBVLSKV')
+  console.log(questionElement.value)
+  if (store) {
+    let formData = {};
       formData[`${questName}.${questionElement.id}`] = questionElement.value;
       console.log(formData)
       if (retrieve && questionElement.value === undefined) {
@@ -718,30 +716,29 @@ async function nextPage(norp, retrieve, store, rootElement) {
       else{
         await store(formData);
       }
-    } else {
-      let tmp = await localforage
-        .getItem(questName)
-        .then((allResponses) => {
-          // if their is not an object in LF create one that we will add later...
-          if (!allResponses) {
-            allResponses = {};
-          }
-          // set the value for the questionId...
-          allResponses[questionElement.id] = questionElement.value;
-          if (questionElement.value === undefined){
-            delete allResponses[questionElement.id]
-          }
-          return allResponses;
-        })
-        .then((allResponses) => {
-          // allResposes really should be defined at this point. If it wasn't
-          // previously in LF, the previous block should have created it...
-          localforage.setItem(questName, allResponses, () => {
-            console.log(
-              "... Response stored in LF: " + questName,
-              JSON.stringify(allResponses)
-            );
-          });
+  } else {
+    let tmp = await localforage
+      .getItem(questName)
+      .then((allResponses) => {
+        // if their is not an object in LF create one that we will add later...
+        if (!allResponses) {
+          allResponses = {};
+        }
+        // set the value for the questionId...
+        allResponses[questionElement.id] = questionElement.value;
+        if (questionElement.value === undefined) {
+          delete allResponses[questionElement.id]
+        }
+        return allResponses;
+      })
+      .then((allResponses) => {
+        // allResposes really should be defined at this point. If it wasn't
+        // previously in LF, the previous block should have created it...
+        localforage.setItem(questName, allResponses, () => {
+          console.log(
+            "... Response stored in LF: " + questName,
+            JSON.stringify(allResponses)
+          );
         });
       });
   }
