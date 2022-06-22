@@ -83,7 +83,7 @@ function validate_number(inputElement) {
         )
 
     if (belowMin) {
-        validationError(inputElement, `Value must be greater than or equal to ${inputElement.dataset.max}.`)
+        validationError(inputElement, `Value must be greater than or equal to ${inputElement.dataset.min}.`)
     } else if (aboveMax) {
         validationError(inputElement, `Value must be less than or equal to ${inputElement.dataset.max}.`)
     } else {
