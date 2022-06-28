@@ -13,6 +13,7 @@ import {
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
+import { clearValidationError } from "./validate.js";
 export let transform = function () {
   // init
 };
@@ -1126,6 +1127,7 @@ function resetChildren(nodes) {
       node.checked = false;
     } else if (node.type === "text" || node.type === "time" || node.type === "date" || node.type === "number") {
       node.value = "";
+      clearValidationError(node)
     }
   }
 }

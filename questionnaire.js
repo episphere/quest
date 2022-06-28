@@ -284,8 +284,8 @@ export function parsePhoneNumber(event) {
 
 export function callExchangeValues(nextElement) {
   console.log("... cev In", nextElement.getAttribute("maxval"), nextElement.dataset.max, nextElement)
-  //  exchangeValue(nextElement, "min", "data-min");
-  //  exchangeValue(nextElement, "max", "data-max")
+  exchangeValue(nextElement, "min", "data-min");
+  exchangeValue(nextElement, "max", "data-max")
   exchangeValue(nextElement, "minval", "data-min");
   exchangeValue(nextElement, "maxval", "data-max")
   exchangeValue(nextElement, "data-min", "data-min")
@@ -698,9 +698,9 @@ async function nextPage(norp, retrieve, store, rootElement) {
   console.log(questionElement.value)
   if (store) {
     let formData = {};
-      formData[`${questName}.${questionElement.id}`] = questionElement.value;
-      console.log(formData)
-      await store(formData)
+    formData[`${questName}.${questionElement.id}`] = questionElement.value;
+    console.log(formData)
+    await store(formData)
   } else {
     let tmp = await localforage
       .getItem(questName)
@@ -888,6 +888,13 @@ export function displayQuestion(nextElement) {
     }
   });
 
+  [...nextElement.querySelectorAll("input[min]")].forEach((element) => {
+    exchangeValue(element, "min", "data-min");
+  });
+  [...nextElement.querySelectorAll("input[max]")].forEach((element) =>
+    exchangeValue(element, "max", "data-max")
+  );
+  // supporting legacy code... dont use minval
   [...nextElement.querySelectorAll("input[minval]")].forEach((element) => {
     exchangeValue(element, "minval", "data-min");
   });
