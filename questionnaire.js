@@ -930,17 +930,11 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
   norp.form.classList.remove("active");
   displayQuestion(prevElement)
 
-  if (retrieve && store) {
-    const response = await retrieve();
-    if (response.code == 200) {
-      console.log("setting... ", moduleParams.questName, "=== ", response.data[moduleParams.questName][norp.form.id])
-      let formData = {};
-      formData[moduleParams.questName] = response.data[moduleParams.questName]
-      delete formData[moduleParams.questName][norp.form.id];
-      store(formData);
-      //      response.data[moduleParams.questName][norp.form.id] = ""
-      //      store(response.data)
-    }
+  if (store) {
+    console.log("setting... ", moduleParams.questName, "=== UNDEFINED")
+    let formData = {};
+    formData[`${moduleParams.questName}.${norp.form.id}`] = undefined;
+    store(formData);
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
   updateTree();
