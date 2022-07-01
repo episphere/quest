@@ -1102,6 +1102,7 @@ export function stopSubmit(event) {
 
   if (event.target.clickType == "BACK") {
     resetChildren(event.target.elements);
+    event.target.value = undefined;
     let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
   } else if (event.target.clickType == "RESET ANSWER") {
