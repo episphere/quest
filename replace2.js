@@ -23,9 +23,16 @@ let rootElement;
 
 let paramSplit = (str) =>
   [...str.matchAll(/(\w+)=(\s?.+?)\s*(?=\w+=|$)/gm)].reduce((pv, cv) => {
-    pv[cv[1]] = cv[2];
+    pv[cv[1]] = encodeURIComponent(cv[2]);
     return pv
   }, {})
+
+let reduceObj = (obj)=>{
+  //replace options with split values (uri encoded)
+  return Object.entries(obj).reduce( (pv,cv)=>{
+    return pv+=` ${cv[0]}=${cv[1]}`
+  },"").trim()
+}
 
 transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
@@ -144,7 +151,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // handle displayif on the question...
     // if questArgs is undefined set it to blank.
     questArgs = questArgs ? questArgs : "";
-
+    
     // make sure that this is a "displayif"
     var displayifMatch = questArgs.match(/displayif\s*=\s*.*/);
     let endMatch = questArgs.match(/end\s*=\s*(.*)?/);
@@ -253,6 +260,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fDate(fullmatch, opts) {
       let { options, elementId } = guaranteeIdSet(opts, "date");
       let optionObj = paramSplit(options)
+      options=reduceObj(optionObj)
       if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min))) {
         options = options + ` data-min-date=${optionObj.min}`
       }
@@ -483,6 +491,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       options = options.replaceAll('\"', "\'");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionObj = paramSplit(options)
+      
+      //replace options with split values (uri encoded)
+      options=reduceObj(optionObj)
+
       if (optionObj.hasOwnProperty("min")) {
         options = options + ` data-min="${optionObj.min}"`
       }

@@ -1123,7 +1123,7 @@ export function evaluateCondition(txt) {
   // if someone passes (#currentYear - 2), this becomes 2022 - 2.
   // we need to evaluate this to 2020...
   if (mjsfun.some(f => txt.includes(f)) ||
-    (/^[\(\d][\(\)\s\+\-\*\/\d]+[\d\)]$/.test(txt))) {
+    (/^\s*[\(\d][\(\)\s\+\-\*\/\d]+[\d\)]$/.test(txt))) {
     let v = math.evaluate(txt)
     console.log(`${txt} ==> ${v}`)
     return v
