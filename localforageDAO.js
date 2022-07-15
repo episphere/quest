@@ -24,7 +24,8 @@ export async function restoreResults(results) {
 
       console.log("==========  dont know how to handle this  ==========", questionElement, id, value)
     }
-
+    console.log('-------checking qids------------')
+    console.log(qid)
     let formElement = document.querySelector("#" + qid);
     // not sure have a non-question would be here
     // but ignore it...
