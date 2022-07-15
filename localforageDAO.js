@@ -56,7 +56,7 @@ export async function restoreResults(results) {
           return;
         }
         element.value = results[qid];
-        textboxinput(element);
+        textboxinput(element, false);
       }
 
       // we should return from here...
@@ -146,7 +146,7 @@ export async function restoreResults(results) {
               radioAndCheckboxUpdate(selectedRadioElement);
             } else {
               element.value = resObject;
-              textboxinput(element);
+              textboxinput(element, false);
             }
           }
         });
