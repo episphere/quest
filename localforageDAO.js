@@ -18,7 +18,7 @@ export async function restoreResults(results) {
       element = questionElement.querySelector(`[id='${id}']`);
       if (element) {
         element.value = value
-        textboxinput(element);
+        textboxinput(element, false);
         return;
       }
 

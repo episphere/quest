@@ -313,7 +313,7 @@ function exchangeValue(element, attrName, newAttrName) {
   return element;
 }
 
-export function textboxinput(inputElement) {
+export function textboxinput(inputElement, validate=true) {
   /////////// To change all max attributes to input element ///////////
   // [...inputElement.parentElement.parentElement.children]
   //   .filter((x) => x.hasAttribute("max"))
@@ -344,7 +344,9 @@ export function textboxinput(inputElement) {
 
   if (['text', 'number', 'email', 'tel', 'date', 'time'].includes(inputElement.type)) {
     console.log(inputElement.type);
-    validateInput(inputElement)
+    if(validate){
+      validateInput(inputElement)
+    }
   }
 
   // what is going on here...
