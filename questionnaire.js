@@ -313,7 +313,7 @@ function exchangeValue(element, attrName, newAttrName) {
   return element;
 }
 
-export function textboxinput(inputElement, validate=true) {
+export function textboxinput(inputElement, validate = true) {
   /////////// To change all max attributes to input element ///////////
   // [...inputElement.parentElement.parentElement.children]
   //   .filter((x) => x.hasAttribute("max"))
@@ -344,7 +344,7 @@ export function textboxinput(inputElement, validate=true) {
 
   if (['text', 'number', 'email', 'tel', 'date', 'time'].includes(inputElement.type)) {
     console.log(inputElement.type);
-    if(validate){
+    if (validate) {
       validateInput(inputElement)
     }
   }
@@ -793,10 +793,10 @@ export async function submitQuestionnaire(store, questName) {
 }
 function exitLoop(nextElement) {
   if (nextElement.hasAttribute("firstquestion")) {
-    let loopMax = document.getElementById(nextElement.getAttribute("loopmax"))
-      .value;
-    let firstQuestion = nextElement.getAttribute("firstquestion");
-    let loopIndex = nextElement.getAttribute("loopindx");
+    let loopMax = parseInt(document.getElementById(nextElement.getAttribute("loopmax"))
+      .value);
+    let firstQuestion = parseInt(nextElement.getAttribute("firstquestion"));
+    let loopIndex = parseInt(nextElement.getAttribute("loopindx"));
     if (math.evaluate(firstQuestion > loopMax)) {
       questionQueue.pop();
       questionQueue.add(`_CONTINUE${loopIndex}_DONE`);
