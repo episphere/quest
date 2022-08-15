@@ -326,7 +326,7 @@ export function textboxinput(inputElement, validate = true) {
   console.log(inputElement.value)
   if (inputElement.getAttribute("modalif") && inputElement.value != "") {
     evalBool = math.evaluate(
-      inputElement.getAttribute("modalif").replace(/value/, inputElement.value)
+      decodeURIComponent(inputElement.getAttribute("modalif").replace(/value/, inputElement.value))
     );
   }
   if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
