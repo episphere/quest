@@ -333,7 +333,7 @@ export function textboxinput(inputElement, validate = true) {
     if (inputElement.getAttribute("modalvalue")) {
       document.getElementById(
         "modalResponseBody"
-      ).innerText = inputElement.getAttribute("modalvalue");
+      ).innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
       $("#softModalResponse").modal("show");
     }
   }
