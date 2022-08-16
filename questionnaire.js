@@ -91,19 +91,35 @@ export const myFunctions = {
    * @return {boolean}     is lowerLimit <= value(id) <= upperLimit
    */
   valueIsBetween: function (lowerLimit, upperLimit, ...ids) {
-    console.log(`VIB:  {$lowerLimit} {$ids}  {$lowerLimit}`)
+    console.log(`VIB:  ${lowerLimit} <= ${ids}  <= ${upperLimit}`)
     if (lowerLimit === undefined || upperLimit === undefined || ids === undefined) return false;
 
     let value = undefined;
     value = (ids.length > 1) ? myFunctions.valueOrDefault(ids.shift(), ids) : myFunctions._value(ids.shift())
-    console.log(`VIB:  {$value}`)
+    console.log(`VIB:  ${value}`)
     // for this function to work, value, lowerLimit, and 
     // upperLimit MUST be numeric....
     if (!isNaN(value) && !isNaN(lowerLimit) && !isNaN(value)) {
-      console.log(`VIB:  `, (parseFloat(lowerLimit) <= value && parseFloat(value <= upperLimit)))
-      return (parseFloat(lowerLimit) <= value && parseFloat(value) <= upperLimit)
+      console.log(`VIB:  `, (parseFloat(lowerLimit) <= value && value <= parseFloat(upperLimit)))
+      return (parseFloat(lowerLimit) <= value && value <= parseFloat(upperLimit))
     }
     return false
+  },
+  dateCompare: function (month1, year1, month2, year2) {
+    if (
+      [month1, month2].some((m) => { let m1 = parseInt(m); m1 < 0 || m1 > 11 })
+    ) {
+      throw 'DateCompareError:months need to be from 0 (Jan) to 11 (Dec)'
+    }
+    if (
+      [year1, year2].some((yr) => isNaN(yr))
+    ) {
+      throw 'DateCompareError:years need to be numeric'
+    }
+
+    let date1 = (new Date(year1, month1)).getTime()
+    let date2 = (new Date(year2, month2)).getTime()
+    return (date1 < date2) ? -1 : (date1 == date2) ? 0 : 1
   },
   isSelected: function (id) {
     // if the id doesnt exist, the ?.checked returns undefined.
