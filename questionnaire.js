@@ -311,6 +311,15 @@ export function callExchangeValues(nextElement) {
 
 function exchangeValue(element, attrName, newAttrName) {
   let attr = element.getAttribute(attrName);
+
+  // !!! DONT EVALUATE 2020-01 to 2019
+  // may have to do this for dates too.
+  // Firefox thinks <input type="month"> has type="text"...
+  if (element.getAttribute("type") == "month") {
+    element.setAttribute(newAttrName, attr)
+    return element;
+  }
+
   if (attr) {
     let isnum = /^[\d\.]+$/.test(attr);
     if (!isnum) {
@@ -358,7 +367,7 @@ export function textboxinput(inputElement, validate = true) {
     parseSSN(inputElement);
   }
 
-  if (['text', 'number', 'email', 'tel', 'date', 'time'].includes(inputElement.type)) {
+  if (['text', 'number', 'email', 'tel', 'date', 'month', 'time'].includes(inputElement.type)) {
     console.log(inputElement.type);
     if (validate) {
       validateInput(inputElement)

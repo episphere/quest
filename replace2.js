@@ -27,11 +27,11 @@ let paramSplit = (str) =>
     return pv
   }, {})
 
-let reduceObj = (obj)=>{
+let reduceObj = (obj) => {
   //replace options with split values (uri encoded)
-  return Object.entries(obj).reduce( (pv,cv)=>{
-    return pv+=` ${cv[0]}=${cv[1]}`
-  },"").trim()
+  return Object.entries(obj).reduce((pv, cv) => {
+    return pv += ` ${cv[0]}=${cv[1]}`
+  }, "").trim()
 }
 
 transform.render = async (obj, divId, previousResults = {}) => {
@@ -151,7 +151,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // handle displayif on the question...
     // if questArgs is undefined set it to blank.
     questArgs = questArgs ? questArgs : "";
-    
+
     // make sure that this is a "displayif"
     var displayifMatch = questArgs.match(/displayif\s*=\s*.*/);
     let endMatch = questArgs.match(/end\s*=\s*(.*)?/);
@@ -257,18 +257,25 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace |date| with a date input
     questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
+    questText = questText.replace(/\|month\|(?:([^\|]+)\|)?/g, fDate);
     function fDate(fullmatch, opts) {
-      let { options, elementId } = guaranteeIdSet(opts, "date");
+      let type = fullmatch.match(/[^|]+/)
+      let { options, elementId } = guaranteeIdSet(opts, type);
       let optionObj = paramSplit(options)
-      options=reduceObj(optionObj)
+      // can't have the value uri encoded... 
+      if (optionObj.hasOwnProperty("value")) {
+        optionObj.value = decodeURIComponent(optionObj.value)
+      }
+      options = reduceObj(optionObj)
       if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min))) {
         options = options + ` data-min-date=${optionObj.min}`
       }
       if (optionObj.hasOwnProperty("max")) {
         options = options + ` data-max-date=${optionObj.max}`
       }
-      return `<input type='date' ${options}></input>`;
+      return `<input type='${type}' ${options}></input>`;
     }
+
 
     // replace |tel| with phone input
 
@@ -491,9 +498,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       options = options.replaceAll('\"', "\'");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionObj = paramSplit(options)
-      
+
       //replace options with split values (uri encoded)
-      options=reduceObj(optionObj)
+      options = reduceObj(optionObj)
 
       if (optionObj.hasOwnProperty("min")) {
         options = options + ` data-min="${optionObj.min}"`
@@ -916,7 +923,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   let textInputs = [
     ...divElement.querySelectorAll(
-      "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='time'],textarea,select"
+      "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='month'],input[type='time'],textarea,select"
     ),
   ];
 
@@ -1138,7 +1145,7 @@ function resetChildren(nodes) {
   for (let node of nodes) {
     if (node.type === "radio" || node.type === "checkbox") {
       node.checked = false;
-    } else if (node.type === "text" || node.type === "time" || node.type === "date" || node.type === "number") {
+    } else if (node.type === "text" || node.type === "time" || node.type === "date" || node.type === "month" || node.type === "number") {
       node.value = "";
       clearValidationError(node)
     }

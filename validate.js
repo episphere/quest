@@ -7,10 +7,13 @@ export function validateInput(inputElement) {
         email: validate_email,
         tel: validate_telephone,
         date: validate_date,
-        text: validate_text
+        text: validate_text,
+        month: valiate_month
     }
 
-    if (inputElement.type in handlers) {
+    // can't use inputElement.type ==> firefox doesn't accept input.type='month'
+    let inputElementType = inputElement.getAttribute("type")
+    if (inputElementType in handlers) {
         // clear any old validation error
         clearValidationError(inputElement)
         // if the value is blank, if required error, else it is valid.
@@ -21,9 +24,9 @@ export function validateInput(inputElement) {
             return
         }
 
-        handlers[inputElement.type](inputElement)
+        handlers[inputElementType](inputElement)
     } else {
-        console.log(`no handle for type: ${inputElement.type}`)
+        console.log(`no handle for type: ${inputElementType}`)
         console.log(inputElement)
     }
 }
@@ -86,6 +89,45 @@ function validate_number(inputElement) {
         validationError(inputElement, `Value must be greater than or equal to ${inputElement.dataset.min}.`)
     } else if (aboveMax) {
         validationError(inputElement, `Value must be less than or equal to ${inputElement.dataset.max}.`)
+    } else {
+        clearValidationError(inputElement)
+    }
+
+}
+
+function valiate_month(inputElement) {
+    console.log("in validate_month", inputElement)
+
+    // because type="month" is not supported on firefox be careful with the input...
+    let value = inputElement.value.trim();
+    // if we have a value, and it does not match a date
+    if (value.length > 0 && !/^\d{4}-\d{2}$/.test(value)) {
+        // check for month-year...
+        if (/^\d{2}-\d{4}$/.test(value)) {
+            value = `${value.slice(3, 7)}-${value.slice(0, 2)}`;
+            inputElement.value = value;
+        } else {
+            validationError(inputElement, "Format should match YYYY-MM");
+            return;
+        }
+    }
+
+    // at this point, we should have a date in the form YYYY-MM...
+    let selectedDate = new Date(value);
+    if (isNaN(selectedDate.getTime())) {
+        validationError(inputElement, "Invalid month or year");
+        return;
+    }
+    let minDate = (inputElement.dataset.minDate) ? new Date(decodeURIComponent(inputElement.dataset.minDate)) : undefined
+    let maxDate = (inputElement.dataset.maxDate) ? new Date(decodeURIComponent(inputElement.dataset.maxDate)) : undefined
+
+    let before_min_date = minDate && selectedDate < minDate
+    let after_max_date = maxDate && selectedDate > maxDate
+
+    if (before_min_date) {
+        validationError(inputElement, `Date must be after ${minDate.getUTCMonth() + 1}/${minDate.getUTCFullYear()}`)
+    } else if (after_max_date) {
+        validationError(inputElement, `Date must be before ${maxDate.getUTCMonth() + 1}/${maxDate.getUTCFullYear()}`)
     } else {
         clearValidationError(inputElement)
     }
