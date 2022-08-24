@@ -101,10 +101,11 @@ function valiate_month(inputElement) {
     // because type="month" is not supported on firefox be careful with the input...
     let value = inputElement.value.trim();
     // if we have a value, and it does not match a date
-    if (value.length > 0 && !/^\d{4}-\d{2}$/.test(value)) {
+    if (value.length > 0 && !/^\d{4}-\d{1,2}$/.test(value)) {
         // check for month-year...
-        if (/^\d{2}-\d{4}$/.test(value)) {
-            value = `${value.slice(3, 7)}-${value.slice(0, 2)}`;
+        if (/^(\d{1,2})-(\d{4})$/.test(value)) {
+            let found = value.match(/(\d{1,2})-(\d{4})/)
+            value = `${found[2]}-${found[1]}`;
             inputElement.value = value;
         } else {
             validationError(inputElement, "Format should match YYYY-MM");
