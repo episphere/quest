@@ -267,7 +267,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
         optionObj.value = decodeURIComponent(optionObj.value)
       }
       options = reduceObj(optionObj)
-      if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min))) {
+      // not sure why we need a data-min-date but allow it to be evaluateable.
+      //      if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min)) ) {
+      if (optionObj.hasOwnProperty("min")) {
         options = options + ` data-min-date=${optionObj.min}`
       }
       if (optionObj.hasOwnProperty("max")) {

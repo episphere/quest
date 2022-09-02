@@ -310,12 +310,13 @@ export function callExchangeValues(nextElement) {
 }
 
 function exchangeValue(element, attrName, newAttrName) {
-  let attr = element.getAttribute(attrName);
+  let attr = element.getAttribute(attrName).trim();
 
   // !!! DONT EVALUATE 2020-01 to 2019
   // may have to do this for dates too.
   // Firefox thinks <input type="month"> has type="text"...
-  if (element.getAttribute("type") == "month") {
+  // so element.type return "text"
+  if (element.getAttribute("type") == "month" && /^\d{4}-\d{1,2}$/.test(attr)) {
     element.setAttribute(newAttrName, attr)
     return element;
   }
@@ -934,6 +935,14 @@ export function displayQuestion(nextElement) {
   );
   [...nextElement.querySelectorAll("input[data-max]")].forEach((element) => {
     exchangeValue(element, "data-max", "data-max");
+  });
+
+  // rewrite the (min|max)-date with a calulated value
+  [...nextElement.querySelectorAll("input[data-min-date]")].forEach((element) => {
+    exchangeValue(element, "min", "data-min-date");
+  });
+  [...nextElement.querySelectorAll("input[data-min-date]")].forEach((element) => {
+    exchangeValue(element, "min", "data-min-date");
   });
 
   //move to the next question...
