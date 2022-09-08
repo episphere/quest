@@ -310,7 +310,7 @@ export function callExchangeValues(nextElement) {
 }
 
 function exchangeValue(element, attrName, newAttrName) {
-  let attr = element.getAttribute(attrName).trim();
+  let attr = element.getAttribute(attrName)?.trim();
 
   // !!! DONT EVALUATE 2020-01 to 2019
   // may have to do this for dates too.
@@ -334,6 +334,8 @@ function exchangeValue(element, attrName, newAttrName) {
       console.log('------------exchanged Vals-----------------')
       console.log(`${element}, ${attrName}, ${newAttrName}, ${tmpVal}`)
       element.setAttribute(newAttrName, tmpVal);
+    } else {
+      element.setAttribute(newAttrName, attr);
     }
   }
   return element;
