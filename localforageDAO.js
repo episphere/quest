@@ -8,7 +8,7 @@ export async function restoreResults(results) {
   Object.keys(results).forEach((qid) => {
     function handleString(questionElement, id, value) {
       // check if we have a radiobutton/checkbox...
-      let element = questionElement.querySelector(`[name='${id}'][value='${value}']`)
+      let element = questionElement.querySelector(`[name='${id}'][value='${value.replace("'", "\\'")}']`)
       if (element) {
         element.checked = true
         radioAndCheckboxUpdate(element)
@@ -157,7 +157,7 @@ export async function restoreResults(results) {
 
 export async function removeQuestion(questName, qid) {
   //check here for going back issue?
-  
+
   let results = await localforage.getItem(questName);
 
   if (results && results[qid]) {
