@@ -1070,7 +1070,7 @@ function unrollLoops(txt) {
 
       //replace all idsInLoop in the loop with {$id_$loopIndx}
       idsInLoop.forEach(id => {
-        currentText = currentText.replace(new RegExp(`${id}`, "g"), `${id}_${loopIndx}`);
+        currentText = currentText.replace(new RegExp(`${id}`, "g"), `${id}_${loopIndx}_${loopIndx}`);
       })
 
       currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
@@ -1104,6 +1104,9 @@ function unrollLoops(txt) {
       //   }
       // }
 
+      // replace  _\d_\d#prev with _{$loopIndex-1}
+      // we do it twice to match a previous bug..
+      currentText = currentText.replace(/_\d+_\d+#prev/g, `_${loopIndx - 1}_${loopIndx - 1}`)
       loopText = loopText + "\n" + currentText;
     }
     loopText +=

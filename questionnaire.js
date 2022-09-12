@@ -838,7 +838,7 @@ function exitLoop(nextElement) {
 export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let defaultValue = x.getAttribute("optional")
-    x.innerHTML = math.valueOrDefault(x.getAttribute("forid"), defaultValue)
+    x.innerHTML = math.valueOrDefault(decodeURIComponent(x.getAttribute("forid")), defaultValue)
   });
 
   Array.from(
@@ -1160,84 +1160,95 @@ export function evaluateCondition(txt) {
   console.log("evaluateCondition: ===>", txt)
   // if someone passes (#currentYear - 2), this becomes 2022 - 2.
   // we need to evaluate this to 2020...
-  if (mjsfun.some(f => txt.includes(f)) ||
-    (/^\s*[\(\d][\(\)\s\+\-\*\/\d]+[\d\)]$/.test(txt))) {
+  //  if (mjsfun.some(f => txt.includes(f)) ||
+  //    (/^\s*[\(\d][\(\)\s\+\-\*\/\d]+[\d\)]$/.test(txt))) {
+  //    let v = math.evaluate(txt)
+  //    console.log(`${txt} ==> ${v}`)
+  //    return v
+  //  }
+
+  // try to evaluate using mathjs...
+  // if we fail, fall back to old evaluation...
+  try {
     let v = math.evaluate(txt)
     console.log(`${txt} ==> ${v}`)
     return v
-  }
-  //refactored to displayIf from parse
-  function replaceValue(x) {
-    if (typeof x === "string") {
-      let element = document.getElementById(x);
-      if (element != null) {
-        if (element.hasAttribute('grid') && (element.type === "radio" || element.type === "checkbox")) {
-          //for displayif conditions with grid elements
-          x = element.checked ? 1 : 0;
-        }
-        else {
-          let tmpVal = x;
-          x = document.getElementById(x).value;
-          if (typeof x == "object" && Array.isArray(x) != true) {
-            x = x[tmpVal];
+  } catch (err) {
+    console.log("--- falling back to old evaluation ---")
+
+    //refactored to displayIf from parse
+    function replaceValue(x) {
+      if (typeof x === "string") {
+        let element = document.getElementById(x);
+        if (element != null) {
+          if (element.hasAttribute('grid') && (element.type === "radio" || element.type === "checkbox")) {
+            //for displayif conditions with grid elements
+            x = element.checked ? 1 : 0;
+          }
+          else {
+            let tmpVal = x;
+            x = document.getElementById(x).value;
+            if (typeof x == "object" && Array.isArray(x) != true) {
+              x = x[tmpVal];
+            }
+          }
+
+        } else {
+          //look up by name
+          let temp1 = [...document.getElementsByName(x)].filter(
+            (y) => y.checked
+          )[0];
+          x = temp1 ? temp1.value : x;
+          // ***** if it's neither... look in the previous module *****
+          if (!temp1) {
+            // ISSUE 383: when moduleParams.previousResults[x] is 0.  It is FALSE and you 
+            // dont replace the key with the value.
+            x = moduleParams.previousResults.hasOwnProperty(x) ? moduleParams.previousResults[x] : x;
           }
         }
+      }
+      return x;
 
+    }
+    //https://stackoverflow.com/questions/6323417/regex-to-extract-all-matches-from-string-using-regexp-exec
+    var re = /[\(\),]/g;
+    var stack = [];
+    var lastMatch = 0;
+    for (const match of txt.matchAll(re)) {
+      stack.push(match.input.substr(lastMatch, match.index - lastMatch));
+      stack.push(match.input.charAt(match.index));
+      lastMatch = match.index + 1;
+    }
+    // remove all blanks...
+    stack = stack.filter((x) => x != "");
+
+    while (stack.indexOf(")") > 0) {
+      let callEnd = stack.indexOf(")");
+      if (
+        stack[callEnd - 4] == "(" &&
+        stack[callEnd - 2] == "," &&
+        stack[callEnd - 5] in knownFunctions
+      ) {
+        // it might hurt performance, but for debugging
+        // expliciting setting the variables are helpful...
+        let fun = stack[callEnd - 5];
+        let arg1 = stack[callEnd - 3];
+        // arg1 one should be a id or a boolean...
+        // either from a element in the document or
+        // from the currently undefined last module...
+        arg1 = replaceValue(arg1);
+        let arg2 = stack[callEnd - 1];
+        arg2 = replaceValue(arg2);
+        let tmpValue = knownFunctions[fun](arg1, arg2);
+        // replace from callEnd-5 to callEnd with  the results...
+        // splice start at callEnd-5, remove 6, add the calculated value...
+        stack.splice(callEnd - 5, 6, tmpValue);
       } else {
-        //look up by name
-        let temp1 = [...document.getElementsByName(x)].filter(
-          (y) => y.checked
-        )[0];
-        x = temp1 ? temp1.value : x;
-        // ***** if it's neither... look in the previous module *****
-        if (!temp1) {
-          // ISSUE 383: when moduleParams.previousResults[x] is 0.  It is FALSE and you 
-          // dont replace the key with the value.
-          x = moduleParams.previousResults.hasOwnProperty(x) ? moduleParams.previousResults[x] : x;
-        }
+        throw { Message: "Bad Displayif Function: " + txt, Stack: stack };
       }
     }
-    return x;
-
+    return stack[0];
   }
-  //https://stackoverflow.com/questions/6323417/regex-to-extract-all-matches-from-string-using-regexp-exec
-  var re = /[\(\),]/g;
-  var stack = [];
-  var lastMatch = 0;
-  for (const match of txt.matchAll(re)) {
-    stack.push(match.input.substr(lastMatch, match.index - lastMatch));
-    stack.push(match.input.charAt(match.index));
-    lastMatch = match.index + 1;
-  }
-  // remove all blanks...
-  stack = stack.filter((x) => x != "");
-
-  while (stack.indexOf(")") > 0) {
-    let callEnd = stack.indexOf(")");
-    if (
-      stack[callEnd - 4] == "(" &&
-      stack[callEnd - 2] == "," &&
-      stack[callEnd - 5] in knownFunctions
-    ) {
-      // it might hurt performance, but for debugging
-      // expliciting setting the variables are helpful...
-      let fun = stack[callEnd - 5];
-      let arg1 = stack[callEnd - 3];
-      // arg1 one should be a id or a boolean...
-      // either from a element in the document or
-      // from the currently undefined last module...
-      arg1 = replaceValue(arg1);
-      let arg2 = stack[callEnd - 1];
-      arg2 = replaceValue(arg2);
-      let tmpValue = knownFunctions[fun](arg1, arg2);
-      // replace from callEnd-5 to callEnd with  the results...
-      // splice start at callEnd-5, remove 6, add the calculated value...
-      stack.splice(callEnd - 5, 6, tmpValue);
-    } else {
-      throw { Message: "Bad Displayif Function: " + txt, Stack: stack };
-    }
-  }
-  return stack[0];
 }
 window.evaluateCondition = evaluateCondition
 window.questionQueue = questionQueue
