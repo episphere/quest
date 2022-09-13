@@ -1056,18 +1056,10 @@ function unrollLoops(txt) {
       ids.map(
         (id) =>
         (currentText = currentText.replace(
-          new RegExp("\\b" + id.id + "\\b", "g"),
-          `${id.id}_${loopIndx}`
+          new RegExp("\\b" + id.id + "\\b(?!\#)", "g"),
+          `${id.id}_${loopIndx}_${loopIndx}`
         ))
       );
-      ids.map(
-        (id) =>
-        (currentText = currentText.replace(
-          new RegExp("\\b" + id.id + "_", "g"),
-          `${id.id}_${loopIndx}_`
-        ))
-      );
-
       //replace all idsInLoop in the loop with {$id_$loopIndx}
       idsInLoop.forEach(id => {
         currentText = currentText.replace(new RegExp(`${id}`, "g"), `${id}_${loopIndx}_${loopIndx}`);
