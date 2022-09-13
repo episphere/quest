@@ -6,9 +6,41 @@ import { validateInput, validationError } from "./validate.js"
 export const moduleParams = {};
 
 let script = document.createElement("script");
-//script.src = "https://episphere.github.io/quest/math.js";
-script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"
+script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.2.0/math.js"
 document.body.appendChild(script);
+
+
+
+// create a class YearMonth for use in mathjs to handle
+// the month class...
+function YearMonth(str) {
+  if (str?.isYearMonth) {
+    this.month = str.month
+    this.year = str.year
+  } else {
+    let x = str.match(/^(\d+)\-(\d+)$/)
+    this.month = parseInt(x[2]).toLocaleString(navigator.language, { minimumIntegerDigits: 2 })
+    this.year = x[1]
+  }
+}
+YearMonth.prototype.isYearMonth = true
+YearMonth.prototype.toString = function () {
+  return `${this.year}-${this.month}`
+}
+// create an add function.  Note: YearMonth + integer = String
+YearMonth.prototype.add = function (n) {
+  let m = parseInt(this.month) + n
+  let yr = parseInt(this.year) + ((m > 12) ? 1 : 0);
+  // if month == 0, set it to 12
+  let mon = (m % 12) || 12
+  return new YearMonth(`${yr}-${mon}`).toString()
+}
+YearMonth.prototype.subtract = function (n) {
+  let m = parseInt(this.month) - n
+  let yr = parseInt(this.year) - ((m > 0) ? 0 : 1);
+  let mon = ((m + 12) % 12) || 12
+  return new YearMonth(`${yr}-${mon}`).toString()
+}
 
 // Note: these function make explicit
 // use of the fact that the DOM stores information.
@@ -176,11 +208,51 @@ export const myFunctions = {
 
     }
     return false;
-  }
+  },
+  yearMonth: function (str) {
+    let isYM = /^(\d+)\-(\d+)$/.test(str)
+    if (isYM) {
+      return new YearMonth(str)
+    }
+    let value = math._value(str)
+    isYM = /^(\d+)\-(\d+)$/.test(value)
+    if (isYM) {
+      return new YearMonth(value)
+    }
+    return false;
+  },
+  YearMonth: YearMonth,
 }
 
-window.myFunctions = myFunctions;
+
 window.addEventListener("load", (event) => {
+  // Tell mathjs about the YearMonth class
+  math.typed.addType({
+    name: 'YearMonth',
+    test: function (x) {
+      return x && x.isYearMonth
+    }
+  })
+
+  // Tell math.js how to add a YearMonth with a number
+  const add = math.typed('add', {
+    'YearMonth, number': function (dte, m) {
+      return dte.add(m)
+    },
+    'number, YearMonth': function (m, dte) {
+      return dte.add(m)
+    }
+  })
+  const subtract = math.typed('subtract', {
+    'YearMonth, number': function (dte, m) {
+      return dte.subtract(m)
+    }
+  })
+
+  myFunctions.add = add;
+  myFunctions.subtract = subtract
+  window.myFunctions = myFunctions;
+
   math.import({
     myFunctions
   })
