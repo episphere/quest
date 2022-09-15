@@ -249,9 +249,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     // replace |hidden|value| 
-    questText = questText.replace(/\|hidden\|([^\|]+)\|?/g, fHide);
-    function fHide(fullmatch,value){
-      return `<input type="text" data-hidden=true ${value}>`
+    questText = questText.replace(/\|hidden\|\s*id\s*=\s*([^\|]+)\|?/g, fHide);
+    function fHide(fullmatch,id){
+      return `<input type="text" data-hidden=true id=${id}>`
     }
 
     // replace |@| with an email input
@@ -936,17 +936,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
   ];
 
   textInputs.forEach((inputElement) => {
-    // let div = document.createElement("div");
-    // let span = document.createElement("span");
-    // span.innerText = " ";
-    // span.style.height = "inherit";
-    // div.appendChild(span);
-    // div.style.minHeight = "30px";
-    // inputElement.onfocus = handleXOR(inputElement);
-    //inputElement.onchange = textBoxInput;
     inputElement.onblur = textBoxInput;
     inputElement.setAttribute("style", "size: 20 !important");
-    // inputElement.insertAdjacentElement("afterend", div);
   });
 
   // for each element with an xor, handle the xor on keydown
@@ -980,7 +971,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   [...divElement.querySelectorAll("[data-hidden]")].forEach((x) => {
     x.style.display="none";
-    textboxinput(x,false)
   });
 
   $(".popover-dismiss").popover({

@@ -783,6 +783,11 @@ async function nextPage(norp, retrieve, store, rootElement) {
   // and call next().
 
   let questionElement = norp.form;
+  questionElement.querySelectorAll("[data-hidden]").forEach((x) => {
+    x.value=true
+    setFormValue(questionElement,true,x.id)
+  });
+
   if (checkValid(questionElement) == false) {
     return null;
   }
