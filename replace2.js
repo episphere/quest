@@ -641,10 +641,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 
     //displayif with just texts
-    questText = questText.replace(/\|displayif=(.+?)\|(.*?)\|/g, fDisplayIf);
-    function fDisplayIf(containsGroup, condition, text) {
+    // the : changes the standard span to a div.
+    questText = questText.replace(/\|displayif=(.+?)(:)?\|(.*?)\|/g, fDisplayIf);
+    function fDisplayIf(containsGroup, condition, nl,text) {
       condition = condition.replaceAll('\"', "\'");
-      return `<span class='displayif' displayif="${condition}">${text}</span>`;
+      let tag=(nl)?"div":"span"
+      return `<${tag} class='displayif' displayif="${condition}">${text}</${tag}>`;
     }
 
     // replace next question  < -> > with hidden...
