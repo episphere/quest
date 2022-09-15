@@ -10,6 +10,7 @@ import {
   parseSSN,
   parsePhoneNumber,
   submitQuestionnaire,
+  textboxinput,
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
@@ -44,11 +45,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // allow the client to reset the tree...
 
   if (obj.text) contents = obj.text;
-  if (obj.url) {
-    moduleParams.config = await (await fetch(obj.url)).text();
-  }
+
   if (obj.url) {
     contents = await (await fetch(obj.url)).text();
+    moduleParams.config = contents
     if (obj.activate) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -246,6 +246,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
       title = title ? title : "";
       popText = popText.replace(/"/g, "&quot;")
       return `<a tabindex="0" class="popover-dismiss btn btn" role="button" data-toggle="popover" data-trigger="focus" title="${title}" data-content="${popText}">${buttonText}</a>`;
+    }
+
+    // replace |hidden|value| 
+    questText = questText.replace(/\|hidden\|([^\|]+)\|?/g, fHide);
+    function fHide(fullmatch,value){
+      return `<input type="text" data-hidden=true ${value}>`
     }
 
     // replace |@| with an email input
@@ -970,6 +976,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   [...divElement.querySelectorAll(".grid-input-element")].forEach((x) => {
     x.addEventListener("change", toggle_grid);
+  });
+
+  [...divElement.querySelectorAll("[data-hidden]")].forEach((x) => {
+    x.style.display="none";
+    textboxinput(x,false)
   });
 
   $(".popover-dismiss").popover({
