@@ -1065,7 +1065,7 @@ function unrollLoops(txt) {
       );
       //replace all idsInLoop in the loop with {$id_$loopIndx}
       idsInLoop.forEach(id => {
-        currentText = currentText.replace(new RegExp(`${id}`, "g"), `${id}_${loopIndx}_${loopIndx}`);
+        currentText = currentText.replace(new RegExp(`\\b${id}\\b`, "g"), `${id}_${loopIndx}_${loopIndx}`);
       })
 
       currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
