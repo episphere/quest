@@ -136,13 +136,16 @@ export const myFunctions = {
     return false
   },
   /**
-   * Given a comma separated value of Ids and value, returns a string of all the values that exist.
+   * Given a comma separated value of Conditions and values, returns a string of all the values that exist.
    * separated by a comma or the optional separator
    * 
-   * @param  {args}  the args should be ID1, VAL1, ID2, VAL2, (optional)sep=,
+   * i.e. existingValues(exists("ID1"),displaytext,exists("ID2"),displaytext)
+   * 
+   * @param  {args}  the args should be condition1, VAL1, condition2, VAL2, (optional)sep=,
    * 
    */
   existingValues: function (args){
+    console.log(args)
     if (!args) return ""
     let v=args.split(/,(?!\s*$)/)
     let sep=", "
@@ -156,7 +159,7 @@ export const myFunctions = {
       if (index%2==0) return prev
 
       // see if the id exists, if so keep the value
-      if (math.exists(array[index-1])) prev.push( math.valueOrDefault(current,current))
+      if (math.evaluate(array[index-1])) prev.push( math.valueOrDefault(current,current))
       
       return prev
     },[] )
