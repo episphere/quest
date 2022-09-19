@@ -128,14 +128,40 @@ export const myFunctions = {
 
     let value = undefined;
     value = (ids.length > 1) ? myFunctions.valueOrDefault(ids.shift(), ids) : myFunctions._value(ids.shift())
-    console.log(`VIB:  ${value}`)
     // for this function to work, value, lowerLimit, and 
     // upperLimit MUST be numeric....
     if (!isNaN(value) && !isNaN(lowerLimit) && !isNaN(value)) {
-      console.log(`VIB:  `, (parseFloat(lowerLimit) <= value && value <= parseFloat(upperLimit)))
       return (parseFloat(lowerLimit) <= value && value <= parseFloat(upperLimit))
     }
     return false
+  },
+  /**
+   * Given a comma separated value of Ids and value, returns a string of all the values that exist.
+   * separated by a comma or the optional separator
+   * 
+   * @param  {args}  the args should be ID1, VAL1, ID2, VAL2, (optional)sep=,
+   * 
+   */
+  existingValues: function (args){
+    if (!args) return ""
+    let v=args.split(/,(?!\s*$)/)
+    let sep=", "
+    let hasSep = v[v.length-1].toString().startsWith("sep=")
+    if (hasSep){
+      sep = v.pop().toString().slice(4)
+    }
+    // we better have (id/value PAIRS)
+    v = v.reduce( (prev,current,index,array) => {
+      // skip the ids...
+      if (index%2==0) return prev
+
+      // see if the id exists, if so keep the value
+      if (math.exists(array[index-1])) prev.push( math.valueOrDefault(current,current))
+      
+      return prev
+    },[] )
+
+    return v.join(sep)
   },
   dateCompare: function (month1, year1, month2, year2) {
     if (
@@ -801,8 +827,6 @@ async function nextPage(norp, retrieve, store, rootElement) {
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
   //if (questionElement.value) {
-  console.log('ASldKVBASLVKBSDVISDBVLSKV')
-  console.log(questionElement.value)
   if (store) {
     let formData = {};
     formData[`${questName}.${questionElement.id}`] = questionElement.value;
@@ -1023,6 +1047,10 @@ export function displayQuestion(nextElement) {
   [...nextElement.querySelectorAll("input[data-min-date]")].forEach((element) => {
     exchangeValue(element, "min", "data-min-date");
   });
+  nextElement.querySelectorAll("[data-displaylist-args]").forEach(element => {
+    console.log(element)
+    element.innerHTML=math.existingValues(element.dataset.displaylistArgs)
+  })
 
   //move to the next question...
   nextElement.classList.add("active");

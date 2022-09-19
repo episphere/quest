@@ -250,7 +250,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace |hidden|value| 
     questText = questText.replace(/\|hidden\|\s*id\s*=\s*([^\|]+)\|?/g, fHide);
-    function fHide(fullmatch,id){
+    function fHide(fullmatch, id) {
       return `<input type="text" data-hidden=true id=${id}>`
     }
 
@@ -643,10 +643,18 @@ transform.render = async (obj, divId, previousResults = {}) => {
     //displayif with just texts
     // the : changes the standard span to a div.
     questText = questText.replace(/\|displayif=(.+?)(:)?\|(.*?)\|/g, fDisplayIf);
-    function fDisplayIf(containsGroup, condition, nl,text) {
+    function fDisplayIf(containsGroup, condition, nl, text) {
       condition = condition.replaceAll('\"', "\'");
-      let tag=(nl)?"div":"span"
+      let tag = (nl) ? "div" : "span"
       return `<${tag} class='displayif' displayif="${condition}">${text}</${tag}>`;
+    }
+
+    //displaylist...
+    questText = questText.replace(/\|displayList\((.+?)\)\s*(:)?\|/g, fDisplayList);
+    function fDisplayList(all,args,nl) {
+      args = args.replaceAll(/[\"\']/g, "");
+      let tag = (nl) ? "div" : "span"
+      return `<${tag} class='displayList' data-displayList-args='${args}'>${args}</${tag}>`;
     }
 
     // replace next question  < -> > with hidden...
@@ -972,7 +980,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   });
 
   [...divElement.querySelectorAll("[data-hidden]")].forEach((x) => {
-    x.style.display="none";
+    x.style.display = "none";
   });
 
   $(".popover-dismiss").popover({
