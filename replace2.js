@@ -650,7 +650,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
 
     //displaylist...
-    questText = questText.replace(/\|displayList\((.+?)\)\s*(:)?\|/g, fDisplayList);
+    questText = questText.replace(/\|(displayList\(.+?\))\s*(:)?\|/g, fDisplayList);
     function fDisplayList(all,args,nl) {
       args = args.replaceAll('\'', "\"");
       let tag = (nl) ? "div" : "span"

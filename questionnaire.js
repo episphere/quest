@@ -145,26 +145,25 @@ export const myFunctions = {
    * 
    */
   existingValues: function (args){
-    console.log(args)
     if (!args) return ""
-    let v=args.split(/,(?!\s*$)/)
+
+    let argArray=math.parse(args).args
+
     let sep=", "
-    let hasSep = v[v.length-1].toString().startsWith("sep=")
-    if (hasSep){
-      sep = v.pop().toString().slice(4)
+    if (argArray[argArray.length-1].name=="sep"){
+      sep = argArray.pop().evaluate()
     }
     // we better have (id/value PAIRS)
-    v = v.reduce( (prev,current,index,array) => {
+    argArray = argArray.reduce( (prev,current,index,array) => {
       // skip the ids...
       if (index%2==0) return prev
 
       // see if the id exists, if so keep the value
-      if (math.evaluate(array[index-1])) prev.push( math.valueOrDefault(current,current))
+      if (array[index-1].evaluate()) prev.push( math.valueOrDefault(current.evaluate(),current.evaluate()))
       
       return prev
     },[] )
-
-    return v.join(sep)
+    return argArray.join(sep)
   },
   dateCompare: function (month1, year1, month2, year2) {
     if (
