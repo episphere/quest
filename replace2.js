@@ -211,7 +211,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
       text = text.replace(/\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g, fNum);
-      text = text.replace(/\|popup\|([^|]+)\|(?:([\S][^|]+[\S])\|)?([\S][^|]+[\S])\|/g, fPopover);
+      text = text.replace(/\|popup\|([^|]+)\|(?:([^|]+)\|)?([^|]+)\|/g, fPopover);
       text = text.replace(/\|@\|(?:([^\|\<]+[^\|]+)\|)?/g, fEmail);
       text = text.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
       text = text.replace(/\|tel\|(?:([^\|\<]+[^\|]+)\|)?/g, fPhone);
