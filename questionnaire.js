@@ -104,6 +104,10 @@ export const myFunctions = {
     values = values.map(v => v.toString())
 
     let test_values = math._value(id);
+    // catch if we have a combobox...
+    if (test_values[id]){
+      test_values = test_values[id]
+    }
     if (Array.isArray(test_values)) {
       return (test_values.some(v => values.includes(v.toString())))
     }
