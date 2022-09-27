@@ -907,7 +907,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
   }
 
-  resetTree();
+  
 
   if (questions.length > 0) {
     let buttonToRemove = questions[0].querySelector(".previous");
@@ -1005,6 +1005,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
     submitQuestionnaire(moduleParams.renderObj.store, questName);
   };
 
+  resetTree();
+  
   if (moduleParams.soccer instanceof Function)
     moduleParams.soccer();
   moduleParams.questName = questName;
