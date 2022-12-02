@@ -49,11 +49,10 @@ YearMonth.prototype.subtract = function (n) {
 export const myFunctions = {
   exists: function (x) {
     if (!x) return false;
-    let element = document.getElementById(x);
-    if (!element && x.toString().includes('.')) {
-      let array = x.toString().split('.')
-      return math.exists(`${array[0]}`)
+    if (x.toString().includes('.')) {
+      return !math.isUndefined( getKeyedValue(x) )
     }
+    let element = document.getElementById(x);
 
     // handle the array case (checkboxes)...
     if (Array.isArray(element?.value)) return !!element.value.length
@@ -78,17 +77,12 @@ export const myFunctions = {
   _value: function (x) {
     if (!math.exists(x)) return null
 
+    if (x.toString().includes('.')) {
+      return getKeyedValue(x)
+    }
+
     let element = document.getElementById(x);
     let returnValue = (element) ? element.value : moduleParams.previousResults[x]
-    // ISSUE 383... if the value is "0", we get a falsy value,
-    // which leads to an infinite loop.  if rv is null or undefined 
-    // we catch it now..., but zeros are ok...
-    if (returnValue == null) {
-      let array = x.split('.')
-      let obj = math._value(array[0])
-      returnValue = (obj) ? obj[array[1]] : null;
-      console.log("last chance to fix... ", returnValue)
-    }
     return returnValue
   },
   valueEquals: function (id, value) {
@@ -105,7 +99,7 @@ export const myFunctions = {
 
     let test_values = math._value(id);
     // catch if we have a combobox...
-    if (test_values[id]){
+    if (test_values[id]) {
       test_values = test_values[id]
     }
     if (Array.isArray(test_values)) {
@@ -148,25 +142,25 @@ export const myFunctions = {
    * @param  {args}  the args should be condition1, VAL1, condition2, VAL2, (optional)sep=,
    * 
    */
-  existingValues: function (args){
+  existingValues: function (args) {
     if (!args) return ""
 
-    let argArray=math.parse(args).args
+    let argArray = math.parse(args).args
 
-    let sep=", "
-    if (argArray[argArray.length-1].name=="sep"){
+    let sep = ", "
+    if (argArray[argArray.length - 1].name == "sep") {
       sep = argArray.pop().evaluate()
     }
     // we better have (id/value PAIRS)
-    argArray = argArray.reduce( (prev,current,index,array) => {
+    argArray = argArray.reduce((prev, current, index, array) => {
       // skip the ids...
-      if (index%2==0) return prev
+      if (index % 2 == 0) return prev
 
       // see if the id exists, if so keep the value
-      if (array[index-1].evaluate()) prev.push( math.valueOrDefault(current.evaluate(),current.evaluate()))
-      
+      if (array[index - 1].evaluate()) prev.push(math.valueOrDefault(current.evaluate(), current.evaluate()))
+
       return prev
-    },[] )
+    }, [])
     return argArray.join(sep)
   },
   dateCompare: function (month1, year1, month2, year2) {
@@ -208,6 +202,17 @@ export const myFunctions = {
     }
     if (v == null) v = defaultValue[defaultValue.length - 1]
     return (v)
+  },
+  selectionCount: function(x){
+    if (!math.exists(x)) return 0
+    let v = math._value(x)
+
+    // if we want object to return the number of keys
+    //if (Array.isArray(v)) return v.length;
+    //if (value !== null && typeof value === 'object') return Object.keys(value).length;
+    //return 1
+    // otherwise:
+    return Array.isArray(v)?v.length:1
   },
   // For a question in a loop, does the value of the response
   // for ANY ITERATION equal a value from a given set. 
@@ -256,6 +261,30 @@ export const myFunctions = {
   YearMonth: YearMonth,
 }
 
+function getKeyedValue(x) {
+  let array = x.toString().split('.')
+  // convert null or undefined to undefined...
+  let obj = math._value(`${array.splice(0, 1)}`) ?? undefined
+  return array.reduce((prev, curr) => {
+    if ( math.isUndefined(prev) ) return prev
+    return prev[curr] ?? undefined
+  }, obj)
+
+  /*
+  if (math.exists(`${array[0]}`)) {
+    // we need to get the object and see
+    // if the object has the appropriate keys.
+    let obj = math._value(`${array.splice(0, 1)}`)
+    let tst = array.reduce((prev, curr) => {
+      if (math.isUndefined(prev)) return prev
+      return prev[curr]
+    }, obj)
+    tst
+  } else {
+    return false
+  }
+  */
+}
 
 window.addEventListener("load", (event) => {
   // Tell mathjs about the YearMonth class
@@ -561,7 +590,8 @@ export function radioAndCheckboxUpdate(inputElement) {
 function clearSelection(inputElement) {
   if (!inputElement.form || !inputElement.name) return;
   let sameName = [
-    ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}]`),
+//    ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}]`),
+      ...inputElement.form.querySelectorAll(`input:not([type="submit"])`),
   ].filter((x) => x.type != "hidden");
 
 
@@ -816,8 +846,8 @@ async function nextPage(norp, retrieve, store, rootElement) {
 
   let questionElement = norp.form;
   questionElement.querySelectorAll("[data-hidden]").forEach((x) => {
-    x.value="true"
-    setFormValue(questionElement,x.value,x.id)
+    x.value = "true"
+    setFormValue(questionElement, x.value, x.id)
   });
 
   if (checkValid(questionElement) == false) {
@@ -1055,7 +1085,7 @@ export function displayQuestion(nextElement) {
   });
   nextElement.querySelectorAll("[data-displaylist-args]").forEach(element => {
     console.log(element)
-    element.innerHTML=math.existingValues(element.dataset.displaylistArgs)
+    element.innerHTML = math.existingValues(element.dataset.displaylistArgs)
   })
 
   //move to the next question...
