@@ -558,7 +558,7 @@ export function radioAndCheckboxClearTextInput(inputElement) {
   responses.forEach(resp => {
     let text_box = resp.querySelector("input:not([type=radio]):not([type=checkbox])")
     let checkbox = resp.querySelector("input[type=radio],input[type=checkbox]")
-    text_box.disabled = !checkbox.checked
+    //text_box.disabled = !checkbox.checked
     if (!checkbox.checked) {
       text_box.value = ""
       delete inputElement.form.value[text_box.id]
