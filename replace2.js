@@ -119,7 +119,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //       otherwise it would match the first and last square bracket
 
   let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\]]+))?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
     "g"
   );
 
@@ -147,6 +147,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     //handle options for question
     questOpts = questOpts ? questOpts : "";
+    questOpts = questOpts.replaceAll(/(min|max)-count\s*=\s*(\d+)/g,'data-$1-count=$2')
 
     // handle displayif on the question...
     // if questArgs is undefined set it to blank.
@@ -516,9 +517,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (optionObj.hasOwnProperty("max")) {
         options = options + ` data-max="${optionObj.max}"`
       }
-      if (radioCheckboxAndInput) {
-        options = options + " disabled ";
-      }
       //onkeypress forces whole numbers
       return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options} ></input>`;
     }
@@ -539,14 +537,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     function fText(fullmatch, value1, opts, value2) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
-
-      // this sets all text elements disabled.  however, if you
-      // have a text element in a RB/CB question that is not part of
-      // a RB/CB it is always disabled
-      //if (radioCheckboxAndInput) {
-      if ((value1?.includes("<input type='radio'")) || (value1?.includes("<input type='checkbox'"))) {
-        options = options + " disabled ";
-      }
 
       // if value1 or 2 contains an apostrophe, convert it to
       // and html entity.  This may need to be preformed in other parts
@@ -575,9 +565,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         elId = z1;
       }
       let options = "";
-      if (radioCheckboxAndInput) {
-        options = options + " disabled ";
-      }
+
       return `<textarea id='${elId}' ${options} style="resize:auto;"></textarea>`;
     }
 
@@ -983,15 +971,32 @@ transform.render = async (obj, divId, previousResults = {}) => {
     x.style.display = "none";
   });
 
+  // handle text in combobox label...
+  [...document.querySelectorAll("label input,label textarea")].forEach(inputElement => {
+      let radioCB = document.getElementById(inputElement.closest('label').htmlFor) 
+      let callback = (event)=>{
+          let nchar = event.target.value.length
+          radioCB.checked = nchar>0;
+      }
+      inputElement.addEventListener("keyup",callback);
+      inputElement.addEventListener("input",callback);
+      radioCB.addEventListener("click",(event=>{
+          if (!radioCB.checked){
+              inputElement.dataset.lastValue=inputElement.value
+              inputElement.value=''
+          }else if ('lastValue' in inputElement.dataset){
+              inputElement.value=inputElement.dataset.lastValue
+          }
+          textboxinput(inputElement)
+      }))
+  })
+
+
   $(".popover-dismiss").popover({
     trigger: "focus",
   });
 
-  // [...document.querySelectorAll(".response")].map((elm) => {
-  //   if (elm.nextSibling.tagName == "BR") {
-  //     elm.nextSibling.remove();
-  //   }
-  // });
+
 
   document.getElementById("submitModalButton").onclick = () => {
     let lastBackButton = document.getElementById('lastBackButton');

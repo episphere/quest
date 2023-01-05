@@ -40,7 +40,7 @@ export function clearValidationError(inputElement) {
         errDiv.parentNode.removeChild(errDiv)
 
         inputElement.classList.remove("invalid");
-        inputElement.form.classList.remove("invalid");
+        inputElement.closest("form").classList.remove("invalid");
     }
 }
 export function validationError(inputElement, errorMsg) {
@@ -69,7 +69,7 @@ export function validationError(inputElement, errorMsg) {
 
     errSpan.innerText = errorMsg
     inputElement.classList.add("invalid");
-    inputElement.form.classList.add("invalid");
+    inputElement.closest("form").classList.add("invalid");
 }
 
 function validate_number(inputElement) {
@@ -208,6 +208,22 @@ function validate_text(inputElement) {
 
 function validate_count(inputElement){
     console.log("in validate_count ... ")
+    let hasMin = 'minCount' in inputElement.form?.dataset;
+    let hasMax = 'maxCount' in inputElement.form?.dataset;
     // Only complain if true
-    if (inputElement.form?.dataset.maxCnt)
+    if (hasMin || hasMax){
+        let minCount = inputElement.form.dataset.minCount
+        let maxCount = inputElement.form.dataset.maxCount
+        let selectedCount = inputElement.form.querySelectorAll(`[name=${inputElement.name}]:checked`).length
+        let lastElement = inputElement.form.querySelectorAll(`[name=${inputElement.name}]`)
+        lastElement=lastElement.item(lastElement.length-1).closest(".response")
+        if (hasMin && selectedCount<minCount){
+            validationError(lastElement, `You have selected ${selectedCount} items.  Please select at least ${minCount}.`)
+        } else if (hasMax && selectedCount>maxCount){
+            validationError(lastElement, `You have selected ${selectedCount} items.  Please select no more than ${maxCount}.`)
+        } else {
+            clearValidationError(lastElement)
+        }
+
+    }
 }
