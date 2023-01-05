@@ -535,6 +535,7 @@ export function rbAndCbClick(event) {
   // when we programatically click, the input element is null.
   // however we call radioAndCheckboxUpdate directly..
   if (inputElement) {
+    validateInput(inputElement)
     radioAndCheckboxUpdate(inputElement);
     radioAndCheckboxClearTextInput(inputElement);
   }

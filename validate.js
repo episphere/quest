@@ -8,7 +8,8 @@ export function validateInput(inputElement) {
         tel: validate_telephone,
         date: validate_date,
         text: validate_text,
-        month: valiate_month
+        month: validate_month,
+        checkbox: validate_count
     }
 
     // can't use inputElement.type ==> firefox doesn't accept input.type='month'
@@ -95,7 +96,7 @@ function validate_number(inputElement) {
 
 }
 
-function valiate_month(inputElement) {
+function validate_month(inputElement) {
     console.log("in validate_month", inputElement)
 
     // because type="month" is not supported on firefox be careful with the input...
@@ -203,4 +204,10 @@ function validate_text(inputElement) {
         }
     }
 
+}
+
+function validate_count(inputElement){
+    console.log("in validate_count ... ")
+    // Only complain if true
+    if (inputElement.form?.dataset.maxCnt)
 }
