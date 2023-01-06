@@ -119,7 +119,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //       otherwise it would match the first and last square bracket
 
   let regEx = new RegExp(
-    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\]]+))?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
+    "\\[([A-Z_][A-Z0-9_#]*[\\?\\!]?)(?:\\|([^,\\|\\]]+)\\|?)?(,.*?)?\\](.*?)(?=$|\\[[_A-Z]|<form)",
     "g"
   );
 
