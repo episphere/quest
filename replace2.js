@@ -977,10 +977,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let callback = (event)=>{
           let nchar = event.target.value.length
           radioCB.checked = nchar>0;
+          inputElement.dataset.lastValue=inputElement.value
       }
       inputElement.addEventListener("keyup",callback);
       inputElement.addEventListener("input",callback);
       radioCB.addEventListener("click",(event=>{
+          console.log("click")
           if (!radioCB.checked){
               inputElement.dataset.lastValue=inputElement.value
               inputElement.value=''

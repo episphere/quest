@@ -510,17 +510,19 @@ export function textboxinput(inputElement, validate = true) {
     }
   }
 
+
+  // THIS IS CHECKED VIA A EVENT LISTENER...  No need to check now..
   // what is going on here...
   // we are checking if we should click the checkbox/radio button..
   // first see if the parent is a div and the first child is a checkbox...
-  if (
-    inputElement.parentElement &&
-    inputElement.parentElement.tagName == "LABEL"
-  ) {
-    let rbCb = inputElement.parentElement.previousSibling;
-    rbCb.checked = inputElement.value.length > 0;
-    radioAndCheckboxUpdate(rbCb);
-  }
+  // if (
+  //   inputElement.parentElement &&
+  //   inputElement.parentElement.tagName == "LABEL"
+  // ) {
+  //   let rbCb = inputElement.parentElement.previousSibling;
+  //   rbCb.checked = inputElement.value.length > 0;
+  //   radioAndCheckboxUpdate(rbCb);
+  // }
 
   clearSelection(inputElement);
   let value = handleXOR(inputElement);
