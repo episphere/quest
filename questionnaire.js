@@ -212,6 +212,20 @@ export const myFunctions = {
     //if (value !== null && typeof value === 'object') return Object.keys(value).length;
     //return 1
     // otherwise:
+
+
+    // BUG FIX:  if the data-reset ("none of the above") is selected
+    // return zero not 1.
+    // NOTE: if selection count is called on a question with two or more multiple choice
+    //       questions, we CANNOT handle it this was.  We need to make sure we search by the
+    //       names.  Each name should be an array.  Only check for length 1 because
+    //       none of the above clears all the other selections, so only 1 is a viable answer.
+    if (Array.isArray(v) && v.length==1){
+      if ("reset" in document.getElementById(x).querySelector('input[type="checkbox"]:checked').dataset) {
+        return 0
+      }
+    }
+
     return Array.isArray(v)?v.length:1
   },
   // For a question in a loop, does the value of the response
