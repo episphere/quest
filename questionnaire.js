@@ -210,16 +210,13 @@ export const myFunctions = {
     if (!math.exists(questionId)) return 0
     let v = math._value(questionId)
 
-
-
-
     // BUG FIX:  if the data-reset ("none of the above") is selected
-    // return zero not 1.
     let questionElement = document.getElementById(questionId)
     if ( Array.isArray(v)  || Array.isArray(v[name]) ) {
       v = Array.isArray(v)?v:v[name]
-
-      return questionElement.querySelector(`input[type="checkbox"][name="${name}"]:checked`).dataset["reset"]?0:v.length
+      // there is a chance that nothing is selected (v.length==0) in that case you will the 
+      // selector will find nothing.  Use the "?" because you cannot find the dataset on a null object.  
+      return questionElement.querySelector(`input[type="checkbox"][name="${name}"]:checked`)?.dataset["reset"]?0:v.length
     }
 
     // if we want object to return the number of keys
