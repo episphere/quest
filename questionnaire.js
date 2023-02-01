@@ -204,29 +204,28 @@ export const myFunctions = {
     return (v)
   },
   selectionCount: function(x){
-    if (!math.exists(x)) return 0
-    let v = math._value(x)
+    let [questionId,name] = x.split(':')
+    name = name ?? questionId
 
-    // if we want object to return the number of keys
-    //if (Array.isArray(v)) return v.length;
-    //if (value !== null && typeof value === 'object') return Object.keys(value).length;
-    //return 1
-    // otherwise:
+    if (!math.exists(questionId)) return 0
+    let v = math._value(questionId)
+
+
 
 
     // BUG FIX:  if the data-reset ("none of the above") is selected
     // return zero not 1.
-    // NOTE: if selection count is called on a question with two or more multiple choice
-    //       questions, we CANNOT handle it this was.  We need to make sure we search by the
-    //       names.  Each name should be an array.  Only check for length 1 because
-    //       none of the above clears all the other selections, so only 1 is a viable answer.
-    if (Array.isArray(v) && v.length==1){
-      if ("reset" in document.getElementById(x).querySelector('input[type="checkbox"]:checked').dataset) {
-        return 0
-      }
+    let questionElement = document.getElementById(questionId)
+    if ( Array.isArray(v)  || Array.isArray(v[name]) ) {
+      v = Array.isArray(v)?v:v[name]
+
+      return questionElement.querySelector(`input[type="checkbox"][name="${name}"]:checked`).dataset["reset"]?0:v.length
     }
 
-    return Array.isArray(v)?v.length:1
+    // if we want object to return the number of keys
+    // Object.keys(v).length
+    // otherwise:
+    return 0;
   },
   // For a question in a loop, does the value of the response
   // for ANY ITERATION equal a value from a given set. 
@@ -607,13 +606,10 @@ export function radioAndCheckboxUpdate(inputElement) {
 function clearSelection(inputElement) {
   if (!inputElement.form || !inputElement.name) return;
   let sameName = [
+    ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}],input[name = ${inputElement.name}] + label > input`)
 //    ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}]`),
-      ...inputElement.form.querySelectorAll(`input:not([type="submit"])`),
+//    ...inputElement.form.querySelectorAll(`input:not([type="submit"])`),
   ].filter((x) => x.type != "hidden");
-
-
-  /*   if (inputElement.value == 99 || inputElement.value == 88 || inputElement.value == 77
-      || inputElement.value == 746038746 || inputElement.value == 178420302) { */
 
   /* 
   if this is a "none of the above", go through all elements with the same name
