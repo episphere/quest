@@ -1016,6 +1016,11 @@ export function displayQuestion(nextElement) {
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? null : "none";
     });
+  Array.from(nextElement.querySelectorAll("span[data-encoded-expression]"))
+  .map(elm=>{
+      let f = evaluateCondition(decodeURIComponent(elm.dataset.encodedExpression))
+      elm.innerText=f;
+  })
 
   //Sets the brs after non-displays to not show as well
   nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {

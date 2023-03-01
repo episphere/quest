@@ -208,6 +208,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
       return `<span forId='${forId}' optional='${optional}'>${forId}</span>`;
     }
+    // replace {#id} with span tag
+    questText=questText.replace(/\{\#([^}#]+)\}/g,fHash)
+    function fHash(fullmatch,expr){
+      return `<span data-encoded-expression=${encodeURIComponent(expr)}>${expr}</span>`
+    }
+
+
     //adding displayif with nested questions. nested display if uses !| to |!
     questText = questText.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
     function fDisplayIf(containsGroup, condition, text) {
