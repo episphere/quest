@@ -11,9 +11,9 @@ document.body.appendChild(script);
 
 
 
-// create a class YearMonth for use in mathjs to handle
+// create a class YearMonth custom datatype for use in mathjs to handle
 // the month class...
-function YearMonth(str) {
+export function YearMonth(str) {
   if (str?.isYearMonth) {
     this.month = str.month
     this.year = str.year
@@ -35,12 +35,20 @@ YearMonth.prototype.add = function (n) {
   let mon = (m % 12) || 12
   return new YearMonth(`${yr}-${mon}`).toString()
 }
+
+// Note: YearMonth - n = String
 YearMonth.prototype.subtract = function (n) {
   let m = parseInt(this.month) - n
   let yr = parseInt(this.year) - ((m > 0) ? 0 : 1);
   let mon = ((m + 12) % 12) || 12
   return new YearMonth(`${yr}-${mon}`).toString()
 }
+
+// Note: YearMonth - YearMonth = integer
+YearMonth.prototype.subMonth = function(ym){
+  return (12*(parseInt(this.year)-parseInt(ym.year)) + parseInt(this.month)-parseInt(ym.month));
+}
+
 
 // Note: these function make explicit
 // use of the fact that the DOM stores information.
@@ -317,6 +325,9 @@ window.addEventListener("load", (event) => {
   const subtract = math.typed('subtract', {
     'YearMonth, number': function (dte, m) {
       return dte.subtract(m)
+    },
+    'YearMonth, YearMonth': function(dte2,dte1){
+      return dte2.subMonth(dte1)
     }
   })
 
