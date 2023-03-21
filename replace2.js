@@ -934,6 +934,14 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
   });
 
+  // Firefox does not alway GRAB focus when the arrows are clicked.
+  // If a changeEvent fires, grab focus.
+  let numberInput = divElement.querySelectorAll("input[type='number']").forEach( (inputElement)=> {
+    inputElement.addEventListener("change",(event)=>{
+      if (event.target!=document.activeElement) event.target.focus()      
+    });
+  })
+
   let textInputs = [
     ...divElement.querySelectorAll(
       "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='month'],input[type='time'],textarea,select"
