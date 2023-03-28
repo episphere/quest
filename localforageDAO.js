@@ -8,7 +8,7 @@ export async function restoreResults(results) {
   Object.keys(results).forEach((qid) => {
     function handleString(questionElement, id, value) {
       // check if we have a radiobutton/checkbox...
-      let element = questionElement.querySelector(`[name='${id}'][value='${value.replace("'", "\\'")}']`)
+      let element = questionElement.querySelector(`[name='${id}'][value='${value.replaceAll("'", "\\'")}']`)
       if (element) {
         element.checked = true
         radioAndCheckboxUpdate(element)
