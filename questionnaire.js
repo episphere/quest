@@ -49,6 +49,9 @@ YearMonth.prototype.subMonth = function(ym){
   return (12*(parseInt(this.year)-parseInt(ym.year)) + parseInt(this.month)-parseInt(ym.month));
 }
 
+// This works in all cases except x=new String(),
+//  which you should never do anyway...
+let isString = (value) => typeof value == 'string'
 
 // Note: these function make explicit
 // use of the fact that the DOM stores information.
@@ -170,6 +173,18 @@ export const myFunctions = {
       return prev
     }, [])
     return argArray.join(sep)
+  },
+  // if the value of id is a string
+  // return the string length, otherwise
+  // return -1
+  valueLength: function(id){
+    // if id is not passed in return FALSE
+    if (math.doesNotExist(id)) return false;
+    let element_value = math._value(id);
+    if (isString(element_value)){
+      return element_value.length
+    }
+    return -1;
   },
   dateCompare: function (month1, year1, month2, year2) {
     if (
