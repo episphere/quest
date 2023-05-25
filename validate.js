@@ -193,6 +193,8 @@ function validate_text(inputElement) {
         } else {
             clearValidationError(inputElement)
         }
+        // if you are a SSN, you cannot be a 4-digit SSN and the length is set...
+        return
     }
 
     // validate a 4 digit SSN
@@ -202,8 +204,43 @@ function validate_text(inputElement) {
         } else {
             clearValidationError(inputElement)
         }
+        return
     }
 
+    // check string length of text response
+    if ("minlen" in inputElement.dataset || "maxlen" in inputElement.dataset) {
+        let textLen = inputElement.value.length;
+        // the user has not entered anything.  Dont bark yet...
+        if (textLen == 0){
+            clearValidationError()
+            return
+        }
+
+        let hasMin = "minlen" in inputElement.dataset
+        let hasMax = "maxlen" in inputElement.dataset
+        let minLen = inputElement.dataset.minlen ?? -1
+        let maxLen = inputElement.dataset.maxlen ?? -2
+        let valueLen = inputElement.value.length
+
+        if (minLen == maxLen && valueLen != minLen){
+            let long_short = (valueLen < minLen)?"short":"long"
+            validationError(inputElement, `Entered text is too ${long_short} (should have ${minLen} characters)`)
+            return
+        }
+
+        if (hasMin && valueLen<minLen){
+            validationError(inputElement, `Entered text is too short (should have at least ${minLen} characters)`)
+            // if you are below the min length, you cannot be above the max length, so return...
+            return
+        }
+
+        if (hasMax && valueLen>maxLen){
+            validationError(inputElement, `Entered text is too long (should have at most ${maxLen} characters)`)
+            return
+        }
+
+        clearValidationError()
+    }
 }
 
 function validate_count(inputElement){

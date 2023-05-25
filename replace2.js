@@ -544,7 +544,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     function fText(fullmatch, value1, opts, value2) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
-
+      options = options.replaceAll(/(min|max)len\s*=\s*(\d+)/g,'data-$1len=$2')
       // if value1 or 2 contains an apostrophe, convert it to
       // and html entity.  This may need to be preformed in other parts
       // the code. As it turns out.  This causes a problem.  Only change the values in the aria-label.
