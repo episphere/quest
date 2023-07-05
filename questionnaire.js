@@ -1120,12 +1120,14 @@ export function displayQuestion(nextElement) {
     exchangeValue(element, "data-max", "data-max");
   });
 
-  // rewrite the (min|max)-date with a calulated value
-  [...nextElement.querySelectorAll("input[data-min-date]")].forEach((element) => {
-    exchangeValue(element, "min", "data-min-date");
+  // rewrite the data-(min|max)-date-uneval with a calulated value
+  [...nextElement.querySelectorAll("input[data-min-date-uneval]")].forEach((element) => {
+    exchangeValue(element, "data-min-date-uneval", "data-min-date");
+    exchangeValue(element, "data-min-date-uneval", "min");
   });
-  [...nextElement.querySelectorAll("input[data-min-date]")].forEach((element) => {
-    exchangeValue(element, "min", "data-min-date");
+  [...nextElement.querySelectorAll("input[data-max-date-uneval]")].forEach((element) => {
+    exchangeValue(element, "data-max-date-uneval", "data-max-date");
+    exchangeValue(element, "data-max-date-uneval", "max");
   });
   nextElement.querySelectorAll("[data-displaylist-args]").forEach(element => {
     console.log(element)

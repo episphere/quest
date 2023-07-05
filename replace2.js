@@ -280,14 +280,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (optionObj.hasOwnProperty("value")) {
         optionObj.value = decodeURIComponent(optionObj.value)
       }
+
       options = reduceObj(optionObj)
       // not sure why we need a data-min-date but allow it to be evaluateable.
       //      if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min)) ) {
       if (optionObj.hasOwnProperty("min")) {
-        options = options + ` data-min-date=${optionObj.min}`
+        options = options + ` data-min-date-uneval=${optionObj.min}`
       }
       if (optionObj.hasOwnProperty("max")) {
-        options = options + ` data-max-date=${optionObj.max}`
+        options = options + `  data-max-date-uneval=${optionObj.max}`
       }
       return `<input type='${type}' ${options}></input>`;
     }
@@ -311,7 +312,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 
     // replace |SSNsm| with SSN input
-    questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
+    questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?data-min-uneval=${optionObj.min}/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
       return `<input type='text' ${options} class="SSNsm" inputmode="numeric" maxlength="4" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
