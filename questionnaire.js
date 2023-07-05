@@ -103,6 +103,9 @@ export const myFunctions = {
     // if the element does not exist return FALSE
     return (element_value == value)
   },
+  equals: function(id, value){
+    return math.valueEquals(id,value)
+  },
   valueIsOneOf: function (id, ...values) {
     if (myFunctions.doesNotExist(id)) return false;
     // compare as strings so "1" == "1"
