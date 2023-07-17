@@ -522,8 +522,6 @@ export function textboxinput(inputElement, validate = true) {
   //   );
   ///////////////////////////////////////////////////////////////////////
   let evalBool = "";
-  console.log('lsjdbvSDKVBSvlkdbv')
-  console.log(inputElement.value)
   if (inputElement.getAttribute("modalif") && inputElement.value != "") {
     evalBool = math.evaluate(
       decodeURIComponent(inputElement.getAttribute("modalif").replace(/value/, inputElement.value))
@@ -562,6 +560,12 @@ export function textboxinput(inputElement, validate = true) {
   //   rbCb.checked = inputElement.value.length > 0;
   //   radioAndCheckboxUpdate(rbCb);
   // }
+
+  // BUG 423: radio button not changing value
+  let radioWithText = inputElement.closest(".response").querySelector("input[type='radio']")
+  if (radioWithText ){
+    radioAndCheckboxUpdate(radioWithText)
+  }
 
   clearSelection(inputElement);
   let value = handleXOR(inputElement);
