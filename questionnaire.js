@@ -485,10 +485,12 @@ function exchangeValue(element, attrName, newAttrName) {
   let attr = element.getAttribute(attrName)?.trim();
 
   // !!! DONT EVALUATE 2020-01 to 2019
-  // may have to do this for dates too.
+  // !!! DONT EVALUATE 2023-07-19-to 1997
+  // may have to do this for dates too.  <- yeah, had to!
   // Firefox thinks <input type="month"> has type="text"...
   // so element.type return "text"
-  if (element.getAttribute("type") == "month" && /^\d{4}-\d{1,2}$/.test(attr)) {
+  if ( (element.getAttribute("type") == "month" && /^\d{4}-\d{1,2}$/.test(attr)) || 
+       (element.getAttribute("type") == "date" && /^\d{4}-\d{1,2}-\d{1,2}$/.test(attr)) ){
     element.setAttribute(newAttrName, attr)
     return element;
   }
