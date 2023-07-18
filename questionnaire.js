@@ -562,7 +562,7 @@ export function textboxinput(inputElement, validate = true) {
   // }
 
   // BUG 423: radio button not changing value
-  let radioWithText = inputElement.closest(".response").querySelector("input[type='radio']")
+  let radioWithText = inputElement.closest(".response")?.querySelector("input[type='radio']")
   if (radioWithText ){
     radioAndCheckboxUpdate(radioWithText)
   }
