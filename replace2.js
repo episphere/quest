@@ -992,7 +992,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let radioCB = document.getElementById(inputElement.closest('label').htmlFor) 
       let callback = (event)=>{
           let nchar = event.target.value.length
-          radioCB.checked = nchar>0;
+          //radioCB.checked = nchar>0;
+          // select if typed in box, DONT UNSELECT
+          if (nchar > 0) radioCB.checked = true
           inputElement.dataset.lastValue=inputElement.value
       }
       inputElement.addEventListener("keyup",callback);
