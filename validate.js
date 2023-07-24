@@ -188,8 +188,8 @@ function validate_text(inputElement) {
 
     // validate a SSN...
     if (inputElement.classList.contains("SSN")) {
-        if (!inputElement.value.match("[0-9]{3}-?[0-9]{2}-?[0-9]{4}")) {
-            validationError(inputElement, "Please enter a Social Security Number in this format: 999-99-9999.")
+        if (!/^(?!9|000|666)(\d)\d{2}-?(?!00)\d{2}-?(?!0000)\d{4}(?<!\1{3}-?\1{2}-?\1{4}?)/.test(inputElement.value)) {
+            validationError(inputElement, "Please enter a valid Social Security Number in this format: 999-99-9999.")
         } else {
             clearValidationError(inputElement)
         }
