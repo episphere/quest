@@ -312,7 +312,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 
     // replace |SSNsm| with SSN input
-    questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?data-min-uneval=${optionObj.min}/g, fSSNsm);
+    questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
       return `<input type='text' ${options} class="SSNsm" inputmode="numeric" maxlength="4" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
