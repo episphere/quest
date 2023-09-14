@@ -199,7 +199,7 @@ function validate_text(inputElement) {
 
     // validate a 4 digit SSN
     if (inputElement.classList.contains("SSNsm")) {
-        if (!inputElement.value.match("[0-9]{4}")) {
+        if (!/^(?!0000)\d{4}/.test(inputElement.value)) {
             validationError(inputElement, "Please enter the last four digits of a Social Security Number in this format: 9999.")
         } else {
             clearValidationError(inputElement)
