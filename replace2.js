@@ -107,6 +107,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     }
   } else {
     questName = "Questionnaire";
+    moduleParams.questName = questName;
   }
   // first let's deal with breaking up questions..
   // a question starts with the [ID1] regex pattern
