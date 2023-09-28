@@ -1003,7 +1003,7 @@ export async function submitQuestionnaire(store, questName) {
   }
 }
 function exitLoop(nextElement) {
-  if (nextElement.hasAttribute("firstquestion")) {
+  if (nextElement?.hasAttribute("firstquestion")) {
     let loopMax = parseInt(document.getElementById(nextElement.getAttribute("loopmax"))
       .value);
     let firstQuestion = parseInt(nextElement.getAttribute("firstquestion"));
