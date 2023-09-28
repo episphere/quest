@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mocha Tests</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/mocha/7.1.2/mocha.css"
+      integrity="sha256-a4j/9d0TJl1bbNF1UC8zUh8pnur9RLQIyyaGAVtj8fM="
+      crossorigin="anonymous"
+    />
+    <script src="../replace2.js" type="module"></script>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.js"
+      integrity="sha256-3NP4l3uenVxIZ0vLGnUjjObImjaJltaSzAHaGUr+yDA="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <div id="questdiv"></div>
+
+    <script class="mocha-init">
+      mocha.setup("bdd");
+    </script>
+
+    <script type="module" src="render.test.js"></script>
+    <script type="module">
+      //mocha.checkLeaks();
+      mocha.run();
+    </script>
+  </body>
+</html>
