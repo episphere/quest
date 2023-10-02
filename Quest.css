@@ -37,7 +37,12 @@ body {
 
 #rendering {
   width: 100%;
-  background-color: re;
+}
+
+.question {
+  padding:5px;
+  border: thin solid black;
+  margin: 5px;
 }
 
 label {
