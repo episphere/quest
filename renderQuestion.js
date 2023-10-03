@@ -1,19 +1,32 @@
-import { displayQuestion, moduleParams, questionQueue } from "./questionnaire.js";
+import { displayQuestion, moduleParams, nextClick,previousClicked,questionQueue,submitQuestionnaire } from "./questionnaire.js";
 
 
+const buttons = {
+    BACK : "BACK",
+    RESET : "RESET ANSWER",
+    NEXT : "NEXT",
+    SUBMIT : "SUBMIT SURVEY"
+}
 export function renderQuestion(event) {
     let questionObject = {
-        questionId: event.detail[1],
-        editType: event.detail[2],
-        qOpts: event.detail[3],
-        content: event.detail[4],
+        questionId: event.detail.question[1],
+        editType: event.detail.question[2],
+        qOpts: event.detail.question[3],
+        content: event.detail.question[4],
+        index: event.detail.index,
+        length: event.detail.length
     }
 
     let formElement = createQuestionForm(questionObject)
+    questionObject.formElement = formElement
+    // handle soft/hard edits
+    if (questionObject.editType){
+        formElement.dataset.target=(questionObject.editType=="!")?"#hardModal":"#softModal"
+    }
 
     // add a header div -- remove later...
     let headerElement = document.createElement("div")
-    headerElement.innerText = questionObject.questionId
+    headerElement.innerText = `${questionObject.index}: ${questionObject.questionId}`
     headerElement.classList.add("text-monospace", "border-bottom")
     formElement.insertAdjacentElement("beforeend", headerElement)
 
@@ -26,14 +39,18 @@ export function renderQuestion(event) {
     // add a div for the buttons...
     let buttonDiv = document.createElement("div")
     buttonDiv.classList.add("row", "justify-content-between", "mx-3", "px-2")
-    let backButton = createButton("BACK")
-    backButton.classList.add("col")
-    let resetButton = createButton("RESET ANSWER")
-    resetButton.classList.add("col")
-    let nextButton = createButton("NEXT")
-    nextButton.classList.add("col")
+
+    let backButton = createButton(buttons.BACK,questionObject)
+    let middleButton = ""
+    if (questionObject.questionId != "END"){
+        middleButton = createButton(buttons.RESET,questionObject)
+    }  else {
+        middleButton = createButton(buttons.SUBMIT,questionObject)
+    }
+    let nextButton = createButton(buttons.NEXT,questionObject)
+    
     buttonDiv.insertAdjacentElement("beforeend", backButton)
-    buttonDiv.insertAdjacentElement("beforeend", resetButton)
+    buttonDiv.insertAdjacentElement("beforeend", middleButton)
     buttonDiv.insertAdjacentElement("beforeend", nextButton)
     formElement.insertAdjacentElement("beforeend", buttonDiv)
 
@@ -42,7 +59,10 @@ export function renderQuestion(event) {
     if (questionQueue.isEmpty()) {
         questionQueue.add(questionObject.questionId)
         questionQueue.next();
+    } 
+    if (questionQueue.currentNode.value == questionObject.questionId){
         setActive(questionObject.questionId)
+        
     }
 }
 
@@ -173,7 +193,29 @@ let reduceObj = (obj) => {
     }, "").trim()
 }
 
-
+function buttonEventListener(event) {
+    event.preventDefault()
+    if (!event.target.form.classList.contains("active")){
+        console.warn(" -- not active question -- ")
+        return
+    }
+    switch (event.target.value) {
+        case buttons.BACK:
+            previousClicked(event.target, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, moduleParams.rootElement)
+            break;
+        case buttons.NEXT:
+            nextClick(event.target, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, moduleParams.rootElement);
+            break;
+        case buttons.RESET:
+            event.target.form.reset()
+            break;
+        case buttons.SUBMIT:
+            submitQuestionnaire(moduleParams.renderObj.store, moduleParams.questName)
+            break;
+        default:
+            console.warn("unhandled button event", event.target)
+    }
+}
 
 
 function createQuestionForm(questionObject) {
@@ -188,26 +230,44 @@ function createQuestionForm(questionObject) {
 
     return formElement;
 }
-function createButton(value) {
-    let btnDiv = document.createElement("div")
-    btnDiv.classList.add("col")
+function createButton(value, question) {
 
+
+    if ((value == buttons.BACK && question.index == 0) ||
+        (value == buttons.NEXT && question.index == (question.length - 1)) ||
+//        (value == "RESET ANSWER" && !question.formElement.querySelector("input[type='radio']"))
+        (value == buttons.RESET && !question.formElement.querySelector("input")) 
+    ) {
+        let btnDiv = document.createElement("div")
+        btnDiv.classList.add("col")
+        return btnDiv
+    }
     let btn = document.createElement("input")
-    btn.classList.add("mx-3")
+    btn.classList.add("mx-3", "col")
     btn.type = "button"
     btn.value = value
-
+    btn.addEventListener("click", buttonEventListener)
     return btn
-}
 
+
+}
 
 // convert markdown text => html text
 function convertMarkdownToHTML(questionObject) {
     let content = questionObject.content
-    let questID = questionObject.id
+    let questID = questionObject.questionId
     let questOpts = questionObject.qOpts
 
     content = content.replace(/(?:\r\n|\r|\n)/g, '<br>');
+
+    // replace [] with default values 1,2,3...
+    let counter = 1;
+    content = content.replace(/\[\]/g, function (x) {
+      let t = "[" + counter.toString() + "]";
+      counter = counter + 1;
+      return t;
+    });
+
     //replace |popup|buttonText|Title|text| with a popover
     content = content.replace(
         /\|popup\|([^|]+)\|(?:([^|]+)\|)?([^|]+)\|/g, fPopover);
@@ -235,6 +295,57 @@ function convertMarkdownToHTML(questionObject) {
     function fHash(fullmatch, expr) {
         return `<span data-encoded-expression=${encodeURIComponent(expr)}>${expr}</span>`
     }
+
+    // Not sure why this is here??
+    //adding displayif with nested questions. nested display if uses !| to |!
+    content = content.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
+    function fDisplayIf(containsGroup, condition, text) {
+      text = text.replace(/\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g, fNum);
+      text = text.replace(/\|popup\|([^|]+)\|(?:([^|]+)\|)?([^|]+)\|/g, fPopover);
+      text = text.replace(/\|@\|(?:([^\|\<]+[^\|]+)\|)?/g, fEmail);
+      text = text.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
+      text = text.replace(/\|tel\|(?:([^\|\<]+[^\|]+)\|)?/g, fPhone);
+      text = text.replace(/\|SSN\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSN);
+      text = text.replace(/\|state\|(?:([^\|\<]+[^\|]+)\|)?/g, fState);
+      text = text.replace(/\((\d*)(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+\))?)?\)(.*?)(?=(?:\(\d)|\n|<br>|$)/g, fRadio);
+      text = text.replace(/\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif=.+?\))?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g, fCheck);
+      text = text.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
+      text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*?)/g, fText);
+      text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
+      text = text.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
+      text = text.replace(
+        /#YNP/g,
+        `(1) Yes
+         (0) No
+         (99) Prefer not to answer`
+      );
+      text = questText.replace(
+        /#YN/g,
+        `(1) Yes
+         (0) No`
+      );
+      return `<span class='displayif' ${condition}>${text}</span>`;
+    }
+
+    // #issue 378, note: getMonth 0=Jan,  need to add 1
+    content = content.replace(/#currentMonthStr/g, ["Jan", "Feb", "Mar", 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][new Date().getMonth()]);
+    let current_date = new Date()
+    Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
+    content = content.replace(/#currentMonth/g, current_date.getMonth() + 1);
+    content = content.replace(/#currentYear/g, current_date.getFullYear());
+    // issue #405 need #today and today+/- n days...
+    content = content.replace(/#today(\s*[+\-]\s*\d+)?/g, function (match, offset) {
+        // if no (+/- offset) we want today...
+        if (!offset || offset.trim().length == 0) {
+            return current_date.toQuestFormat()
+        }
+
+        // otherwise +/- the offset in number of days...
+        offset = parseInt(offset.replace(/\s/g, ""));
+        let offset_date = new Date()
+        offset_date.setDate(offset_date.getDate() + offset)
+        return offset_date.toQuestFormat()
+    })
 
 
     // replace |hidden|value| 
@@ -414,40 +525,26 @@ function convertMarkdownToHTML(questionObject) {
         return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
     }
 
-
-    function handleButton(match) {
-        let value = match[1];
-        let radioElementName = !!match[2] ? match[2] : questID;
-        let labelID = !!match[3] ? match[3] : `${radioElementName}_${value}_label`;
-
-        // finds real end
-        let cnt = 0;
-        let end = 0;
-        for (let i = match.index; i < match.input.length; i++) {
-            if (match.input[i] == "(") cnt++;
-            if (match.input[i] == ")") cnt--;
-            if (match.input[i] == "\n") break;
-            //if (match.input[i] == "\n")throw new SyntaxError("parenthesis mismatch near ", match[0]);
-
-            end = i + 1;
-            if (cnt == 0) break;
-        }
-
-        // need to have the displayif=... in the variable display_if otherwise if
-        // you have displayif={displayif} displayif will be false if empty.
-        let radioButtonMetaData = match.input.substring(match.index, end);
-        let display_if = !!match[4] ? radioButtonMetaData.substring(radioButtonMetaData.indexOf(match[4]), radioButtonMetaData.length - 1).trim() : "";
-        display_if = (!!display_if) ? `displayif=${encodeURIComponent(display_if)}` : ""
-        let label_end = match.input.substring(end).search(/\n|(?:<br>|$)/) + end;
-        let label = match.input.substring(end, label_end);
-        let replacement = `<div class='response' style='margin-top:15px' ${display_if}><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
-
-        return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
-    }
+    /*
+      \((\d+)       Required: (value
+      (?:\:(\w+))?  an optional :name for the input
+      (?:\|(\w+))?  an optional |label
+      (?:,displayif=([^)]*))?  an optional display if.. up to the first close parenthesis
+      (\s*\))     Required: close paren with optional space in front.
+    */
     let buttonRegex = /\((\d+)(?:\:(\w+))?(?:\|(\w+))?(?:,displayif=([^)]*))?(\s*\))/;
     for (let match = content.match(buttonRegex); !!match; match = content.match(buttonRegex)) {
         content = handleButton(match);
     }
+
+    // replace [XX] with checkbox
+    // The "displayif" is reading beyond the end of the pattern ( displayif=.... )
+    // let cbRegEx = new RegExp(''
+    //   + /\[(d*)(\*)?(?:\:(\w+))?/.source              // (digits with a potential * and :name
+    //   + /(?:\|(\w+))?/.source                         // an optional id for the label
+    //   + /(?:,(displayif=.+?\))?)?/.source             // an optional displayif
+    //   + /\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/         // go to the end of the line or next [
+    // )
     content = content.replace(
         /\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif\s*=\s*.+?\)\s*)?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
         fCheck

@@ -41,7 +41,7 @@ async function setup(obj,divId,previousResults){
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   moduleParams.soccer = obj.soccer;
-  let rootElement = divId;
+  moduleParams.rootElement = divId
   let contents = "";
 
   // get contents
@@ -75,7 +75,7 @@ async function setup(obj,divId,previousResults){
   if (obj.treeJSON){
     questionQueue.loadFromJSON(obj.treeJSON)
   } else{
-    let treeJSON = await localforage.getItem(`${questName}.${moduleParams.questName}`)
+    let treeJSON = await localforage.getItem(`${moduleParams.questName}.treeJSON`)
     if (treeJSON) {
       questionQueue.loadFromVanillaObject(treeJSON)
     }else{
@@ -110,8 +110,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
   questDiv.removeEventListener("renderQuestion",renderQuestion)
   questDiv.addEventListener("renderQuestion",renderQuestion)
 
-  questions.forEach( (question) => {
-    let qEvent = new CustomEvent("renderQuestion",{detail:question});
+  
+  questions.forEach( (question,index,array) => {
+    let qEvent = new CustomEvent("renderQuestion",{detail:{
+      question:question,
+      index:index,
+      length:array.length}});
     setTimeout(()=>questDiv.dispatchEvent(qEvent),0 )
   })
 
@@ -262,6 +266,8 @@ export function stopSubmit(event) {
   }
 }
 
+/*
+// replace with form.reset
 function resetChildren(nodes) {
   if (nodes == null) {
     return;
@@ -276,3 +282,4 @@ function resetChildren(nodes) {
     }
   }
 }
+*/
