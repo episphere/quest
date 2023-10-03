@@ -371,7 +371,7 @@ function numberOfInputs(element) {
     element.querySelectorAll("input, textarea, select")
   ).reduce((acc, current) => {
     //if (["submit", "button"].includes(current.type)) return acc;
-    if (current.type == "submit" || current.type == "hidden") return acc;
+    if (current.type == "submit" || current.type == "hidden" || current.type =="button" ) return acc;
     if (["radio", "checkbox"].includes(current.type)) {
       acc[current.name] = true;
     } else {
@@ -1004,8 +1004,7 @@ export async function submitQuestionnaire(store, questName) {
 }
 function exitLoop(nextElement) {
   if (nextElement?.hasAttribute("firstquestion")) {
-    let loopMax = parseInt(document.getElementById(nextElement.getAttribute("loopmax"))
-      .value);
+    let loopMax = parseInt(document.getElementById(nextElement.getAttribute("loopmax")).value)
     let firstQuestion = parseInt(nextElement.getAttribute("firstquestion"));
     let loopIndex = parseInt(nextElement.getAttribute("loopindx"));
     if (math.evaluate(firstQuestion > loopMax)) {

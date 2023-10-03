@@ -14,8 +14,8 @@ const buttons = {
 export function renderQuestion(event) {
     let questionObject = {
         questionId: event.detail.question[1],
-        editType: event.detail.question[2],
-        qOpts: event.detail.question[3],
+        editType: event.detail.question[2]??"",
+        qOpts: event.detail.question[3]??"",
         content: event.detail.question[4],
         index: event.detail.index,
         length: event.detail.length
@@ -31,7 +31,10 @@ export function renderQuestion(event) {
         formElement.setAttribute("softedit",formElement.dataset.target=="#softModal")
     }
     // handle other qOptions...
-    let opts = paramSplit(questionObject.qOpts)
+    let opts=questionObject.qOpts
+    opts = (opts.slice(-1)=='|')?opts.slice(0,-1):opts
+    opts = (opts.slice(0)=='|')?opts.slice(1):opts
+    opts = paramSplit(opts)
     Object.entries(opts).forEach(([key, value]) => {
         formElement.setAttribute(key,value)
     });
