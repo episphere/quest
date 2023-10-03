@@ -1,16 +1,6 @@
 import {
   questionQueue,
-  nextClick,
-  previousClicked,
   moduleParams,
-  rbAndCbClick,
-  textBoxInput,
-  handleXOR,
-  displayQuestion,
-  parseSSN,
-  parsePhoneNumber,
-  submitQuestionnaire,
-  textboxinput,
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
@@ -21,7 +11,6 @@ export let transform = function () {
 };
 
 let questName = "Questionnaire";
-let rootElement;
 
 let paramSplit = (str) =>
   [...str.matchAll(/(\w+)=(\s?.+?)\s*(?=\w+=|$)/gm)].reduce((pv, cv) => {
@@ -86,6 +75,32 @@ async function setup(obj,divId,previousResults){
   return contents;
 }
 
+async function fillForm(retrieve) {
+  console.log("... in fillForm ...")
+  let questObj = {};
+  let tempObj = {};
+
+  if (retrieve) {
+    const response = await retrieve();
+    if (response.code === 200) {
+      const userData = response.data;
+      console.log("retrieve module name===", moduleParams.questName);
+      if (userData[moduleParams.questName]) {
+        questObj = userData[moduleParams.questName];
+        console.log("questObj===", questObj);
+        await restoreResults(questObj);
+      }
+    }
+  } else {
+    // a retrieve function is not defined use
+    // the default which pull the values out of
+    // localforage...
+    let results = await localforage.getItem(questName);
+
+    if (results == null) results = {};
+    await restoreResults(results);
+  }
+}
 
 transform.render = async (obj, divId, previousResults = {}) => {
   let T0 = performance.now()
@@ -110,7 +125,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   questDiv.removeEventListener("renderQuestion",renderQuestion)
   questDiv.addEventListener("renderQuestion",renderQuestion)
 
-  
+  // add all the question to the event queue...
   questions.forEach( (question,index,array) => {
     let qEvent = new CustomEvent("renderQuestion",{detail:{
       question:question,
@@ -121,6 +136,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   addModals(questDiv)
 
+
+  //  needs to be added to the event queue to avoid be run before the questions finish
+  setTimeout(()=> fillForm(),0)
+
   let TF=performance.now()
   console.log(`time to completely render: ${(TF-T0)} ms`)
 
@@ -128,9 +147,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     trigger: "focus",
   });
 };
-
-
-
 
 function ordinal(a) {
   if (Number.isInteger(a)) {
@@ -245,6 +261,8 @@ function unrollLoops(txt) {
   return txt;
 }
 
+/*
+// replace by button event listener
 export function stopSubmit(event) {
   event.preventDefault();
 
@@ -265,7 +283,7 @@ export function stopSubmit(event) {
     nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
   }
 }
-
+*/
 /*
 // replace with form.reset
 function resetChildren(nodes) {

@@ -1,4 +1,8 @@
-import { displayQuestion, moduleParams, nextClick,previousClicked,questionQueue,submitQuestionnaire } from "./questionnaire.js";
+import { displayQuestion, moduleParams, nextClick, 
+    parsePhoneNumber, parseSSN, previousClicked,
+    questionQueue, rbAndCbClick, submitQuestionnaire, 
+    textBoxInput,textboxinput} from "./questionnaire.js";
+import { clearValidationError } from "./validate.js";
 
 
 const buttons = {
@@ -16,13 +20,21 @@ export function renderQuestion(event) {
         index: event.detail.index,
         length: event.detail.length
     }
+    //console.log(questionObject.questionId)
 
     let formElement = createQuestionForm(questionObject)
     questionObject.formElement = formElement
     // handle soft/hard edits
     if (questionObject.editType){
         formElement.dataset.target=(questionObject.editType=="!")?"#hardModal":"#softModal"
+        formElement.setAttribute("hardedit",formElement.dataset.target=="#hardModal")
+        formElement.setAttribute("softedit",formElement.dataset.target=="#softModal")
     }
+    // handle other qOptions...
+    let opts = paramSplit(questionObject.qOpts)
+    Object.entries(opts).forEach(([key, value]) => {
+        formElement.setAttribute(key,value)
+    });
 
     // add a header div -- remove later...
     let headerElement = document.createElement("div")
@@ -35,11 +47,13 @@ export function renderQuestion(event) {
     markdownElement.innerHTML = convertMarkdownToHTML(questionObject)
     formElement.insertAdjacentElement("beforeend", markdownElement)
 
+    // add handler for the various input types..
+    addHandlers(markdownElement)
 
+    // Add the button at the bottom
     // add a div for the buttons...
     let buttonDiv = document.createElement("div")
     buttonDiv.classList.add("row", "justify-content-between", "mx-3", "px-2")
-
     let backButton = createButton(buttons.BACK,questionObject)
     let middleButton = ""
     if (questionObject.questionId != "END"){
@@ -162,6 +176,21 @@ export function addModals(questDiv) {
     </div>
     `
     questDiv.insertAdjacentHTML("beforeend", modalsHTML)
+
+    document.getElementById("submitModalButton").onclick = (event) => {
+        let formElement = questDiv.querySelector(".active")
+        if (!formElement) {console.warn("ON SUMBIT: CANNOT GET THE ACTIVE FORM!")}
+
+        let lastBackButton = formElement?.querySelector(`[value='${buttons.BACK}']`)
+        if (lastBackButton) {
+          lastBackButton.remove();
+        }
+        let submitButton = formElement?.querySelector(`[value='${buttons.SUBMIT}']`)
+        if (submitButton) {
+          submitButton.remove();
+        }
+        submitQuestionnaire(moduleParams.renderObj.store, moduleParams.questName);
+      };
 }
 
 
@@ -208,9 +237,9 @@ function buttonEventListener(event) {
             break;
         case buttons.RESET:
             event.target.form.reset()
+            event.target.form.querySelectorAll(".invalid").forEach( invalidElement => (clearValidationError(invalidElement)))
             break;
         case buttons.SUBMIT:
-            submitQuestionnaire(moduleParams.renderObj.store, moduleParams.questName)
             break;
         default:
             console.warn("unhandled button event", event.target)
@@ -235,18 +264,24 @@ function createButton(value, question) {
 
     if ((value == buttons.BACK && question.index == 0) ||
         (value == buttons.NEXT && question.index == (question.length - 1)) ||
-//        (value == "RESET ANSWER" && !question.formElement.querySelector("input[type='radio']"))
+//        (value == buttons.RESET && !question.formElement.querySelector("input[type='radio']"))
         (value == buttons.RESET && !question.formElement.querySelector("input")) 
     ) {
         let btnDiv = document.createElement("div")
         btnDiv.classList.add("col")
         return btnDiv
     }
+
     let btn = document.createElement("input")
     btn.classList.add("mx-3", "col")
     btn.type = "button"
     btn.value = value
-    btn.addEventListener("click", buttonEventListener)
+    if (value == buttons.SUBMIT){
+        btn.dataset.toggle="modal";
+        btn.dataset.target="#submitModal"
+    } else {
+        btn.addEventListener("click", buttonEventListener)
+    }
     return btn
 
 
@@ -761,4 +796,86 @@ function convertMarkdownToHTML(questionObject) {
     );
     content = content.replace(/<\/div><br>/g, "</div>");
     return content
+}
+
+function addHandlers(markdownElement){
+    // Firefox does not alway GRAB focus when the arrows are clicked.
+    // If a changeEvent fires, grab focus.
+    markdownElement.querySelectorAll("input[type='number']").forEach((inputElement) => {
+        inputElement.addEventListener("change", (event) => {
+            if (event.target != document.activeElement) event.target.focus()
+        });
+    })
+
+    // all text inputs need to call textBoxInput
+    markdownElement.querySelectorAll(
+        "input[type='text'],input[type='number'],input[type='email'],input[type='tel'],input[type='date'],input[type='month'],input[type='time'],textarea,select"
+    ).forEach((textInputElement) => {
+        textInputElement.onblur = textBoxInput;
+        //textInputElement.setAttribute("style", "size: 20 !important");
+    })
+
+    // Add handlers to the
+    // handle the xors...
+    markdownElement.querySelectorAll("[xor]").forEach(xorElement => {
+        xorElement.addEventListener("keydown", () => handleXOR(xorElement));
+    })
+
+    //handle the SSN
+    markdownElement.querySelectorAll(".SSN").forEach((inputElement) => {
+        inputElement.addEventListener("keyup", parseSSN);
+    });
+
+    //handle phone numbers
+    markdownElement.querySelectorAll("input[type='tel']").forEach((inputElement) => {
+        inputElement.addEventListener("keyup", parsePhoneNumber)
+    });
+
+    // handle radio button and combo boxes
+    markdownElement.querySelectorAll("input[type='radio'],input[type='checkbox']").forEach((inputElement) => {
+        inputElement.onchange = rbAndCbClick;
+    });
+    
+    // toggle the grids???
+    markdownElement.querySelectorAll(".grid-input-element").forEach((x) => {
+        x.addEventListener("change", toggle_grid);
+    });
+
+    // hide elements
+    markdownElement.querySelectorAll("[data-hidden]").forEach((x) => {
+        x.style.display = "none";
+    });
+
+    // handle text in combobox label...
+    markdownElement.querySelectorAll("label input,label textarea").forEach(inputElement => {
+        // the markdown element has not yet been attached to the DOM,
+        // so dont use document.getElementById()
+        let radioCB = markdownElement.querySelector(`#${inputElement.closest('label').htmlFor}`)
+        if (!radioCB){
+            console.error("no radio button/combo box for ")
+            console.log(inputElement)
+            return
+        }
+        let callback = (event) => {
+            let nchar = event.target.value.length
+            // select if typed in box, DONT UNSELECT
+            if (nchar > 0) radioCB.checked = true
+            inputElement.dataset.lastValue = inputElement.value
+        }
+        inputElement.addEventListener("keyup", callback);
+        inputElement.addEventListener("input", callback);
+        radioCB.addEventListener("click", (event => {
+            console.log("click")
+            if (!radioCB.checked) {
+                inputElement.dataset.lastValue = inputElement.value
+                inputElement.value = ''
+            } else if ('lastValue' in inputElement.dataset) {
+                inputElement.value = inputElement.dataset.lastValue
+            }
+            textboxinput(inputElement)
+        }))
+    })
+    $(".popover-dismiss").popover({
+        trigger: "focus",
+      });
 }
