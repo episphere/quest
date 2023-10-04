@@ -1,4 +1,4 @@
-import { displayQuestion, moduleParams, nextClick, 
+import { displayQuestion, handleXOR, moduleParams, nextClick, 
     parsePhoneNumber, parseSSN, previousClicked,
     questionQueue, rbAndCbClick, submitQuestionnaire, 
     textBoxInput,textboxinput} from "./questionnaire.js";
