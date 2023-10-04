@@ -62,7 +62,7 @@ async function startUp() {
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
   document.getElementById("clearMem").onclick = clearLocalForage;
-
+  document.getElementById("clearPrevious").onclick = clearPreviousResults;
   
   document.getElementById("updater").onclick = function (event) {
     let txt = "";
@@ -106,6 +106,12 @@ function clearLocalForage() {
     });
 
   questionQueue.clear();
+}
+
+function clearPreviousResults(){
+  prevRes = {};
+  localStorage.clear();
+  json_input.value=""
 }
 
 transform.tout = function (fun, tt = 500) {
