@@ -229,7 +229,7 @@ export const myFunctions = {
     if (v == null) v = defaultValue[defaultValue.length - 1]
     return (v)
   },
-  selectionCount: function(x){
+  selectionCount: function(x,countReset=false){
     let [questionId,name] = x.split(':')
     name = name ?? questionId
 
@@ -240,6 +240,9 @@ export const myFunctions = {
     let questionElement = document.getElementById(questionId)
     if ( Array.isArray(v)  || Array.isArray(v[name]) ) {
       v = Array.isArray(v)?v:v[name]
+      if (countReset){
+        return v.length;
+      }
       // there is a chance that nothing is selected (v.length==0) in that case you will the 
       // selector will find nothing.  Use the "?" because you cannot find the dataset on a null object.  
       return questionElement.querySelector(`input[type="checkbox"][name="${name}"]:checked`)?.dataset["reset"]?0:v.length
