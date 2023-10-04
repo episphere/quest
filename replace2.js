@@ -131,6 +131,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       question:question,
       index:index,
       length:array.length}});
+    //requestAnimationFrame(()=>questDiv.dispatchEvent(qEvent))
     setTimeout(()=>questDiv.dispatchEvent(qEvent),0 )
   })
 
@@ -138,6 +139,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 
   //  needs to be added to the event queue to avoid be run before the questions finish
+  //requestAnimationFrame(()=>fillForm(moduleParams.renderObj.retrieves))
   setTimeout(()=> fillForm(),0)
 
   let TF=performance.now()

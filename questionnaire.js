@@ -1037,11 +1037,8 @@ export function displayQuestion(nextElement) {
   );
 
   // check all responses for next question
-  [...nextElement.children]
-    .filter((x) => {
-      return x.hasAttribute("displayif");
-    })
-    .map((elm) => {
+  nextElement.querySelectorAll("[displayif]")
+    .forEach((elm) => {
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? null : "none";
     });
