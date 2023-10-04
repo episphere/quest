@@ -4,6 +4,13 @@ import { questionQueue, moduleParams } from "./questionnaire.js";
 let prevRes = {};
 
 async function startUp() {
+  const json_input=document.getElementById("json_input")
+  let saved_previous=localStorage.getItem("quest_previous")
+  if (saved_previous){
+    json_input.value = saved_previous
+    prevRes = JSON.parse(json_input.value);
+  }
+
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
     transform.tout((previousResults) => {
@@ -56,16 +63,20 @@ async function startUp() {
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
   document.getElementById("clearMem").onclick = clearLocalForage;
 
+  
   document.getElementById("updater").onclick = function (event) {
     let txt = "";
     try {
       prevRes = JSON.parse(json_input.value);
+      console.log(`seeting quest_previous to ${json_input.value}`)
+      localStorage.setItem("quest_previous",json_input.value)
       txt = "added json... ";
     } catch (err) {
       txt = "caught error: " + err;
     }
     loaddisplay.innerText = txt;
   };
+
   let myTree = questionQueue;
 }
 
@@ -95,8 +106,6 @@ function clearLocalForage() {
     });
 
   questionQueue.clear();
-
-  prevRes = {};
 }
 
 transform.tout = function (fun, tt = 500) {

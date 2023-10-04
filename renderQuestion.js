@@ -3,6 +3,7 @@ import { displayQuestion, handleXOR, moduleParams, nextClick,
     questionQueue, rbAndCbClick, submitQuestionnaire, 
     textBoxInput,textboxinput} from "./questionnaire.js";
 import { clearValidationError } from "./validate.js";
+import { toggle_grid } from "./buildGrid.js";
 
 
 const buttons = {
