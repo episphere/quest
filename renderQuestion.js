@@ -45,6 +45,7 @@ export function renderQuestion(event) {
         questionObject.index = event.detail.index
         questionObject.length = event.detail.length
         formElement=document.getElementById(questionObject.questionId)
+        addHandlers(formElement)
     }
     questionObject.formElement = formElement
 
