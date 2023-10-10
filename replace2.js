@@ -115,7 +115,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   console.log(`time to handle grids/unroll loops: ${(t1-t0)} ms`)
 
   t0 = performance.now()
-  let questionRegex = /\[([A-Z|_][A-Za-z0-9_]*)([!?])?(.*?)\](.*?)(?=\[[A-Z_]|$)/gs
+  let questionRegex = /(?:\<form|\[([A-Z|_][A-Za-z0-9_]*)([!?])?(.*?)\])(.*?)(?=\[[A-Z_]|$|\<form)/gs
   let questions = Array.from(contents.matchAll(questionRegex))
   t1 = performance.now()
   console.log(`time to parse: ${(t1-t0)} ms`)

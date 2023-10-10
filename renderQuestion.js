@@ -13,46 +13,49 @@ const buttons = {
     SUBMIT : "SUBMIT SURVEY"
 }
 export function renderQuestion(event) {
-    let questionObject = {
-        questionId: event.detail.question[1],
-        editType: event.detail.question[2]??"",
-        qOpts: event.detail.question[3]??"",
-        content: event.detail.question[4],
-        index: event.detail.index,
-        length: event.detail.length
-    }
-    //console.log(questionObject.questionId)
+    let isGrid = !event.detail.question[1]
 
-    let formElement = createQuestionForm(questionObject)
-    questionObject.formElement = formElement
-    // handle soft/hard edits
-    if (questionObject.editType){
-        formElement.dataset.target=(questionObject.editType=="!")?"#hardModal":"#softModal"
-        formElement.setAttribute("hardedit",formElement.dataset.target=="#hardModal")
-        formElement.setAttribute("softedit",formElement.dataset.target=="#softModal")
+    let questionObject = {}
+    let formElement;
+
+    // If not a grid, create a form element in the DOM, with appropriate html.
+    // otherwise, a grid already created the form object, so use it.
+    // Either way, we still need to add the header div and the buttons.
+    if (!isGrid) {
+        questionObject = {
+            questionId: event.detail.question[1],
+            editType: event.detail.question[2] ?? "",
+            qOpts: event.detail.question[3] ?? "",
+            content: event.detail.question[4],
+            index: event.detail.index,
+            length: event.detail.length
+        }
+        formElement = createQuestionForm(questionObject)
+
+        // add a div for the actual markdown
+        let markdownElement = document.createElement("div")
+        markdownElement.innerHTML = convertMarkdownToHTML(questionObject)
+        // add handler for the various input types..
+        addHandlers(markdownElement)
+        formElement.insertAdjacentElement("beforeend", markdownElement)
+    } else {
+        event.target.insertAdjacentHTML("beforeend", event.detail.question[0])
+        questionObject.content = event.detail.question[0]
+        questionObject.questionId = questionObject.content.match(/(?<=\id\s*=\s*)[a-zA-Z0-9_]+/gm)[0]
+        questionObject.index = event.detail.index
+        questionObject.length = event.detail.length
+        formElement=document.getElementById(questionObject.questionId)
     }
-    // handle other qOptions...
-    let opts=questionObject.qOpts
-    opts = (opts.slice(-1)=='|')?opts.slice(0,-1):opts
-    opts = (opts.slice(0)=='|')?opts.slice(1):opts
-    opts = paramSplit(opts)
-    Object.entries(opts).forEach(([key, value]) => {
-        formElement.setAttribute(key,value)
-    });
+    questionObject.formElement = formElement
+
 
     // add a header div -- remove later...
     let headerElement = document.createElement("div")
     headerElement.innerText = `${questionObject.index}: ${questionObject.questionId}`
     headerElement.classList.add("text-monospace", "border-bottom")
-    formElement.insertAdjacentElement("beforeend", headerElement)
+    formElement.insertAdjacentElement("afterBegin", headerElement)
 
-    // add a div for the actual markdown
-    let markdownElement = document.createElement("div")
-    markdownElement.innerHTML = convertMarkdownToHTML(questionObject)
-    formElement.insertAdjacentElement("beforeend", markdownElement)
 
-    // add handler for the various input types..
-    addHandlers(markdownElement)
 
     // Add the button at the bottom
     // add a div for the buttons...
@@ -252,14 +255,32 @@ function buttonEventListener(event) {
 
 
 function createQuestionForm(questionObject) {
+    // grid questions already have form objects..
     let formElement = document.createElement("form")
     formElement.classList.add("question")
     formElement.id = questionObject.questionId
+
     // need to add the option
     formElement.dataset.hardEdit = questionObject.editType == "!"
     formElement.dataset.softEdit = questionObject.editType == "?"
     formElement.dataset.qargs = questionObject.qOpts
     formElement.noValidate = true
+
+    // handle soft/hard edits
+    if (questionObject.editType){
+        formElement.dataset.target=(questionObject.editType=="!")?"#hardModal":"#softModal"
+        formElement.setAttribute("hardedit",formElement.dataset.target=="#hardModal")
+        formElement.setAttribute("softedit",formElement.dataset.target=="#softModal")
+    }
+
+    // handle other qOptions...
+    let opts = questionObject.qOpts
+    opts = (opts.slice(-1) == '|') ? opts.slice(0, -1) : opts
+    opts = (opts.slice(0) == '|') ? opts.slice(1) : opts
+    opts = paramSplit(opts)
+    Object.entries(opts).forEach(([key, value]) => {
+        formElement.setAttribute(key, value)
+    });
 
     return formElement;
 }
@@ -268,7 +289,6 @@ function createButton(value, question) {
 
     if ((value == buttons.BACK && question.index == 0) ||
         (value == buttons.NEXT && question.index == (question.length - 1)) ||
-//        (value == buttons.RESET && !question.formElement.querySelector("input[type='radio']"))
         (value == buttons.RESET && !question.formElement.querySelector("input")) 
     ) {
         let btnDiv = document.createElement("div")

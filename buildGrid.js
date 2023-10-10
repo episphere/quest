@@ -74,19 +74,6 @@ function buildHtml(grid_obj) {
   let html_text = `<form ${grid_obj.args} class="container question" grid ${gridPrompt}>
   ${grid_obj.shared_text}<div class="d-none d-lg-block" data-grid="large" style="background-color: rgb(193,225,236)">
   ${grid_head}${grid_table_body}</div><div class="d-lg-none" data-grid="small">${small_format}</div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3 col-sm-12">
-        <input type='submit' class='previous w-100' value='BACK'/>
-      </div>
-      <div class="col-md-6 col-sm-12">
-        <input type='submit' class='reset w-100' value='RESET ANSWER'/>
-      </div>
-      <div class="col-md-3 col-sm-12">
-        <input type='submit' class='next w-100' value='NEXT'/>
-      </div>
-    </div>
-  </div>
   </form>`;
 
   //for some reason spacing needs to be removed
