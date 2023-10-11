@@ -95,7 +95,7 @@ function decreaseSize() {
 }
 
 function clearLocalForage() {
-  localforage
+  moduleParams.localforage
     .clear()
     .then(() => {
       loaddisplay.innerHTML = "local forage cleared";

@@ -48,6 +48,10 @@ async function setup(obj,divId,previousResults){
   let nameRegex=/{.*?"?name"?\s*:\s*"(.*?)".*?}/s
   let found = contents.match(nameRegex)
   moduleParams.questName=found?.[1]?found[1]:"questionnaire"
+  moduleParams.localforage = await localforage.createInstance({
+    name: "Quest",
+    storeName: moduleParams.questName,
+  });
 
   moduleParams.config = contents
   if (obj.activate) {
@@ -60,6 +64,9 @@ async function setup(obj,divId,previousResults){
     link2.href = "Style1.css";
     document.head.appendChild(link2);
   }
+
+
+
 
   if (obj.treeJSON){
     questionQueue.loadFromJSON(obj.treeJSON)

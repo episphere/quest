@@ -3,7 +3,11 @@ import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
 import { validateInput, validationError } from "./validate.js"
 
-export const moduleParams = {};
+export const moduleParams = {
+  localforage: await localforage.createInstance({
+    name:"Quest"
+  })
+};
 
 let script = document.createElement("script");
 script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.2.0/math.js"
@@ -886,6 +890,18 @@ function getNextQuestionId(currentFormElement) {
   return nextQuestionNode.value;
 }
 
+async function localStore(formData){
+  let tree = formData.tree ?? questionQueue.toVanillaObject()
+  
+  await moduleParams.localforage.setItem("_treeJSON",tree)
+  
+  if (formData.value){
+    await moduleParams.localforage.setItem(formData.questionId,formData.value)
+  } else if (formData.questionId){
+    await moduleParams.localforage.removeItem(formData.questionId)
+  }
+}
+
 // norp == next or previous button (which ever is clicked...)
 async function nextPage(norp, retrieve, store, rootElement) {
   // The root is defined as null, so if the question is not the same as the
@@ -912,39 +928,18 @@ async function nextPage(norp, retrieve, store, rootElement) {
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
   //if (questionElement.value) {
-  if (store) {
-    let formData = {};
-    formData[`${questName}.${questionElement.id}`] = questionElement.value;
-    console.log(formData)
-    await store(formData)
-  } else {
-    let tmp = await localforage
-      .getItem(questName)
-      .then((allResponses) => {
-        // if their is not an object in LF create one that we will add later...
-        if (!allResponses) {
-          allResponses = {};
-        }
-        // set the value for the questionId...
-        allResponses[questionElement.id] = questionElement.value;
-        if (questionElement.value === undefined) {
-          delete allResponses[questionElement.id]
-        }
-        return allResponses;
-      })
-      .then((allResponses) => {
-        // allResposes really should be defined at this point. If it wasn't
-        // previously in LF, the previous block should have created it...
-        localforage.setItem(questName, allResponses, () => {
-          console.log(
-            "... Response stored in LF: " + questName,
-            JSON.stringify(allResponses)
-          );
-        });
-      });
-  }
-  //}
 
+  let formData = {}
+  formData.module = moduleParams.questName
+  formData.questionId = questionElement.id
+  formData.value = questionElement.value;
+  formData.tree = questionQueue.toVanillaObject()
+
+  await localStore(formData)
+  if (store){
+     await store(formData)
+  }
+  
 
   // check if we need to add questions to the question queue
   checkForSkips(questionElement);
@@ -996,9 +991,7 @@ export async function submitQuestionnaire(store, questName) {
     formData[`${questName}.COMPLETED`] = true;
     formData[`${questName}.COMPLETED_TS`] = new Date();
     try {
-      store(formData).then(() => {
-        location.reload();
-      });
+      store(formData)
     } catch (e) {
       console.log("Store failed", e);
     }
@@ -1145,7 +1138,9 @@ export function displayQuestion(nextElement) {
 
   // FINALLY...  update the tree in localForage...
   // First let's try NOT waiting for the function to return.
-  updateTree();
+  //updateTree();
+
+  localStore({})
 
   questionQueue.ptree();
   return nextElement;
@@ -1161,16 +1156,17 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
   norp.form.classList.remove("active");
   displayQuestion(prevElement)
 
-  if (store) {
-    console.log("setting... ", moduleParams.questName, "=== UNDEFINED")
-    let formData = {};
-    formData[`${moduleParams.questName}.${norp.form.id}`] = undefined;
-    store(formData);
-  } else removeQuestion(moduleParams.questName, norp.form.id);
+  let formData = {}
+  formData.questionId = norp.form.id
+  formData.value = undefined;
+  formData.tree = questionQueue.toVanillaObject()
+  formData.module = moduleParams.questName
 
-  updateTree();
-  // prevElement.parentElement.scrollIntoView();
-  //document.getElementById(rootElement).scrollIntoView();
+  await localStore(formData)
+  if (store){
+     await store(formData)
+  }
+
   window.scrollTo(0, 0);
   return prevElement;
 }

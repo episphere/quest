@@ -1,4 +1,4 @@
-import { textboxinput, radioAndCheckboxUpdate } from "./questionnaire.js";
+import { moduleParams, textboxinput, radioAndCheckboxUpdate } from "./questionnaire.js";
 
 export async function restoreResults(results) {
   // get the results from localforage...
@@ -158,11 +158,11 @@ export async function restoreResults(results) {
 export async function removeQuestion(questName, qid) {
   //check here for going back issue?
 
-  let results = await localforage.getItem(questName);
+  let results = await moduleParams.localforage.getItem(questName);
 
   if (results && results[qid]) {
     delete results[qid];
   }
 
-  localforage.setItem(questName, results);
+  moduleParams.localforage.setItem(questName, results);
 }
