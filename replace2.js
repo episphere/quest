@@ -109,6 +109,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questName = "Questionnaire";
     moduleParams.questName = questName;
   }
+
+  moduleParams.localforage = await localforage.createInstance({
+    name        : "Quest",
+    storeName   : moduleParams.questName,
+});
+
   // first let's deal with breaking up questions..
   // a question starts with the [ID1] regex pattern
   // and end with the next pattern or the end of string...
