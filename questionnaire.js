@@ -1164,6 +1164,7 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
   formData.questionId = norp.form.id
   formData.value = undefined;
   formData.tree = questionQueue.toVanillaObject()
+  formData.module = moduleParams.questName
 
   await localStore(formData)
   if (store){
