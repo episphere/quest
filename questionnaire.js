@@ -3,7 +3,11 @@ import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
 import { validateInput, validationError } from "./validate.js"
 
-export const moduleParams = {};
+export const moduleParams = {
+  localforage: await localforage.createInstance({
+    name:"Quest"
+  })
+};
 
 let script = document.createElement("script");
 script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.2.0/math.js"
