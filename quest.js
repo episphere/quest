@@ -14,7 +14,7 @@ async function startUp() {
         "rendering",
         previousResults
       ); // <-- this is where quest.js is engaged
-      // transform.render({url: 'https://jonasalmeida.github.io/privatequest/demo2.txt&run'}, 'rendering') // <-- this is where quest.js is engaged
+      
       if (document.querySelector(".question") != null) {
         document.querySelector(".question").classList.add("active");
       }
@@ -39,16 +39,6 @@ async function startUp() {
     ta.onkeyup()
   }
 
-  /*var q = (location.search + location.hash).replace(/[\#\?]/g, "");
-    if (q.length > 3) {
-      if (!q.startsWith("config")) {
-        ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
-      } else {
-        moduleParams.config = config;
-        ta.value = await (await fetch(config.markdown)).text();
-      }
-      ta.onkeyup();
-    } */
   ta.style.width =
     parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
 

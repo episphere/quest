@@ -853,25 +853,6 @@ function showModal(norp, retrieve, store, rootElement) {
 
 let tempObj = {};
 
-async function updateTree() {
-  if (moduleParams?.renderObj?.updateTree) {
-    moduleParams.renderObj.updateTree(moduleParams.questName, questionQueue)
-  }
-  updateTreeInLocalForage()
-}
-
-async function updateTreeInLocalForage() {
-  // We dont have questName yet, don't bother saving the tree yet...
-  if (!('questName' in moduleParams)) {
-    return
-  }
-
-  let questName = moduleParams.questName;
-  // do you want a JSON string or a JS Object in LF???
-  // await localforage.setItem(questName + ".treeJSON", questionQueue.JSON());
-  await localforage.setItem(questName + ".treeJSON", questionQueue.toVanillaObject());
-}
-
 function getNextQuestionId(currentFormElement) {
   // get the next question from the questionQueue
   // if it exists... otherwise get the next look at the
@@ -925,9 +906,6 @@ async function nextPage(norp, retrieve, store, rootElement) {
   let questName = moduleParams.questName;
   tempObj[questionElement.id] = questionElement.value;
 
-  //Check if questionElement exists first so its not pushing undefineds
-  //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
-  //if (questionElement.value) {
 
   let formData = {}
   formData.module = moduleParams.questName
@@ -1140,10 +1118,6 @@ export function displayQuestion(nextElement) {
   //move to the next question...
   nextElement.classList.add("active");
 
-  // FINALLY...  update the tree in localForage...
-  // First let's try NOT waiting for the function to return.
-  //updateTree();
-
   localStore({})
 
   questionQueue.ptree();
@@ -1304,11 +1278,6 @@ export function getSelected(questionElement) {
   rv2 = rv2.filter((x) => x.value.length > 0);
   rv3 = rv3.filter((x) => x.hasAttribute("checked"));
 
-  // rv = rv.filter(x =>
-  //   x.type == "radio" || x.type == "checkbox" || x.type == "hidden"
-  //     ? x.checked
-  //     : x.value.length > 0
-  // );
 
   // we may need to guarentee that the hidden comes last.
   rv1 = rv1.concat(rv2);

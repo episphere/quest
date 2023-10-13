@@ -35,21 +35,21 @@ let reduceObj = (obj) => {
   }, "").trim()
 }
 
-transform.render = async (obj, divId, previousResults = {}) => {
-  moduleParams.renderObj = obj;
+transform.render = async (questParameters, divId, previousResults = {}) => {
+  moduleParams.renderObj = questParameters;
   moduleParams.previousResults = previousResults;
-  moduleParams.soccer = obj.soccer;
+  moduleParams.soccer = questParameters.soccer;
   rootElement = divId;
   let contents = "";
 
   // allow the client to reset the tree...
 
-  if (obj.text) contents = obj.text;
+  if (questParameters.text) contents = questParameters.text;
 
-  if (obj.url) {
-    contents = await (await fetch(obj.url)).text();
+  if (questParameters.url) {
+    contents = await (await fetch(questParameters.url)).text();
     moduleParams.config = contents
-    if (obj.activate) {
+    if (questParameters.activate) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
       link.href = "https://episphere.github.io/quest/ActiveLogic.css";
@@ -96,7 +96,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   contents = contents.replace(/\/\*.*\*\//g, "");
   contents = contents.replace(/\/\/.*/g, "");
-  // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
+
   let nameRegex = new RegExp(/{"name":"(\w*)"}/);
   if (nameRegex.test(contents)) {
     contents = contents.replace(/{"name":"(\w*)"}/, fQuestName);
@@ -140,8 +140,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questArgs,
     questText
   ) {
-    // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
-    // questText = questText.replace(/\/\/.*\n/g, "");
+    
     questText = questText.replace(/\u001f/g, "\n");
     questText = questText.replace(/(?:\r\n|\r|\n)/g, "<br>");
     questText = questText.replace(/\[_#\]/g, "");
@@ -889,26 +888,27 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // wait for the objects to be retrieved,
   // then reset the tree.
-  await fillForm(obj.retrieve);
+  await fillForm(questParameters.retrieve);
 
   // get the tree from either 1) the client or 2) localforage..
   // either way, we always use the version in LF...
-  if (obj.treeJSON) {
-    questionQueue.loadFromJSON(obj.treeJSON)
-  } else {
-    await localforage.getItem(questName + ".treeJSON").then((tree) => {
-      // if this is the first time the user attempt
-      // the questionnaire, the tree will not be in
-      // the localForage...
-      if (tree) {
-        questionQueue.loadFromVanillaObject(tree);
-      } else {
-        questionQueue.clear();
-      }
-      // not sure this is needed.  resetTree set it active...
-      setActive(questionQueue.currentNode.value);
-    });
-  }
+  	if (questParameters.tree) {
+      	questionQueue.loadFromJSON(questParameters.tree)
+  	} 
+	else {
+    	await moduleParams.localforage.getItem("_treeJSON").then((tree) => {
+
+			if (tree) {
+				questionQueue.loadFromVanillaObject(tree);
+			} 
+			else {
+				questionQueue.clear();
+			}
+		
+			// not sure this is needed.  resetTree set it active...
+			setActive(questionQueue.currentNode.value);
+    	});
+	}
 
   
 
