@@ -1042,6 +1042,24 @@ transform.render = async (questParameters, divId, previousResults = {}) => {
   if (moduleParams.soccer instanceof Function)
     moduleParams.soccer();
   moduleParams.questName = questName;
+
+
+  // add an event listener to validate confirm...
+  // if the user was lazy and used confirm instead of data-confirm, fix it now
+  document.querySelectorAll("[confirm]").forEach( (element) => {
+    element.dataset.confirm = element.getAttribute("confirm")
+    element.removeAttribute("confirm")
+  })
+  document.querySelectorAll("[data-confirm]").forEach( (element) => {
+    console.log(element.dataset.confirm)
+    if (!document.getElementById(element.dataset.confirm)) {
+      console.warn(`... cannot confirm ${element.id}. `)      
+      delete element.dataset.confirm
+    }
+    let otherElement = document.getElementById(element.dataset.confirm)
+    otherElement.dataset.conformationFor=element.id
+  })
+
   return true;
 };
 
@@ -1155,6 +1173,7 @@ function unrollLoops(txt) {
     txt = txt.replace(res[loopIndx].orig, cleanedText[loopIndx]);
   }
   txt = txt.replace(/\xa9/g, "\n");
+
   return txt;
 }
 
