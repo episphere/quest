@@ -191,21 +191,21 @@ function validate_text(inputElement) {
         if (!/^(?!9|000|666)(\d)\d{2}-?(?!00)\d{2}-?(?!0000)\d{4}(?<!\1{3}-?\1{2}-?\1{4}?)/.test(inputElement.value) ||
         ["078-05-1120","219-09-9999"].includes(inputElement.value) ) {
             validationError(inputElement, "Please enter a valid Social Security Number in this format: 999-99-9999.")
+            return
         } else {
             clearValidationError(inputElement)
         }
         // if you are a SSN, you cannot be a 4-digit SSN and the length is set...
-        return
     }
 
     // validate a 4 digit SSN
     if (inputElement.classList.contains("SSNsm")) {
         if (!/^(?!0000)\d{4}/.test(inputElement.value)) {
             validationError(inputElement, "Please enter the last four digits of a Social Security Number in this format: 9999.")
+            return
         } else {
             clearValidationError(inputElement)
         }
-        return
     }
 
     // check string length of text response
@@ -213,7 +213,7 @@ function validate_text(inputElement) {
         let textLen = inputElement.value.length;
         // the user has not entered anything.  Dont bark yet...
         if (textLen == 0){
-            clearValidationError()
+            clearValidationError(inputElement)
             return
         }
 
@@ -239,8 +239,21 @@ function validate_text(inputElement) {
             validationError(inputElement, `Entered text is too long (should have at most ${maxLen} characters)`)
             return
         }
+        clearValidationError(inputElement)
+    }
 
-        clearValidationError()
+    let checkConfirmation = "confirm" in inputElement.dataset ||
+        "conformationFor" in inputElement.dataset
+    if (checkConfirmation){
+        let otherId = inputElement.dataset.confirm ?? inputElement.dataset.conformationFor
+        let otherElement = document.getElementById(otherId)
+        if (otherElement.value != inputElement.value){
+            validationError(inputElement,"Values do not match")
+            validationError(otherElement,"Values do not match")
+        }else{
+            clearValidationError(inputElement)
+            clearValidationError(otherElement)
+        }
     }
 }
 
