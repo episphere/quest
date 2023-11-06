@@ -900,6 +900,22 @@ function addHandlers(markdownElement){
             textboxinput(inputElement)
         }))
     })
+
+    // mark  text confirmation (confirm SSN) for validation.
+    markdownElement.querySelectorAll("[confirm]").forEach( (element) => {
+        element.dataset.confirm = element.getAttribute("confirm")
+        element.removeAttribute("confirm")
+      })
+      document.querySelectorAll("[data-confirm]").forEach( (element) => {
+        console.log(element.dataset.confirm)
+        if (!document.getElementById(element.dataset.confirm)) {
+          console.warn(`... cannot confirm ${element.id}. `)      
+          delete element.dataset.confirm
+        }
+        let otherElement = document.getElementById(element.dataset.confirm)
+        otherElement.dataset.conformationFor=element.id
+      })
+
     $(".popover-dismiss").popover({
         trigger: "focus",
       });
