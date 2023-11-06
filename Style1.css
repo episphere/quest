@@ -120,6 +120,10 @@ textarea + label {
   display: none;
 }
 
+.question.active textarea {
+  width: 95%;
+}
+
 /* select all labels immediatle after a checked radio box */
 
 input[type="radio"]:checked + label {
