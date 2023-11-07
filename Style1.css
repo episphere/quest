@@ -58,7 +58,7 @@ input[type="checkbox"] {
   display: inline !important;
 }
 
-label {
+.response > label {
   display: block;
   border-radius: 6px;
   background-color: rgb(240, 240, 240);
@@ -74,13 +74,13 @@ label {
   display: block;
 }
 
-label {
+.response > label {
   padding-left: 10px;
   padding-top: 10px;
   display: block !important;
 }
 
-label:hover {
+.response > label:hover {
   background-color: rgb(230, 230, 230);
   border: solid 3px rgb(230, 230, 230);
 }

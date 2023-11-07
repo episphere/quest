@@ -537,7 +537,8 @@ export function textboxinput(inputElement, validate = true) {
       document.getElementById(
         "modalResponseBody"
       ).innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
-      $("#softModalResponse").modal("show");
+      new bootstrap.Modal('#softModalResponse').show()
+//      $("#softModalResponse").modal("show");
     }
   }
   if (inputElement.className == "SSN") {
@@ -762,20 +763,28 @@ function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
   let prompt = `There ${num > 1 ? "are" : "is"} ${num} question${num > 1 ? "s" : ""
     } unanswered on this page. `;
   if (!soft) {
+
+    // set modal text...
     document.getElementById(
       "hardModalBodyText"
     ).innerText = `${prompt} Please answer the question${num > 1 ? "s" : ""}.`;
-    $("#hardModal").modal("toggle");
+
+      // popup the modal..
+    const hardModal = new bootstrap.Modal('#hardModal')
+    hardModal.show()
     return null;
   }
   let f1 = nextPage;
   f1 = f1.bind(f1, norp, retrieve, store);
+  // set soft modal inner text...
   document.getElementById(
     "modalBodyText"
   ).innerText = `${prompt} Would you like to continue?`;
   document.getElementById("modalContinueButton").onclick = f1;
-  $("#softModal").modal("toggle");
+  const softModal = new bootstrap.Modal('#softModal')
+  softModal.show()
 }
+
 // show modal function
 function showModal(norp, retrieve, store, rootElement) {
   if (
@@ -986,7 +995,8 @@ async function nextPage(norp, retrieve, store, rootElement) {
   displayQuestion(nextElement);
   // nextElement.scrollIntoView();
   // document.getElementById(rootElement).scrollIntoView();
-  window.scrollTo(0, 0);
+  //window.scrollTo(0, 0);
+  document.getElementById(rootElement).scroll(0,0)
 }
 
 export async function submitQuestionnaire(store, questName) {

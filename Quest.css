@@ -40,7 +40,7 @@ body {
   background-color: re;
 }
 
-label {
+.question > label {
   display: inline;
   width: 95% !important;
   font-size: 1em;
@@ -61,23 +61,12 @@ label {
     width: 150px;
   }
 
-  [id="ta"] {
-    width: 350px !important;
-  }
   [id="markup"] {
     position: sticky;
   }
 
   [id="navLinks"] {
     background-color: #24305e;
-  }
-
-  [id="prevResDiv"] {
-    border: 1px solid black !important;
-  }
-
-  [id="stylingDiv"] {
-    border: 1px solid black !important;
   }
 
   [id="fontSpan"] {
@@ -95,9 +84,6 @@ label {
 }
 
 @media only screen and (max-width: 1024px) {
-  [id="ta"] {
-    width: 350px !important;
-  }
   [id="markup"] {
     position: sticky;
   }

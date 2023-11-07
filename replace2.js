@@ -730,7 +730,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
               </button>
           </div>
@@ -738,8 +738,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
               <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
           </div>
           <div id="softModalFooter" class="modal-footer">
-              <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal">Continue Without Answering</button>
-              <button type="button" id=modalCloseButton class="btn btn-light" data-dismiss="modal">Answer the Question</button>
+              <button type="button" id=modalContinueButton class="btn btn-light" data-bs-dismiss="modal">Continue Without Answering</button>
+              <button type="button" id=modalCloseButton class="btn btn-light" data-bs-dismiss="modal">Answer the Question</button>
           </div>
           </div>
       </div>
@@ -749,7 +749,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title">Response Required</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
               </button>
           </div>
@@ -757,7 +757,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
               <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Answer the Question</button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Answer the Question</button>
           </div>
           </div>
       </div>
@@ -787,7 +787,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Submit Answers</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -795,8 +795,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
             <p id="submitModalBodyText">Are you sure you want to submit your answers?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal">Submit</button>
-          <button type="button" id="cancelModal" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+          <button type="button" id="submitModalButton" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
+          <button type="button" id="cancelModal" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
         </div>
         </div>
     </div>
@@ -1013,12 +1013,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   })
 
 
-  $(".popover-dismiss").popover({
-    trigger: "focus",
-  });
-
-
-
   document.getElementById("submitModalButton").onclick = () => {
     let lastBackButton = document.getElementById('lastBackButton');
     if (lastBackButton) {
@@ -1183,9 +1177,7 @@ export function stopSubmit(event) {
     resetChildren(event.target.elements);
     event.target.value = undefined;
   } else if (event.target.clickType == "Submit Survey") {
-
-    $("#submitModal").modal("toggle");
-
+    new bootstrap.Modal('#submitModal').show()
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
     nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);

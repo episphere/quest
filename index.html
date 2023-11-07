@@ -3,13 +3,9 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-        crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
     <script href="https://fonts.googleapis.com/css?family=Archivo&display=swap" rel="stylesheet"></script>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
         crossorigin="anonymous">
@@ -21,92 +17,82 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min.js"></script>
     <title>Quest</title>
 </head>
-
-<div id="navBar" style="margin-bottom: 10px;">
-    <h1 style="padding-left: 50px;">Quest</h1>
-    <div id="navLinks">
-        | <a href="https://github.com/episphere/quest" target="_blank">Quest.js</a>
-        | <a href="https://github.com/episphere/quest/wiki" target="_blank">Wiki</a> |
-        <a href="https://github.com/episphere/quest/issues" target="_blank">Issues</a> |
-        <a href="https://github.com/episphere/quest/projects/1" target="_blank">Project Page</a> |
-        <a href="https://gitter.im/episphere/quest" target="_blank">Gitter</a> |
+<body class="w-100">
+    <div id="navBar" style="margin-bottom: 10px;">
+        <h1 style="padding-left: 50px;">Quest</h1>
+        <div id="navLinks">
+            | <a href="https://github.com/episphere/quest" target="_blank">Quest.js</a>
+            | <a href="https://github.com/episphere/quest/wiki" target="_blank">Wiki</a> |
+            <a href="https://github.com/episphere/quest/issues" target="_blank">Issues</a> |
+            <a href="https://github.com/episphere/quest/projects/1" target="_blank">Project Page</a> |
+            <a href="https://gitter.im/episphere/quest" target="_blank">Gitter</a> |
+        </div>
     </div>
-</div>
 
-<div class="container-fluid" id="tool">
-    <div id="legendDiv" class="row">
-        <div class="col-sm-6 my-2" id="loadSaveDiv" style="border: 1px solid black;">
-            <h3>Questionnaire Options</h3>
-            <input id="file" type="file" aria-label="Choose File" style="margin-top: 15px;" onchange="onFileSelected(event)">
-            <br>
-            <span>Enter URL:</span>
-            <input id="url" style="margin-top: 10px;" aria-label="url" onchange="submitURL()">
-            <input type="submit" aria-label="submit" onclick="submitURL()"></input>
-            <br>
-            <span>File Name:</span>
-            <input id="tb" aria-label="File Name" style="margin-top: 10px;">
-            <span>.txt</span>
-            <button aria-label="Save" onclick="saveDoc()">Save</button>
-            <br>
-            <span>Upload Questionnaire:</span>
-            <button style="margin-top: 10px;" aria-label="Upload" onclick="goToLink()">Upload</button>
+    <div class="container-fluid" id="tool">
+        <div id="legendDiv" class="row">
+            <div class="col-12 col-md-6 col-lg-5 border" id="loadSaveDiv">
+                <h3>Questionnaire Options</h3>
+                <input id="file" type="file" aria-label="Choose File" style="margin-top: 15px;"
+                    onchange="onFileSelected(event)">
+                <br>
+                <span>Enter URL:</span>
+                <input id="url" style="margin-top: 10px;" aria-label="url" onchange="submitURL()">
+                <input type="submit" aria-label="submit" onclick="submitURL()"></input>
+                <br>
+                <span>File Name:</span>
+                <input id="tb" aria-label="File Name" style="margin-top: 10px;">
+                <span>.txt</span>
+                <button aria-label="Save" onclick="saveDoc()">Save</button>
+                <br>
+                <span>Upload Questionnaire:</span>
+                <button class="mt-2 mb-3" aria-label="Upload" onclick="goToLink()">Upload</button>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3 border" id="stylingDiv">
+                <div>
+                    <h3>Styling</h3>
+                    <input type="radio" id="styling_default" class="styling" name="styling"
+                    onclick="changeStyle('Default.css')" checked aria-label='No Style'> No Style</input>
+                    <input type="radio" id="styling_style1" class="styling" name="styling"
+                    onclick="changeStyle('Style1.css')" aria-label='With Style 1'> With Style 1</input>
+                </div>
+                <div class="mb-3">
+                    <h3>Logic</h3>
+                    <input type="radio" id="logic_default" class="styling" name="logic" onclick="changeLogic('Default.css')"
+                        aria-label="Not Active" checked> Not Active</input>
+                    <input type="radio" id="logic_active" class="styling" name="logic" onclick="changeLogic('ActiveLogic.css')"
+                        aria-label="Active"> Active</input>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-4 border" id="prevResDiv">
+                <h3>Previous Results</h3>
+                <textarea id="json_input" aria-label="json input" style="width: 100%; height:200px"></textarea>
+                <div class="col" style="margin-top: 10px;">
+                    <input type="button" id="updater" value="add JSON to memory" />
+                    <input type="button" id="clearMem" value="Clear Memory" />
+                    <div id="loaddisplay" style="height: 20px;"></div>
+                </div>
+            </div>
         </div>
-        <div class="col-sm-3 my-2" id="stylingDiv" style="border: 1px solid black; border-right:0;">
-            <h3>Styling</h3>
-            <input type="radio" id="styling_default" class="styling" name="styling" onclick="changeStyle('Default.css')" checked aria-label='No Style'> No Style</input>
-            <!-- <div><input type='radio' id="styling_default" class="styling" name="styling" onclick="changeStyle('Default.css')" checked></input><label id='label_styling_default' for='styling_default'> No Style</label></div> -->
-            <!-- <div><input type='radio' id="styling_style1" class="styling" name="styling" onclick="changeStyle('Style1.css')"></input><label id='label_styling_style1' for='styling_style1'> With Style 1</label></div> -->
-            <input type="radio" id="styling_style1" class="styling" name="styling" onclick="changeStyle('Style1.css')" aria-label='With Style 1'> With Style 1</input>
-
-            <h3>Logic</h3>
-            <input type="radio" id="logic_default" class="styling" name="logic" onclick="changeLogic('Default.css')" checked aria-label="Not Active"> Not Active</input>
-            <!-- <div><input type='radio' id="logic_default" class="styling" name="logic" onclick="changeLogic('Default.css')" checked></input><label id='label_logic_default' for='logic_default'> Not Active</label></div>
-                <div><input type='radio' id="logic_active" class="styling" name="logic" onclick="changeLogic('ActiveLogic.css')"></input><label id='label_logic_active' for='logic_active'> Active</label></div> -->
-            <input type="radio" id="logic_active" class="styling" name="logic" onclick="changeLogic('ActiveLogic.css')" aria-label="Active"> Active</input>
-        </div>
-        <div class="col-sm-3 my-2" id="prevResDiv" style="border: 1px solid black;border-left:0">
-            <h3>Previous Results</h3>
-            <textarea id="json_input" aria-label="json input" style="width: 100%; height:200px"></textarea>
-            <div class="col" style="margin-top: 10px;">
-                <input type="button" id="updater" value="add JSON to memory" />
-                <input type="button" id="clearMem" value="Clear Memory" />
-                <div id="loaddisplay" style="height: 20px;"></div>
+        <div class="row">
+            <div class="col-12 col-md-6" id="markup">
+                <div class="d-flex flex-wrap justify-content-between">
+                    <span class="me-1 h3">Markup (<a href="#questionnaires/demo.txt" id="demo">Demo</a>)</span>
+                    <div class="d-flex">
+                        <label for="buttonFlex" id="fontSpan" class="align-self-end me-1 h5">Change Font Size </label>
+                        <button id="increaseSizeButton" aria-label="increaseSize" class="me-1 fa fa-plus-square-o align-self-center"></button>
+                        <button id="decreaseSizeButton" aria-label="decreaseSize" class="me-1 fa fa-minus-square-o align-self-center"></button>
+                    </div>
+                </div>
+                <textarea class="w-100" id="ta" aria-label="Enter Text"></textarea>
+            </div>
+            <div class="col-12 col-md-6">
+                <h3 id="renderText" style="color: navy;">Rendering</h3>
+                <div id="rendering"></div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col" id="markup">
-            <span class="h3">Markup (<a href="#questionnaires/demo.txt" id="demo">Demo</a>) </span> <span id="fontSpan" class="h5" style="float:right;">Change Font Size <span
-                    class="h5 align-middle"><button id="increaseSizeButton" aria-label="increaseSize" class="fa fa-plus-square-o"></button> <button id="decreaseSizeButton" aria-label="decreaseSize"
-                        class="fa fa-minus-square-o"></button></span></span>
-            <textarea id="ta" aria-label="Enter Text"></textarea>
-        </div>
-        <!-- <div id="lint" style="border: 1px solid black; padding-right: 5px; padding-left:5px; width:500px">
-                <h3>Linting</h3>
-                <input type="checkbox" id="sherlock" onclick="changeLint('Sherlock.js')">Sherlock</button>
-                <input type="checkbox" id="demo5" onclick="changeLint('demo5.js')">Demo</button>
-            </div>
-            <script>
-                function changeLint(file){
-                    let script = document.createElement('script')
-                    script.src = file
-                    script.id = "script_" + file
-                    if(event.target.checked == true){
-                        document.getElementsByTagName('head')[0].appendChild(script)
-                    }
-                    else{
-                        document.getElementsByTagName('head')[0].removeChild(document.getElementById('script_'+ `${file}`))
-                    }
-                    
-                }
-            </script> -->
-        <div class="col">
-            <h3 id="renderText" style="color: navy;">Rendering</h3>
-            <div id="rendering"></div>
-        </div>
-    </div>
-</div>
-
+</body>
 <script>
     function changeStyle(sheet) {
         document.getElementById("pagestyle").setAttribute("href", sheet)
@@ -188,6 +174,7 @@
     }
 
     let myTree = {};
+
 
 </script>
 
