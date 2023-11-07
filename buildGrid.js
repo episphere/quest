@@ -32,6 +32,18 @@ export function toggle_grid(event) {
   }
 }
 
+function grid_text_displayif(original_text){
+  let question_text = original_text
+  let dif_regex = /%displayif=([^%]+)%([^%]+)%/g
+  if (dif_regex.test(question_text)) {      
+    console.log(" ...  GOTTA DEAL WITH THE DISPLAY IF ...")
+    question_text = question_text.replace(dif_regex,(match,p1,p2)=>{
+      return `<span displayif="${encodeURIComponent(p1)}" class="grid-displayif"> ${p2.replace(/ /g,"&nbsp;")}</span>`
+    })
+    console.log(question_text)
+    return question_text;
+  }
+}
 function buildHtml(grid_obj) {
   let grid_head =
     '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
@@ -40,12 +52,18 @@ function buildHtml(grid_obj) {
   });
   grid_head += "</div>";
   let grid_table_body = "";
-  grid_obj.questions.forEach((question) => {
+  grid_obj.questions.forEach((question) => 
+  {
+    // check for row-level display if
     let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
 
-    grid_table_body += `<div id="${question.id}" ${displayif} data-gridrow=true class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border">${question.question_text}</div>`;
+    // check for displayif inside row text
+    let question_text = grid_text_displayif(question.question_text)
+
+    console.log(` .... ${question_text} ....`)
+    grid_table_body += `<div id="${question.id}" ${displayif} data-gridrow=true class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border"><span>${question_text}<span></div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
-      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" aria-label='(${question.question_text}, ${resp.text})' grid class="grid-input-element show-button"/></div>`;
+      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" grid class="grid-input-element show-button"/></div>`;
     });
     grid_table_body += "</div>";
   });
@@ -53,7 +71,9 @@ function buildHtml(grid_obj) {
   let small_format = "";
   grid_obj.questions.forEach((question) => {
     let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
-    small_format += `<div id="${question.id}_sm" ${displayif}><div class="py-4">${question.question_text}</div>`;
+    // check for displayif inside question text
+    let question_text = grid_text_displayif(question.question_text)
+    small_format += `<div id="${question.id}_sm" ${displayif}><div class="py-4">${question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       small_format += `<div class="text-center"><input data-is-small-grid-cell="1" type="${resp.type}" class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
@@ -136,7 +156,7 @@ export function parseGrid(text) {
       let question_obj = { id: match[1], question_text: question_text, displayif: encodeURIComponent(displayIf) };
       grid_obj.questions.push(question_obj);
     }
-
+  
     let rb_cb_regex = /([\[\(])(\w+):([^\]\)]+)[\]\)]/g;
     let response_matches = grid_obj.shared_response.matchAll(rb_cb_regex);
     if (response_matches) {
