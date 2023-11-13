@@ -41,8 +41,8 @@ function grid_text_displayif(original_text){
       return `<span displayif="${encodeURIComponent(p1)}" class="grid-displayif"> ${p2.replace(/ /g,"&nbsp;")}</span>`
     })
     console.log(question_text)
-    return question_text;
   }
+  return question_text;
 }
 function buildHtml(grid_obj) {
   let grid_head =
