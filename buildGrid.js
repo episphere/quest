@@ -92,7 +92,7 @@ function buildHtml(grid_obj) {
   //remove , from display if for form if it exists
   grid_obj.args = grid_obj.args.replace(",displayif", " displayif");
   let html_text = `<form ${grid_obj.args} class="container question" grid ${gridPrompt}>
-  ${grid_obj.shared_text}<div class="d-none d-lg-block" data-grid="large" style="background-color: rgb(193,225,236)">
+  ${grid_text_displayif(grid_obj.shared_text)}<div class="d-none d-lg-block" data-grid="large" style="background-color: rgb(193,225,236)">
   ${grid_head}${grid_table_body}</div><div class="d-lg-none" data-grid="small">${small_format}</div>
   <div class="container">
     <div class="row">
