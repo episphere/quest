@@ -445,7 +445,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       display_if = (!!display_if) ? `displayif=${encodeURIComponent(display_if)}` : ""
       let label_end = match.input.substring(end).search(/\n|(?:<br>|$)/) + end;
       let label = match.input.substring(end, label_end);
-      let replacement = `<div class='response' ${display_if}><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${radioElementName}_${value}'>${label}</label></div>`;
+      let replacement = `<div class='response' ${display_if}><input type='radio' name='${radioElementName}' value='${value}' id='${radioElementName}_${value}'></input><label id='${labelID}' for='${radioElementName}_${value}'>${label}</label></div>`;
 
       return match.input.substring(0, match.index) + replacement + match.input.substring(label_end);
     }
@@ -491,7 +491,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
-      return `<div class='response' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' ${clearValues}></input><label id='${labelID}' style='font-weight: normal; padding-left:5px;' for='${elVar}_${value}'>${label}</label></div>`;
+      return `<div class='response' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' ${clearValues}></input><label id='${labelID}' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
     // replace |time| with a time input
