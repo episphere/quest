@@ -73,7 +73,7 @@ function buildHtml(grid_obj) {
     let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
     // check for displayif inside question text
     let question_text = grid_text_displayif(question.question_text)
-    small_format += `<div id="${question.id}_sm" ${displayif}><div class="py-4">${question_text}</div>`;
+    small_format += `<div id="${question.id}_sm" ${displayif}><div class="pt-4">${question_text}</div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       small_format += `<div class="response text-center"><input data-is-small-grid-cell="1" type="${resp.type}" class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
     });
