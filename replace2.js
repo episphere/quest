@@ -196,7 +196,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
-      return `<span name='${varid}'>${previousResults[varid]}</span>`;
+      return `<span name='${varid}'>${math._value(varid)}</span>`;
     });
 
     // replace {$id} with span tag
