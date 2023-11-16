@@ -34,7 +34,7 @@ export function toggle_grid(event) {
 
 function grid_replace_piped_variables(txt){
   txt = txt.replace(/\{\$([ue]:)?([^}]+)}/g, (all, type, varid) => {
-    return `<span data-gridreplacetype=${type == "e" ? "eval" : "_val"} data-gridreplace=${encodeURIComponent(varid)}></span>`
+    return `<span data-gridreplacetype=${type == "e:" ? "eval" : "_val"} data-gridreplace=${encodeURIComponent(varid)}></span>`
   });
   txt = txt.replace(' <span', '&nbsp;<span')
   return txt
