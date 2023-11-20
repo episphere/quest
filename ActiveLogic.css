@@ -51,3 +51,82 @@
 input[type="text"] {
   flex-grow: 1;
 }
+
+
+/* CSS for grids... */
+.quest-grid{
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto repeat(12,minmax(0px,min-content));
+
+  font-family:Arial, Helvetica, sans-serif;
+  font-size: small;
+  overflow-x: auto;
+  gap: 1px;
+  overflow-y: visible;
+}
+
+.quest-grid * {
+  padding: 2px;
+  text-align: center;
+}
+
+.quest-grid > .nr {
+  grid-column-start: 1;
+  text-align: start;
+}
+
+ul.quest-grid{
+  padding: 0px;
+  list-style-type: none;
+  min-width: min-content;
+}
+
+
+
+@media screen and (min-width: 576px) {
+  ul.quest-grid input{
+      display: inline;
+      height: 100%;
+  }
+  ul.quest-grid label{
+      display: none;
+  }
+}
+
+
+/** 
+I chose 576px because this matches the default breakpoint
+for bootstrap -xs
+**/
+@media screen and (max-width: 576px) {
+  .quest-grid {
+      display: block;
+      width:100%;
+  }
+  ul.quest-grid{
+      min-width: min-content;
+      list-style-type: none;
+      text-align: left;
+  }
+
+  li {
+    list-style-type: none;
+  }
+
+  ul.quest-grid .hr {
+      display: none;
+  }
+
+  ul.quest-grid li.nr {
+      display: block;
+  }
+
+  ul.quest-grid li.nr:not(:first-child){
+      padding-top: 10px;
+  }
+
+
+
+    
+}

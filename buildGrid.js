@@ -51,7 +51,59 @@ function grid_text_displayif(original_text){
   }
   return question_text;
 }
-function buildHtml(grid_obj) {
+
+function buildHtml(grid_obj){
+  // is there a hard/soft edit?
+  let gridPrompt = "hardedit='false' softedit='false'";
+  if (grid_obj.prompt) {
+    if (grid_obj.prompt === '!') {
+      gridPrompt = "hardedit='true' softedit='false'";
+    }
+    else if (grid_obj.prompt === '?') {
+      gridPrompt = "hardedit='false' softedit='true'";
+    }
+  }
+
+  let grid_html = `<form ${grid_obj.args} class="container question" data-grid="true" ${gridPrompt}>`
+  grid_html+=`<div>${grid_text_displayif(grid_obj.shared_text)}</div>`
+  grid_html+='<ul class="quest-grid">'
+
+  // header line...
+  grid_html += '<li class="nr hr"></div>';
+  grid_obj.responses.forEach((resp,index) => {
+    grid_html += `<li class="hr">${resp.text}</div>`;
+  });
+
+  // now lets handle each question...
+  grid_obj.questions.forEach((question) => {
+    // check if there is a displayif for the entire question.  
+    let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
+    // fill in the question text, replacing any displayif 
+    grid_html += `<li class="nr" data-question-id="${question.id}">${grid_text_displayif(question.question_text)}`
+    // for each possible response make a grid cell...
+    grid_obj.responses.forEach( (resp, resp_indx) => {
+      grid_html += `<li class="response" data-question-id="${question.id}"><input name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" type="radio"><label for="${question.id}_${resp_indx}">${resp.text}</label></li>`
+    })
+  })
+  grid_html+=`</ul></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 col-sm-12">
+        <input type='submit' class='previous w-100' value='BACK'/>
+      </div>
+      <div class="col-md-6 col-sm-12">
+        <input type='submit' class='reset w-100' value='RESET ANSWER'/>
+      </div>
+      <div class="col-md-3 col-sm-12">
+        <input type='submit' class='next w-100' value='NEXT'/>
+      </div>
+    </div>
+  </div>
+  </form></form>`
+  console.log(grid_html)
+  return grid_html
+}
+function buildHtml_og(grid_obj) {
   let grid_head =
     '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
   grid_obj.responses.forEach((resp) => {

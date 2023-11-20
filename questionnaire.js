@@ -1184,8 +1184,8 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
 
   updateTree();
   // prevElement.parentElement.scrollIntoView();
-  //document.getElementById(rootElement).scrollIntoView();
-  window.scrollTo(0, 0);
+  // document.getElementById(rootElement).scrollIntoView();
+  // window.scrollTo(0, 0);
   return prevElement;
 }
 
