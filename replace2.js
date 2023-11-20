@@ -254,7 +254,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fPopover(fullmatch, buttonText, title, popText) {
       title = title ? title : "";
       popText = popText.replace(/"/g, "&quot;")
-      return `<a tabindex="0" class="popover-dismiss btn btn" role="button" data-toggle="popover" data-trigger="focus" title="${title}" data-content="${popText}">${buttonText}</a>`;
+      return `<a tabindex="0" class="popover-dismiss btn" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="${title}" data-bs-content="${popText}">${buttonText}</a>`;
     }
 
     // replace |hidden|value| 
@@ -1047,6 +1047,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let otherElement = document.getElementById(element.dataset.confirm)
     otherElement.dataset.conformationFor=element.id
   })
+
+  // enable all popovers...
+  console.log("...")
+  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+  const popoverList = [...popoverTriggerList].map(popoverTriggerEl => {
+    console.log("... ",popoverTriggerEl)
+    new bootstrap.Popover(popoverTriggerEl)
+  })
+
 
   return true;
 };
