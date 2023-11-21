@@ -39,6 +39,13 @@ async function startUp() {
     ta.onkeyup()
   }
 
+  if (params.has("run")){
+    let parentElement = document.getElementById("rendering").parentElement
+    parentElement.classList.remove("col-12","col-md-6")
+    if (!params.has("style")){
+      document.getElementById("pagestyle").setAttribute("href", "Style1.css")
+    }
+  }
   /*var q = (location.search + location.hash).replace(/[\#\?]/g, "");
     if (q.length > 3) {
       if (!q.startsWith("config")) {
@@ -66,6 +73,7 @@ async function startUp() {
     }
     loaddisplay.innerText = txt;
   };
+
   let myTree = questionQueue;
 }
 

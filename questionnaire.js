@@ -270,7 +270,7 @@ export const myFunctions = {
   gridQuestionsValueIsOneOf: function (gridId, ...values) {
     if (math.doesNotExist(gridId)) return false
     let gridElement = document.getElementById(gridId)
-    if (!gridElement.hasAttribute("grid")) return false
+    if (! "grid" in gridElement.dataset) return false
 
     values = values.map(v => v.toString())
     let gridValues = math._value(gridId)
@@ -809,11 +809,11 @@ function showModal(norp, retrieve, store, rootElement) {
       }
     }
 
-    if (norp.form.hasAttribute("grid")) {
+    if (norp.form.dataset.grid) {
       if (!gridHasAllAnswers(norp.form)) {
         hasNoResponses = true;
       }
-
+      numBlankReponses = numberOfUnansweredGridQuestions(norp.form)
     }
     // let tempVal = 0;
     // if (hasNoResponses) {
@@ -1089,11 +1089,19 @@ export function displayQuestion(nextElement) {
   // concern:: in the grid you can have style:none and class="d-flex"
   // currently this SHOWS the row.  If this changes in the future,
   // it may have to be fixed.
-  Array.from(nextElement.querySelectorAll("[data-gridrow][displayif]"))
-    .map((elm) => {
-      let f = evaluateCondition(elm.getAttribute("displayif"));
-      elm.classList.add((f) ? "d-flex" : "collapse")
-      elm.classList.remove((f) ? "collapse" : "d-flex")
+  Array.from(nextElement.querySelectorAll("[data-gridrow][data-displayif]"))
+    .forEach((elm) => {
+      let f = evaluateCondition(decodeURIComponent(elm.dataset.displayif));
+
+      console.log(elm)
+      console.log(`checking the datagrid for displayif... ${elm.dataset.questionId} ${f}`)
+      
+      Array.from(elm.parentElement.querySelectorAll(`[data-question-id=${elm.dataset.questionId}]`)).forEach(resp => {
+        console.log(resp)
+        resp.style.display=(f)?'block':'none'
+      })
+//      elm.classList.add((f) ? "d-flex" : "collapse")
+//      elm.classList.remove((f) ? "collapse" : "d-flex")
     });
 
   // check min/max for variable substitution in validation
@@ -1184,8 +1192,8 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
 
   updateTree();
   // prevElement.parentElement.scrollIntoView();
-  //document.getElementById(rootElement).scrollIntoView();
-  window.scrollTo(0, 0);
+  // document.getElementById(rootElement).scrollIntoView();
+  // window.scrollTo(0, 0);
   return prevElement;
 }
 
@@ -1253,25 +1261,32 @@ function checkValid(questionElement) {
 
 //check if grids has all answers
 export function gridHasAllAnswers(questionElement) {
-  let gridRows = questionElement.querySelectorAll("[data-gridrow]");
-  for (let i = 0; i < gridRows.length; i++) {
-    if (gridRows[i].style.display != "none") {
-      let gridCells = gridRows[i].querySelectorAll("[gridcell]");
-      let rowHasAnswer = false;
-      for (let j = 0; j < gridCells.length; j++) {
-        if (gridCells[j].checked) {
-          rowHasAnswer = true;
-        }
-      }
-      if (!rowHasAnswer) {
-        return false;
-      }
-    }
+  let gridRows = Array.from(questionElement.querySelectorAll("[data-gridrow]"));
 
+  const checked = (element) => element.checked;
+  return gridRows.reduce( (acc,current,index) => {
+    if (current.style.display=='none') return acc
 
-  }
-  return true;
+    let name = current.dataset.questionId
+    let currentResponses = Array.from(current.parentElement.querySelectorAll(`[name="${name}"]`))
+    return acc && currentResponses.some(checked)
+  },true)
 }
+
+export function numberOfUnansweredGridQuestions(questionElement) {
+  let gridRows = Array.from(questionElement.querySelectorAll("[data-gridrow]"));
+
+  const checked = (element) => element.checked;
+  return gridRows.reduce( (acc,current,index) => {
+    if (current.style.display=='none') return acc
+
+    let name = current.dataset.questionId
+    let currentResponses = Array.from(current.parentElement.querySelectorAll(`[name="${name}"]`))
+    return currentResponses.some(checked)?acc:(acc+1)
+  },0)
+}
+
+
 //check if radio/checkboxes with inputs attached has all of the required values
 //does a double loop through of each radio/checbox, if checked then the following inputs must not have a empty value
 export function radioCbHasAllAnswers(questionElement) {

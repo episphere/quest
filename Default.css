@@ -2,3 +2,85 @@ input[type="checkbox"] + label {
   /* padding: 10px; */
   margin: 5px;
 }
+
+
+/* CSS for grids... */
+.quest-grid{
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto repeat(12,minmax(0px,min-content));
+
+  font-family:Arial, Helvetica, sans-serif;
+  font-size: small;
+  overflow-x: auto;
+}
+
+.quest-grid > .nr {
+  grid-column-start: 1;
+  text-align: start;
+}
+
+ul.quest-grid{
+  padding: 0px;
+  min-width: min-content;
+  list-style-type: none;
+  text-align: center;
+}
+
+ul.quest-grid:li{
+  padding: 0px;
+  min-width: min-content;
+  list-style-type: none;
+  text-align: center;
+}
+
+
+
+@media screen and (min-width: 576px) {
+  ul.quest-grid input{
+      display: inline;
+  }
+  ul.quest-grid label{
+      display: none;
+  }
+}
+
+
+/** 
+I chose 576px because this matches the default breakpoint
+for bootstrap -xs
+**/
+@media screen and (max-width: 576px) {
+  .quest-grid {
+      display: block;
+      width:100%;
+  }
+  ul.quest-grid{
+      min-width: min-content;
+      list-style-type: none;
+      text-align: left;
+  }
+
+  li {
+    list-style-type: none;
+  }
+
+  ul.quest-grid .hr {
+      display: none;
+  }
+
+  ul.quest-grid li.nr {
+      display: block;
+  }
+
+  ul.quest-grid li.nr:not(:first-child){
+      padding-top: 10px;
+  }
+
+  ul.quest-grid li label {
+      display: unset;
+      padding-left: 5px;
+  }
+
+    
+}

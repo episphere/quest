@@ -980,10 +980,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
     rcElement.onchange = rbAndCbClick;
   });
 
+  /*
   [...divElement.querySelectorAll(".grid-input-element")].forEach((x) => {
     x.addEventListener("change", toggle_grid);
   });
-
+  */
+ 
   [...divElement.querySelectorAll("[data-hidden]")].forEach((x) => {
     x.style.display = "none";
   });
