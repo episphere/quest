@@ -41,7 +41,7 @@ ul.quest-grid:li{
       display: inline;
   }
   ul.quest-grid label{
-      visibility: hidden;
+      display: none;
   }
 }
 

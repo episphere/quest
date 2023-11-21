@@ -15,7 +15,6 @@ export function toggle_grid(event) {
     console.error("ERROR in [grid] toggle_grid!!!  Bad element id!\n", element);
     return;
   }
-  console.log(element)
   let otherid = tmp[2] ? tmp[1] + tmp[3] : tmp[1] + "_sm" + tmp[3];
   let otherElement = document.getElementById(otherid);
   otherElement.checked = element.checked;
@@ -43,11 +42,9 @@ function grid_text_displayif(original_text){
   let question_text = original_text
   let dif_regex = /%displayif=([^%]+)%([^%]+)%/g
   if (dif_regex.test(question_text)) {      
-    console.log(" ...  GOTTA DEAL WITH THE DISPLAY IF ...")
     question_text = question_text.replace(dif_regex,(match,p1,p2)=>{
       return `<span displayif="${encodeURIComponent(p1)}" class="grid-displayif"> ${p2.replace(/ /g,"&nbsp;")}</span>`
     })
-    console.log(question_text)
   }
   return question_text;
 }
@@ -77,12 +74,12 @@ function buildHtml(grid_obj){
   // now lets handle each question...
   grid_obj.questions.forEach((question) => {
     // check if there is a displayif for the entire question.  
-    let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
+    let displayif = question.displayif ? `data-displayif="${encodeURIComponent(question.displayif)}"` : '';
     // fill in the question text, replacing any displayif 
-    grid_html += `<li class="nr" data-question-id="${question.id}">${grid_text_displayif(question.question_text)}`
+    grid_html += `<li class="nr" data-question-id="${question.id}" data-gridrow="true" ${displayif}>${grid_text_displayif(question.question_text)}`
     // for each possible response make a grid cell...
     grid_obj.responses.forEach( (resp, resp_indx) => {
-      grid_html += `<li class="response" data-question-id="${question.id}"><input name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" type="radio"><label for="${question.id}_${resp_indx}">${resp.text}</label></li>`
+      grid_html += `<li class="response" data-question-id="${question.id}"><input name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" type="radio" dataset-gridcell="true" data-grid="true"><label for="${question.id}_${resp_indx}">${resp.text}</label></li>`
     })
   })
   grid_html+=`</ul></div>
@@ -100,7 +97,6 @@ function buildHtml(grid_obj){
     </div>
   </div>
   </form></form>`
-  console.log(grid_html)
   return grid_html
 }
 function buildHtml_og(grid_obj) {
@@ -119,7 +115,6 @@ function buildHtml_og(grid_obj) {
     // check for displayif inside row text
     let question_text = grid_text_displayif(question.question_text)
 
-    console.log(` .... ${question_text} ....`)
     grid_table_body += `<div id="${question.id}" ${displayif} data-gridrow=true class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border"><span>${question_text}<span></div>`;
     grid_obj.responses.forEach((resp, resp_indx) => {
       grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" grid class="grid-input-element show-button"/></div>`;
