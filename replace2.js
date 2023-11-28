@@ -11,10 +11,13 @@ import {
   parsePhoneNumber,
   submitQuestionnaire,
   textboxinput,
+  math
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
+
+
 export let transform = function () {
   // init
 };

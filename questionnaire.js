@@ -4,10 +4,13 @@ import { removeQuestion } from "./localforageDAO.js";
 import { validateInput, validationError } from "./validate.js"
 
 export const moduleParams = {};
+import  * as mathjs  from 'https://cdn.skypack.dev/mathjs@11.2.0';
+export const math=mathjs.create(mathjs.all)
+window.math = math
 
-let script = document.createElement("script");
-script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.2.0/math.js"
-document.body.appendChild(script);
+//let script = document.createElement("script");
+//script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.2.0/math.js"
+//document.body.appendChild(script);
 
 
 
