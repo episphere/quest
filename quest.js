@@ -13,9 +13,12 @@ async function startUp() {
   let styling = await questLF.getItem("styling") ?? "styling_default";
   let logic = await questLF.getItem("logic") ?? "logic_default";
   let cachedPreviousResults = await questLF.getItem("previousResults") ?? "";
+  // prevRes is a ugh.. global variable
+  prevRes = cachedPreviousResults.length>0?JSON.parse(cachedPreviousResults):{}
   document.getElementById(styling).checked = true
   document.getElementById(logic).checked = true
   document.getElementById("json_input").innerText=cachedPreviousResults;
+  setStylingAndLogic()
 
 
 
@@ -76,7 +79,10 @@ async function startUp() {
 */
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
-  document.getElementById("clearMem").onclick = clearLocalForage;
+  document.getElementById("clearMem").addEventListener("click",(event)=> {
+    clearLocalForage()
+    document.getElementById("json_input").value=""
+  });
 
   document.getElementById("updater").onclick = function (event) {
     let txt = "";
@@ -108,6 +114,7 @@ function decreaseSize() {
 }
 
 function clearLocalForage() {
+  questLF.clear()
   localforage
     .clear()
     .then(() => {
@@ -130,25 +137,24 @@ transform.tout = function (fun, tt = 500) {
   transform.tout.t = setTimeout(fun(prevRes), tt);
 };
 
+function setStylingAndLogic(){
+  let sheet = ""
+  document.querySelectorAll('input[type="radio"][name="styling"]').forEach( el=>{
+    if (el.checked) sheet=el.dataset.sheet
+  })
+  let link = document.getElementById("pagestyle")
+  link.setAttribute("href", sheet)
+  document.querySelectorAll('input[type="radio"][name="logic"]').forEach( el=>{
+    if (el.checked) sheet=el.dataset.sheet
+  })
+  link = document.getElementById("pagelogic")
+  link.setAttribute("href", sheet)
+}
+
 window.onload = function () {
   startUp();
 
   document.querySelectorAll('input[type="radio"][name="styling"],input[type="radio"][name="logic"]').forEach((el)=>{
-    console.log(el)
-    el.addEventListener("change",(event)=>{
-      let sheet=""
-      let link = ""
-      if (event.target.name == "styling"){
-        sheet=event.target.id == "styling_default"?"Default.css":"Style1.css"
-        link = document.getElementById("pagestyle")
-      } else {
-        sheet=event.target.id == "logic_default"?"Default.css":"ActiveLogic.css"
-        link = document.getElementById("pagelogic")
-      }
-      link.setAttribute("href", sheet)
-      questLF.setItem(event.target.name,event.target.id)
-      console.log(`${event.target.name} changed to ${event.target.id}`)
-    })
+    el.addEventListener("change",setStylingAndLogic)
   })
-  //,input[type="radio"][name="logic"').forEach( 
 };
