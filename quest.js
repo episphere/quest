@@ -87,7 +87,7 @@ async function startUp() {
   document.getElementById("updater").onclick = function (event) {
     let txt = "";
     try {
-      prevRes = JSON.parse(json_input.value);
+      prevRes = (json_input.value.length>0)?JSON.parse(json_input.value):{};
       questLF.setItem("previousResults",json_input.value);
       txt = "added json... ";
     } catch (err) {
