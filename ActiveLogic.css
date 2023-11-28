@@ -74,6 +74,7 @@ input[type="text"] {
 .quest-grid > .nr {
   grid-column-start: 1;
   text-align: start;
+  align-self: center;
 }
 
 ul.quest-grid{
@@ -87,7 +88,7 @@ ul.quest-grid{
 @media screen and (min-width: 576px) {
   ul.quest-grid input{
       display: inline;
-      height: 100%;
+      height: 1rem;
   }
   ul.quest-grid label{
       display: none;
