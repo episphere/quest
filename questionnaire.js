@@ -996,7 +996,7 @@ async function nextPage(norp, retrieve, store, rootElement) {
   // nextElement.scrollIntoView();
   // document.getElementById(rootElement).scrollIntoView();
   //window.scrollTo(0, 0);
-  document.getElementById(rootElement).scroll(0,0)
+  //document.getElementById(rootElement).scroll(0,0)
 }
 
 export async function submitQuestionnaire(store, questName) {
