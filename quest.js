@@ -155,6 +155,9 @@ window.onload = function () {
   startUp();
 
   document.querySelectorAll('input[type="radio"][name="styling"],input[type="radio"][name="logic"]').forEach((el)=>{
-    el.addEventListener("change",setStylingAndLogic)
+    el.addEventListener("change",(event)=>{
+      questLF.setItem(event.target.name,event.target.id)
+      setStylingAndLogic()
+    })
   })
 };
