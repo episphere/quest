@@ -3,6 +3,7 @@ import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
 import { validateInput, validationError } from "./validate.js"
 
+
 export const moduleParams = {};
 import  * as mathjs  from 'https://cdn.skypack.dev/mathjs@11.2.0';
 export const math=mathjs.create(mathjs.all)
@@ -138,7 +139,6 @@ export const myFunctions = {
    * @return {boolean}     is lowerLimit <= value(id) <= upperLimit
    */
   valueIsBetween: function (lowerLimit, upperLimit, ...ids) {
-    console.log(`VIB:  ${lowerLimit} <= ${ids}  <= ${upperLimit}`)
     if (lowerLimit === undefined || upperLimit === undefined || ids === undefined) return false;
 
     let value = undefined;
@@ -328,41 +328,40 @@ function getKeyedValue(x) {
   */
 }
 
-window.addEventListener("load", (event) => {
-  // Tell mathjs about the YearMonth class
-  math.typed.addType({
-    name: 'YearMonth',
-    test: function (x) {
-      return x && x.isYearMonth
-    }
-  })
-
-  // Tell math.js how to add a YearMonth with a number
-  const add = math.typed('add', {
-    'YearMonth, number': function (dte, m) {
-      return dte.add(m)
-    },
-    'number, YearMonth': function (m, dte) {
-      return dte.add(m)
-    }
-  })
-  const subtract = math.typed('subtract', {
-    'YearMonth, number': function (dte, m) {
-      return dte.subtract(m)
-    },
-    'YearMonth, YearMonth': function(dte2,dte1){
-      return dte2.subMonth(dte1)
-    }
-  })
-
-  myFunctions.add = add;
-  myFunctions.subtract = subtract
-  window.myFunctions = myFunctions;
-
-  math.import({
-    myFunctions
-  })
+// Tell mathjs about the YearMonth class
+math.typed.addType({
+  name: 'YearMonth',
+  test: function (x) {
+    return x && x.isYearMonth
+  }
 })
+
+// Tell math.js how to add a YearMonth with a number
+const add = math.typed('add', {
+  'YearMonth, number': function (dte, m) {
+    return dte.add(m)
+  },
+  'number, YearMonth': function (m, dte) {
+    return dte.add(m)
+  }
+})
+const subtract = math.typed('subtract', {
+  'YearMonth, number': function (dte, m) {
+    return dte.subtract(m)
+  },
+  'YearMonth, YearMonth': function (dte2, dte1) {
+    return dte2.subMonth(dte1)
+  }
+})
+
+myFunctions.add = add;
+myFunctions.subtract = subtract
+window.myFunctions = myFunctions;
+
+math.import({
+  myFunctions
+})
+
 
 // The questionQueue is an Tree which contains
 // the question ids in the order they should be displayed.
@@ -415,7 +414,6 @@ export function textBoxInput(event) {
 }
 
 export function parseSSN(event) {
-  console.log("SSN EVENT ", event);
   if (event.type == "keyup") {
     let element = event.target;
     let val = element.value.replace(/\D/g, "");
@@ -477,14 +475,12 @@ export function parsePhoneNumber(event) {
 }
 
 export function callExchangeValues(nextElement) {
-  console.log("... cev In", nextElement.getAttribute("maxval"), nextElement.dataset.max, nextElement)
   exchangeValue(nextElement, "min", "data-min");
   exchangeValue(nextElement, "max", "data-max")
   exchangeValue(nextElement, "minval", "data-min");
   exchangeValue(nextElement, "maxval", "data-max")
   exchangeValue(nextElement, "data-min", "data-min")
   exchangeValue(nextElement, "data-max", "data-max");
-  console.log("... cev Out", nextElement.getAttribute("maxval"), nextElement.dataset.max, nextElement)
 }
 
 function exchangeValue(element, attrName, newAttrName) {
@@ -540,8 +536,7 @@ export function textboxinput(inputElement, validate = true) {
       document.getElementById(
         "modalResponseBody"
       ).innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
-      new bootstrap.Modal('#softModalResponse').show()
-//      $("#softModalResponse").modal("show");
+      new bootstrap.Modal(document.getElementById('softModalResponse')).show()
     }
   }
   if (inputElement.className == "SSN") {
@@ -550,7 +545,6 @@ export function textboxinput(inputElement, validate = true) {
   }
 
   if (['text', 'number', 'email', 'tel', 'date', 'month', 'time'].includes(inputElement.type)) {
-    console.log(inputElement.type);
     if (validate) {
       validateInput(inputElement)
     }
@@ -773,7 +767,7 @@ function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
     ).innerText = `${prompt} Please answer the question${num > 1 ? "s" : ""}.`;
 
       // popup the modal..
-    const hardModal = new bootstrap.Modal('#hardModal')
+    const hardModal = new bootstrap.Modal(document.getElementById('hardModal'))
     hardModal.show()
     return null;
   }
@@ -784,7 +778,7 @@ function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
     "modalBodyText"
   ).innerText = `${prompt} Would you like to continue?`;
   document.getElementById("modalContinueButton").onclick = f1;
-  const softModal = new bootstrap.Modal('#softModal')
+  const softModal = new bootstrap.Modal(document.getElementById('softModal'))
   softModal.show()
 }
 
@@ -846,15 +840,6 @@ function showModal(norp, retrieve, store, rootElement) {
       );
       return null;
     }
-    // if (
-    //   norp.getAttribute("data-target") == "#hardModal" &&
-    //   getSelected(norp.form) == 0
-    // ) {
-    //   $("#hardModal").modal("toggle");
-    //   return null;
-    // } else {
-    //   nextPage(norp, store);
-    // }
   }
   nextPage(norp, retrieve, store, rootElement);
 }
@@ -998,7 +983,7 @@ async function nextPage(norp, retrieve, store, rootElement) {
   displayQuestion(nextElement);
   // nextElement.scrollIntoView();
   // document.getElementById(rootElement).scrollIntoView();
-  //window.scrollTo(0, 0);
+  window.scrollTo(0, 0);
   //document.getElementById(rootElement).scroll(0,0)
 }
 

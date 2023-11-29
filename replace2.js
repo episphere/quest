@@ -18,9 +18,11 @@ import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
 
 
+
 export let transform = function () {
   // init
 };
+transform.rbAndCbClick = rbAndCbClick
 
 let questName = "Questionnaire";
 let rootElement;
@@ -733,7 +735,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
               </button>
           </div>
@@ -741,8 +743,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
               <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
           </div>
           <div id="softModalFooter" class="modal-footer">
-              <button type="button" id=modalContinueButton class="btn btn-light" data-bs-dismiss="modal">Continue Without Answering</button>
-              <button type="button" id=modalCloseButton class="btn btn-light" data-bs-dismiss="modal">Answer the Question</button>
+              <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Continue Without Answering</button>
+              <button type="button" id=modalCloseButton class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
           </div>
           </div>
       </div>
@@ -752,7 +754,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           <div class="modal-content">
           <div class="modal-header">
               <h5 class="modal-title">Response Required</h5>
-              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
               </button>
           </div>
@@ -760,7 +762,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
               <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Answer the Question</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
           </div>
           </div>
       </div>
@@ -790,7 +792,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Submit Answers</h5>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -798,8 +800,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
             <p id="submitModalBodyText">Are you sure you want to submit your answers?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" id="submitModalButton" class="btn btn-success" data-bs-dismiss="modal">Submit</button>
-          <button type="button" id="cancelModal" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal" data-bs-dismiss="modal">Submit</button>
+          <button type="button" id="cancelModal" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
         </div>
         </div>
     </div>
@@ -1179,7 +1181,7 @@ function unrollLoops(txt) {
   return txt;
 }
 
-export function stopSubmit(event) {
+function stopSubmit(event) {
   event.preventDefault();
 
   if (event.target.clickType == "BACK") {
@@ -1191,7 +1193,7 @@ export function stopSubmit(event) {
     resetChildren(event.target.elements);
     event.target.value = undefined;
   } else if (event.target.clickType == "Submit Survey") {
-    new bootstrap.Modal('#submitModal').show()
+    new bootstrap.Modal(document.getElementById('submitModal')).show()
   } else {
     let buttonClicked = event.target.getElementsByClassName("next")[0];
     nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
