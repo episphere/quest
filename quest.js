@@ -10,14 +10,16 @@ const questLF = await localforage.createInstance({
 
 async function startUp() {
 
-  let styling = await questLF.getItem("styling") ?? "styling_default";
-  let logic = await questLF.getItem("logic") ?? "logic_default";
+  let styling = await questLF.getItem("styling") ?? false
+  let logic = await questLF.getItem("logic") ?? false;
   let cachedPreviousResults = await questLF.getItem("previousResults") ?? "";
   // prevRes is a ugh.. global variable
   prevRes = cachedPreviousResults.length>0?JSON.parse(cachedPreviousResults):{}
-  document.getElementById(styling).checked = true
-  document.getElementById(logic).checked = true
+
+  document.getElementById("styling").checked = styling
+  document.getElementById("logic").checked = logic
   document.getElementById("json_input").innerText=cachedPreviousResults;
+
   setStylingAndLogic()
 
 
@@ -138,6 +140,17 @@ transform.tout = function (fun, tt = 500) {
 };
 
 function setStylingAndLogic(){
+  function setValue(cssId,inputId){
+    let inputElement = document.getElementById(inputId)
+    let cssElement = document.getElementById(cssId)
+    console.log(inputElement.dataset)
+    cssElement.setAttribute("href",inputElement.checked?inputElement.dataset.sheetOn:inputElement.dataset.sheetOff)
+  }
+  setValue("pagestyle","styling")
+  setValue("pagelogic","logic")
+}
+
+function setOldStylingAndLogic(){
   let sheet = ""
   document.querySelectorAll('input[type="radio"][name="styling"]').forEach( el=>{
     if (el.checked) sheet=el.dataset.sheet
@@ -154,10 +167,17 @@ function setStylingAndLogic(){
 window.onload = function () {
   startUp();
 
+  document.querySelectorAll('input.form-check-input').forEach( (el) => {
+    el.addEventListener("change",(event)=>{
+      console.log(event.target.id,event.target.checked)
+      questLF.setItem(event.target.id,event.target.checked)
+      setStylingAndLogic()
+    })
+  })
   document.querySelectorAll('input[type="radio"][name="styling"],input[type="radio"][name="logic"]').forEach((el)=>{
     el.addEventListener("change",(event)=>{
       questLF.setItem(event.target.name,event.target.id)
-      setStylingAndLogic()
+      setOldStylingAndLogic()
     })
   })
 };

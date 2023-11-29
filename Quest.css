@@ -27,6 +27,16 @@ body {
   background-color: rgb(245 245 246);
 }
 
+#loaddisplay {
+  height: 3em;
+  font-size: smaller;
+}
+
+input[type="checkbox"].form-check-input{
+  display: inline;
+}
+
+
 #ta {
   background-color: #f7f9fb;
   font-family: monospace;
