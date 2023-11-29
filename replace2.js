@@ -259,7 +259,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fPopover(fullmatch, buttonText, title, popText) {
       title = title ? title : "";
       popText = popText.replace(/"/g, "&quot;")
-      return `<a tabindex="0" class="popover-dismiss btn" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="${title}" data-bs-content="${popText}">${buttonText}</a>`;
+      return `<a tabindex="0" class="popover-dismiss btn" role="button" title="${title}" data-toggle="popover" data-bs-toggle="popover" data-trigger="focus" data-bs-trigger="focus" data-content="${popText}" data-bs-content="${popText}">${buttonText}</a>`;
     }
 
     // replace |hidden|value| 
@@ -727,7 +727,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
   // add the HTML/HEAD/BODY tags...
-  document.getElementById(divId).innerHTML =/*html*/
+  document.getElementById(divId).innerHTML =
     contents +
     `
   <div class="modal" id="softModal" tabindex="-1" role="dialog">
