@@ -16,7 +16,7 @@
     <title>Quest</title>
 </head>
 <body class="w-100">
-    <nav class="navbar navbar-expand-sm quest-bg-gradient" data-bs-theme="dark">
+    <nav id="questNavbar" class="navbar navbar-expand-sm quest-bg-gradient" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand text-baskerville" href="#">Quest</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#questNavContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,9 @@
             </button>
             <div class="collapse navbar-collapse" id="questNavContent">
                 <ul class="navbar-nav">
+                    <ul class="navbar-nav">
+                        <a class="nav-link" data-bs-toggle="offcanvas" href="#settings">Settings</a>
+                    </ul>
                     <li class="nav-item">
                         <a class="nav-link" href="https://github.com/episphere/quest" target="_blank">Source</a>
                     </li>
@@ -40,97 +43,60 @@
             </div>
         </div>
     </nav>
-<!--
-    <div id="navBar" style="margin-bottom: 10px;">
-        <h1 style="padding-left: 50px;">Quest</h1>
-        <div id="navLinks">
-            | <a href="https://github.com/episphere/quest" target="_blank">Quest.js</a>
-            | <a href="https://github.com/episphere/quest/wiki" target="_blank">Wiki</a> |
-            <a href="https://github.com/episphere/quest/issues" target="_blank">Issues</a> |
-            <a href="https://github.com/episphere/quest/projects/1" target="_blank">Project Page</a> |
-            <a href="https://gitter.im/episphere/quest" target="_blank">Gitter</a> |
-        </div>
-    </div>
--->
-    <div class="container-fluid" id="tool">
-        <div class="d-flex flex-wrap flex-sm-nowrap">
-            <form class="form border flex-grow-1 p-1 d-flex flex-column">
-                <h3>Questionnaire Options</h3>
-                <div>
-                    <label for="url">Module URL </label>
-                    <input id="url" style="margin-top: 10px;" aria-label="url" onchange="submitURL()">
-                    <input type="button" aria-label="submit" value="Load" onclick="submitURL()"></input>
-                </div>
-                <div>
-                    <label class="form-check form-switch mt-2">
-                        Use Styling
-                        <input class="form-check-input" type="checkbox" role="switch" id="styling" data-sheet-on="Style1.css" data-sheet-off="Default.css">
-                    </label>
-                </div>
-                <div>
-                    <label class="form-check form-switch mt-2">
-                        Activate Logic
-                        <input class="form-check-input" type="checkbox" role="switch" id="logic"  data-sheet-on="ActiveLogic.css" data-sheet-off="Default.css">
-                    </label>
-                </div>
-            </form>
-            <div class="border flex-grow-1 p-1">
-                <h3>Previous Results</h3>
-                <textarea id="json_input" aria-label="json input" style="width: 100%; height:150px"></textarea>
-                <div class="col" style="margin-top: 10px;">
-                    <input type="button" id="updater" value="add JSON to memory"/>
-                    <input type="button" id="clearMem" value="Clear Memory"/>
-                    <div id="loaddisplay"></div>
-                </div>
 
+    <div class="container-fluid" id="tool">
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="settings" aria-labelledby="settingLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="settingLabel">Settings</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-        </div>
-<!--
-        <div id="legendDiv" class="row">
-            <div class="col-12 col-md-6 col-lg-5 border" id="loadSaveDiv">
-                <h3>Questionnaire Options</h3>
-                <input id="file" type="file" aria-label="Choose File" style="margin-top: 15px;"
-                    onchange="onFileSelected(event)">
-                <br>
-                <span>Enter URL:</span>
-                <input id="url" style="margin-top: 10px;" aria-label="url" onchange="submitURL()">
-                <input type="submit" aria-label="submit" onclick="submitURL()"></input>
-                <br>
-                <span>File Name:</span>
-                <input id="tb" aria-label="File Name" style="margin-top: 10px;">
-                <span>.txt</span>
-                <button aria-label="Save" onclick="saveDoc()">Save</button>
-                <br>
-                <span>Upload Questionnaire:</span>
-                <button class="mt-2 mb-3" aria-label="Upload" onclick="goToLink()">Upload</button>
-            </div>
-            <div class="col-12 col-md-6 col-lg-3 border" id="stylingDiv">
-                <div>
-                    <h3>Styling</h3>
-                    <input type="radio" id="styling_default" class="styling" name="styling" data-sheet="Default.css" aria-label='No Style'> No Style</input>
-                    <input type="radio" id="styling_style1" class="styling" name="styling" data-sheet="Style1.css" aria-label='With Style 1'> With Style 1</input>
+            <div class="offcanvas-body">
+                <div class="d-flex flex-wrap">
+                    <form class="form border flex-grow-1 p-1 d-flex flex-column">
+                        <h3>Questionnaire Options</h3>
+                        <div>
+                            <label for="url" class="form-label">Module URL </label>
+                            <div class="input-group mb-3">
+                                <input id="url" class="form-control" aria-label="url" onchange="submitURL()">
+                                <input type="button" aria-label="submit" value="Load" onclick="submitURL()"></input>
+                            </div>
+                            
+                            <label for="tb" class="form-label">Save Module</label>
+                            <div class="input-group mb-3">
+                                <input id="tb" class="form-control" aria-label="File Name" style="margin-top: 10px;">
+                                <button type="button" class="btn">.txt</button>
+                                <button aria-label="Save" onclick="saveDoc()">Save</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-check form-switch mt-2">
+                                Use Styling
+                                <input class="form-check-input" type="checkbox" role="switch" id="styling" data-sheet-on="Style1.css" data-sheet-off="Default.css">
+                            </label>
+                        </div>
+                        <div>
+                            <label class="form-check form-switch mt-2">
+                                Activate Logic
+                                <input class="form-check-input" type="checkbox" role="switch" id="logic"  data-sheet-on="ActiveLogic.css" data-sheet-off="Default.css">
+                            </label>
+                        </div>
+                    </form>
+                    <div class="border flex-grow-1 p-1">
+                        <h3>Previous Results</h3>
+                        <textarea id="json_input" aria-label="json input" style="width: 100%; height:150px"></textarea>
+                        <div class="col" style="margin-top: 10px;">
+                            <input type="button" id="updater" value="add JSON to memory"/>
+                            <input type="button" id="clearMem" value="Clear Memory"/>
+                            <div id="loaddisplay"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <h3>Logic</h3>
-                    <input type="radio" id="logic_default" class="styling" name="logic" data-sheet="Default.css" aria-label="Not Active"> Not Active</input>
-                    <input type="radio" id="logic_active" class="styling" name="logic" data-sheet="ActiveLogic.css" aria-label="Active"> Active</input>
-                </div>
             </div>
-            <div class="col-12 col-md-12 col-lg-4 border" id="prevResDiv">
-                <h3>Previous Results</h3>
-                <textarea id="json_input" aria-label="json input" style="width: 100%; height:150px"></textarea>
-                <div class="col" style="margin-top: 10px;">
-                    <input type="button" id="updater" value="add JSON to memory" />
-                    <input type="button" id="clearMem" value="Clear Memory" />
-                    <div id="loaddisplay" style="height: 20px;"></div>
-                </div>
-            </div>
-        </div>
-    -->
+          </div>
         <div class="row">
             <div class="col-12 col-md-6" id="markup">
                 <div class="d-flex flex-wrap justify-content-between">
-                    <span class="me-1 h3">Markup</span> 
+                    <span class="me-1 h4">Markup</span> 
                     <div class="d-flex align-items-end">
                         <span class="me-1 h5">(<a href="#questionnaires/demo.txt" id="demo">Demo</a>)</span>
                         <label for="buttonFlex" id="fontSpan" class=" me-1 h5">Change Font Size </label>
@@ -138,10 +104,16 @@
                         <button id="decreaseSizeButton" aria-label="decreaseSize" class="me-1 h4">&CircleMinus;</button>
                     </div>
                 </div>
-                <textarea class="w-100" id="ta" aria-label="Enter Text"></textarea>
+                <textarea class="form-control" id="ta" placeholder="type, paste, or upload questionnaire markup"></textarea>
+                <!-- 
+                <form class="form-floating">
+                    <textarea class="form-control" id="ta" placeholder="type, paste, or upload questionnaire markup"></textarea>
+                    <label for="ta">type, paste, or upload questionnaire markup</label>
+                </form>
+            -->
             </div>
             <div class="col-12 col-md-6">
-                <h3 id="renderText" style="color: navy;">Rendering</h3>
+                <h4 id="renderText" style="color: navy;">Rendering</h4>
                 <div id="rendering"></div>
             </div>
         </div>
@@ -207,12 +179,11 @@
 <script>
     let searchParams = new URLSearchParams(location.search)
     if (location.hash.split('&').includes('run') || searchParams.has('run')) {
-        document.getElementById('navBar').style.display = 'none'
-        document.getElementById('loadSaveDiv').style.display = 'none'
-        document.getElementById('stylingDiv').style.display = 'none'
-        document.getElementById('prevResDiv').style.display = 'none'
-        document.getElementById('markup').style.display = 'none'
-        changeLogic("ActiveLogic.css")
+        document.getElementById('logic').checked=true;
+        changeLogic("ActiveLogic.css");
+        document.getElementById('questNavbar').style.display = 'none';
+        document.getElementById('markup').style.display = 'none';
+        document.getElementById('renderText').style.display = 'none';
     }
     let styleRegex = /^style=([^&\s]+)/
     let styleIndx = location.hash.split("&").findIndex((x) => styleRegex.exec(x))

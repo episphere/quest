@@ -10,17 +10,27 @@ const questLF = await localforage.createInstance({
 
 async function startUp() {
 
-  let styling = await questLF.getItem("styling") ?? false
-  let logic = await questLF.getItem("logic") ?? false;
+
+  let searchParams = new URLSearchParams(location.search)
+  if (location.hash.split('&').includes('run') || searchParams.has('run')) {
+      document.getElementById('logic').checked=true;
+      document.getElementById("styling").checked = styling
+      document.getElementById('questNavbar').style.display = 'none';
+      document.getElementById('markup').style.display = 'none';
+      document.getElementById('renderText').style.display = 'none';
+  } else {
+    let logic = await questLF.getItem("logic") ?? false;
+    let styling = await questLF.getItem("styling") ?? false
+    document.getElementById("logic").checked = logic
+    document.getElementById("styling").checked = styling
+  }
+  setStylingAndLogic()
+
   let cachedPreviousResults = await questLF.getItem("previousResults") ?? "";
   // prevRes is a ugh.. global variable
   prevRes = cachedPreviousResults.length>0?JSON.parse(cachedPreviousResults):{}
-
-  document.getElementById("styling").checked = styling
-  document.getElementById("logic").checked = logic
   document.getElementById("json_input").innerText=cachedPreviousResults;
 
-  setStylingAndLogic()
 
 
 
@@ -41,7 +51,6 @@ async function startUp() {
     });
   };
 
-  ta.innerHTML = "// type, paste, or upload questionnaire markup\n\n";
   // handle the Search params with the URLSearchParam API instead of a string...
   let params = new URLSearchParams(location.search)
   if (params.has("config")) {
@@ -57,6 +66,9 @@ async function startUp() {
     console.log(location.hash.substring(1))
     ta.value = await (await fetch(location.hash.substring(1))).text();
     ta.onkeyup()
+  }
+  if(params.has("style")) {
+    document.getElementById("logic").dataset.sheetOn=params.get("style")
   }
 
   if (params.has("run")){
@@ -81,10 +93,7 @@ async function startUp() {
 */
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
-  document.getElementById("clearMem").addEventListener("click",(event)=> {
-    clearLocalForage()
-    document.getElementById("json_input").value=""
-  });
+  document.getElementById("clearMem").addEventListener("click",clearLocalForage)
 
   document.getElementById("updater").onclick = function (event) {
     let txt = "";
