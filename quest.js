@@ -143,26 +143,13 @@ function setStylingAndLogic(){
   function setValue(cssId,inputId){
     let inputElement = document.getElementById(inputId)
     let cssElement = document.getElementById(cssId)
-    console.log(inputElement.dataset)
     cssElement.setAttribute("href",inputElement.checked?inputElement.dataset.sheetOn:inputElement.dataset.sheetOff)
   }
   setValue("pagestyle","styling")
   setValue("pagelogic","logic")
 }
 
-function setOldStylingAndLogic(){
-  let sheet = ""
-  document.querySelectorAll('input[type="radio"][name="styling"]').forEach( el=>{
-    if (el.checked) sheet=el.dataset.sheet
-  })
-  let link = document.getElementById("pagestyle")
-  link.setAttribute("href", sheet)
-  document.querySelectorAll('input[type="radio"][name="logic"]').forEach( el=>{
-    if (el.checked) sheet=el.dataset.sheet
-  })
-  link = document.getElementById("pagelogic")
-  link.setAttribute("href", sheet)
-}
+
 
 window.onload = function () {
   startUp();
@@ -172,12 +159,6 @@ window.onload = function () {
       console.log(event.target.id,event.target.checked)
       questLF.setItem(event.target.id,event.target.checked)
       setStylingAndLogic()
-    })
-  })
-  document.querySelectorAll('input[type="radio"][name="styling"],input[type="radio"][name="logic"]').forEach((el)=>{
-    el.addEventListener("change",(event)=>{
-      questLF.setItem(event.target.name,event.target.id)
-      setOldStylingAndLogic()
     })
   })
 };

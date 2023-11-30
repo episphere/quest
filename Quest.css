@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
+
 #navBar {
   background-color: rgb(53 58 64);
   color: rgb(197 199 202);
@@ -7,6 +9,13 @@
   font-family: "Archivo";
   width: 100%;
   /* font-weight: bold; */
+}
+
+.quest-bg-gradient{
+  background-color: transparent;
+  background-image: linear-gradient(to right, #24305e, lightblue);
+  border-top: 5px solid rgb(154 160 173);
+  border-bottom: 5px solid rgb(154 160 173);
 }
 
 #navLinks {
@@ -64,6 +73,12 @@ input[type="checkbox"].form-check-input{
   border: 1px solid rgb(175, 175, 175) !important;
   padding-top: 3px !important;
   padding-bottom: 3px !important;
+}
+
+
+.text-baskerville {
+  font-family: 'Libre Baskerville', serif;
+  background-color: transparent;
 }
 
 @media only screen and (max-width: 768px) {
