@@ -116,7 +116,6 @@ function decreaseSize() {
 }
 
 function clearLocalForage() {
-  questLF.clear()
   localforage
     .clear()
     .then(() => {
