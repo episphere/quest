@@ -8,6 +8,14 @@ const questLF = await localforage.createInstance({
   storeName:"params"
 })
 
+async function fetchModule(url){
+  let response = await fetch(url)
+  if (!response.ok){
+    return `<h3>Problem retrieving questionnaire module <i>${url}</i>:</h3> HTTP response code: ${response.status}`
+  }
+  return await response.text()
+}
+
 async function startUp() {
 
 
@@ -55,16 +63,19 @@ async function startUp() {
   let params = new URLSearchParams(location.search)
   if (params.has("config")) {
     moduleParams.config = config;
-    ta.value = await (await fetch(config.markdown)).text();
+    ta.value = await fetchModule(confirm.markdown)
+    //ta.value = await (await fetch(config.markdown)).text();
   }
   if (params.has("url")) {
     let url = params.get("url")
     console.log(url)
-    ta.value = await (await fetch(url)).text();
+    //ta.value = await (await fetch(url)).text();
+    ta.value = await fetchModule(url)
     ta.onkeyup()
   } else if (location.hash.length > 1) {
     console.log(location.hash.substring(1))
-    ta.value = await (await fetch(location.hash.substring(1))).text();
+    ta.value = await fetchModule( location.hash.substring(1) ) 
+    //ta.value = await (await fetch(location.hash.substring(1))).text();
     ta.onkeyup()
   }
   if(params.has("style")) {
