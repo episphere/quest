@@ -3,6 +3,14 @@ import { questionQueue, moduleParams } from "./questionnaire.js";
 
 let prevRes = {};
 
+// Make it easier to create a TH.
+HTMLTableRowElement.prototype.insertHead = function(html){
+  let cell = document.createElement("th")
+  cell.innerHTML=html
+  this.insertAdjacentElement("beforeend",cell)
+  return cell
+}
+
 const questLF = await localforage.createInstance({
   name:"questParams",
   storeName:"params"
@@ -135,6 +143,39 @@ function decreaseSize() {
   ta.style.fontSize = fontSize - 1 + "px";
 }
 
+// needed for testing...
+window.getLF = async function(){
+  let responses = {}
+  if (moduleParams.questName){
+    responses = await localforage.getItem(moduleParams.questName)
+  }
+  return responses;
+}
+
+async function getCachedResponses(){
+  let responses = {}
+  if (moduleParams.questName){
+    responses = await localforage.getItem(moduleParams.questName)
+  }
+  console.log(`${moduleParams.questName}`,responses)
+  let tableElement=document.getElementById("cacheTable")
+  tableElement.innerText=""
+  // create head..
+  let tableHeadElement = tableElement.createTHead();
+  let row=tableHeadElement.insertRow()
+  row.insertHead("Id")
+  row.insertHead("Value")
+  // create the rows...
+  let tableBodyElement = tableElement.createTBody();
+  Object.entries(responses).forEach( ([key, value]) => {
+    row = tableBodyElement.insertRow()
+    let cell = row.insertCell()
+    cell.innerText = key;
+    cell = row.insertCell()
+    cell.innerHTML = `<pre>${JSON.stringify(value,null,3)}</pre>`;
+  })
+}
+
 function clearLocalForage() {
   localforage
     .clear()
@@ -169,10 +210,12 @@ function setStylingAndLogic(){
 }
 
 
+document.getElementById("viewCache").addEventListener("click",()=>{
+  getCachedResponses()
+})
 
 window.onload = function () {
   startUp();
-
   document.querySelectorAll('input.form-check-input').forEach( (el) => {
     el.addEventListener("change",(event)=>{
       console.log(event.target.id,event.target.checked)

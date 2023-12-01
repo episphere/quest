@@ -40,6 +40,9 @@
                         <a class="nav-link" href="https://gitter.im/episphere/quest" target="_blank">Talk to us</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="offcanvas" href="#cache" role="button" id="viewCache">Cached Responses</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="offcanvas" href="#helpOC" role="button">Help</a>
                     </li>
                 </ul>
@@ -130,6 +133,15 @@
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
+    <div id="cache" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="cacheLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="cacheLabel">Cached Data</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <table class="table table-striped" id="cacheTable"></table>
         </div>
     </div>
 </body>
