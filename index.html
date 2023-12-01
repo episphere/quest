@@ -39,6 +39,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="https://gitter.im/episphere/quest" target="_blank">Talk to us</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="offcanvas" href="#helpOC" role="button">Help</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -105,16 +108,27 @@
                     </div>
                 </div>
                 <textarea class="form-control" id="ta" placeholder="type, paste, or upload questionnaire markup"></textarea>
-                <!-- 
-                <form class="form-floating">
-                    <textarea class="form-control" id="ta" placeholder="type, paste, or upload questionnaire markup"></textarea>
-                    <label for="ta">type, paste, or upload questionnaire markup</label>
-                </form>
-            -->
             </div>
             <div class="col-12 col-md-6">
                 <h4 id="renderText" style="color: navy;">Rendering</h4>
                 <div id="rendering"></div>
+            </div>
+        </div>
+    </div>
+    <div id="helpOC" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="helpOCLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="helpOCLabel">Help</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">How do I load a module from a URL</h5>
+                    <p class="card-text">The questionnaire module load/save features were
+                        hidden to save space on the screen.  Click "settings" in the menu and 
+                        type the URL in the <i>Module URL</i> box.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
