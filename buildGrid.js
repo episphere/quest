@@ -43,7 +43,7 @@ function grid_text_displayif(original_text){
   let dif_regex = /%displayif=([^%]+)%([^%]+)%/g
   if (dif_regex.test(question_text)) {      
     question_text = question_text.replace(dif_regex,(match,p1,p2)=>{
-      return `<span displayif="${encodeURIComponent(p1)}" class="grid-displayif"> ${p2.replace(/ /g,"&nbsp;")}</span>`
+      return `<span displayif="${encodeURIComponent(p1)}" class="grid-displayif"> ${p2}</span>`
     })
   }
   return question_text;
@@ -61,8 +61,12 @@ function buildHtml(grid_obj){
     }
   }
 
+  let shared_text = grid_text_displayif(grid_obj.shared_text)
+  shared_text = grid_replace_piped_variables(shared_text)
+
+  // replace displayif and piped variables...
   let grid_html = `<form ${grid_obj.args} class="container question" data-grid="true" ${gridPrompt}>`
-  grid_html+=`<div>${grid_text_displayif(grid_obj.shared_text)}</div>`
+  grid_html+=`<div>${grid_text_displayif(shared_text)}</div>`
   grid_html+='<ul class="quest-grid">'
 
   // header line...
@@ -76,7 +80,9 @@ function buildHtml(grid_obj){
     // check if there is a displayif for the entire question.  
     let displayif = question.displayif ? `data-displayif="${encodeURIComponent(question.displayif)}"` : '';
     // fill in the question text, replacing any displayif 
-    grid_html += `<li class="nr" data-question-id="${question.id}" data-gridrow="true" ${displayif}>${grid_text_displayif(question.question_text)}`
+    let question_text = grid_text_displayif(question.question_text)
+    question_text = grid_replace_piped_variables(question_text)
+    grid_html += `<li class="nr" data-question-id="${question.id}" data-gridrow="true" ${displayif}>${question_text}`
     // for each possible response make a grid cell...
     grid_obj.responses.forEach( (resp, resp_indx) => {
       grid_html += `<li class="response" data-question-id="${question.id}"><input name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" type="radio" dataset-gridcell="true" data-grid="true"><label for="${question.id}_${resp_indx}">${resp.text}</label></li>`
