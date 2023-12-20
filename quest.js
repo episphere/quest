@@ -44,11 +44,16 @@ async function startUp() {
 
   let cachedPreviousResults = await questLF.getItem("previousResults") ?? "";
   // prevRes is a ugh.. global variable
-  prevRes = cachedPreviousResults.length>0?JSON.parse(cachedPreviousResults):{}
-  document.getElementById("json_input").innerText=cachedPreviousResults;
-
-
-
+  // if there is key that is not in [run,style,url]
+  searchParams.forEach( (value,key) =>{
+    if (!["run","style","url"].includes(key)){
+      prevRes[key] = value
+    }
+  } ) 
+  if (Object.keys(prevRes).length==0){
+    prevRes = cachedPreviousResults.length>0?JSON.parse(cachedPreviousResults):{}
+  }
+  document.getElementById("json_input").innerText=JSON.stringify(prevRes,null,3);
 
   var ta = document.getElementById("ta");
   ta.onkeyup = (ev) => {
