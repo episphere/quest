@@ -57,7 +57,7 @@ input[type="text"] {
 .quest-grid{
   width: 100%;
   display: grid;
-  grid-template-columns: auto repeat(12,minmax(0px,min-content));
+  grid-template-columns: auto repeat(12,minmax(0px,auto));
 
   font-family:Arial, Helvetica, sans-serif;
   font-size: medium;
@@ -67,7 +67,7 @@ input[type="text"] {
 }
 
 .quest-grid * {
-  padding: 2px;
+  padding: 4px;
   text-align: center;
 }
 
