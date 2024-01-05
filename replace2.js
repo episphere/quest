@@ -11,7 +11,8 @@ import {
   parsePhoneNumber,
   submitQuestionnaire,
   textboxinput,
-  math
+  math,
+  radioAndCheckboxUpdate
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
@@ -1003,6 +1004,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
           //radioCB.checked = nchar>0;
           // select if typed in box, DONT UNSELECT
           if (nchar > 0) radioCB.checked = true
+          radioAndCheckboxUpdate(radioCB)
           inputElement.dataset.lastValue=inputElement.value
       }
       inputElement.addEventListener("keyup",callback);
