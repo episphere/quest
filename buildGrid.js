@@ -85,7 +85,7 @@ function buildHtml(grid_obj){
     grid_html += `<li class="nr" data-question-id="${question.id}" data-gridrow="true" ${displayif}>${question_text}`
     // for each possible response make a grid cell...
     grid_obj.responses.forEach( (resp, resp_indx) => {
-      grid_html += `<li class="response" data-question-id="${question.id}"><input name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" type="${resp.type}" dataset-gridcell="true" data-grid="true"><label for="${question.id}_${resp_indx}">${resp.text}</label></li>`
+      grid_html += `<li class="response" data-question-id="${question.id}"><input name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" type="${resp.type}" data-gridcell="true" data-grid="true"><label for="${question.id}_${resp_indx}">${resp.text}</label></li>`
     })
   })
   grid_html+=`</ul></div>
