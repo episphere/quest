@@ -216,6 +216,9 @@ export const myFunctions = {
   someSelected: function (...ids) {
     return (ids.some(id => math.isSelected(id)))
   },
+  noneSelected: function(...ids){
+    return (!ids.some(id => math.isSelected(id)))
+  },
   // defaultValue accepts an Id and a value or a Id/Value
   // If only 1 default value is given, first it looks it up
   // if it does not exist assume it is a value...
