@@ -251,6 +251,25 @@ transform.render = async (obj, divId, previousResults = {}) => {
       );
       return `<span class='displayif' ${condition}>${text}</span>`;
     }
+    //replace |select|select_params| [(option value){param}+] |
+    questText = questText.replace(
+      /\|select\|([^\|]*)\|\[((?:\([^{]+\)\s*\{[^}]*\};?\s*)+)\]\|/gm,
+      fSelect);
+    function fSelect(fullmatch,selectParams,options){
+      console.log(`fullmatch: ${fullmatch} \nselectParams: ${selectParams}\noptions: ${options}`)
+      let regex=/\(([^\{]+)\)\s*\{([^}]*)\}/gm;
+      let select_obj = paramSplit(selectParams)
+      select_obj.id =select_obj.id ?? `${questID}_select`
+
+      let select_html= `<select ${reduceObj(select_obj)}>`
+      select_html=Array.from(options.matchAll(regex)).reduce( (pv,cv) =>{
+        return pv+`<option ${cv[2]}>${cv[1]}</option>`
+      },select_html)
+
+      select_html += "</select>"
+      console.log(select_html)
+      return select_html;
+    }
 
     //replace |popup|buttonText|Title|text| with a popover
     questText = questText.replace(
@@ -1058,7 +1077,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   })
 
   // enable all popovers...
-  console.log("...")
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => {
     console.log("... ",popoverTriggerEl)

@@ -1048,7 +1048,7 @@ export function displayQuestion(nextElement) {
       elm.style.display = f ? null : "none";
     });
   // check for displayif spans...
-  Array.from(nextElement.querySelectorAll("span[displayif],div[displayif]"))
+  Array.from(nextElement.querySelectorAll("span[displayif],div[displayif],option[displayif]"))
     .map(elm => {
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? null : "none";
