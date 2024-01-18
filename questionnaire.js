@@ -104,6 +104,12 @@ export const myFunctions = {
     // if id is not passed in return FALSE
     if (math.doesNotExist(id)) return false;
     let element_value = math._value(id);
+
+    // catch if we have a combobox...
+    if (element_value[id]) {
+      element_value = element_value[id]
+    }
+
     // if the element does not exist return FALSE
     return (element_value == value)
   },
