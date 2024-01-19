@@ -1117,6 +1117,9 @@ function unrollLoops(txt) {
       return x[1] ? x[1] : (x[2] ? x[2] : x[3])
     })
 
+    // combobox and radiobuttons may have been renamed...
+    let rb_cb_regex = /(?:[\(\[])\d+:(.*?)[\,\)\]]/g
+
     // goto from 1-> max for human consumption... need <=
     let loopText = "";
     for (var loopIndx = 1; loopIndx <= x.cnt; loopIndx++) {
@@ -1133,6 +1136,9 @@ function unrollLoops(txt) {
       idsInLoop.forEach(id => {
         currentText = currentText.replace(new RegExp(`\\b${id}\\b`, "g"), `${id}_${loopIndx}_${loopIndx}`);
       })
+
+      //replace all user-named combo and radio boxes
+      currentText = currentText.replaceAll(rb_cb_regex,(all,g1)=>all.replace(g1,`${g1}_${loopIndx}`))
 
       currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
       // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
@@ -1164,6 +1170,7 @@ function unrollLoops(txt) {
       //     );
       //   }
       // }
+
 
       // replace  _\d_\d#prev with _{$loopIndex-1}
       // we do it twice to match a previous bug..
