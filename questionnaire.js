@@ -498,10 +498,16 @@ function exchangeValue(element, attrName, newAttrName) {
   // !!! DONT EVALUATE 2020-01 to 2019
   // !!! DONT EVALUATE 2023-07-19-to 1997
   // may have to do this for dates too.  <- yeah, had to!
-  // Firefox thinks <input type="month"> has type="text"...
-  // so element.type return "text"
+  // Firefox and Safari for MacOS think <input type="month"> has type="text"...
+  // so month selection calendar is not shown.
   if ( (element.getAttribute("type") == "month" && /^\d{4}-\d{1,2}$/.test(attr)) || 
        (element.getAttribute("type") == "date" && /^\d{4}-\d{1,2}-\d{1,2}$/.test(attr)) ){
+    
+    // if leading zero for single digit month was stripped by the browser, add it back.
+    if (element.getAttribute("type") == "month" && /^\d{4}-\d$/.test(attr)) {
+      attr = attr.replace(/-(\d)$/, '-0$1')
+    }
+    
     element.setAttribute(newAttrName, attr)
     return element;
   }
@@ -1159,6 +1165,14 @@ export function displayQuestion(nextElement) {
     element.innerHTML = math.existingValues(element.dataset.displaylistArgs)
   })
 
+  // handle unsupported 'month' input type (Safari for MacOS and Firefox)
+  const monthInputs = nextElement.querySelectorAll("input[type='month']");
+  if (monthInputs.length > 0 && !isMonthInputSupported()) {
+    monthInputs.forEach(input => {
+      input.setAttribute('placeholder', 'YYYY-MM');
+    });
+  }
+
   //move to the next question...
   nextElement.classList.add("active");
 
@@ -1168,6 +1182,15 @@ export function displayQuestion(nextElement) {
 
   questionQueue.ptree();
   return nextElement;
+}
+
+// Check whether the browser supports "month" input type.
+// Browsers that do not support 'month' use 'text' input type fallback.
+// So input.type === 'month' -> true when supported and false otherwise.
+function isMonthInputSupported() {
+  const input = document.createElement('input');
+  input.setAttribute('type', 'month');
+  return input.type === 'month';
 }
 
 export async function previousClicked(norp, retrieve, store, rootElement) {

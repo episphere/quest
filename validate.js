@@ -126,14 +126,15 @@ function validate_month(inputElement) {
     let before_min_date = minDate && selectedDate < minDate
     let after_max_date = maxDate && selectedDate > maxDate
 
+    // When input type='month' is supported, out of range values aren't selectable on the calendar.
+    // validationError shows when type="month" is not supported. Match expected text input format.
     if (before_min_date) {
-        validationError(inputElement, `Date must be after ${minDate.getUTCMonth() + 1}/${minDate.getUTCFullYear()}`)
+        validationError(inputElement, `Date must be after ${minDate.getUTCFullYear()}-${(minDate.getUTCMonth() + 1).toString().padStart(2, '0')}`)
     } else if (after_max_date) {
-        validationError(inputElement, `Date must be before ${maxDate.getUTCMonth() + 1}/${maxDate.getUTCFullYear()}`)
+        validationError(inputElement, `Date must be before ${maxDate.getUTCFullYear()}-${(maxDate.getUTCMonth() + 1).toString().padStart(2, '0')}`)
     } else {
         clearValidationError(inputElement)
     }
-
 }
 
 function validate_date(inputElement) {
