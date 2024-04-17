@@ -102,19 +102,7 @@ async function startUp() {
       document.getElementById("pagestyle").setAttribute("href", "Style1.css")
     }
   }
-  /*var q = (location.search + location.hash).replace(/[\#\?]/g, "");
-    if (q.length > 3) {
-      if (!q.startsWith("config")) {
-        ta.value = await (await fetch(q.split("&")[0])).text(); // getting the first of markup&css
-      } else {
-        moduleParams.config = config;
-        ta.value = await (await fetch(config.markdown)).text();
-      }
-      ta.onkeyup();
-    }
-  ta.style.width =
-    parseInt(ta.parentElement.style.width.slice(0, -1)) - 5 + "%";
-*/
+  
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
   document.getElementById("clearMem").addEventListener("click",clearLocalForage)
