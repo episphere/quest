@@ -1,4 +1,5 @@
-import { callExchangeValues } from "./questionnaire.js"
+import { callExchangeValues } from "./questionnaire.js";
+import { translate } from "./common.js";
 
 export function validateInput(inputElement) {
 
@@ -20,7 +21,7 @@ export function validateInput(inputElement) {
         // if the value is blank, if required error, else it is valid.
         if (inputElement.value.length == 0) {
             if (inputElement.hasAttribute("data-required")) {
-                validationError(inputElement, "Please fill out this field.")
+                validationError(inputElement, translate("validationInputEmptyField"));
             }
             return
         }
@@ -49,8 +50,7 @@ export function validationError(inputElement, errorMsg) {
 
     // either use the current error div
     // or create a new one...
-    if (inputElement &&
-        inputElement.nextElementSibling?.classList.contains('validation-container')) {
+    if (inputElement && inputElement.nextElementSibling?.classList.contains('validation-container')) {
         errDiv = inputElement.nextElementSibling;
         errSpan = inputElement.nextElementSibling.firstChild;
     } else {
@@ -73,31 +73,27 @@ export function validationError(inputElement, errorMsg) {
 }
 
 function validate_number(inputElement) {
-    console.log("in validate number")
-    callExchangeValues(inputElement)
+
+    callExchangeValues(inputElement);
+    
     let belowMin =
         inputElement.dataset.min &&
-        math.evaluate(
-            `${inputElement.value} < ${inputElement.dataset.min}`
-        )
+        math.evaluate(`${inputElement.value} < ${inputElement.dataset.min}`);
+
     let aboveMax =
         inputElement.dataset.max &&
-        math.evaluate(
-            `${inputElement.value} > ${inputElement.dataset.max}`
-        )
+        math.evaluate(`${inputElement.value} > ${inputElement.dataset.max}`);
 
     if (belowMin) {
-        validationError(inputElement, `Value must be greater than or equal to ${inputElement.dataset.min}.`)
+        validationError(inputElement, translate("validationNumberGreaterThan", [inputElement.dataset.min]));
     } else if (aboveMax) {
-        validationError(inputElement, `Value must be less than or equal to ${inputElement.dataset.max}.`)
+        validationError(inputElement, translate("validationNumberLessThan", [inputElement.dataset.max]));
     } else {
-        clearValidationError(inputElement)
+        clearValidationError(inputElement);
     }
-
 }
 
 function validate_month(inputElement) {
-    console.log("in validate_month", inputElement)
 
     // because type="month" is not supported on firefox be careful with the input...
     let value = inputElement.value.trim();
@@ -109,7 +105,7 @@ function validate_month(inputElement) {
             value = `${found[2]}-${found[1]}`;
             inputElement.value = value;
         } else {
-            validationError(inputElement, "Format should match YYYY-MM");
+            validationError(inputElement, translate("validationMonthFormat"));
             return;
         }
     }
@@ -117,7 +113,7 @@ function validate_month(inputElement) {
     // at this point, we should have a date in the form YYYY-MM...
     let selectedDate = new Date(value);
     if (isNaN(selectedDate.getTime())) {
-        validationError(inputElement, "Invalid month or year");
+        validationError(inputElement, translate("validationMonthInvalid"));
         return;
     }
     let minDate = (inputElement.dataset.minDate) ? new Date(decodeURIComponent(inputElement.dataset.minDate)) : undefined
@@ -129,37 +125,28 @@ function validate_month(inputElement) {
     // When input type='month' is supported, out of range values aren't selectable on the calendar.
     // validationError shows when type="month" is not supported. Match expected text input format.
     if (before_min_date) {
-        validationError(inputElement, `Date must be after ${minDate.getUTCFullYear()}-${(minDate.getUTCMonth() + 1).toString().padStart(2, '0')}`)
+        validationError(inputElement, translate("validationMonthAfter", [minDate.getUTCFullYear(), (minDate.getUTCMonth() + 1).toString().padStart(2, '0')]));
     } else if (after_max_date) {
-        validationError(inputElement, `Date must be before ${maxDate.getUTCFullYear()}-${(maxDate.getUTCMonth() + 1).toString().padStart(2, '0')}`)
+        validationError(inputElement, translate("validationMonthBefore", [maxDate.getUTCFullYear(), (maxDate.getUTCMonth() + 1).toString().padStart(2, '0')]));
     } else {
         clearValidationError(inputElement)
     }
 }
 
 function validate_date(inputElement) {
-    console.log("in validate_date", inputElement)
 
     let minDate = (inputElement.dataset.minDate) ? new Date(inputElement.dataset.minDate + "GMT") : undefined
     let maxDate = (inputElement.dataset.maxDate) ? new Date(inputElement.dataset.maxDate + "GMT") : undefined
     let selectedDate = new Date(inputElement.value)
-
-    /*
-    console.log(
-        "minDate:", minDate.toUTCString(),
-        "\nmax Date:", maxDate.toUTCString(),
-        "\ninput Date:", selectedDate.toUTCString()
-    )*/
-
     let before_min_date = minDate && selectedDate < minDate
     let after_max_date = maxDate && selectedDate > maxDate
 
     if (before_min_date) {
-        validationError(inputElement, `Date must be after ${minDate.getUTCMonth() + 1}/${minDate.getUTCDate()}/${minDate.getUTCFullYear()}`)
+        validationError(inputElement, translate("validationDateAfter", [minDate.getUTCMonth() + 1, minDate.getUTCDate(), minDate.getUTCFullYear()]));
     } else if (after_max_date) {
-        validationError(inputElement, `Date must be before ${maxDate.getUTCMonth() + 1}/${maxDate.getUTCDate()}/${maxDate.getUTCFullYear()}`)
+        validationError(inputElement, translate("validationDateBefore", [maxDate.getUTCMonth() + 1, maxDate.getUTCDate(), maxDate.getUTCFullYear()]));
     } else {
-        clearValidationError(inputElement)
+        clearValidationError(inputElement);
     }
 }
 
@@ -168,9 +155,9 @@ function validate_email(inputElement) {
 
     let emailRegEx = /\S+@\S+\.\S+/;
     if (!emailRegEx.test(inputElement.value)) {
-        validationError(inputElement, "Please enter an email address in this format: user@example.com.")
+        validationError(inputElement, translate("validationEmailAddress"));
     } else {
-        clearValidationError(inputElement)
+        clearValidationError(inputElement);
     }
 }
 
@@ -178,20 +165,19 @@ function validate_telephone(inputElement) {
     console.log("in validate telephone", inputElement)
 
     if (inputElement.value.length < 12) {
-        validationError(inputElement, "Please enter a phone number in this format: 999-999-9999.")
+        validationError(inputElement, translate("validationPhoneNumber"));
     } else {
-        clearValidationError(inputElement)
+        clearValidationError(inputElement);
     }
 }
 
 function validate_text(inputElement) {
-    console.log("in validate text")
 
     // validate a SSN...
     if (inputElement.classList.contains("SSN")) {
         if (!/^(?!9|000|666)(?!111-?11-?1111|333-?33-?3333|078-?05-?1120|219-?09-?9999)\d{3}-?(?!00)\d{2}-?(?!0000)\d{4}/gm.test(inputElement.value)) {
-            validationError(inputElement, "Please enter a valid Social Security Number in this format: 999-99-9999.")
-            return
+            validationError(inputElement, translate("validationSocialFull"));
+            return;
         } else {
             clearValidationError(inputElement)
         }
@@ -201,8 +187,8 @@ function validate_text(inputElement) {
     // validate a 4 digit SSN
     if (inputElement.classList.contains("SSNsm")) {
         if (!/^(?!0000)\d{4}/.test(inputElement.value)) {
-            validationError(inputElement, "Please enter the last four digits of a Social Security Number in this format: 9999.")
-            return
+            validationError(inputElement, translate("validationSocialPartial"));
+            return;
         } else {
             clearValidationError(inputElement)
         }
@@ -213,8 +199,8 @@ function validate_text(inputElement) {
         let textLen = inputElement.value.length;
         // the user has not entered anything.  Dont bark yet...
         if (textLen == 0){
-            clearValidationError(inputElement)
-            return
+            clearValidationError(inputElement);
+            return;
         }
 
         let hasMin = "minlen" in inputElement.dataset
@@ -224,33 +210,39 @@ function validate_text(inputElement) {
         let valueLen = inputElement.value.length
 
         if (minLen == maxLen && valueLen != minLen){
-            let long_short = (valueLen < minLen)?"short":"long"
-            validationError(inputElement, `Entered text is too ${long_short} (should have ${minLen} characters)`)
+            if (valueLen < minLen) {
+                validationError(inputElement, translate("validationTextShortExact", [minLen]));
+            }
+            else {
+                validationError(inputElement, translate("validationTextLongExact", [minLen]));
+            }
+
+            return;
+        }
+
+        if (hasMin && valueLen < minLen){
+            validationError(inputElement, translate("validationTextShort", [minLen]));
+            return;
+        }
+
+        if (hasMax && valueLen > maxLen){
+            validationError(inputElement, translate("validationTextLong", [maxLen]));
             return
         }
 
-        if (hasMin && valueLen<minLen){
-            validationError(inputElement, `Entered text is too short (should have at least ${minLen} characters)`)
-            // if you are below the min length, you cannot be above the max length, so return...
-            return
-        }
-
-        if (hasMax && valueLen>maxLen){
-            validationError(inputElement, `Entered text is too long (should have at most ${maxLen} characters)`)
-            return
-        }
         clearValidationError(inputElement)
     }
 
-    let checkConfirmation = "confirm" in inputElement.dataset ||
-        "conformationFor" in inputElement.dataset
+    let checkConfirmation = "confirm" in inputElement.dataset || "conformationFor" in inputElement.dataset;
+
     if (checkConfirmation){
         let otherId = inputElement.dataset.confirm ?? inputElement.dataset.conformationFor
         let otherElement = document.getElementById(otherId)
-        if (otherElement.value != inputElement.value){
-            validationError(inputElement,"Values do not match")
-            validationError(otherElement,"Values do not match")
-        }else{
+
+        if (otherElement.value != inputElement.value) {
+            validationError(inputElement, translate("validationMismatch"));
+            validationError(otherElement, translate("validationMismatch"));
+        } else{
             clearValidationError(inputElement)
             clearValidationError(otherElement)
         }
@@ -258,21 +250,26 @@ function validate_text(inputElement) {
 }
 
 function validate_count(inputElement){
-    console.log("in validate_count ... ")
+
     let hasMin = 'minCount' in inputElement.form?.dataset;
     let hasMax = 'maxCount' in inputElement.form?.dataset;
-    // Only complain if true
+    
     if (hasMin || hasMax){
-        let minCount = inputElement.form.dataset.minCount
-        let maxCount = inputElement.form.dataset.maxCount
-        let selectedCount = inputElement.form.querySelectorAll(`[name=${inputElement.name}]:checked`).length
-        let lastElement = inputElement.form.querySelectorAll(`[name=${inputElement.name}]`)
-        lastElement=lastElement.item(lastElement.length-1).closest(".response")
-        if (hasMin && selectedCount<minCount){
-            validationError(lastElement, `You have selected ${selectedCount} items.  Please select at least ${minCount}.`)
-        } else if (hasMax && selectedCount>maxCount){
-            validationError(lastElement, `You have selected ${selectedCount} items.  Please select no more than ${maxCount}.`)
-        } else {
+        let minCount = inputElement.form.dataset.minCount;
+        let maxCount = inputElement.form.dataset.maxCount;
+
+        let selectedCount = inputElement.form.querySelectorAll(`[name=${inputElement.name}]:checked`).length;
+        let lastElement = inputElement.form.querySelectorAll(`[name=${inputElement.name}]`);
+
+        lastElement = lastElement.item(lastElement.length - 1).closest(".response");
+
+        if (hasMin && selectedCoun < minCount) {
+            validationError(lastElement, translate("validationCountMore", [selectedCount, minCount]));
+        } 
+        else if (hasMax && selectedCount > maxCount) {
+            validationError(lastElement, translate("validationCountLess", [selectedCount, maxCount]));
+        } 
+        else {
             clearValidationError(lastElement)
         }
 

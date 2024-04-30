@@ -1,22 +1,11 @@
-import {
-  questionQueue,
-  nextClick,
-  previousClicked,
-  moduleParams,
-  rbAndCbClick,
-  textBoxInput,
-  handleXOR,
-  displayQuestion,
-  parseSSN,
-  parsePhoneNumber,
-  submitQuestionnaire,
-  textboxinput,
-  math,
-  radioAndCheckboxUpdate
-} from "./questionnaire.js";
+import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput, handleXOR, displayQuestion, parseSSN, parsePhoneNumber, submitQuestionnaire, textboxinput, math, radioAndCheckboxUpdate } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
-import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
+import { parseGrid, grid_replace_regex } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
+import { responseRequestedModal, responseRequiredModal, responseErrorModal, submitModal  } from "./common.js";
+
+import en from "./i18n/en.json" with {type: 'json'};
+import es from "./i18n/es.json" with {type: 'json'};
 
 
 
@@ -42,9 +31,13 @@ let reduceObj = (obj) => {
 }
 
 transform.render = async (obj, divId, previousResults = {}) => {
+  
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   moduleParams.soccer = obj.soccer;
+  moduleParams.i18n = obj.lang === 'es' ? es : en;
+  moduleParams.i18n = es;
+
   rootElement = divId;
   let contents = "";
 
@@ -74,7 +67,24 @@ transform.render = async (obj, divId, previousResults = {}) => {
   contents = unrollLoops(contents);
 
   // #issue 378, note: getMonth 0=Jan,  need to add 1
-  contents = contents.replace(/#currentMonthStr/g, ["Jan", "Feb", "Mar", 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][new Date().getMonth()]);
+  // months
+
+  contents = contents.replace(/#currentMonthStr/g, 
+  [
+    moduleParams.i18n.januaryShort,
+    moduleParams.i18n.februaryShort,
+    moduleParams.i18n.marchShort,
+    moduleParams.i18n.aprilShort,
+    moduleParams.i18n.mayShort,
+    moduleParams.i18n.juneShort,
+    moduleParams.i18n.julyShort,
+    moduleParams.i18n.augustShort,
+    moduleParams.i18n.septemberShort,
+    moduleParams.i18n.octoberShort,
+    moduleParams.i18n.novemberShort,
+    moduleParams.i18n.decemberShort
+  ][new Date().getMonth()]);
+
   let current_date = new Date()
   Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
   contents = contents.replace(/#currentMonth/g, current_date.getMonth() + 1);
@@ -140,8 +150,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questArgs,
     questText
   ) {
-    // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
-    // questText = questText.replace(/\/\/.*\n/g, "");
+
     questText = questText.replace(/\u001f/g, "\n");
     questText = questText.replace(/(?:\r\n|\r|\n)/g, "<br>");
     questText = questText.replace(/\[_#\]/g, "");
@@ -186,19 +195,17 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
     }
 
-    let prevButton =
-      (endMatch && endMatch[1]) === "noback"
-        ? ""
-        : (questID === 'END') ? "<input type='submit' class='previous w-100' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous w-100' value='BACK'></input>";
+    let prevButton = (endMatch && endMatch[1]) === "noback"
+      ? ""
+      : `<input type='submit' class='previous w-100' data-clicktype='back' ${questID === 'END' ? `id='lastBackButton'` : ""} value='${moduleParams.i18n.backButton}'></input>`;
 
-    //debugger;
-    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>"
-      :
-      "<input type='submit' class='reset w-100' value='RESET ANSWER'></input>";
+    let resetButton = questID === 'END'
+      ? `<input type='submit' class='reset w-100' data-clicktype='submit' id='submitButton' value='${moduleParams.i18n.submitSurveyButton}'></input>`
+      : `<input type='submit' class='reset w-100' data-clicktype='reset' value='${moduleParams.i18n.resetAnswerButton}'></input>`;
 
     let nextButton = endMatch
       ? ""
-      : `<input type='submit' class='next w-100' ${target} value='NEXT'></input>`;
+      : `<input type='submit' class='next w-100' data-clicktype='next' ${target} value=${moduleParams.i18n.nextButton}></input>`;
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
@@ -238,17 +245,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*?)/g, fText);
       text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
       text = text.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
-      text = text.replace(
-        /#YNP/g,
-        `(1) Yes
-         (0) No
-         (99) Prefer not to answer`
-      );
-      text = questText.replace(
-        /#YN/g,
-        `(1) Yes
-         (0) No`
-      );
+      text = text.replace(/#YNP/g, translate('yesNoPrefer'));
+      text = questText.replace(/#YN/g, translate('yesNo'));
+
       return `<span class='displayif' ${condition}>${text}</span>`;
     }
 
@@ -297,7 +296,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (optionObj.hasOwnProperty("max")) {
         options = options + `  data-max-date-uneval=${optionObj.max}`
       }
-      return `<input type='${type}' ${options}></input>`;
+      return `<input type='${type}' ${options} lang="es"></input>`;
     }
 
 
@@ -438,7 +437,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
         if (match.input[i] == "(") cnt++;
         if (match.input[i] == ")") cnt--;
         if (match.input[i] == "\n") break;
-        //if (match.input[i] == "\n")throw new SyntaxError("parenthesis mismatch near ", match[0]);
 
         end = i + 1;
         if (cnt == 0) break;
@@ -584,20 +582,19 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<textarea id='${elId}' ${options} style="resize:auto;"></textarea>`;
     }
 
+    
     // replace #YNP with Yes No input
     questText = questText.replace(
       /#YNP/g, `<div class='response'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div><div class='response'><input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer"></input><label for='${questID}_99'>Prefer not to answer</label></div>`
-      // `(1) Yes
-      //  (0) No
-      //  (99) Prefer not to answer`
     );
 
     // replace #YN with Yes No input
     questText = questText.replace(
       /#YN/g, `<div class='response'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div>`
-      // `(1) Yes
-      //  (0) No`
     );
+    
+
+
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
     questText = questText.replace(
@@ -727,93 +724,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
-  // add the HTML/HEAD/BODY tags...
-  document.getElementById(divId).innerHTML =
-    contents +
-    `
-  <div class="modal" id="softModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div id="modalBody" class="modal-body">
-              <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
-          </div>
-          <div id="softModalFooter" class="modal-footer">
-              <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Continue Without Answering</button>
-              <button type="button" id=modalCloseButton class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
-          </div>
-          </div>
-      </div>
-  </div>
-  <div class="modal" id="hardModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Response Required</h5>
-              <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
-          </div>
-          </div>
-      </div>
-  </div>
-  <div class="modal" id="softModalResponse" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div id="modalResponseBody" class="modal-body">
-              <p>There is an error with this response. Is this correct?</p>
-          </div>
-          <div id="softModalResponseFooter" class="modal-footer">
-              <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
-              <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
-          </div>
-          </div>
-      </div>
-  </div>
-  
-    <div class="modal" id="submitModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Submit Answers</h5>
-            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <p id="submitModalBodyText">Are you sure you want to submit your answers?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal" data-bs-dismiss="modal">Submit</button>
-          <button type="button" id="cancelModal" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-        </div>
-        </div>
-    </div>
-  </div>
-  `;
 
-  // if (obj.url && obj.url.split("&").includes("run")) {
-  //   if (document.querySelector(".question") != null) {
-  //     document.querySelector(".question").classList.add("active");
-  //   }
-  // }
+  // add the HTML/HEAD/BODY tags...
+  document.getElementById(divId).innerHTML = contents + responseRequestedModal() + responseRequiredModal() + responseErrorModal() + submitModal();
+
 
   function setActive(id) {
     let active = document.getElementById(id);
@@ -838,7 +752,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // for the back/next functionality.
   async function fillForm(retrieve) {
     let questObj = {};
-    let tempObj = {};
 
     if (retrieve) {
       const response = await retrieve();
@@ -930,7 +843,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     .querySelectorAll("input[type='submit']")
     .forEach((submitButton) => {
       submitButton.addEventListener("click", (event) => {
-        event.target.form.clickType = event.target.value;
+        event.target.form.clickType = event.target.clickType;
       });
     });
 
@@ -985,12 +898,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
   });
-
-  /*
-  [...divElement.querySelectorAll(".grid-input-element")].forEach((x) => {
-    x.addEventListener("change", toggle_grid);
-  });
-  */
  
   [...divElement.querySelectorAll("[data-hidden]")].forEach((x) => {
     x.style.display = "none";
@@ -1141,35 +1048,10 @@ function unrollLoops(txt) {
       currentText = currentText.replaceAll(rb_cb_regex,(all,g1)=>all.replace(g1,`${g1}_${loopIndx}`))
 
       currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
-      // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
-
-      // disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
-      // disIfIDs.map((id) => (currentText = currentText.replace(new RegExp(id + "\\b", "g"), id + "_" + loopIndx)));
-
-      // // replace all -> Id with -> Id_#
-      // ids.map(
-      //   (id) => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx))
-      // );
-
-      // // replace all |__(|__)|xxxx|  xxxx= id=questionid_xxx xor=questionid
-      // // |__|id=lalala_3_txt xor=lalala_3|  |xor= lalala id=lalala_txt|
-      // ids.map((id) => (currentText = currentText.replace(/(\|__(?:\|__)*\|[^|\s][^|]\b)(${id.id})(\b[^|]*\|)/g, `$1$2_${loopIndx}$3`)));
 
       ids.map(
         (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
       );
-
-      // if (currentText.search(/->\s*_continue/g) >= 0) {
-      //   ;
-      //   if (loopIndx < x.cnt) {
-      //     currentText = currentText.replace(/->\s*_continue\s*/g, "-> " + ids[0].id + "_" + (loopIndx + 1));
-      //   } else {
-      //     currentText = currentText.replace(
-      //       /->\s*_continue\s*/g,
-      //       "-> " + document.getElementById(ids.slice(-1)[0].id + "_" + loopIndx).nextElementSibling.id
-      //     );
-      //   }
-      // }
 
 
       // replace  _\d_\d#prev with _{$loopIndex-1}
@@ -1193,19 +1075,36 @@ function unrollLoops(txt) {
 function stopSubmit(event) {
   event.preventDefault();
 
-  if (event.target.clickType == "BACK") {
-    resetChildren(event.target.elements);
-    event.target.value = undefined;
-    let buttonClicked = event.target.getElementsByClassName("previous")[0];
-    previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
-  } else if (event.target.clickType == "RESET ANSWER") {
-    resetChildren(event.target.elements);
-    event.target.value = undefined;
-  } else if (event.target.clickType == "Submit Survey") {
-    new bootstrap.Modal(document.getElementById('submitModal')).show()
-  } else {
-    let buttonClicked = event.target.getElementsByClassName("next")[0];
-    nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
+  switch (event.submitter.dataset.clicktype) {
+
+    case "back":
+      resetChildren(event.target.elements);
+      event.target.value = undefined;
+
+      let prevButtonClicked = event.target.getElementsByClassName("previous")[0];
+      previousClicked(prevButtonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
+
+      break;
+
+    case "reset":
+      resetChildren(event.target.elements);
+      event.target.value = undefined;
+
+      break;
+    
+    case "next":
+      let nextButtonClicked = event.target.getElementsByClassName("next")[0];
+      nextClick(nextButtonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
+
+      break;
+
+    case "submit":
+      new bootstrap.Modal(document.getElementById('submitModal')).show();
+
+      break;
+
+    default:
+
   }
 }
 
