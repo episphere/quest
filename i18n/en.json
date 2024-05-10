@@ -5,9 +5,7 @@
     "nextButton": "Next",
     "ariaCloseLabel": "Close",
     "responseRequestedLabel": "Response Requested",
-    "responseRequestedBody": "There is 1 unanswered question on this page. Would you like to continue?",
     "responseRequiredLabel": "Response Required",
-    "responseRequiredBody": "There is 1 unanswered question on this page. Please answer this question.",
     "responseErrorLabel": "Response Requested",
     "responseErrorBody": "There is an error with this response. Is this correct?",
     "submitLabel": "Submit Answers",
@@ -22,8 +20,11 @@
     "yesNo": "(1) Yes (0) No",
     "yesNoPrefer": "(1) Yes (0) No (99) Prefer not to answer",
 
+    "chooseState": "Choose a State",
+
     "basePrompt": " There {0} {1} question{2} unanswered on this page.",
     "softPrompt": " Would you like to continue?",
+    "hardPrompt": " Please answer the question{0}.",
 
     "validationInputEmptyField": "Please fill out this field",
     "validationNumberGreaterThan": "Value must be greater than or equal to {0}",
