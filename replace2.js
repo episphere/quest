@@ -329,7 +329,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fState(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "state");
       return `<select ${options}>
-        <option value='' disabled selected>Choose a state: </option>
+        <option value='' disabled selected>${moduleParams.i18n.chooseState}: </option>
         <option value='AL'>Alabama</option>
         <option value='AK'>Alaska</option>
         <option value='AZ'>Arizona</option>
