@@ -532,6 +532,7 @@ function exchangeValue(element, attrName, newAttrName) {
   return element;
 }
 
+// TODO: Look here for Safari text input delay issue.
 export function textboxinput(inputElement, validate = true) {
   /////////// To change all max attributes to input element ///////////
   // [...inputElement.parentElement.parentElement.children]
@@ -772,87 +773,77 @@ export function nextClick(norp, retrieve, store, rootElement) {
 }
 
 function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
-  let prompt = `There ${num > 1 ? "are" : "is"} ${num} question${num > 1 ? "s" : ""
-    } unanswered on this page. `;
-  if (!soft) {
+  const prompt = `There ${num > 1 ? "are" : "is"} ${num} unanswered question${num > 1 ? "s" : ""} on this page.`;
+  
+  const modalID = soft ? 'softModal' : 'hardModal';
+  const modal = new bootstrap.Modal(document.getElementById(modalID));
 
-    // set modal text...
-    document.getElementById(
-      "hardModalBodyText"
-    ).innerText = `${prompt} Please answer the question${num > 1 ? "s" : ""}.`;
+  document.getElementById(soft ? "modalBodyText" : "hardModalBodyText").innerText = `${prompt} ${soft ? "Would you like to continue?" : "Please answer the question(s)."}`;
 
-      // popup the modal..
-    const hardModal = new bootstrap.Modal(document.getElementById('hardModal'))
-    hardModal.show()
-    return null;
+  if (soft) {
+    const continueButton = document.getElementById("modalContinueButton");
+    continueButton.removeEventListener("click", continueButton.clickHandler);
+    continueButton.clickHandler = nextPage.bind(null, norp, retrieve, store);
+    continueButton.addEventListener("click", continueButton.clickHandler);
   }
-  let f1 = nextPage;
-  f1 = f1.bind(f1, norp, retrieve, store);
-  // set soft modal inner text...
-  document.getElementById(
-    "modalBodyText"
-  ).innerText = `${prompt} Would you like to continue?`;
-  document.getElementById("modalContinueButton").onclick = f1;
-  const softModal = new bootstrap.Modal(document.getElementById('softModal'))
-  softModal.show()
+
+  modal.show();
+
+  // Set focus to the modal title
+  document.getElementById("softModalTitle").focus();
+
+  let modalElement = modal._element;
+  modalElement.querySelector('.close').addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      modal.hide();
+    }
+  });
 }
 
 // show modal function
 function showModal(norp, retrieve, store, rootElement) {
-  if (
-    norp.form.getAttribute("softedit") == "true" ||
-    norp.form.getAttribute("hardedit") == "true"
-  ) {
-    let numBlankReponses = [...norp.form.children]
-      .filter(
-        (x) =>
-          x.type &&
-          x.type != "hidden" &&
-          !x.hasAttribute("xor") &&
-          x.style.display != "none"
-      )
-      .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
-    let hasNoResponses =
-      getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0;
+  if (norp.form.getAttribute("softedit") == "true" || norp.form.getAttribute("hardedit") == "true") {
+    // Fieldset is the parent of the inputs for all but grid questions. Grid questions are in a table.
+    const fieldset = norp.form.querySelector('fieldset') || norp.form.querySelector('tbody');
 
-    if (norp.form.hasAttribute("radioCheckboxAndInput")) {
-      if (!radioCbHasAllAnswers(norp.form)) {
+    let numBlankResponses = [fieldset.children]
+      .filter(x => 
+        x.tagName !== 'DIV' && x.tagName !== 'BR' &&
+        x.type && x.type !== 'hidden' &&
+        x.value !== undefined &&
+        (x.style ? x.style.display !== "none" : true) &&
+        !x.hasAttribute("xor")
+      ).reduce((t, x) =>
+        x.value.length == 0 ? t + 1 : t, 0
+      );
+      
+    let hasNoResponses = getSelectedResponses(fieldset).filter((x) => x.type !== "hidden").length === 0;
+
+    if (fieldset.hasAttribute("radioCheckboxAndInput")) {
+      if (!radioCbHasAllAnswers(fieldset)) {
         hasNoResponses = true;
       }
     }
 
     if (norp.form.dataset.grid) {
-      if (!gridHasAllAnswers(norp.form)) {
+      if (!gridHasAllAnswers(fieldset)) {
         hasNoResponses = true;
       }
-      numBlankReponses = numberOfUnansweredGridQuestions(norp.form)
+      numBlankResponses = numberOfUnansweredGridQuestions(fieldset);
     }
-    // let tempVal = 0;
-    // if (hasNoResponses) {
-    //   tempVal = 0;
-    // } else {
-    //   tempVal = 1;
-    // }
-    if (numBlankReponses == 0 && hasNoResponses == true) {
-      numBlankReponses = 1;
-    } else if ((numBlankReponses == 0) == true && hasNoResponses == false) {
-      numBlankReponses = 0;
-    } else if ((numBlankReponses == 0) == false && hasNoResponses == true) {
-      numBlankReponses = numBlankReponses;
-    } else {
-      numBlankReponses = 0;
-    }
-    // numBlankReponses =
-    //   numBlankReponses == 0 && hasNoResponses ? tempVal : numBlankReponses;
 
-    if (numBlankReponses > 0) {
-      setNumberOfQuestionsInModal(
-        numBlankReponses,
-        norp,
-        retrieve,
-        store,
-        norp.form.getAttribute("softedit") == "true"
-      );
+    if (numBlankResponses == 0 && hasNoResponses == true) {
+      numBlankResponses = 1;
+    } else if ((numBlankResponses == 0) == true && hasNoResponses == false) {
+      numBlankResponses = 0;
+    } else if ((numBlankResponses == 0) == false && hasNoResponses == true) {
+      numBlankResponses = numBlankResponses;
+    } else {
+      numBlankResponses = 0;
+    }
+
+    if (numBlankResponses > 0) {
+      setNumberOfQuestionsInModal(numBlankResponses, norp, retrieve, store, norp.form.getAttribute("softedit") == "true");
       return null;
     }
   }
@@ -969,7 +960,7 @@ async function nextPage(norp, retrieve, store, rootElement) {
 
   // before we add the next question to the queue...
   // check for the displayif status...
-  while (nextElement.hasAttribute("displayif")) {
+  while (nextElement?.hasAttribute("displayif")) {
     // not sure what to do if the next element is is not a question ...
     if (nextElement.classList.contains("question")) {
       let display = evaluateCondition(nextElement.getAttribute("displayif"));
@@ -1019,11 +1010,27 @@ export async function submitQuestionnaire(store, questName) {
   }
 }
 function exitLoop(nextElement) {
+  if (!nextElement) {
+    console.error("nextElement is null or undefined");
+    return null;
+  }
+
   if (nextElement.hasAttribute("firstquestion")) {
-    let loopMax = parseInt(document.getElementById(nextElement.getAttribute("loopmax"))
-      .value);
+    let loopMaxElement = document.getElementById(nextElement.getAttribute("loopmax"));
+    if (!loopMaxElement) {
+      console.error(`LoopMaxElement is null or undefined for ${nextElement.id}`);
+      return nextElement;
+    }
+
+    let loopMax = parseInt(loopMaxElement.value);
     let firstQuestion = parseInt(nextElement.getAttribute("firstquestion"));
     let loopIndex = parseInt(nextElement.getAttribute("loopindx"));
+
+    if (isNaN(loopMax) || isNaN(firstQuestion) || isNaN(loopIndex)) {
+      console.error(`LoopMax, firstQuestion, or loopIndex is NaN for ${nextElement.id}`);
+      return nextElement;
+    }
+
     if (math.evaluate(firstQuestion > loopMax)) {
       questionQueue.pop();
       questionQueue.add(`_CONTINUE${loopIndex}_DONE`);
@@ -1031,10 +1038,12 @@ function exitLoop(nextElement) {
       nextElement = document.getElementById(nextQuestionId.value);
     }
   }
+  
   return nextElement;
 }
 
 export function displayQuestion(nextElement) {
+
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let defaultValue = x.getAttribute("optional")
     x.innerHTML = math.valueOrDefault(decodeURIComponent(x.getAttribute("forid")), defaultValue)
@@ -1088,24 +1097,17 @@ export function displayQuestion(nextElement) {
       e.innerText = math.evaluate(decodeURIComponent(e.dataset.gridreplace))
     }
   });
-  //check if grid elements needs to be shown
-  // concern:: in the grid you can have style:none and class="d-flex"
-  // currently this SHOWS the row.  If this changes in the future,
-  // it may have to be fixed.
-  Array.from(nextElement.querySelectorAll("[data-gridrow][data-displayif]"))
-    .forEach((elm) => {
-      let f = evaluateCondition(decodeURIComponent(elm.dataset.displayif));
+  
+  // Check if grid elements need to be shown. Elm is a <tr>. If f !== true, remove the row (elm) from the DOM.
+  Array.from(nextElement.querySelectorAll("[data-gridrow][data-displayif]")).forEach((elm) => {
+    const f = evaluateCondition(decodeURIComponent(elm.dataset.displayif));
+    console.log(`checking the datagrid for displayif... ${elm.dataset.questionId} ${f}`)
 
-      console.log(elm)
-      console.log(`checking the datagrid for displayif... ${elm.dataset.questionId} ${f}`)
-      
-      Array.from(elm.parentElement.querySelectorAll(`[data-question-id=${elm.dataset.questionId}]`)).forEach(resp => {
-        console.log(resp)
-        resp.style.display=(f)?'block':'none'
-      })
-//      elm.classList.add((f) ? "d-flex" : "collapse")
-//      elm.classList.remove((f) ? "collapse" : "d-flex")
-    });
+    if (f !== true) {
+      elm.remove();
+      //elm.closest('tr').remove(); // this is the same as elm.remove()...slower but more flexible. temp leaving in case there are cases I've missed.
+    }
+  });
 
   // check min/max for variable substitution in validation
   /*function exchangeValue(element, attrName, newAttrName) {
@@ -1181,7 +1183,76 @@ export function displayQuestion(nextElement) {
   updateTree();
 
   questionQueue.ptree();
+
+  // manage the question-specific listeners
+  refreshListeners(nextElement);
+
   return nextElement;
+}
+
+let debounceHandler;
+
+function refreshListeners(nextElement) {
+  removeListeners();
+  debounceHandler = null;
+  addListeners(nextElement);
+}
+
+function removeListeners() {
+  const textInputs = document.querySelectorAll('input[type="text"]');
+  
+  if (debounceHandler) {
+    textInputs.forEach(textInput => {
+        textInput.removeEventListener('input', debounceHandler);
+    });
+  }
+}
+
+function addListeners(nextElement) {
+  const textInputs = nextElement.querySelectorAll('input[type="text"]');
+
+  if (!debounceHandler) {
+    debounceHandler = debounce(handleOtherTextInputKeyPress, 200); // 200ms
+  }
+  
+  // Find the associated checkbox/radio element. Note: Some are checkboxes and some are radios though they look the same.
+  textInputs.forEach(textInput => {
+      textInput.addEventListener('input', debounceHandler);
+      const responseContainer = textInput.closest('.response');
+
+      if (responseContainer) {
+          const checkboxOrRadio = responseContainer.querySelector('input[type="checkbox"], input[type="radio"]');
+
+          if (checkboxOrRadio) {
+              checkboxOrRadio.addEventListener('click', () => {
+                  textInput.focus(); // Focus the text input on checkbox/radio click
+              });
+          }
+      }
+  });
+}
+
+// Simulate a click on the checkbox (turn the tile blue) when the text input is used to enter "Other" text values.
+// Get the parent response container, then get the checkbox element that wraps the input field.
+function handleOtherTextInputKeyPress(event) {
+  const responseTarget = event.target.closest('.response');
+  const checkboxOrRadioEle = responseTarget?.querySelector('input[type="checkbox"], input[type="radio"]');
+  
+  if (checkboxOrRadioEle) {
+      event.target.value ? checkboxOrRadioEle.checked = true : checkboxOrRadioEle.checked = false;
+  }
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function execute(...args) {
+      const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+  };
 }
 
 // Check whether the browser supports "month" input type.
@@ -1221,7 +1292,7 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
 // question queue.  It always returns null;
 function checkForSkips(questionElement) {
   // get selected responses
-  let selectedElements = getSelected(questionElement);
+  let selectedElements = getSelectedResponses(questionElement);
 
   let numSelected = selectedElements.filter((x) => x.type != "hidden").length;
   // if there are NO non-hidden responses ...
@@ -1280,28 +1351,27 @@ function checkValid(questionElement) {
 }
 
 //check if grids has all answers
-export function gridHasAllAnswers(questionElement) {
-  let gridRows = Array.from(questionElement.querySelectorAll("[data-gridrow]"));
+export function gridHasAllAnswers(questionFieldset) {
+  let gridRows = Array.from(questionFieldset.querySelectorAll("tr[data-gridrow='true']"));
 
   const checked = (element) => element.checked;
   return gridRows.reduce( (acc,current,index) => {
-    if (current.style.display=='none') return acc
+    if (current.style.display=='none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
-    let currentResponses = Array.from(current.parentElement.querySelectorAll(`[name="${name}"]`))
+    let currentResponses = Array.from(current.parentElement.querySelectorAll(`input[type="radio"][name="${name}"]`))
     return acc && currentResponses.some(checked)
   },true)
 }
 
-export function numberOfUnansweredGridQuestions(questionElement) {
-  let gridRows = Array.from(questionElement.querySelectorAll("[data-gridrow]"));
-
+export function numberOfUnansweredGridQuestions(questionFieldset) {
+  let gridRows = Array.from(questionFieldset.querySelectorAll("tr[data-gridrow='true']"));
   const checked = (element) => element.checked;
   return gridRows.reduce( (acc,current,index) => {
-    if (current.style.display=='none') return acc
+    if (current.style.display=='none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
-    let currentResponses = Array.from(current.parentElement.querySelectorAll(`[name="${name}"]`))
+    let currentResponses = Array.from(current.querySelectorAll(`input[type="radio"][name="${name}"]`));
     return currentResponses.some(checked)?acc:(acc+1)
   },0)
 }
@@ -1325,43 +1395,15 @@ export function radioCbHasAllAnswers(questionElement) {
   }
   return hasAllAnswers;
 }
-export function getSelected(questionElement) {
-  // look for radio boxes, checkboxes, and  hidden elements
-  // for checked items.  Return all checked items.
-  // If nothing is checked, an empty array should be returned.
-  // var rv = [
-  //   ...questionElement.querySelectorAll(
-  //     "input[type='radio'],input[type='checkbox'],input[type='hidden'],input[type='number']"
-  //   )
-  // ];
 
-  var rv1 = [
-    ...questionElement.querySelectorAll(
-      "input[type='radio'],input[type='checkbox']"
-    ),
-  ];
+// Look at radio, checkboxes, input fields, and hidden elements and return all checked or filled items.
+// If nothing is checked, return empty array.
+export function getSelectedResponses(questionElement) {
+  const radiosAndCheckboxes = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox']")].filter((x) => x.checked);
+  const inputFields = [...questionElement.querySelectorAll("input[type='number'], input[type='text'], input[type='date'], input[type='month'], input[type='email'], input[type='time'], input[type='tel'], textarea, option")].filter((x) => x.value.length > 0);
+  const hiddenInputs = [...questionElement.querySelectorAll("input[type='hidden']")].filter((x) => x.hasAttribute("checked"));
 
-  var rv2 = [
-    ...questionElement.querySelectorAll(
-      "input[type='number'], input[type='text'], input[type='date'], input[type='month'], input[type='email'], input[type='time'], input[type='tel'], textarea, option"
-    ),
-  ];
-
-  var rv3 = [...questionElement.querySelectorAll("input[type='hidden']")];
-
-  rv1 = rv1.filter((x) => x.checked);
-  rv2 = rv2.filter((x) => x.value.length > 0);
-  rv3 = rv3.filter((x) => x.hasAttribute("checked"));
-
-  // rv = rv.filter(x =>
-  //   x.type == "radio" || x.type == "checkbox" || x.type == "hidden"
-  //     ? x.checked
-  //     : x.value.length > 0
-  // );
-
-  // we may need to guarentee that the hidden comes last.
-  rv1 = rv1.concat(rv2);
-  return rv1.concat(rv3);
+  return [...radiosAndCheckboxes, ...inputFields, ...hiddenInputs];
 }
 
 // create a blank object for collecting

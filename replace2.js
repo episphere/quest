@@ -15,7 +15,7 @@ import {
   radioAndCheckboxUpdate
 } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
-import { parseGrid, grid_replace_regex, toggle_grid } from "./buildGrid.js";
+import { parseGrid, grid_replace_regex } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
 
 
@@ -66,42 +66,39 @@ transform.render = async (obj, divId, previousResults = {}) => {
       document.head.appendChild(link2);
     }
   }
+  
+  // Define the Date prototype function toQuestFormat
+  Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
+  const current_date = new Date()
+  
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
-
   // then we must unroll the loops...
-
   contents = unrollLoops(contents);
-
   // #issue 378, note: getMonth 0=Jan,  need to add 1
-  contents = contents.replace(/#currentMonthStr/g, ["Jan", "Feb", "Mar", 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][new Date().getMonth()]);
-  let current_date = new Date()
-  Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
-  contents = contents.replace(/#currentMonth/g, current_date.getMonth() + 1);
-  contents = contents.replace(/#currentYear/g, current_date.getFullYear());
-  // issue #405 need #today and today+/- n days...
-  contents = contents.replace(/#today(\s*[+\-]\s*\d+)?/g, function (match, offset) {
-    // if no (+/- offset) we want today...
-    if (!offset || offset.trim().length == 0) {
-      return current_date.toQuestFormat()
-    }
+  contents = contents
+    .replace(/#currentMonthStr/g, ["Jan", "Feb", "Mar", 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][new Date().getMonth()])
+    .replace(/#currentMonth/g, current_date.getMonth() + 1)
+    .replace(/#currentYear/g, current_date.getFullYear())
+    // issue #405 need #today and today+/- n days...
+    .replace(/#today(\s*[+\-]\s*\d+)?/g, (match, offset) => {
+      // if no (+/- offset) we want today...
+      if (!offset || offset.trim().length == 0) {
+        return current_date.toQuestFormat()
+      }
 
-    // otherwise +/- the offset in number of days...
-    offset = parseInt(offset.replace(/\s/g, ""));
-    let offset_date = new Date()
-    offset_date.setDate(offset_date.getDate() + offset)
-    return offset_date.toQuestFormat()
-  })
+      // otherwise +/- the offset in number of days...
+      offset = parseInt(offset.replace(/\s/g, ""));
+      let offset_date = new Date()
+      offset_date.setDate(offset_date.getDate() + offset)
+      return offset_date.toQuestFormat()
+    })
+    // questionnarie 
+    // hey, lets de-lint the contents.. convert (^|\n{2,}Q1. to [Q1]
+    // note:  the first question wont have the \n\n so we need to look at start of string(^)
+    .replace(/\/\*.*\*\//g, "")
+    .replace(/\/\/.*/g, "");
 
-  // questionnarie 
-
-  // hey, lets de-lint the contents..
-  // convert (^|\n{2,}Q1. to [Q1]
-  // note:  the first question wont have the
-  // \n\n so we need to look at start of string(^)
-
-  contents = contents.replace(/\/\*.*\*\//g, "");
-  contents = contents.replace(/\/\/.*/g, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
   let nameRegex = new RegExp(/{"name":"(\w*)"}/);
   if (nameRegex.test(contents)) {
@@ -115,6 +112,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questName = "Questionnaire";
     moduleParams.questName = questName;
   }
+
   // first let's deal with breaking up questions..
   // a question starts with the [ID1] regex pattern
   // and end with the next pattern or the end of string...
@@ -130,6 +128,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     "g"
   );
 
+  // TODO: General -> <br> tag replacement -> these read "Empty Group" in Chrome with screen reader, which is not ideal.
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/(?:\r\n|\r|\n)/g, "\u001f");
@@ -189,16 +188,19 @@ transform.render = async (obj, divId, previousResults = {}) => {
     let prevButton =
       (endMatch && endMatch[1]) === "noback"
         ? ""
-        : (questID === 'END') ? "<input type='submit' class='previous w-100' id='lastBackButton' value='BACK'></input>" : "<input type='submit' class='previous w-100' value='BACK'></input>";
+        : (questID === 'END')
+          ? "<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>BACK</button>"
+          : "<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>BACK</button>";
 
     //debugger;
-    let resetButton = (questID === 'END') ? "<input type='submit' class='reset' id='submitButton' value='Submit Survey'></input>"
-      :
-      "<input type='submit' class='reset w-100' value='RESET ANSWER'></input>";
+    let resetButton = (questID === 'END')
+      ? "<button type='submit' class='reset' id='submitButton' aria-label='Submit your survey' data-click-type='submitSurvey'>Submit Survey</button>"
+      : "<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>RESET ANSWER</button>";
 
     let nextButton = endMatch
       ? ""
-      : `<input type='submit' class='next w-100' ${target} value='NEXT'></input>`;
+      : `<button type='submit' class='next w-100' ${target} aria-label='Next question' data-click-type='next'>NEXT</button>`;
+
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
@@ -220,7 +222,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fHash(fullmatch,expr){
       return `<span data-encoded-expression=${encodeURIComponent(expr)}>${expr}</span>`
     }
-
 
     //adding displayif with nested questions. nested display if uses !| to |!
     questText = questText.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
@@ -280,26 +281,29 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
     questText = questText.replace(/\|month\|(?:([^\|]+)\|)?/g, fDate);
     function fDate(fullmatch, opts) {
-      let type = fullmatch.match(/[^|]+/)
+      let type = fullmatch.match(/[^|]+/);
       let { options, elementId } = guaranteeIdSet(opts, type);
-      let optionObj = paramSplit(options)
+      let optionObj = paramSplit(options);
       // can't have the value uri encoded... 
       if (optionObj.hasOwnProperty("value")) {
-        optionObj.value = decodeURIComponent(optionObj.value)
+          optionObj.value = decodeURIComponent(optionObj.value);
       }
+  
+      options = reduceObj(optionObj);
 
-      options = reduceObj(optionObj)
-      // not sure why we need a data-min-date but allow it to be evaluateable.
-      //      if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min)) ) {
       if (optionObj.hasOwnProperty("min")) {
         options = options + ` data-min-date-uneval=${optionObj.min}`
       }
       if (optionObj.hasOwnProperty("max")) {
         options = options + `  data-max-date-uneval=${optionObj.max}`
       }
-      return `<input type='${type}' ${options}></input>`;
+      
+      const descText = type === 'month' ? "Type month and four-digit year" : type === 'date' ? "Select a date" : "Enter the month and year in format: four digit year - two digit month. YYYY-MM";
+  
+      // Adding placeholders and aria-describedby attributes in one line
+      options += ` placeholder='Select ${type}' aria-describedby='${elementId}-desc' aria-label='Select ${type}'`;
+      return `<input type='${type}' ${options}><span id='${elementId}-desc' class='sr-only'>${descText}</span>`;
     }
-
 
     // replace |tel| with phone input
 
@@ -404,7 +408,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace |image|URL|height,width| with a html img tag...
     questText = questText.replace(
       /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
-      "<img src=https://$1 height=$2 width=$3>"
+      "<img src=https://$1 height=$2 width=$3 loading='lazy'>"
     );
 
     //regex to test if there are input as a part of radio or checkboxes
@@ -475,7 +479,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     //   + /(?:,(displayif=.+?\))?)?/.source             // an optional displayif
     //   + /\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/         // go to the end of the line or next [
     // )
-    //questText = questText.replace(cbRegEx, fCheck)
+
     questText = questText.replace(
       /\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif\s*=\s*.+?\)\s*)?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
       fCheck
@@ -497,6 +501,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
+
       return `<div class='response' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' ${clearValues}></input><label id='${labelID}' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
@@ -504,37 +509,52 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
     function fTime(x, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "time");
-      return `<input type='time' ${options}>`;
+      return `
+        <label for='${elementId}' class='sr-only'>Enter Time</label>
+        <input type='time' id='${elementId}' ${options} aria-label='Enter Time'>
+      `;
     }
 
+    // TODO: General: format for number input boxes needs adjustment for screen readers (description text first or aria description)
     // replace |__|__|  with a number box...
     questText = questText.replace(
       /\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g,
       fNum
     );
     function fNum(fullmatch, opts) {
-
-      let value = questText.startsWith('<br>') ? questText.split('<br>')[0] : ''
-
+      const value = questText.startsWith('<br>') ? questText.split('<br>')[0] : '';
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
-
+      
       options = options.replaceAll('\"', "\'");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionObj = paramSplit(options)
 
       //replace options with split values (uri encoded)
       options = reduceObj(optionObj)
-
       if (optionObj.hasOwnProperty("min")) {
         options = options + ` data-min="${optionObj.min}"`
       }
       if (optionObj.hasOwnProperty("max")) {
         options = options + ` data-max="${optionObj.max}"`
       }
+
+      // Handle not converted and not yet calculated min and max values
+      const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.startsWith('isDefined') && value !== '0' ? value : ''; }
+      const min = minMaxValueTest(optionObj.min);
+      const max = minMaxValueTest(optionObj.max);
+
+      // Build the description text
+      const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? 'between ' + min + ' and ' + max : ''}.`;
+      
+      // Add placeholder and aria-describedby
+      const placeholder = min ? `placeholder="Example: ${min}"` : (max ? `placeholder="Example: ${max}"` : 'placeholder="Enter a value"');
+      options += ` ${placeholder} aria-describedby="${elementId}-desc"`;
+
       //onkeypress forces whole numbers
-      return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options} ></input>`;
-    }
+      return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options}>
+              <div id="${elementId}-desc" class="sr-only">${descriptionText}</div>`;
+  }
 
     // replace |__| or [text box:xxx] with an input box...
     questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
@@ -545,11 +565,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 
     questText = questText.replace(
-      // /\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*)?/g,
       /(.*)?\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?(.*)?/g,
       fText
     );
 
+    // TODO: Inspect ServiceNow/DataDog 'Too Much Recursion' error (Windows 10 / Firefox v125.0.0). One occurrence 5/3/24, Module 4.
     function fText(fullmatch, value1, opts, value2) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
       options = options.replaceAll(/(min|max)len\s*=\s*(\d+)/g,'data-$1len=$2')
@@ -558,10 +578,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // the code. As it turns out.  This causes a problem.  Only change the values in the aria-label.
       // if you have (1) xx |__| text with  ' in it.
       // then the apostrophe is put in the aria-label screwing up the rendering 
-      // value1 = value1?.replace(/'/g, "&apos;")
-      // value2 = value2?.replace(/'/g, "&apos;")
 
       // this is really ugly..  What is going on here?
+      // TODO: refactor, test, and remove this console.warn
+      //if (value1 && value1.includes('div')) console.warn('fText:', value1, opts, value2);
       if (value1 && value1.includes('div')) return `${value1}<input type='text' aria-label='${value1.split('>').pop().replace(/'/g, "&apos;")}'name='${questID}' ${options}></input>${value2}`
       if (value1 && value2) return `<span>${value1}</span><input type='text' aria-label='${value1.replace(/'/g, "&apos;")} ${value2.replace(/'/g, "&apos;")}' name='${questID}' ${options}></input><span>${value2}</span>`;
       if (value1) return `<span>${value1}</span><input type='text' aria-label='${value1.replace(/'/g, "&apos;")}' name='${questID}' ${options}></input>`;
@@ -584,20 +604,49 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<textarea id='${elId}' ${options} style="resize:auto;"></textarea>`;
     }
 
-    // replace #YNP with Yes No input
+    // replace #YNP with Yes No input: `(1) Yes, (0) No, (99) Prefer not to answer`
     questText = questText.replace(
-      /#YNP/g, `<div class='response'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div><div class='response'><input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer"></input><label for='${questID}_99'>Prefer not to answer</label></div>`
-      // `(1) Yes
-      //  (0) No
-      //  (99) Prefer not to answer`
+      /#YNP/g,
+      `<div role="radiogroup" aria-labelledby="yesNoDontKnowLabel">
+        <label id="yesNoDontKnowLabel" class="sr-only">Select "Yes," "No," or "Prefer not to answer" to answer the question.</label>
+        <ul>
+          <li class='response'>
+            <input type='radio' id="${questID}_1" name="${questID}" value="yes">
+            <label for='${questID}_1'>Yes</label>
+          </li>
+          <li class='response'>
+            <input type='radio' id="${questID}_0" name="${questID}" value="no">
+            <label for='${questID}_0'>No</label>
+          </li>
+          <li class='response'>
+            <input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer">
+            <label for='${questID}_99'>Prefer not to answer</label>
+          </li>
+        </ul>
+      </div>
+      `
     );
 
-    // replace #YN with Yes No input
+    // replace #YN with Yes No input: `(1) Yes, (0) No`
+
     questText = questText.replace(
-      /#YN/g, `<div class='response'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div>`
-      // `(1) Yes
-      //  (0) No`
+      /#YN/g,
+      `<div role="radiogroup" aria-labelledby="yesNoLabel">
+        <div id="yesNoLabel" class="sr-only">Select "Yes" or "No" to answer the question.</div>
+        <ul>
+          <li class='response'>
+            <input type='radio' id="${questID}_1" name="${questID}" value="yes">
+            <label for='${questID}_1'>Yes</label>
+          </li>
+          <li class='response'>
+            <input type='radio' id="${questID}_0" name="${questID}" value="no">
+            <label for='${questID}_0'>No</label>
+          </li>
+        </ul>
+      </div>
+      `
     );
+
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
     questText = questText.replace(
@@ -637,7 +686,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       let skipTo = skipToId ? `skipTo=${skipToId}` : "";
       let value = cbValue ? `value=${cbValue}` : "";
-      let rv = `<div class='response'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}></input><label for='${id}'>${labelText}${textBox}</label></div>`;
+      let rv = `<li class='response'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}><label for='${id}'>${labelText}${textBox}</label></li>`;
       return rv;
     }
     // SAME thing but this time with a textarea...
@@ -682,13 +731,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // handle skips
     questText = questText.replace(
-      //      /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^>]*?)<\/label>/g,
       /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^<\s]*?)\s*<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
     questText = questText.replace(
       /<textarea ([^>]*)><\/textarea>\s*->\s*([^\s<]+)/g,
-      "<textarea $1 skipTo=$2></textarea>"
+      "<textarea $1 skipTo=$2 aria-label='Enter your response'></textarea>"
     );
     questText = questText.replace(/<\/div><br>/g, "</div>");
 
@@ -697,25 +745,30 @@ transform.render = async (obj, divId, previousResults = {}) => {
     if (!questText.includes('input') && (questID !== 'END')) {
       resetButton = '';
     }
-
-
-    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-3 col-sm-12">
-          ${prevButton}
+    
+    let rv = `
+      <form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>
+        <fieldset>
+          ${questText}
+        </fieldset>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3 col-sm-12">
+              ${prevButton}
+            </div>
+            <div class="col-md-6 col-sm-12">
+              ${resetButton}
+            </div>
+            <div class="col-md-3 col-sm-12">
+              ${nextButton}
+            </div>
+          </div>
         </div>
-        <div class="col-md-6 col-sm-12">
-          ${resetButton}
-        </div>
-        <div class=" col-md-3 col-sm-12">
-          ${nextButton}
-        </div>
-      </div>
-    </div>
-    </div><div class="spacePadding"></div></form>`;
-
+        <div class="spacePadding"></div>
+      </form>`;
+    
     return rv;
+  
   });
 
 
@@ -729,91 +782,83 @@ transform.render = async (obj, divId, previousResults = {}) => {
   contents = contents.replace(//g, "");
   // add the HTML/HEAD/BODY tags...
   document.getElementById(divId).innerHTML =
-    contents +
-    `
-  <div class="modal" id="softModal" tabindex="-1" role="dialog">
+    contents + `
+    <div class="modal" id="softModal" tabindex="-1" role="dialog" aria-labelledby="softModalTitle" aria-modal="true">
       <div class="modal-dialog" role="document">
-          <div class="modal-content">
+        <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
+            <h5 class="modal-title" id="softModalTitle" tabindex="-1">Response Requested</h5>
+            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
           </div>
-          <div id="modalBody" class="modal-body">
-              <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
+          <div id="modalBody" class="modal-body" aria-describedby="modalBodyText">
+            <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
           </div>
           <div id="softModalFooter" class="modal-footer">
-              <button type="button" id=modalContinueButton class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Continue Without Answering</button>
-              <button type="button" id=modalCloseButton class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
+            <button type="button" id="modalContinueButton" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Continue Without Answering</button>
+            <button type="button" id="modalCloseButton" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
           </div>
-          </div>
+        </div>
       </div>
-  </div>
-  <div class="modal" id="hardModal" tabindex="-1" role="dialog">
+    </div>
+    <div class="modal" id="hardModal" tabindex="-1" role="dialog" aria-labelledby="hardModalLabel" aria-modal="true" aria-describedby="hardModalBodyText">
       <div class="modal-dialog" role="document">
-          <div class="modal-content">
+        <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title">Response Required</h5>
-              <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+            <h5 class="modal-title" id="hardModalLabel">Response Required</h5>
+            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
-              </button>
+            </button>
           </div>
           <div class="modal-body">
-              <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
+            <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
           </div>
-          </div>
+        </div>
       </div>
-  </div>
-  <div class="modal" id="softModalResponse" tabindex="-1" role="dialog">
+    </div>
+    <div class="modal" id="softModalResponse" tabindex="-1" role="dialog" aria-labelledby="softModalResponseTitle" aria-modal="true" aria-describedby="softModalResponseBody">
       <div class="modal-dialog" role="document">
-          <div class="modal-content">
+        <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title">Response Requested</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h5 class="modal-title" id="softModalResponseTitle">Response Requested</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
-              </button>
+            </button>
           </div>
-          <div id="modalResponseBody" class="modal-body">
-              <p>There is an error with this response. Is this correct?</p>
+          <div id="softModalResponseBody" class="modal-body">
+            <p>There is an error with this response. Is this correct?</p>
           </div>
           <div id="softModalResponseFooter" class="modal-footer">
-              <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
-              <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
+            <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
+            <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
           </div>
-          </div>
+        </div>
       </div>
-  </div>
-  
-    <div class="modal" id="submitModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Submit Answers</h5>
-            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <p id="submitModalBodyText">Are you sure you want to submit your answers?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal" data-bs-dismiss="modal">Submit</button>
-          <button type="button" id="cancelModal" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-        </div>
-        </div>
     </div>
-  </div>
+    <div class="modal" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel" aria-modal="true" aria-describedby="submitModalBodyText">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="submitModalLabel">Submit Answers</h5>
+            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p id="submitModalBodyText">Are you sure you want to submit your answers?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal" data-bs-dismiss="modal">Submit</button>
+            <button type="button" id="cancelModal" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
   `;
-
-  // if (obj.url && obj.url.split("&").includes("run")) {
-  //   if (document.querySelector(".question") != null) {
-  //     document.querySelector(".question").classList.add("active");
-  //   }
-  // }
 
   function setActive(id) {
     let active = document.getElementById(id);
@@ -838,7 +883,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // for the back/next functionality.
   async function fillForm(retrieve) {
     let questObj = {};
-    let tempObj = {};
 
     if (retrieve) {
       const response = await retrieve();
@@ -884,6 +928,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
     }
   }
+  
   let questions = [...document.getElementsByClassName("question")];
   let divElement = document.getElementById(divId);
 
@@ -910,8 +955,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
   }
 
-  
-
   if (questions.length > 0) {
     let buttonToRemove = questions[0].querySelector(".previous");
     if (buttonToRemove) {
@@ -926,13 +969,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
   questions.forEach((question) => {
     question.onsubmit = stopSubmit;
   });
-  divElement
-    .querySelectorAll("input[type='submit']")
-    .forEach((submitButton) => {
-      submitButton.addEventListener("click", (event) => {
-        event.target.form.clickType = event.target.value;
-      });
-    });
+
+  // TODO: Test -> can these eventListeners be managed in displayQuestion() for scope reduction & memory management?
+  // Concept: test using the nextElement value in place of divElement for these listeners in that function.
+  // Reminder: Why -> maybe that could help the Safari input box focus/slowness issue.
 
   [...divElement.querySelectorAll("input")].forEach((inputElement) => {
     inputElement.addEventListener("keydown", (event) => {
@@ -985,12 +1025,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
   });
-
-  /*
-  [...divElement.querySelectorAll(".grid-input-element")].forEach((x) => {
-    x.addEventListener("change", toggle_grid);
-  });
-  */
  
   [...divElement.querySelectorAll("[data-hidden]")].forEach((x) => {
     x.style.display = "none";
@@ -998,28 +1032,32 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // handle text in combobox label...
   [...divElement.querySelectorAll("label input,label textarea")].forEach(inputElement => {
-      let radioCB = document.getElementById(inputElement.closest('label').htmlFor) 
-      let callback = (event)=>{
-          let nchar = event.target.value.length
-          //radioCB.checked = nchar>0;
-          // select if typed in box, DONT UNSELECT
-          if (nchar > 0) radioCB.checked = true
-          radioAndCheckboxUpdate(radioCB)
-          inputElement.dataset.lastValue=inputElement.value
+      let radioCB = document.getElementById(inputElement.id)
+      //let radioCB = document.getElementById(inputElement.closest('label').htmlFor)
+
+      if (radioCB) { 
+        let callback = (event)=>{
+            let nchar = event.target.value.length
+            //radioCB.checked = nchar>0;
+            // select if typed in box, DONT UNSELECT
+            if (nchar > 0) radioCB.checked = true
+            radioAndCheckboxUpdate(radioCB)
+            inputElement.dataset.lastValue=inputElement.value
+        }
+        inputElement.addEventListener("keyup",callback);
+        inputElement.addEventListener("input",callback);
+        radioCB.addEventListener("click",(event=>{
+            console.log("click")
+            if (!radioCB.checked){
+                inputElement.dataset.lastValue=inputElement.value
+                inputElement.value=''
+            }else if ('lastValue' in inputElement.dataset){
+                inputElement.value=inputElement.dataset.lastValue
+            }
+            textboxinput(inputElement)
+        }));
       }
-      inputElement.addEventListener("keyup",callback);
-      inputElement.addEventListener("input",callback);
-      radioCB.addEventListener("click",(event=>{
-          console.log("click")
-          if (!radioCB.checked){
-              inputElement.dataset.lastValue=inputElement.value
-              inputElement.value=''
-          }else if ('lastValue' in inputElement.dataset){
-              inputElement.value=inputElement.dataset.lastValue
-          }
-          textboxinput(inputElement)
-      }))
-  })
+  });
 
 
   document.getElementById("submitModalButton").onclick = () => {
@@ -1037,7 +1075,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   resetTree();
   
   if (moduleParams.soccer instanceof Function)
-    moduleParams.soccer();
+    moduleParams.soccer(); // "externalListeners" (PWA)
   moduleParams.questName = questName;
 
 
@@ -1064,7 +1102,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     console.log("... ",popoverTriggerEl)
     new bootstrap.Popover(popoverTriggerEl)
   })
-
 
   return true;
 };
@@ -1141,36 +1178,10 @@ function unrollLoops(txt) {
       currentText = currentText.replaceAll(rb_cb_regex,(all,g1)=>all.replace(g1,`${g1}_${loopIndx}`))
 
       currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
-      // ids.map((id) => (currentText = currentText.replace(id.label, id.label.replace(id.id, id.id + "_" + loopIndx))));
-
-      // disIfIDs = disIfIDs.filter((x) => newIds.includes(x));
-      // disIfIDs.map((id) => (currentText = currentText.replace(new RegExp(id + "\\b", "g"), id + "_" + loopIndx)));
-
-      // // replace all -> Id with -> Id_#
-      // ids.map(
-      //   (id) => (currentText = currentText.replace(new RegExp("->\\s*" + id.id + "\\b", "g"), "-> " + id.id + "_" + loopIndx))
-      // );
-
-      // // replace all |__(|__)|xxxx|  xxxx= id=questionid_xxx xor=questionid
-      // // |__|id=lalala_3_txt xor=lalala_3|  |xor= lalala id=lalala_txt|
-      // ids.map((id) => (currentText = currentText.replace(/(\|__(?:\|__)*\|[^|\s][^|]\b)(${id.id})(\b[^|]*\|)/g, `$1$2_${loopIndx}$3`)));
 
       ids.map(
         (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
       );
-
-      // if (currentText.search(/->\s*_continue/g) >= 0) {
-      //   ;
-      //   if (loopIndx < x.cnt) {
-      //     currentText = currentText.replace(/->\s*_continue\s*/g, "-> " + ids[0].id + "_" + (loopIndx + 1));
-      //   } else {
-      //     currentText = currentText.replace(
-      //       /->\s*_continue\s*/g,
-      //       "-> " + document.getElementById(ids.slice(-1)[0].id + "_" + loopIndx).nextElementSibling.id
-      //     );
-      //   }
-      // }
-
 
       // replace  _\d_\d#prev with _{$loopIndex-1}
       // we do it twice to match a previous bug..
@@ -1190,22 +1201,24 @@ function unrollLoops(txt) {
   return txt;
 }
 
+// Handle the next, reset, and back buttons
 function stopSubmit(event) {
   event.preventDefault();
+  
+  const clickType = event.submitter.getAttribute('data-click-type');
+  const buttonClicked = event.target.querySelector(`.${clickType}`);
 
-  if (event.target.clickType == "BACK") {
+  if (clickType === 'previous') { 
     resetChildren(event.target.elements);
-    event.target.value = undefined;
-    let buttonClicked = event.target.getElementsByClassName("previous")[0];
     previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
-  } else if (event.target.clickType == "RESET ANSWER") {
+  } else if (clickType === 'reset') {
     resetChildren(event.target.elements);
-    event.target.value = undefined;
-  } else if (event.target.clickType == "Submit Survey") {
-    new bootstrap.Modal(document.getElementById('submitModal')).show()
-  } else {
-    let buttonClicked = event.target.getElementsByClassName("next")[0];
+  } else if (clickType === 'submitSurvey') {
+    new bootstrap.Modal(document.getElementById('submitModal')).show();
+  } else if (clickType === 'next') {
     nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
+  } else {
+    console.error(`ERROR: Unknown button clicked: ${clickType}`);
   }
 }
 

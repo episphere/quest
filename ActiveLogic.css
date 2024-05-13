@@ -1,5 +1,5 @@
 #questionnaire {
-  font-family: Ariel, sans-serif;
+  font-family: Arial, sans-serif;
   height: 70%;
   border: solid 2px black;
   padding: 20px;
@@ -11,26 +11,27 @@
 
 #thankYou,
 .question {
-  margin: 10px 0px;
+  margin: 5px 0px;
   display: none;
 }
 
 #thankYou.active,
 .question.active {
+  padding-top: 5px;
   display: block;
 }
 
-/* .previous {
-  float: left;
+.question p { 
+   margin-bottom: 1em;
 }
 
-.next {
-  float: right;
-}
-
-.submit {
-  float: right;
+/* .question p strong {
+  font-weight: bold !important;
 } */
+.question.active p b {
+  font-family: 'Monserrat', sans-serif;
+  font-weight: bold;
+}
 
 /* this is an answer with a text area...*/
 
@@ -54,44 +55,79 @@ input[type="text"] {
 
 
 /* CSS for grids... */
-.quest-grid{
+.quest-grid {
   width: 100%;
-  display: grid;
-  grid-template-columns: auto repeat(12,minmax(0px,auto));
-
-  font-family:Arial, Helvetica, sans-serif;
-  font-size: medium;
-  overflow-x: auto;
-  gap: 1px;
-  overflow-y: visible;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
 }
 
-.quest-grid * {
-  padding: 4px;
+.quest-grid tr {
+  width: auto;
+  display: table-row !important;
+}
+
+.quest-grid th, .quest-grid td {
+  padding: 10px;
   text-align: center;
+  vertical-align: middle;
+  height: 70px;
+  position: relative;
 }
 
-.quest-grid > .nr {
-  grid-column-start: 1;
-  text-align: start;
-  align-self: center;
+.quest-grid th.nr, .quest-grid td.nr {
+  font-weight: bold;
+  text-align: left;
 }
 
-ul.quest-grid{
-  padding: 0px;
-  list-style-type: none;
-  min-width: min-content;
+.quest-grid td {
+  width: auto;
+  position: relative;
+  min-height: 70px;
+  padding: 10px;
 }
 
+.quest-grid .custom-label {
+  background-color: #f4f4f4;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: 100%;
+  color: transparent;
+}
 
+.quest-grid .custom-label hover {
+  color: #e6e6e6;
+}
+
+.quest-grid input[type="radio"] {
+  display: none;
+}
+
+.quest-grid input[type="radio"]:checked + .custom-label {
+  background-color: #205c84;
+  color: transparent;
+}
+
+/* Styles for when the radio button is checked */
+.quest-grid input[type="radio"]:checked + .custom-label::after {
+  content: '\2713'; /* Unicode character for checkmark */
+  color: #ffbc24;
+  font-size: 36px;
+  position: absolute;
+  left: 35%;
+  top: 50%;
+  transform: translate(-75%, -50%);
+}
 
 @media screen and (min-width: 576px) {
-  ul.quest-grid input{
-      display: inline;
-      height: 1rem;
-  }
-  ul.quest-grid label{
-      display: none;
+  /* Emphasize the first table column. Then let the browser calculate the width for the remaining columns */
+  .quest-grid th:first-child, .quest-grid td:first-child {
+    width: 35%;
+    font-weight: bold;
   }
 }
 
@@ -101,36 +137,88 @@ I chose 576px because this matches the default breakpoint
 for bootstrap -xs
 **/
 @media screen and (max-width: 576px) {
-  .quest-grid {
-      display: block;
-      width:100%;
-  }
-  ul.quest-grid{
-      min-width: min-content;
-      list-style-type: none;
-      text-align: left;
-  }
-  ul.quest-grid > li {
-      margin-top: 2px;
+  .quest-grid, .quest-grid thead, .quest-grid tbody, .quest-grid th, .quest-grid td, .quest-grid tr { 
+    display: block;
   }
 
-  li {
-    list-style-type: none;
+  .quest-grid thead tr { 
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
   }
 
-  ul.quest-grid .hr {
-      display: none;
+  .quest-grid tr { 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Distribute space between header and label */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding: 2px;
   }
 
-  ul.quest-grid li.nr {
-      display: block;
+  .quest-grid th {
+    padding: 5px;
+    min-height: auto; /* Allow expansion for long questions/headers */
+    height: auto;
+    display: block; /* Stack cells vertically in smaller views */
+    width: 100%;
+    font-size: 14px;
+    word-wrap: break-word; /* Allow long words to be broken and wrapped */
+    padding: 10px 0;
   }
 
-  ul.quest-grid li.nr:not(:first-child){
-      padding-top: 10px;
+  .quest-grid td { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 5px;
+    min-height: 70px;
+    width: 100%;
   }
 
+  .quest-grid td::before {
+    content: attr(data-header);
+    font-size: 16px;
+    color: #333;
+    flex: 1;  
+    padding-right: 10px;  
+    white-space: normal; 
+    overflow: hidden;  
+    text-overflow: ellipsis; 
+    max-width: 60%;  
+    text-align: left;
+  }
 
+  .quest-grid .custom-label {
+    height: 60px;
+    line-height: 60px;
+    width: 30%;
+    margin-left: 33%;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+  }
 
-    
+  .quest-grid input[type="radio"] {
+    display: none;
+  }
+
+  .quest-grid input[type="radio"]:checked + .custom-label {
+    background-color: #205c84;
+  }
+
+  .quest-grid input[type="radio"]:checked + .custom-label::after {
+    content: '\2713'; /* Unicode character for checkmark */
+    color: #ffbc24;
+    font-size: 36px;
+    position: absolute;
+    left: 78%;
+    top: 50%;
+  }
 }
