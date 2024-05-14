@@ -773,12 +773,13 @@ export function nextClick(norp, retrieve, store, rootElement) {
 }
 
 function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
-  const prompt = `There ${num > 1 ? "are" : "is"} ${num} unanswered question${num > 1 ? "s" : ""} on this page.`;
+  const prompt = `There ${num > 1 ? "are" : "is"} ${num} question${num > 1 ? "s" : ""} unanswered on this page.`;
   
   const modalID = soft ? 'softModal' : 'hardModal';
   const modal = new bootstrap.Modal(document.getElementById(modalID));
-
-  document.getElementById(soft ? "modalBodyText" : "hardModalBodyText").innerText = `${prompt} ${soft ? "Would you like to continue?" : "Please answer the question(s)."}`;
+  const softModalText = "Would you like to continue?";
+  const hardModalText = `Please answer the question${num > 1 ? "s" : ""}.`;
+  document.getElementById(soft ? "modalBodyText" : "hardModalBodyText").innerText = `${prompt} ${soft ? softModalText : hardModalText}`;
 
   if (soft) {
     const continueButton = document.getElementById("modalContinueButton");
@@ -1109,20 +1110,6 @@ export function displayQuestion(nextElement) {
     }
   });
 
-  // check min/max for variable substitution in validation
-  /*function exchangeValue(element, attrName, newAttrName) {
-    let attr = element.getAttribute(attrName);
-    if (attr) {
-      let isnum = /^[\d\.]+$/.test(attr);
-      if (!isnum) {
-        let tmpVal = evaluateCondition(attr);
-        console.log('------------exchanged Vals-----------------')
-        console.log(`${element} , ${attrName} , ${newAttrName} , ${tmpVal}`)
-        element.setAttribute(newAttrName, tmpVal);
-      }
-    }
-    return element;
-  }*/
   //Replacing all default HTML form validations with datasets
 
   [...nextElement.querySelectorAll("input[required]")].forEach((element) => {
@@ -1174,6 +1161,16 @@ export function displayQuestion(nextElement) {
       input.setAttribute('placeholder', 'YYYY-MM');
     });
   }
+
+  // Hide br elements that directly follow hidden elements.
+  nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
+    e.style = "display: none";
+  });
+
+  // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
+  nextElement.querySelectorAll("br").forEach((br) => {
+    br.setAttribute("aria-hidden", "true");
+  });
 
   //move to the next question...
   nextElement.classList.add("active");

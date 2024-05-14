@@ -52,6 +52,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   if (obj.text) contents = obj.text;
 
+  // TODO: should these stylesheets have local refs instead (pulled from the CDN instead of the GitHub repo)?
   if (obj.url) {
     contents = await (await fetch(obj.url)).text();
     moduleParams.config = contents
@@ -1033,7 +1034,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // handle text in combobox label...
   [...divElement.querySelectorAll("label input,label textarea")].forEach(inputElement => {
       let radioCB = document.getElementById(inputElement.id)
-      //let radioCB = document.getElementById(inputElement.closest('label').htmlFor)
 
       if (radioCB) { 
         let callback = (event)=>{
@@ -1208,17 +1208,26 @@ function stopSubmit(event) {
   const clickType = event.submitter.getAttribute('data-click-type');
   const buttonClicked = event.target.querySelector(`.${clickType}`);
 
-  if (clickType === 'previous') { 
-    resetChildren(event.target.elements);
-    previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
-  } else if (clickType === 'reset') {
-    resetChildren(event.target.elements);
-  } else if (clickType === 'submitSurvey') {
-    new bootstrap.Modal(document.getElementById('submitModal')).show();
-  } else if (clickType === 'next') {
-    nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
-  } else {
-    console.error(`ERROR: Unknown button clicked: ${clickType}`);
+  switch (clickType) {
+    case 'previous':
+      resetChildren(event.target.elements);
+      previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
+      break;
+
+    case 'reset':
+      resetChildren(event.target.elements);
+      break;
+
+    case 'submitSurvey':
+      new bootstrap.Modal(document.getElementById('submitModal')).show();
+      break;
+
+    case 'next':
+      nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
+      break;
+
+    default:
+      console.error(`ERROR: Unknown button clicked: ${clickType}`);
   }
 }
 

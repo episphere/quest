@@ -25,9 +25,6 @@
    margin-bottom: 1em;
 }
 
-/* .question p strong {
-  font-weight: bold !important;
-} */
 .question.active p b {
   font-family: 'Monserrat', sans-serif;
   font-weight: bold;
@@ -53,172 +50,281 @@ input[type="text"] {
   flex-grow: 1;
 }
 
-
-/* CSS for grids... */
+/* CSS for grids... '.quest-grid' impacts all grids and list grids. '.quest-grid.table-layout' (increased specificity) handles the new table-based grids. */
+/* CSS for ALL (list and table) Grids... */
 .quest-grid {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 1rem;
+  font-size: medium;
+  margin-top: 10px;
 }
 
-.quest-grid tr {
-  width: auto;
-  display: table-row !important;
-}
-
-.quest-grid th, .quest-grid td {
-  padding: 10px;
+.quest-grid * {
+  padding: 4px;
   text-align: center;
-  vertical-align: middle;
-  height: 70px;
-  position: relative;
 }
 
-.quest-grid th.nr, .quest-grid td.nr {
-  font-weight: bold;
-  text-align: left;
+/* CSS for LIST grids... TODO: the list CSS is deprecated. */
+.quest-grid {
+  display: grid;
+  grid-template-columns: auto repeat(12,minmax(0px,auto));
+  overflow-x: auto;
+  gap: 1px;
+  overflow-y: visible;
 }
 
-.quest-grid td {
-  width: auto;
-  position: relative;
-  min-height: 70px;
-  padding: 10px;
+.quest-grid > .nr {
+  grid-column-start: 1;
+  text-align: start;
+  align-self: center;
 }
 
-.quest-grid .custom-label {
-  background-color: #f4f4f4;
-  border-radius: 4px;
-  text-align: center;
-  cursor: pointer;
-  overflow: hidden;
-  white-space: nowrap;
-  text-indent: 100%;
-  color: transparent;
-}
-
-.quest-grid .custom-label hover {
-  color: #e6e6e6;
-}
-
-.quest-grid input[type="radio"] {
-  display: none;
-}
-
-.quest-grid input[type="radio"]:checked + .custom-label {
-  background-color: #205c84;
-  color: transparent;
-}
-
-/* Styles for when the radio button is checked */
-.quest-grid input[type="radio"]:checked + .custom-label::after {
-  content: '\2713'; /* Unicode character for checkmark */
-  color: #ffbc24;
-  font-size: 36px;
-  position: absolute;
-  left: 35%;
-  top: 50%;
-  transform: translate(-75%, -50%);
+ul.quest-grid{
+  padding: 0px;
+  list-style-type: none;
+  min-width: min-content;
 }
 
 @media screen and (min-width: 576px) {
-  /* Emphasize the first table column. Then let the browser calculate the width for the remaining columns */
-  .quest-grid th:first-child, .quest-grid td:first-child {
-    width: 35%;
-    font-weight: bold;
+  ul.quest-grid input{
+      display: inline;
+      height: 1rem;
+  }
+  ul.quest-grid label{
+      display: none;
   }
 }
-
 
 /** 
 I chose 576px because this matches the default breakpoint
 for bootstrap -xs
 **/
 @media screen and (max-width: 576px) {
-  .quest-grid, .quest-grid thead, .quest-grid tbody, .quest-grid th, .quest-grid td, .quest-grid tr { 
+  .quest-grid {
+      display: block;
+      width:100%;
+  }
+  ul.quest-grid {
+      min-width: min-content;
+      list-style-type: none;
+      text-align: left;
+  }
+  ul.quest-grid > li {
+      margin-top: 2px;
+  }
+
+  li {
+    list-style-type: none;
+  }
+
+  ul.quest-grid .hr {
+      display: none;
+  }
+
+  ul.quest-grid li.nr {
+      display: block;
+  }
+
+  ul.quest-grid li.nr:not(:first-child){
+      padding-top: 10px;
+  }   
+}
+
+/* CSS for TABLE grids... */
+.quest-grid.table-layout {
+  display: inline-table;
+}
+
+.quest-grid.table-layout tr {
+  width: auto;
+  display: table-row;
+}
+
+.quest-grid.table-layout th, .quest-grid.table-layout td {
+  padding: 5px;
+  text-align: center;
+  vertical-align: middle;
+  height: 50px;
+  position: relative;
+  background-color: transparent;
+  border: none;
+}
+
+.quest-grid.table-layout th.nr, .quest-grid.table-layout td.nr {
+  font-weight: bold;
+  text-align: left;
+}
+
+.quest-grid.table-layout input[type="radio"] {
+  display: none;
+}
+
+/* Additional styles to ensure the label is large enough to comfortably contain the circles */
+.quest-grid.table-layout .custom-label {
+  position: relative;
+  height: 50px;
+  min-width: 50px;
+  color: transparent;
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* Styling for the custom label to always have an unfilled circle */
+.quest-grid.table-layout .custom-label::before {
+  content: '';
+  display: block;
+  width: 26px;
+  height: 26px;
+  border: 2px solid #cccccc;
+  border-radius: 50%; /* Circle */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+}
+
+.quest-grid.table-layout .custom-label:hover {
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+/* Hover effect for the label */
+.quest-grid .custom-label:hover::before {
+  border-color: #1c5d86;
+  box-shadow: 0 0 8px #ccc;
+}
+
+/* Styling for when the radio button is checked */
+.quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%; /* Circle */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #327ABB;
+}
+
+.quest-grid.table-layout input[type="radio"]:checked + .custom-label {
+  border: none;
+  background-color: transparent;
+  color: transparent;
+}
+
+@media screen and (min-width: 576px) {
+  /* Emphasize the first table column. Then let the browser calculate the width for the remaining columns */
+  .quest-grid.table-layout th:first-child, .quest-grid td:first-child {
+    width: 35%;
+    font-weight: bold;
+  }
+}
+
+/** 
+I chose 576px because this matches the default breakpoint
+for bootstrap -xs
+**/
+@media screen and (max-width: 576px) {
+  .quest-grid.table-layout, .quest-grid.table-layout thead, .quest-grid.table-layout td  { 
     display: block;
   }
 
-  .quest-grid thead tr { 
+  .quest-grid.table-layout .custom-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    cursor: pointer;
+    display: block;
+  }
+
+  .quest-grid.table-layout tbody {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quest-grid.table-layout thead tr { 
     position: absolute;
     top: -9999px;
     left: -9999px;
   }
 
-  .quest-grid tr { 
+  .quest-grid.table-layout tr { 
     display: flex;
-    flex-direction: row;
-    justify-content: space-between; /* Distribute space between header and label */
-    border: 1px solid #ccc;
+    flex-direction: column;
+    border: 1px solid #a3a3a3;
     border-radius: 4px;
-    margin-top: 10px;
-    padding: 2px;
-  }
-
-  .quest-grid th {
+    margin-top: 10px; 
     padding: 5px;
-    min-height: auto; /* Allow expansion for long questions/headers */
-    height: auto;
-    display: block; /* Stack cells vertically in smaller views */
+  }
+
+  .quest-grid.table-layout td { 
+    display: block;
     width: 100%;
-    font-size: 14px;
-    word-wrap: break-word; /* Allow long words to be broken and wrapped */
-    padding: 10px 0;
-  }
-
-  .quest-grid td { 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    padding: 5px;
-    min-height: 70px;
-    width: 100%;
-  }
-
-  .quest-grid td::before {
-    content: attr(data-header);
-    font-size: 16px;
-    color: #333;
-    flex: 1;  
-    padding-right: 10px;  
-    white-space: normal; 
-    overflow: hidden;  
-    text-overflow: ellipsis; 
-    max-width: 60%;  
-    text-align: left;
-  }
-
-  .quest-grid .custom-label {
-    height: 60px;
-    line-height: 60px;
-    width: 30%;
-    margin-left: 33%;
-    background-color: #f4f4f4;
-    border-radius: 4px;
+    margin-bottom: 3px;
     text-align: center;
+    min-height: 100px;
+    height: auto;
+    padding: 5px;
     cursor: pointer;
-    overflow: hidden;
-    text-indent: 100%;
-    white-space: nowrap;
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 16px;
+    border-radius: 4px;
+    position: relative;
   }
 
-  .quest-grid input[type="radio"] {
+  .quest-grid.table-layout td:hover {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+
+  .quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
     display: none;
   }
 
-  .quest-grid input[type="radio"]:checked + .custom-label {
-    background-color: #205c84;
+  .quest-grid.table-layout .custom-label::before {
+    display: none;
   }
 
-  .quest-grid input[type="radio"]:checked + .custom-label::after {
-    content: '\2713'; /* Unicode character for checkmark */
-    color: #ffbc24;
-    font-size: 36px;
+  .quest-grid.table-layout td input[type="radio"]:checked + .custom-label {
     position: absolute;
-    left: 78%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #327ABB;
+    color: white;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    padding: 0 5px;
+    box-sizing: border-box;
+    z-index: 1;
+    text-transform: none;
+    line-height: normal;
+  }
+
+ .quest-grid.table-layout td::before {
+    content: attr(data-header);
+    font-size: 16px;
+    color: #333;
+    position: absolute;
     top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 0 3px;
   }
 }

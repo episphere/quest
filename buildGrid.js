@@ -49,10 +49,7 @@ function grid_text_displayif(original_text){
       return `<span displayif="${encodeURIComponent(p1)}" class="grid-displayif"> ${p2}</span>`
     })
   }
-  // Accessibility: Replace <br/> with </p><p> to make the text more screen reader friendly.
-  // Screen reader was reading <br/> as "Empty goup" which made navigation confusing.
-  question_text = question_text
-    .replace(/<br\/>/g, "</p><p>");
+
   return question_text;
 }
 
@@ -79,7 +76,7 @@ function buildHtmlTable(grid_obj){
       <form ${grid_obj.args} class="container question" data-grid="true" ${gridPrompt} aria-describedby="formDescription" role="form">
         <div id="formDescription" class="sr-only" aria-live="polite">Please interact with the table below to answer the questions.</div>
         <div>${grid_text_displayif(shared_text)}</div>
-        <table class="quest-grid">`;
+        <table class="quest-grid table-layout">`;
   
   // Build the table header row with the question text and response headers. Start with a placeholder for the row header.
   grid_html += '<thead class="hr" role="rowgroup"><tr><th class="nr hr"></th>';
@@ -96,10 +93,6 @@ function buildHtmlTable(grid_obj){
     const piped_question_text = grid_text_displayif(question.question_text);    
     const question_text = grid_replace_piped_variables(piped_question_text);
 
-    if (question_text.id === "D_488415137") {
-      console.log('Question:', question);
-      console.log('Displayif:', displayif, 'Question Text:', question_text)
-    }
     // Start the row for the question, then add the row header (question text)
     grid_html +=
       `<tr role="row" data-question-id="${question.id}" data-gridrow="true" aria-labelledby="qtext${question.id}" ${displayif}>
@@ -112,7 +105,7 @@ function buildHtmlTable(grid_obj){
         grid_html += `
           <td class="response" data-question-id="${question.id}" data-header="${resp.text}" role="gridcell">
             <input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_index}" value="${resp.value}" data-gridcell="true" data-grid="true">
-            <label for="${question.id}_${resp_index}" id="label${question.id}_${resp_index}" class="custom-label">${resp.text} checkbox</label>
+            <label for="${question.id}_${resp_index}" id="label${question.id}_${resp_index}" class="custom-label">${resp.text}</label>
           </td>`;
     });
 
@@ -127,7 +120,7 @@ function buildHtmlTable(grid_obj){
           <button type="submit" class="previous w-100" aria-label="Back to the previous section" data-click-type="previous">Back</button>
         </div>
         <div class="col-md-6 col-sm-12">
-          <button type="reset" class="reset w-100" aria-label="Reset answer for this question" data-click-type="reset">Reset Answer</button>
+          <button type="submit" class="reset w-100" aria-label="Reset answer for this question" data-click-type="reset">Reset Answer</button>
         </div>
         <div class="col-md-3 col-sm-12">
           <button type="submit" class="next w-100" aria-label="Go to the next section" data-click-type="next">Next</button>
@@ -139,7 +132,6 @@ function buildHtmlTable(grid_obj){
   return grid_html;
 }
 
-//NOTE: This function is not used in the current implementation
 function buildHtml_og(grid_obj) {
   let grid_head =
     '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
