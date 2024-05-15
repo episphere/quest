@@ -890,6 +890,20 @@ function getNextQuestionId(currentFormElement) {
   return nextQuestionNode.value;
 }
 
+function showLoadingIndicator() {
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.id = 'loadingIndicator';
+    loadingIndicator.innerHTML = '<div class="spinner"></div>';
+    document.body.appendChild(loadingIndicator);
+}
+
+function hideLoadingIndicator() {
+  const loadingIndicator = document.getElementById('loadingIndicator');
+  if (loadingIndicator) {
+    document.body.removeChild(loadingIndicator);
+  }
+}
+
 // norp == next or previous button (which ever is clicked...)
 async function nextPage(norp, retrieve, store, rootElement) {
   // The root is defined as null, so if the question is not the same as the
@@ -913,50 +927,12 @@ async function nextPage(norp, retrieve, store, rootElement) {
   let questName = moduleParams.questName;
   tempObj[questionElement.id] = questionElement.value;
 
-  //Check if questionElement exists first so its not pushing undefineds
-  //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
-  //if (questionElement.value) {
-  if (store) {
-    let formData = {};
-    formData[`${questName}.${questionElement.id}`] = questionElement.value;
-    console.log(formData)
-    await store(formData)
-  } else {
-    let tmp = await localforage
-      .getItem(questName)
-      .then((allResponses) => {
-        // if their is not an object in LF create one that we will add later...
-        if (!allResponses) {
-          allResponses = {};
-        }
-        // set the value for the questionId...
-        allResponses[questionElement.id] = questionElement.value;
-        if (questionElement.value === undefined) {
-          delete allResponses[questionElement.id]
-        }
-        return allResponses;
-      })
-      .then((allResponses) => {
-        // allResposes really should be defined at this point. If it wasn't
-        // previously in LF, the previous block should have created it...
-        localforage.setItem(questName, allResponses, () => {
-          console.log(
-            "... Response stored in LF: " + questName,
-            JSON.stringify(allResponses)
-          );
-        });
-      });
-  }
-  //}
-
-
   // check if we need to add questions to the question queue
   checkForSkips(questionElement);
 
   let nextQuestionId = getNextQuestionId(questionElement);
   // get the actual HTML element.
   let nextElement = document.getElementById(nextQuestionId.value);
-
   nextElement = exitLoop(nextElement);
 
   // before we add the next question to the queue...
@@ -983,15 +959,55 @@ async function nextPage(norp, retrieve, store, rootElement) {
       console.trace();
     }
   }
+
+  //Check if questionElement exists first so its not pushing undefineds
+  //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
+  //if (questionElement.value) {
+  if (store) {
+    try {
+      // show a loading indicator for variables in delayedParameterArray (they take extra time to process)
+      if (moduleParams.delayedParameterArray.includes(nextElement.id)) showLoadingIndicator();
+
+      let formData = {};
+      formData[`${questName}.${questionElement.id}`] = questionElement.value;
+      console.log(formData)
+      await store(formData)
+    } catch (e) {
+      console.error("Store failed", e);
+    } finally {
+      hideLoadingIndicator();
+    }
+  } else {
+    let tmp = await localforage
+      .getItem(questName)
+      .then((allResponses) => {
+        // if their is not an object in LF create one that we will add later...
+        if (!allResponses) {
+          allResponses = {};
+        }
+        // set the value for the questionId...
+        allResponses[questionElement.id] = questionElement.value;
+        if (questionElement.value === undefined) {
+          delete allResponses[questionElement.id]
+        }
+        return allResponses;
+      })
+      .then((allResponses) => {
+        // allResposes really should be defined at this point. If it wasn't
+        // previously in LF, the previous block should have created it...
+        localforage.setItem(questName, allResponses, () => {
+          console.log(
+            "... Response stored in LF: " + questName,
+            JSON.stringify(allResponses)
+          );
+        });
+      });
+  }
+
   //hide the current question
   questionElement.classList.remove("active");
-  // nextElement.scrollIntoView();
-
   displayQuestion(nextElement);
-  // nextElement.scrollIntoView();
-  // document.getElementById(rootElement).scrollIntoView();
   window.scrollTo(0, 0);
-  //document.getElementById(rootElement).scroll(0,0)
 }
 
 export async function submitQuestionnaire(store, questName) {

@@ -45,6 +45,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   moduleParams.soccer = obj.soccer;
+  moduleParams.delayedParameterArray = obj.delayedParameterArray;
   rootElement = divId;
   let contents = "";
 
