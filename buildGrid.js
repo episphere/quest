@@ -1,10 +1,12 @@
-import { moduleParams } from "./questionnaire.js";
 
 export const grid_replace_regex = /\|grid(\!|\?)*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
 
+//NOTE: This function is not used in the current implementation
 export function firstFun(event) {
   event.preventDefault();
 }
+
+//NOTE: This function is not used in the current implementation
 export function toggle_grid(event) {
   event.preventDefault();
   let element = event.target;
@@ -38,6 +40,7 @@ function grid_replace_piped_variables(txt){
   txt = txt.replace(' <span', '&nbsp;<span')
   return txt
 }
+
 function grid_text_displayif(original_text){
   let question_text = original_text
   let dif_regex = /%displayif=([^%]+)%([^%]+)%/g
@@ -46,10 +49,12 @@ function grid_text_displayif(original_text){
       return `<span displayif="${encodeURIComponent(p1)}" class="grid-displayif"> ${p2}</span>`
     })
   }
+
   return question_text;
 }
 
-function buildHtml(grid_obj){
+// Builds the HTML Table for a grid question (radio-selectable multi-option fields).
+function buildHtmlTable(grid_obj){
   // is there a hard/soft edit?
   let gridPrompt = "hardedit='false' softedit='false'";
   if (grid_obj.prompt) {
@@ -61,50 +66,72 @@ function buildHtml(grid_obj){
     }
   }
 
-  let shared_text = grid_text_displayif(grid_obj.shared_text)
-  shared_text = grid_replace_piped_variables(shared_text)
-
   // replace displayif and piped variables...
-  let grid_html = `<form ${grid_obj.args} class="container question" data-grid="true" ${gridPrompt}>`
-  grid_html+=`<div>${grid_text_displayif(shared_text)}</div>`
-  grid_html+='<ul class="quest-grid">'
-
-  // header line...
-  grid_html += '<li class="nr hr"></div>';
-  grid_obj.responses.forEach((resp,index) => {
-    grid_html += `<li class="hr">${resp.text}</div>`;
+  let shared_text = grid_text_displayif(grid_obj.shared_text)
+  shared_text = grid_replace_piped_variables(shared_text)  
+  
+  // Begin form and set up accessibility description.
+  // Ask the main question, then begin the table structure (this semantic HTML helps screen readers).
+  let grid_html = `
+      <form ${grid_obj.args} class="container question" data-grid="true" ${gridPrompt} aria-describedby="formDescription" role="form">
+        <div id="formDescription" class="sr-only" aria-live="polite">Please interact with the table below to answer the questions.</div>
+        <div>${grid_text_displayif(shared_text)}</div>
+        <table class="quest-grid table-layout">`;
+  
+  // Build the table header row with the question text and response headers. Start with a placeholder for the row header.
+  grid_html += '<thead class="hr" role="rowgroup"><tr><th class="nr hr"></th>';
+  grid_obj.responses.forEach((resp) => {
+    const header_text = resp.text;
+    grid_html += `<th class="hr" scope="col" data-header="${header_text}">${header_text}</th>`;
   });
-
+  grid_html += '</tr></thead><tbody role="rowgroup">';
+  
   // now lets handle each question...
   grid_obj.questions.forEach((question) => {
-    // check if there is a displayif for the entire question.  
-    let displayif = question.displayif ? `data-displayif="${encodeURIComponent(question.displayif)}"` : '';
-    // fill in the question text, replacing any displayif 
-    let question_text = grid_text_displayif(question.question_text)
-    question_text = grid_replace_piped_variables(question_text)
-    grid_html += `<li class="nr" data-question-id="${question.id}" data-gridrow="true" ${displayif}>${question_text}`
-    // for each possible response make a grid cell...
-    grid_obj.responses.forEach( (resp, resp_indx) => {
-      grid_html += `<li class="response" data-question-id="${question.id}"><input name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" type="${resp.type}" data-gridcell="true" data-grid="true"><label for="${question.id}_${resp_indx}">${resp.text}</label></li>`
-    })
-  })
-  grid_html+=`</ul></div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3 col-sm-12">
-        <input type='submit' class='previous w-100' value='BACK'/>
-      </div>
-      <div class="col-md-6 col-sm-12">
-        <input type='submit' class='reset w-100' value='RESET ANSWER'/>
-      </div>
-      <div class="col-md-3 col-sm-12">
-        <input type='submit' class='next w-100' value='NEXT'/>
+    // check for row-level display if. Then check for displayif inside row text
+    const displayif = question.displayif ? `data-displayif="${encodeURIComponent(question.displayif)}"` : '';
+    const piped_question_text = grid_text_displayif(question.question_text);    
+    const question_text = grid_replace_piped_variables(piped_question_text);
+
+    // Start the row for the question, then add the row header (question text)
+    grid_html +=
+      `<tr role="row" data-question-id="${question.id}" data-gridrow="true" aria-labelledby="qtext${question.id}" ${displayif}>
+        <th scope="row" id="qtext${question.id}" class="nr">${question_text}</th>`;
+
+
+    // All selectable responses for a given question share the same 'name' attribute to link them as a group
+    // The label is used as a click target for the radio/checkbox input
+    grid_obj.responses.forEach((resp, resp_index) => {
+        grid_html += `
+          <td class="response" data-question-id="${question.id}" data-header="${resp.text}" role="gridcell">
+            <input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_index}" value="${resp.value}" data-gridcell="true" data-grid="true">
+            <label for="${question.id}_${resp_index}" id="label${question.id}_${resp_index}" class="custom-label">${resp.text}</label>
+          </td>`;
+    });
+
+    // Close the row for the question
+    grid_html += `</tr>`;
+  });
+  
+  grid_html+=`</tbody></table>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 col-sm-12">
+          <button type="submit" class="previous w-100" aria-label="Back to the previous section" data-click-type="previous">Back</button>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <button type="submit" class="reset w-100" aria-label="Reset answer for this question" data-click-type="reset">Reset Answer</button>
+        </div>
+        <div class="col-md-3 col-sm-12">
+          <button type="submit" class="next w-100" aria-label="Go to the next section" data-click-type="next">Next</button>
+        </div>
       </div>
     </div>
-  </div>
-  </form></form>`
-  return grid_html
+  </form>`;
+
+  return grid_html;
 }
+
 function buildHtml_og(grid_obj) {
   let grid_head =
     '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
@@ -201,7 +228,7 @@ export function parseGrid(text) {
     grid_obj.args = grid_obj.args.replace(args_regex,(match,group1)=>{
       return `displayif=${encodeURIComponent(group1)}`
     })
-    console.log(grid_obj.args)
+    console.log(grid_obj.args) 
 
     //let question_regex = /\[([A-Z][A-Z0-9_]*)\](.*?);\s*(?=[\[\]])/g;     
     let question_regex = /\[([A-Z][A-Z0-9_]*)(,displayif=[^\]]+)?\](.*?)[;\]]/g;
@@ -236,5 +263,5 @@ export function parseGrid(text) {
       }
     }
   }
-  return buildHtml(grid_obj);
+  return buildHtmlTable(grid_obj);
 }
