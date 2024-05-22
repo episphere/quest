@@ -542,7 +542,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
 
       // Handle not converted and not yet calculated min and max values
-      const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.startsWith('isDefined') && value !== '0' ? value : ''; }
+      const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.includes('isDefined') && value !== '0' ? value : ''; }
       const min = minMaxValueTest(optionObj.min);
       const max = minMaxValueTest(optionObj.max);
 

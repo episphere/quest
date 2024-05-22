@@ -582,7 +582,7 @@ export function textboxinput(inputElement, validate = true) {
 
   // BUG 423: radio button not changing value
   let radioWithText = inputElement.closest(".response")?.querySelector("input[type='radio']")
-  if (radioWithText ){
+  if (radioWithText && inputElement.value?.trim() !== ''){
     radioWithText.click()
     radioAndCheckboxUpdate(radioWithText)
   }
@@ -1059,7 +1059,14 @@ function exitLoop(nextElement) {
   return nextElement;
 }
 
+let debounceHandler;
+let questionText = null;
+let modal;
+let closeButton;
+let questionFocusSet;
+
 export function displayQuestion(nextElement) {
+  questionFocusSet = false;
 
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let defaultValue = x.getAttribute("optional")
@@ -1104,6 +1111,11 @@ export function displayQuestion(nextElement) {
   nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
     e.style = "display: none"
   })
+  
+  // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
+  nextElement.querySelectorAll("br").forEach((br) => {
+    br.setAttribute("aria-hidden", "true");
+  });
 
   // ISSUE: 403
   // update {$e:}/{$u} and and {$} elements in grids when the user displays the question ...
@@ -1178,16 +1190,6 @@ export function displayQuestion(nextElement) {
     });
   }
 
-  // Hide br elements that directly follow hidden elements.
-  nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
-    e.style = "display: none";
-  });
-
-  // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
-  nextElement.querySelectorAll("br").forEach((br) => {
-    br.setAttribute("aria-hidden", "true");
-  });
-
   //move to the next question...
   nextElement.classList.add("active");
 
@@ -1198,27 +1200,35 @@ export function displayQuestion(nextElement) {
   questionQueue.ptree();
 
   // manage the question-specific listeners
-  refreshListeners(nextElement);
-
+  refreshListeners(nextElement);  
   return nextElement;
 }
-
-let debounceHandler;
 
 function refreshListeners(nextElement) {
   removeListeners();
   debounceHandler = null;
+  questionText = null;
   addListeners(nextElement);
+    // The question text is at the opening fieldset tag. Let DOM settle, If focusable, set focus.
+    setTimeout(() => focusQuestionText(nextElement.querySelector('fieldset')), 0);
 }
 
 function removeListeners() {
   const textInputs = document.querySelectorAll('input[type="text"]');
   
+  // Remove input listeners from all text inputs
   if (debounceHandler) {
     textInputs.forEach(textInput => {
         textInput.removeEventListener('input', debounceHandler);
     });
   }
+
+  // Remove event listeners from modal and close button (for screen readers)
+  modal = document.getElementById('softModal');
+  closeButton = document.getElementById('closeModal');
+
+  modal?.removeEventListener('click', closeModalAndFocusQuestion);
+  closeButton?.removeEventListener('click', closeModalAndFocusQuestion);
 }
 
 function addListeners(nextElement) {
@@ -1235,7 +1245,6 @@ function addListeners(nextElement) {
 
       if (responseContainer) {
           const checkboxOrRadio = responseContainer.querySelector('input[type="checkbox"], input[type="radio"]');
-
           if (checkboxOrRadio) {
               checkboxOrRadio.addEventListener('click', () => {
                   textInput.focus(); // Focus the text input on checkbox/radio click
@@ -1243,6 +1252,42 @@ function addListeners(nextElement) {
           }
       }
   });
+
+  // Attach event listeners to modal and close buttons (for screen readers)
+  modal = document.getElementById('softModal');
+  closeButton = document.getElementById('closeModal');
+
+  modal?.addEventListener('click', closeModalAndFocusQuestion);
+  closeButton?.addEventListener('click', closeModalAndFocusQuestion);
+}
+
+function focusQuestionText(fieldsetEle) {
+  if (fieldsetEle && !questionFocusSet) {
+    // Find the first focusable element within the fieldset
+    const firstFocusable = fieldsetEle.querySelector('input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
+    if (firstFocusable) {
+      firstFocusable.focus();
+    } else {
+      // Fallback to focusing on the fieldset if no focusable element found
+      fieldsetEle.tabIndex = -1;
+      fieldsetEle.focus();
+      fieldsetEle.removeAttribute('tabindex');
+    }
+    questionFocusSet = true;
+  }
+}
+
+// Close the modal and focus on the question text (for screen readers).
+function closeModalAndFocusQuestion(event) {
+  const isWindowClick = event.target === modal;
+  const isButtonClick = event.target.id === 'closeModal';
+
+  if (isWindowClick || isButtonClick) {
+    modal.style.display = 'none';
+    if (questionText) {
+      questionText.focus();
+    }
+  }
 }
 
 // Simulate a click on the checkbox (turn the tile blue) when the text input is used to enter "Other" text values.
@@ -1250,9 +1295,15 @@ function addListeners(nextElement) {
 function handleOtherTextInputKeyPress(event) {
   const responseTarget = event.target.closest('.response');
   const checkboxOrRadioEle = responseTarget?.querySelector('input[type="checkbox"], input[type="radio"]');
-  
+
   if (checkboxOrRadioEle) {
-      event.target.value ? checkboxOrRadioEle.checked = true : checkboxOrRadioEle.checked = false;
+    const inputValue = event.target.value?.trim();
+    const isChecked = checkboxOrRadioEle.checked;
+    if (inputValue && !isChecked) {
+      checkboxOrRadioEle.checked = true;
+    } else if (!inputValue && isChecked) {
+      checkboxOrRadioEle.checked = false;
+    }
   }
 }
 
