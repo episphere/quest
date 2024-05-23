@@ -17,6 +17,10 @@
     "submitButton": "Submit",
     "cancelButton": "Cancel",
 
+    "yes": "Yes",
+    "no": "No",
+    "preferNotToAnswer": "Prefer not to answer",
+
     "yesNo": "(1) Yes (0) No",
     "yesNoPrefer": "(1) Yes (0) No (99) Prefer not to answer",
 

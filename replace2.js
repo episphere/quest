@@ -245,8 +245,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
       text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*?)/g, fText);
       text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
       text = text.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
-      text = text.replace(/#YNP/g, translate('yesNoPrefer'));
-      text = questText.replace(/#YN/g, translate('yesNo'));
+      text = text.replace(/#YNP/g, translate('yesNoPrefer')); //check
+      text = questText.replace(/#YN/g, translate('yesNo')); //check
 
       return `<span class='displayif' ${condition}>${text}</span>`;
     }
@@ -582,15 +582,38 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<textarea id='${elId}' ${options} style="resize:auto;"></textarea>`;
     }
 
-    
+    //check
     // replace #YNP with Yes No input
     questText = questText.replace(
-      /#YNP/g, `<div class='response'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div><div class='response'><input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer"></input><label for='${questID}_99'>Prefer not to answer</label></div>`
+      /#YNP/g, 
+        `<div class='response'>
+          <input type='radio' id="${questID}_1" name="${questID}" value="yes"></input>
+          <label for='${questID}_1'>Yes</label>
+        </div>
+        
+        <div class='response'>
+          <input type='radio' id="${questID}_0" name="${questID}" value="no"></input>
+          <label for='${questID}_0'>No</label>
+        </div>
+        
+        <div class='response'>
+          <input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer"></input>
+          <label for='${questID}_99'>Prefer not to answer</label>
+        </div>`
     );
 
+    //check
     // replace #YN with Yes No input
     questText = questText.replace(
-      /#YN/g, `<div class='response'><input type='radio' id="${questID}_1" name="${questID}" value="yes"></input><label for='${questID}_1'>Yes</label></div><div class='response'><input type='radio' id="${questID}_0" name="${questID}" value="no"></input><label for='${questID}_0'>No</label></div>`
+      /#YN/g, 
+        `<div class='response'>
+          <input type='radio' id="${questID}_1" name="${questID}" value="yes"></input>
+          <label for='${questID}_1'>Yes</label>
+        </div>
+        <div class='response'>
+          <input type='radio' id="${questID}_0" name="${questID}" value="no"></input>
+          <label for='${questID}_0'>No</label>
+        </div>`
     );
     
 
@@ -976,18 +999,25 @@ transform.render = async (obj, divId, previousResults = {}) => {
   return true;
 };
 
-function ordinal(a) {
+function ordinal(a, lang) {
+  
   if (Number.isInteger(a)) {
-    switch (a % 10) {
-      case 1: return ((a % 100) == 11 ? `${a}th` : `${a}st`);
-      case 2: return ((a % 100) == 12 ? `${a}th` : `${a}nd`);
-      case 3: return ((a % 100) == 13 ? `${a}th` : `${a}rd`);
-      default: return (`${a}th`)
+    if (lang === "es") {
+      return `${a}o`;
+    }
+    else {
+      switch (a % 10) {
+        case 1: return ((a % 100) == 11 ? `${a}th` : `${a}st`);
+        case 2: return ((a % 100) == 12 ? `${a}th` : `${a}nd`);
+        case 3: return ((a % 100) == 13 ? `${a}th` : `${a}rd`);
+        default: return (`${a}th`)
+      } 
     }
   }
-  return ""
-
+  
+  return "";
 }
+
 function unrollLoops(txt) {
   // all the questions in the loops...
   // each element in res is a loop in the questionnaire...
@@ -1047,7 +1077,7 @@ function unrollLoops(txt) {
       //replace all user-named combo and radio boxes
       currentText = currentText.replaceAll(rb_cb_regex,(all,g1)=>all.replace(g1,`${g1}_${loopIndx}`))
 
-      currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
+      currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx, moduleParams.i18n)}`)
 
       ids.map(
         (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))

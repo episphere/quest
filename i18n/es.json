@@ -4,9 +4,9 @@
     "submitSurveyButton": "Enviar Encuesta",
     "nextButton": "Siguiente",
     "ariaCloseLabel": "Cerrar",
-    "responseRequestedLabel": "",
-    "responseRequiredLabel": "",
-    "responseErrorLabel": "",
+    "responseRequestedLabel": "Respuesta Solicitada",
+    "responseRequiredLabel": "Respuesta Requerida",
+    "responseErrorLabel": "Respuesta Solicitada",
     "responseErrorBody": "Hay un error en esta respuesta. ¿Es correcta?",
     "submitLabel": "Enviar Respuestas",
     "submitBody": "¿Está seguro de que desea enviar sus respuestas?",
@@ -17,8 +17,12 @@
     "submitButton": "Enviar",
     "cancelButton": "Cancelar",
 
-    "yesNo": "",
-    "yesNoPrefer": "",
+    "yes": "Sí",
+    "no": "No",
+    "preferNotToAnswer": "Prefiero no responder",
+
+    "yesNo": "(1) Sí (0) No",
+    "yesNoPrefer": "(1) Sí (0) No (99) Prefiero no responder",
 
     "chooseState": "Elija un Estado",
 
@@ -39,8 +43,8 @@
     "validationPhoneNumber": "Ingrese un número de teléfono con este formato: 999-999-9999",
     "validationSocialFull": "Ingrese un número de Seguro Social válido con este formato: 999-99-9999",
     "validationSocialPartial": "Ingrese los últimos cuatro dígitos de un número de Seguro Social con este formato: 9999",
-    "validationTextShortExact": "",
-    "validationTextLongExact": "",
+    "validationTextShortExact": "El texto ingresado es demasiado corto (debe tener {0} caracteres)",
+    "validationTextLongExact": "El texto ingresado es demasiado largo (debe tener {0} caracteres)",
     "validationTextShort": "El texto ingresado es demasiado corto (debe tener al menos {0} caracteres)",
     "validationTextLong": "El texto ingresado es demasiado largo (debe tener como máximo {0} caracteres)",
     "validationMismatch": "Los valores no coinciden",
