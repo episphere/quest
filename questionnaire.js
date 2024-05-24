@@ -518,8 +518,11 @@ function exchangeValue(element, attrName, newAttrName) {
       let tmpVal = evaluateCondition(attr);
       // note: tmpVal==tmpVal means that tmpVal is Not Nan
       if (tmpVal == undefined || tmpVal == null || tmpVal != tmpVal) {
-        console.error(`Module Coding Error: Evaluating ${element.id}:${attrName} expression ${attr}  => ${tmpVal}`)
-        validationError(element, `Module Coding Error: ${element.id}:${attrName}`)
+        const previousResultsErrorMessage = moduleParams.previousResults && typeof moduleParams.previousResults === 'object' && Object.keys(moduleParams.previousResults)?.length === 0 && attr.includes('isDefined')
+          ? `\nUsing the Markup Renderer?\nEnsure your variables are added to Settings -> Previous Results in JSON format.\nEx: {"AGE": "45"}`
+          : '';
+        console.error(`Module Coding Error: Evaluating ${element.id}:${attrName} expression ${attr}  => ${tmpVal} ${previousResultsErrorMessage}`)
+        validationError(element, `Module Coding Error: ${element.id}:${attrName} ${previousResultsErrorMessage}`)
         return
       }
       console.log('------------exchanged Vals-----------------')
@@ -784,7 +787,10 @@ function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
   if (soft) {
     const continueButton = document.getElementById("modalContinueButton");
     continueButton.removeEventListener("click", continueButton.clickHandler);
-    continueButton.clickHandler = nextPage.bind(null, norp, retrieve, store);
+    //await the store operation on 'continue without answering' click for correct screen reader focus
+    continueButton.clickHandler = async () => {
+      await nextPage(norp, retrieve, store);
+    };
     continueButton.addEventListener("click", continueButton.clickHandler);
   }
 
@@ -1200,7 +1206,7 @@ export function displayQuestion(nextElement) {
   questionQueue.ptree();
 
   // manage the question-specific listeners
-  refreshListeners(nextElement);  
+  refreshListeners(nextElement);
   return nextElement;
 }
 
@@ -1209,8 +1215,8 @@ function refreshListeners(nextElement) {
   debounceHandler = null;
   questionText = null;
   addListeners(nextElement);
-    // The question text is at the opening fieldset tag. Let DOM settle, If focusable, set focus.
-    setTimeout(() => focusQuestionText(nextElement.querySelector('fieldset')), 0);
+  // The question text is at the opening fieldset tag. Let DOM settle, If focusable, set focus.
+  setTimeout(() => focusQuestionText(nextElement.querySelector('fieldset')), 0);
 }
 
 function removeListeners() {
@@ -1261,31 +1267,69 @@ function addListeners(nextElement) {
   closeButton?.addEventListener('click', closeModalAndFocusQuestion);
 }
 
+// for screen readers (accessibility)
 function focusQuestionText(fieldsetEle) {
   if (fieldsetEle && !questionFocusSet) {
-    // Find the first focusable element within the fieldset
-    const firstFocusable = fieldsetEle.querySelector('input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
-    if (firstFocusable) {
-      firstFocusable.focus();
-    } else {
-      // Fallback to focusing on the fieldset if no focusable element found
-      fieldsetEle.tabIndex = -1;
-      fieldsetEle.focus();
-      fieldsetEle.removeAttribute('tabindex');
+    // Clean up existing sr-only spans (found issue where text was duplicated on back button click)
+    const existingTempSpans = fieldsetEle.querySelectorAll('.sr-only');
+    existingTempSpans.forEach(span => span.remove());
+    // Find the initial text in the fieldset
+    let textContent = findInitialText(fieldsetEle);
+    
+    if (textContent) {
+      // Remove all instances of 'null' (generated from displayIf cases)
+      textContent = textContent.replace(/null/g, '');
+      // Create a temporary span element, add sr-only class, and set the text content
+      const tempSpan = document.createElement('span');
+      tempSpan.setAttribute('tabindex', '-1');
+      tempSpan.classList.add('sr-only');
+      tempSpan.textContent = textContent + ' ';
+      tempSpan.setAttribute('aria-live', 'assertive');
+      
+      // Insert it into fieldset, then focus
+      fieldsetEle.insertBefore(tempSpan, fieldsetEle.firstChild);
+      tempSpan.focus();
+      
+      // Hide the temporary span after it's been read by the screen reader
+      setTimeout(() => {
+        tempSpan.setAttribute('aria-hidden', 'true');
+      }, 500);
     }
+    
     questionFocusSet = true;
   }
+}
+
+function findInitialText(element) {
+  let textContent = '';
+  
+  for (const node of element.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+      textContent += node.textContent.trim() + ' ';
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
+      textContent += findInitialText(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+      break;
+    }
+  }
+  
+  return textContent.trim() || null;
 }
 
 // Close the modal and focus on the question text (for screen readers).
 function closeModalAndFocusQuestion(event) {
   const isWindowClick = event.target === modal;
-  const isButtonClick = event.target.id === 'closeModal';
+  const isButtonClick = ['close', 'modalCloseButton', 'modalContinueButton'].includes(event.target.id);
 
   if (isWindowClick || isButtonClick) {
     modal.style.display = 'none';
-    if (questionText) {
-      questionText.focus();
+
+    // Find the fieldset within the current active question
+    const currentFieldset = document.querySelector(".active fieldset");
+
+    if (currentFieldset) {
+      questionFocusSet = false;
+      focusQuestionText(currentFieldset);
     }
   }
 }

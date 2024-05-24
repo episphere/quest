@@ -168,7 +168,7 @@ for bootstrap -xs
 .quest-grid.table-layout th.hr {
   padding: .2vw;
   text-align: center;
-  vertical-align: middle;
+  vertical-align: top;
   height: auto;
   position: relative;
   background-color: transparent;

@@ -555,7 +555,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       //onkeypress forces whole numbers
       return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options}>
-              <div id="${elementId}-desc" class="sr-only">${descriptionText}</div>`;
+              <div id="${elementId}-desc" class="sr-only">${descriptionText}</div><br>`;
   }
 
     // replace |__| or [text box:xxx] with an input box...
