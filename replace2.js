@@ -36,7 +36,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.previousResults = previousResults;
   moduleParams.soccer = obj.soccer;
   moduleParams.i18n = obj.lang === 'es' ? es : en;
-  moduleParams.i18n = es;
 
   rootElement = divId;
   let contents = "";
