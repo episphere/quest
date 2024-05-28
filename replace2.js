@@ -587,17 +587,17 @@ transform.render = async (obj, divId, previousResults = {}) => {
       /#YNP/g, 
         `<div class='response'>
           <input type='radio' id="${questID}_1" name="${questID}" value="yes"></input>
-          <label for='${questID}_1'>Yes</label>
+          <label for='${questID}_1'>${moduleParams.i18n.yes}</label>
         </div>
         
         <div class='response'>
           <input type='radio' id="${questID}_0" name="${questID}" value="no"></input>
-          <label for='${questID}_0'>No</label>
+          <label for='${questID}_0'>${moduleParams.i18n.no}</label>
         </div>
         
         <div class='response'>
           <input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer"></input>
-          <label for='${questID}_99'>Prefer not to answer</label>
+          <label for='${questID}_99'>${moduleParams.i18n.preferNotToAnswer}</label>
         </div>`
     );
 
