@@ -518,8 +518,11 @@ function exchangeValue(element, attrName, newAttrName) {
       let tmpVal = evaluateCondition(attr);
       // note: tmpVal==tmpVal means that tmpVal is Not Nan
       if (tmpVal == undefined || tmpVal == null || tmpVal != tmpVal) {
-        console.error(`Module Coding Error: Evaluating ${element.id}:${attrName} expression ${attr}  => ${tmpVal}`)
-        validationError(element, `Module Coding Error: ${element.id}:${attrName}`)
+        const previousResultsErrorMessage = moduleParams.previousResults && typeof moduleParams.previousResults === 'object' && Object.keys(moduleParams.previousResults)?.length === 0 && attr.includes('isDefined')
+          ? `\nUsing the Markup Renderer?\nEnsure your variables are added to Settings -> Previous Results in JSON format.\nEx: {"AGE": "45"}`
+          : '';
+        console.error(`Module Coding Error: Evaluating ${element.id}:${attrName} expression ${attr}  => ${tmpVal} ${previousResultsErrorMessage}`)
+        validationError(element, `Module Coding Error: ${element.id}:${attrName} ${previousResultsErrorMessage}`)
         return
       }
       console.log('------------exchanged Vals-----------------')
@@ -582,7 +585,7 @@ export function textboxinput(inputElement, validate = true) {
 
   // BUG 423: radio button not changing value
   let radioWithText = inputElement.closest(".response")?.querySelector("input[type='radio']")
-  if (radioWithText ){
+  if (radioWithText && inputElement.value?.trim() !== ''){
     radioWithText.click()
     radioAndCheckboxUpdate(radioWithText)
   }
@@ -784,7 +787,10 @@ function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
   if (soft) {
     const continueButton = document.getElementById("modalContinueButton");
     continueButton.removeEventListener("click", continueButton.clickHandler);
-    continueButton.clickHandler = nextPage.bind(null, norp, retrieve, store);
+    //await the store operation on 'continue without answering' click for correct screen reader focus
+    continueButton.clickHandler = async () => {
+      await nextPage(norp, retrieve, store);
+    };
     continueButton.addEventListener("click", continueButton.clickHandler);
   }
 
@@ -1059,7 +1065,14 @@ function exitLoop(nextElement) {
   return nextElement;
 }
 
+let debounceHandler;
+let questionText = null;
+let modal;
+let closeButton;
+let questionFocusSet;
+
 export function displayQuestion(nextElement) {
+  questionFocusSet = false;
 
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let defaultValue = x.getAttribute("optional")
@@ -1104,6 +1117,11 @@ export function displayQuestion(nextElement) {
   nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
     e.style = "display: none"
   })
+  
+  // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
+  nextElement.querySelectorAll("br").forEach((br) => {
+    br.setAttribute("aria-hidden", "true");
+  });
 
   // ISSUE: 403
   // update {$e:}/{$u} and and {$} elements in grids when the user displays the question ...
@@ -1178,16 +1196,6 @@ export function displayQuestion(nextElement) {
     });
   }
 
-  // Hide br elements that directly follow hidden elements.
-  nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
-    e.style = "display: none";
-  });
-
-  // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
-  nextElement.querySelectorAll("br").forEach((br) => {
-    br.setAttribute("aria-hidden", "true");
-  });
-
   //move to the next question...
   nextElement.classList.add("active");
 
@@ -1199,26 +1207,34 @@ export function displayQuestion(nextElement) {
 
   // manage the question-specific listeners
   refreshListeners(nextElement);
-
   return nextElement;
 }
-
-let debounceHandler;
 
 function refreshListeners(nextElement) {
   removeListeners();
   debounceHandler = null;
+  questionText = null;
   addListeners(nextElement);
+  // The question text is at the opening fieldset tag. Let DOM settle, If focusable, set focus.
+  setTimeout(() => focusQuestionText(nextElement.querySelector('fieldset')), 0);
 }
 
 function removeListeners() {
   const textInputs = document.querySelectorAll('input[type="text"]');
   
+  // Remove input listeners from all text inputs
   if (debounceHandler) {
     textInputs.forEach(textInput => {
         textInput.removeEventListener('input', debounceHandler);
     });
   }
+
+  // Remove event listeners from modal and close button (for screen readers)
+  modal = document.getElementById('softModal');
+  closeButton = document.getElementById('closeModal');
+
+  modal?.removeEventListener('click', closeModalAndFocusQuestion);
+  closeButton?.removeEventListener('click', closeModalAndFocusQuestion);
 }
 
 function addListeners(nextElement) {
@@ -1235,7 +1251,6 @@ function addListeners(nextElement) {
 
       if (responseContainer) {
           const checkboxOrRadio = responseContainer.querySelector('input[type="checkbox"], input[type="radio"]');
-
           if (checkboxOrRadio) {
               checkboxOrRadio.addEventListener('click', () => {
                   textInput.focus(); // Focus the text input on checkbox/radio click
@@ -1243,6 +1258,80 @@ function addListeners(nextElement) {
           }
       }
   });
+
+  // Attach event listeners to modal and close buttons (for screen readers)
+  modal = document.getElementById('softModal');
+  closeButton = document.getElementById('closeModal');
+
+  modal?.addEventListener('click', closeModalAndFocusQuestion);
+  closeButton?.addEventListener('click', closeModalAndFocusQuestion);
+}
+
+// for screen readers (accessibility)
+function focusQuestionText(fieldsetEle) {
+  if (fieldsetEle && !questionFocusSet) {
+    // Clean up existing sr-only spans (found issue where text was duplicated on back button click)
+    const existingTempSpans = fieldsetEle.querySelectorAll('.sr-only');
+    existingTempSpans.forEach(span => span.remove());
+    // Find the initial text in the fieldset
+    let textContent = findInitialText(fieldsetEle);
+    
+    if (textContent) {
+      // Remove all instances of 'null' (generated from displayIf cases)
+      textContent = textContent.replace(/null/g, '');
+      // Create a temporary span element, add sr-only class, and set the text content
+      const tempSpan = document.createElement('span');
+      tempSpan.setAttribute('tabindex', '-1');
+      tempSpan.classList.add('sr-only');
+      tempSpan.textContent = textContent + ' ';
+      tempSpan.setAttribute('aria-live', 'assertive');
+      
+      // Insert it into fieldset, then focus
+      fieldsetEle.insertBefore(tempSpan, fieldsetEle.firstChild);
+      tempSpan.focus();
+      
+      // Hide the temporary span after it's been read by the screen reader
+      setTimeout(() => {
+        tempSpan.setAttribute('aria-hidden', 'true');
+      }, 500);
+    }
+    
+    questionFocusSet = true;
+  }
+}
+
+function findInitialText(element) {
+  let textContent = '';
+  
+  for (const node of element.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+      textContent += node.textContent.trim() + ' ';
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
+      textContent += findInitialText(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+      break;
+    }
+  }
+  
+  return textContent.trim() || null;
+}
+
+// Close the modal and focus on the question text (for screen readers).
+function closeModalAndFocusQuestion(event) {
+  const isWindowClick = event.target === modal;
+  const isButtonClick = ['close', 'modalCloseButton', 'modalContinueButton'].includes(event.target.id);
+
+  if (isWindowClick || isButtonClick) {
+    modal.style.display = 'none';
+
+    // Find the fieldset within the current active question
+    const currentFieldset = document.querySelector(".active fieldset");
+
+    if (currentFieldset) {
+      questionFocusSet = false;
+      focusQuestionText(currentFieldset);
+    }
+  }
 }
 
 // Simulate a click on the checkbox (turn the tile blue) when the text input is used to enter "Other" text values.
@@ -1250,9 +1339,15 @@ function addListeners(nextElement) {
 function handleOtherTextInputKeyPress(event) {
   const responseTarget = event.target.closest('.response');
   const checkboxOrRadioEle = responseTarget?.querySelector('input[type="checkbox"], input[type="radio"]');
-  
+
   if (checkboxOrRadioEle) {
-      event.target.value ? checkboxOrRadioEle.checked = true : checkboxOrRadioEle.checked = false;
+    const inputValue = event.target.value?.trim();
+    const isChecked = checkboxOrRadioEle.checked;
+    if (inputValue && !isChecked) {
+      checkboxOrRadioEle.checked = true;
+    } else if (!inputValue && isChecked) {
+      checkboxOrRadioEle.checked = false;
+    }
   }
 }
 

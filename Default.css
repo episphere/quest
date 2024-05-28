@@ -96,52 +96,96 @@ for bootstrap -xs
 .quest-grid.table-layout tr {
   width: auto;
   display: table-row;
+  font-size: clamp(12px, 1.5vw, 16px);
 }
-
-.quest-grid.table-layout th, .quest-grid.table-layout td {
-  padding: 5px;
+ 
+.quest-grid.table-layout th.hr {
+  padding: .2vw;
   text-align: center;
   vertical-align: middle;
-  height: 50px;
+  height: auto;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  font-weight: normal;
+  font-size: clamp(11px, 1.8vw, 16px);
+  word-wrap: break-word;
+}
+
+.quest-grid.table-layout th.nr {
+  padding: clamp(5px, 1vw, 10px);
+  text-align: center;
+  vertical-align: middle;
+  height: auto;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+
+.quest-grid.table-layout td {
+  padding: .5vw;
+  text-align: center;
+  vertical-align: middle;
+  height: auto;
   position: relative;
   background-color: transparent;
   border: none;
 }
 
 .quest-grid.table-layout th.nr, .quest-grid.table-layout td.nr {
-  font-weight: bold;
   text-align: left;
+  font-size: clamp(12px, 1.5vw, 16px);
 }
 
 .quest-grid.table-layout input[type="radio"] {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
 }
 
-/* Additional styles to ensure the label is large enough to comfortably contain the circles */
 .quest-grid.table-layout .custom-label {
   position: relative;
-  height: 50px;
-  min-width: 50px;
+  height: clamp(19px, 2vw, 34px);
+  min-width: clamp(19px, 2vw, 34px);
   color: transparent;
   background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   border: none;
   outline: none;
+  overflow: hidden;
+  padding: 1em;
 }
 
-/* Styling for the custom label to always have an unfilled circle */
 .quest-grid.table-layout .custom-label::before {
   content: '';
   display: block;
-  width: 26px;
-  height: 26px;
-  border: 2px solid #cccccc;
-  border-radius: 50%; /* Circle */
+  width: clamp(19px, 2vw, 34px);
+  height: clamp(19px, 2vw, 34px);
+  border: 0.15vw solid #b3b3b3;
+  border-radius: 50%;
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   background-color: transparent;
+}
+
+.quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
+  content: '';
+  display: block;
+  width: clamp(14px, 1.4vw, 23px);
+  height: clamp(14px, 1.4vw, 23px);
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #327ABB;
 }
 
 .quest-grid.table-layout .custom-label:hover {
@@ -150,37 +194,23 @@ for bootstrap -xs
   outline: none;
 }
 
-/* Hover effect for the label */
 .quest-grid .custom-label:hover::before {
   border-color: #1c5d86;
-  box-shadow: 0 0 8px #ccc;
-}
-
-/* Styling for when the radio button is checked */
-.quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
-  content: '';
-  display: block;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%; /* Circle */
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #327ABB;
+  box-shadow: 0 0 .75vw #b3b3b3;
 }
 
 .quest-grid.table-layout input[type="radio"]:checked + .custom-label {
   border: none;
   background-color: transparent;
   color: transparent;
-}
+} 
 
 @media screen and (min-width: 576px) {
   /* Emphasize the first table column. Then let the browser calculate the width for the remaining columns */
   .quest-grid.table-layout th:first-child, .quest-grid td:first-child {
-    width: 35%;
-    font-weight: bold;
+    width: 25%;
+    font-weight: normal;
+    font-size: clamp(12px, 1.5vw, 16px);
   }
 }
 
@@ -193,6 +223,10 @@ for bootstrap -xs
     display: block;
   }
 
+  .quest-grid.table-layout th.nr {
+    font-weight: bold;
+    font-size: 16px;
+  }
   .quest-grid.table-layout .custom-label {
     position: absolute;
     top: 0;

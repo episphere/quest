@@ -76,7 +76,7 @@ function buildHtmlTable(grid_obj){
       <form ${grid_obj.args} class="container question" data-grid="true" ${gridPrompt} aria-describedby="formDescription" role="form">
         <div id="formDescription" class="sr-only" aria-live="polite">Please interact with the table below to answer the questions.</div>
         <div>${grid_text_displayif(shared_text)}</div>
-        <table class="quest-grid table-layout">`;
+          <table class="quest-grid table-layout table">`;
   
   // Build the table header row with the question text and response headers. Start with a placeholder for the row header.
   grid_html += '<thead class="hr" role="rowgroup"><tr><th class="nr hr"></th>';

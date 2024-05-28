@@ -542,7 +542,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
 
       // Handle not converted and not yet calculated min and max values
-      const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.startsWith('isDefined') && value !== '0' ? value : ''; }
+      const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.includes('isDefined') && value !== '0' ? value : ''; }
       const min = minMaxValueTest(optionObj.min);
       const max = minMaxValueTest(optionObj.max);
 
@@ -555,7 +555,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       //onkeypress forces whole numbers
       return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options}>
-              <div id="${elementId}-desc" class="sr-only">${descriptionText}</div>`;
+              <div id="${elementId}-desc" class="sr-only">${descriptionText}</div><br>`;
   }
 
     // replace |__| or [text box:xxx] with an input box...
