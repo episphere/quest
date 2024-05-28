@@ -295,7 +295,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (optionObj.hasOwnProperty("max")) {
         options = options + `  data-max-date-uneval=${optionObj.max}`
       }
-      return `<input type='${type}' ${options} lang="es"></input>`;
+      return `<input type='${type}' ${options}></input>`;
     }
 
 
