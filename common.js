@@ -14,16 +14,16 @@ export const translate = (key, replacements = []) => {
 export const responseRequestedModal = () => {
 
     return `
-      <div class="modal" id="softModal" tabindex="-1" role="dialog">
+      <div class="modal" id="softModal" tabindex="-1" role="dialog" aria-labelledby="softModalTitle" aria-modal="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title">${translate('responseRequestedLabel')}</h5>
-                      <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="${translate('ariaCloseLabel')}">
+                      <h5 class="modal-title" id="softModalTitle" tabindex="-1">${translate('responseRequestedLabel')}</h5>
+                      <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
-                  <div id="modalBody" class="modal-body">
+                  <div id="modalBody" class="modal-body" aria-describedby="modalBodyText">
                       <p id="modalBodyText"></p>
                   </div>
                   <div id="softModalFooter" class="modal-footer">
@@ -39,12 +39,12 @@ export const responseRequestedModal = () => {
 export const responseRequiredModal = () => {
     
     return `
-      <div class="modal" id="hardModal" tabindex="-1" role="dialog">
+      <div class="modal" id="hardModal" tabindex="-1" role="dialog" aria-labelledby="hardModalLabel" aria-modal="true" aria-describedby="hardModalBodyText">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title">${translate('responseRequiredLabel')}</h5>
-                      <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="${translate('ariaCloseLabel')}">
+                      <h5 class="modal-title" id="hardModalLabel">${translate('responseRequiredLabel')}</h5>
+                      <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
@@ -63,12 +63,12 @@ export const responseRequiredModal = () => {
 export const responseErrorModal = () => {
     
     return `
-      <div class="modal" id="softModalResponse" tabindex="-1" role="dialog">
+      <div class="modal" id="softModalResponse" tabindex="-1" role="dialog" aria-labelledby="softModalResponseTitle" aria-modal="true" aria-describedby="softModalResponseBody">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title">${translate('responseErrorLabel')}</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="${translate('ariaCloseLabel')}">
+                      <h5 class="modal-title" id="softModalResponseTitle">${translate('responseErrorLabel')}</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
@@ -88,12 +88,12 @@ export const responseErrorModal = () => {
 export const submitModal = () => {
     
     return `
-      <div class="modal" id="submitModal" tabindex="-1" role="dialog">
+      <div class="modal" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel" aria-modal="true" aria-describedby="submitModalBodyText">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h5 class="modal-title">${translate('submitLabel')}</h5>
-                      <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="${translate('ariaCloseLabel')}">
+                      <h5 class="modal-title" id="submitModalLabel">${translate('submitLabel')}</h5>
+                      <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
