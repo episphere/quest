@@ -481,8 +481,11 @@ function exchangeValue(element, attrName, newAttrName) {
       let tmpVal = evaluateCondition(attr);
       // note: tmpVal==tmpVal means that tmpVal is Not Nan
       if (tmpVal == undefined || tmpVal == null || tmpVal != tmpVal) {
-        console.error(`Module Coding Error: Evaluating ${element.id}:${attrName} expression ${attr}  => ${tmpVal}`)
-        validationError(element, `Module Coding Error: ${element.id}:${attrName}`)
+        const previousResultsErrorMessage = moduleParams.previousResults && typeof moduleParams.previousResults === 'object' && Object.keys(moduleParams.previousResults)?.length === 0 && attr.includes('isDefined')
+          ? `\nUsing the Markup Renderer?\nEnsure your variables are added to Settings -> Previous Results in JSON format.\nEx: {"AGE": "45"}`
+          : '';
+        console.error(`Module Coding Error: Evaluating ${element.id}:${attrName} expression ${attr}  => ${tmpVal} ${previousResultsErrorMessage}`)
+        validationError(element, `Module Coding Error: ${element.id}:${attrName} ${previousResultsErrorMessage}`)
         return
       }
       console.log('------------exchanged Vals-----------------')
@@ -495,6 +498,7 @@ function exchangeValue(element, attrName, newAttrName) {
   return element;
 }
 
+// TODO: Look here for Safari text input delay issue.
 export function textboxinput(inputElement, validate = true) {
   
   let evalBool = "";
@@ -524,7 +528,7 @@ export function textboxinput(inputElement, validate = true) {
 
   // BUG 423: radio button not changing value
   let radioWithText = inputElement.closest(".response")?.querySelector("input[type='radio']")
-  if (radioWithText ){
+  if (radioWithText && inputElement.value?.trim() !== ''){
     radioWithText.click()
     radioAndCheckboxUpdate(radioWithText)
   }
@@ -713,76 +717,81 @@ export function nextClick(norp, retrieve, store, rootElement) {
 }
 
 function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
-
-  let prompt = translate("basePrompt", [num > 1 ? "are" : "is", num, num > 1 ? "s" : ""]);
+  const prompt = translate("basePrompt", [num > 1 ? "are" : "is", num, num > 1 ? "s" : ""]);
+  
+  const modalID = soft ? 'softModal' : 'hardModal';
+  const modal = new bootstrap.Modal(document.getElementById(modalID));
+  const softModalText = translate("softPrompt");
+  const hardModalText = translate("hardPrompt", [num > 1 ? "s" : ""]);
+  document.getElementById(soft ? "modalBodyText" : "hardModalBodyText").innerText = `${prompt} ${soft ? softModalText : hardModalText}`;
 
   if (soft) {
-    let f1 = nextPage;
-    f1 = f1.bind(f1, norp, retrieve, store);
-
-    document.getElementById("modalBodyText").innerText = prompt + translate("softPrompt");
-    document.getElementById("modalContinueButton").onclick = f1;
-
-    const softModal = new bootstrap.Modal(document.getElementById('softModal'));
-    softModal.show();
+    const continueButton = document.getElementById("modalContinueButton");
+    continueButton.removeEventListener("click", continueButton.clickHandler);
+    //await the store operation on 'continue without answering' click for correct screen reader focus
+    continueButton.clickHandler = async () => {
+      await nextPage(norp, retrieve, store);
+    };
+    continueButton.addEventListener("click", continueButton.clickHandler);
   }
-  else {
-    document.getElementById("hardModalBodyText").innerText = prompt + translate("hardPrompt", [num > 1 ? "s" : ""]);
 
-    const hardModal = new bootstrap.Modal(document.getElementById('hardModal'));
-    hardModal.show();
-  }
+  modal.show();
+
+  // Set focus to the modal title
+  document.getElementById("softModalTitle").focus();
+
+  let modalElement = modal._element;
+  modalElement.querySelector('.close').addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      modal.hide();
+    }
+  });
 }
 
 // show modal function
 function showModal(norp, retrieve, store, rootElement) {
-  if (
-    norp.form.getAttribute("softedit") == "true" ||
-    norp.form.getAttribute("hardedit") == "true"
-  ) {
-    let numBlankReponses = [...norp.form.children]
-      .filter(
-        (x) =>
-          x.type &&
-          x.type != "hidden" &&
-          !x.hasAttribute("xor") &&
-          x.style.display != "none"
-      )
-      .reduce((t, x) => (x.value.length == 0 ? t + 1 : t), 0);
-    let hasNoResponses =
-      getSelected(norp.form).filter((x) => x.type !== "hidden").length == 0;
+  if (norp.form.getAttribute("softedit") == "true" || norp.form.getAttribute("hardedit") == "true") {
+    // Fieldset is the parent of the inputs for all but grid questions. Grid questions are in a table.
+    const fieldset = norp.form.querySelector('fieldset') || norp.form.querySelector('tbody');
 
-    if (norp.form.hasAttribute("radioCheckboxAndInput")) {
-      if (!radioCbHasAllAnswers(norp.form)) {
+    let numBlankResponses = [fieldset.children]
+      .filter(x => 
+        x.tagName !== 'DIV' && x.tagName !== 'BR' &&
+        x.type && x.type !== 'hidden' &&
+        x.value !== undefined &&
+        (x.style ? x.style.display !== "none" : true) &&
+        !x.hasAttribute("xor")
+      ).reduce((t, x) =>
+        x.value.length == 0 ? t + 1 : t, 0
+      );
+      
+    let hasNoResponses = getSelectedResponses(fieldset).filter((x) => x.type !== "hidden").length === 0;
+
+    if (fieldset.hasAttribute("radioCheckboxAndInput")) {
+      if (!radioCbHasAllAnswers(fieldset)) {
         hasNoResponses = true;
       }
     }
 
     if (norp.form.dataset.grid) {
-      if (!gridHasAllAnswers(norp.form)) {
+      if (!gridHasAllAnswers(fieldset)) {
         hasNoResponses = true;
       }
-      numBlankReponses = numberOfUnansweredGridQuestions(norp.form)
+      numBlankResponses = numberOfUnansweredGridQuestions(fieldset);
     }
 
-    if (numBlankReponses == 0 && hasNoResponses == true) {
-      numBlankReponses = 1;
-    } else if ((numBlankReponses == 0) == true && hasNoResponses == false) {
-      numBlankReponses = 0;
-    } else if ((numBlankReponses == 0) == false && hasNoResponses == true) {
-      numBlankReponses = numBlankReponses;
+    if (numBlankResponses == 0 && hasNoResponses == true) {
+      numBlankResponses = 1;
+    } else if ((numBlankResponses == 0) == true && hasNoResponses == false) {
+      numBlankResponses = 0;
+    } else if ((numBlankResponses == 0) == false && hasNoResponses == true) {
+      numBlankResponses = numBlankResponses;
     } else {
-      numBlankReponses = 0;
+      numBlankResponses = 0;
     }
 
-    if (numBlankReponses > 0) {
-      setNumberOfQuestionsInModal(
-        numBlankReponses,
-        norp,
-        retrieve,
-        store,
-        norp.form.getAttribute("softedit") == "true"
-      );
+    if (numBlankResponses > 0) {
+      setNumberOfQuestionsInModal(numBlankResponses, norp, retrieve, store, norp.form.getAttribute("softedit") == "true");
       return null;
     }
   }
@@ -826,6 +835,20 @@ function getNextQuestionId(currentFormElement) {
   return nextQuestionNode.value;
 }
 
+function showLoadingIndicator() {
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.id = 'loadingIndicator';
+    loadingIndicator.innerHTML = '<div class="spinner"></div>';
+    document.body.appendChild(loadingIndicator);
+}
+
+function hideLoadingIndicator() {
+  const loadingIndicator = document.getElementById('loadingIndicator');
+  if (loadingIndicator) {
+    document.body.removeChild(loadingIndicator);
+  }
+}
+
 // norp == next or previous button (which ever is clicked...)
 async function nextPage(norp, retrieve, store, rootElement) {
   // The root is defined as null, so if the question is not the same as the
@@ -849,14 +872,56 @@ async function nextPage(norp, retrieve, store, rootElement) {
   let questName = moduleParams.questName;
   tempObj[questionElement.id] = questionElement.value;
 
+  // check if we need to add questions to the question queue
+  checkForSkips(questionElement);
+
+  let nextQuestionId = getNextQuestionId(questionElement);
+  // get the actual HTML element.
+  let nextElement = document.getElementById(nextQuestionId.value);
+  nextElement = exitLoop(nextElement);
+
+  // before we add the next question to the queue...
+  // check for the displayif status...
+  while (nextElement?.hasAttribute("displayif")) {
+    // not sure what to do if the next element is is not a question ...
+    if (nextElement.classList.contains("question")) {
+      let display = evaluateCondition(nextElement.getAttribute("displayif"));
+      if (display) break;
+      if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
+
+      let nextQuestionId = nextElement.dataset.nodisplay_skip;
+      if (nextElement.dataset.nodisplay_skip) {
+        questionQueue.add(nextElement.dataset.nodisplay_skip);
+      }
+      nextQuestionId = getNextQuestionId(nextElement);
+
+      nextElement = document.getElementById(nextQuestionId.value);
+      nextElement = exitLoop(nextElement);
+    } else {
+      console.log(
+        " ============= next element is not a question...  not sure what went wrong..."
+      );
+      console.trace();
+    }
+  }
+
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
 
   if (store) {
-    let formData = {};
-    formData[`${questName}.${questionElement.id}`] = questionElement.value;
-    console.log(formData)
-    await store(formData)
+    try {
+      // show a loading indicator for variables in delayedParameterArray (they take extra time to process)
+      if (moduleParams.delayedParameterArray.includes(nextElement.id)) showLoadingIndicator();
+
+      let formData = {};
+      formData[`${questName}.${questionElement.id}`] = questionElement.value;
+      console.log(formData)
+      await store(formData)
+    } catch (e) {
+      console.error("Store failed", e);
+    } finally {
+      hideLoadingIndicator();
+    }
   } else {
     let tmp = await localforage
       .getItem(questName)
@@ -884,41 +949,6 @@ async function nextPage(norp, retrieve, store, rootElement) {
       });
   }
 
-
-
-  // check if we need to add questions to the question queue
-  checkForSkips(questionElement);
-
-  let nextQuestionId = getNextQuestionId(questionElement);
-  // get the actual HTML element.
-  let nextElement = document.getElementById(nextQuestionId.value);
-
-  nextElement = exitLoop(nextElement);
-
-  // before we add the next question to the queue...
-  // check for the displayif status...
-  while (nextElement.hasAttribute("displayif")) {
-    // not sure what to do if the next element is is not a question ...
-    if (nextElement.classList.contains("question")) {
-      let display = evaluateCondition(nextElement.getAttribute("displayif"));
-      if (display) break;
-      if (nextElement.id.substring(0, 9) != "_CONTINUE") questionQueue.pop();
-
-      let nextQuestionId = nextElement.dataset.nodisplay_skip;
-      if (nextElement.dataset.nodisplay_skip) {
-        questionQueue.add(nextElement.dataset.nodisplay_skip);
-      }
-      nextQuestionId = getNextQuestionId(nextElement);
-
-      nextElement = document.getElementById(nextQuestionId.value);
-      nextElement = exitLoop(nextElement);
-    } else {
-      console.log(
-        " ============= next element is not a question...  not sure what went wrong..."
-      );
-      console.trace();
-    }
-  }
   //hide the current question
   questionElement.classList.remove("active");
 
@@ -943,11 +973,27 @@ export async function submitQuestionnaire(store, questName) {
   }
 }
 function exitLoop(nextElement) {
+  if (!nextElement) {
+    console.error("nextElement is null or undefined");
+    return null;
+  }
+
   if (nextElement.hasAttribute("firstquestion")) {
-    let loopMax = parseInt(document.getElementById(nextElement.getAttribute("loopmax"))
-      .value);
+    let loopMaxElement = document.getElementById(nextElement.getAttribute("loopmax"));
+    if (!loopMaxElement) {
+      console.error(`LoopMaxElement is null or undefined for ${nextElement.id}`);
+      return nextElement;
+    }
+
+    let loopMax = parseInt(loopMaxElement.value);
     let firstQuestion = parseInt(nextElement.getAttribute("firstquestion"));
     let loopIndex = parseInt(nextElement.getAttribute("loopindx"));
+
+    if (isNaN(loopMax) || isNaN(firstQuestion) || isNaN(loopIndex)) {
+      console.error(`LoopMax, firstQuestion, or loopIndex is NaN for ${nextElement.id}`);
+      return nextElement;
+    }
+
     if (math.evaluate(firstQuestion > loopMax)) {
       questionQueue.pop();
       questionQueue.add(`_CONTINUE${loopIndex}_DONE`);
@@ -955,10 +1001,19 @@ function exitLoop(nextElement) {
       nextElement = document.getElementById(nextQuestionId.value);
     }
   }
+  
   return nextElement;
 }
 
+let debounceHandler;
+let questionText = null;
+let modal;
+let closeButton;
+let questionFocusSet;
+
 export function displayQuestion(nextElement) {
+  questionFocusSet = false;
+
   [...nextElement.querySelectorAll("span[forid]")].map((x) => {
     let defaultValue = x.getAttribute("optional")
     x.innerHTML = math.valueOrDefault(decodeURIComponent(x.getAttribute("forid")), defaultValue)
@@ -1002,6 +1057,11 @@ export function displayQuestion(nextElement) {
   nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
     e.style = "display: none"
   })
+  
+  // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
+  nextElement.querySelectorAll("br").forEach((br) => {
+    br.setAttribute("aria-hidden", "true");
+  });
 
   // ISSUE: 403
   // update {$e:}/{$u} and and {$} elements in grids when the user displays the question ...
@@ -1012,22 +1072,17 @@ export function displayQuestion(nextElement) {
       e.innerText = math.evaluate(decodeURIComponent(e.dataset.gridreplace))
     }
   });
-  //check if grid elements needs to be shown
-  // concern:: in the grid you can have style:none and class="d-flex"
-  // currently this SHOWS the row.  If this changes in the future,
-  // it may have to be fixed.
-  Array.from(nextElement.querySelectorAll("[data-gridrow][data-displayif]"))
-    .forEach((elm) => {
-      let f = evaluateCondition(decodeURIComponent(elm.dataset.displayif));
+  
+  // Check if grid elements need to be shown. Elm is a <tr>. If f !== true, remove the row (elm) from the DOM.
+  Array.from(nextElement.querySelectorAll("[data-gridrow][data-displayif]")).forEach((elm) => {
+    const f = evaluateCondition(decodeURIComponent(elm.dataset.displayif));
+    console.log(`checking the datagrid for displayif... ${elm.dataset.questionId} ${f}`)
 
-      console.log(elm)
-      console.log(`checking the datagrid for displayif... ${elm.dataset.questionId} ${f}`)
-      
-      Array.from(elm.parentElement.querySelectorAll(`[data-question-id=${elm.dataset.questionId}]`)).forEach(resp => {
-        console.log(resp)
-        resp.style.display=(f)?'block':'none'
-      })
-    });
+    if (f !== true) {
+      elm.remove();
+      //elm.closest('tr').remove(); // this is the same as elm.remove()...slower but more flexible. temp leaving in case there are cases I've missed.
+    }
+  });
 
   //Replacing all default HTML form validations with datasets
 
@@ -1089,7 +1144,163 @@ export function displayQuestion(nextElement) {
   updateTree();
 
   questionQueue.ptree();
+
+  // manage the question-specific listeners
+  refreshListeners(nextElement);
   return nextElement;
+}
+
+function refreshListeners(nextElement) {
+  removeListeners();
+  debounceHandler = null;
+  questionText = null;
+  addListeners(nextElement);
+  // The question text is at the opening fieldset tag. Let DOM settle, If focusable, set focus.
+  setTimeout(() => focusQuestionText(nextElement.querySelector('fieldset')), 0);
+}
+
+function removeListeners() {
+  const textInputs = document.querySelectorAll('input[type="text"]');
+  
+  // Remove input listeners from all text inputs
+  if (debounceHandler) {
+    textInputs.forEach(textInput => {
+        textInput.removeEventListener('input', debounceHandler);
+    });
+  }
+
+  // Remove event listeners from modal and close button (for screen readers)
+  modal = document.getElementById('softModal');
+  closeButton = document.getElementById('closeModal');
+
+  modal?.removeEventListener('click', closeModalAndFocusQuestion);
+  closeButton?.removeEventListener('click', closeModalAndFocusQuestion);
+}
+
+function addListeners(nextElement) {
+  const textInputs = nextElement.querySelectorAll('input[type="text"]');
+
+  if (!debounceHandler) {
+    debounceHandler = debounce(handleOtherTextInputKeyPress, 200); // 200ms
+  }
+  
+  // Find the associated checkbox/radio element. Note: Some are checkboxes and some are radios though they look the same.
+  textInputs.forEach(textInput => {
+      textInput.addEventListener('input', debounceHandler);
+      const responseContainer = textInput.closest('.response');
+
+      if (responseContainer) {
+          const checkboxOrRadio = responseContainer.querySelector('input[type="checkbox"], input[type="radio"]');
+          if (checkboxOrRadio) {
+              checkboxOrRadio.addEventListener('click', () => {
+                  textInput.focus(); // Focus the text input on checkbox/radio click
+              });
+          }
+      }
+  });
+
+  // Attach event listeners to modal and close buttons (for screen readers)
+  modal = document.getElementById('softModal');
+  closeButton = document.getElementById('closeModal');
+
+  modal?.addEventListener('click', closeModalAndFocusQuestion);
+  closeButton?.addEventListener('click', closeModalAndFocusQuestion);
+}
+
+// for screen readers (accessibility)
+function focusQuestionText(fieldsetEle) {
+  if (fieldsetEle && !questionFocusSet) {
+    // Clean up existing sr-only spans (found issue where text was duplicated on back button click)
+    const existingTempSpans = fieldsetEle.querySelectorAll('.sr-only');
+    existingTempSpans.forEach(span => span.remove());
+    // Find the initial text in the fieldset
+    let textContent = findInitialText(fieldsetEle);
+    
+    if (textContent) {
+      // Remove all instances of 'null' (generated from displayIf cases)
+      textContent = textContent.replace(/null/g, '');
+      // Create a temporary span element, add sr-only class, and set the text content
+      const tempSpan = document.createElement('span');
+      tempSpan.setAttribute('tabindex', '-1');
+      tempSpan.classList.add('sr-only');
+      tempSpan.textContent = textContent + ' ';
+      tempSpan.setAttribute('aria-live', 'assertive');
+      
+      // Insert it into fieldset, then focus
+      fieldsetEle.insertBefore(tempSpan, fieldsetEle.firstChild);
+      tempSpan.focus();
+      
+      // Hide the temporary span after it's been read by the screen reader
+      setTimeout(() => {
+        tempSpan.setAttribute('aria-hidden', 'true');
+      }, 500);
+    }
+    
+    questionFocusSet = true;
+  }
+}
+
+function findInitialText(element) {
+  let textContent = '';
+  
+  for (const node of element.childNodes) {
+    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+      textContent += node.textContent.trim() + ' ';
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
+      textContent += findInitialText(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+      break;
+    }
+  }
+  
+  return textContent.trim() || null;
+}
+
+// Close the modal and focus on the question text (for screen readers).
+function closeModalAndFocusQuestion(event) {
+  const isWindowClick = event.target === modal;
+  const isButtonClick = ['close', 'modalCloseButton', 'modalContinueButton'].includes(event.target.id);
+
+  if (isWindowClick || isButtonClick) {
+    modal.style.display = 'none';
+
+    // Find the fieldset within the current active question
+    const currentFieldset = document.querySelector(".active fieldset");
+
+    if (currentFieldset) {
+      questionFocusSet = false;
+      focusQuestionText(currentFieldset);
+    }
+  }
+}
+
+// Simulate a click on the checkbox (turn the tile blue) when the text input is used to enter "Other" text values.
+// Get the parent response container, then get the checkbox element that wraps the input field.
+function handleOtherTextInputKeyPress(event) {
+  const responseTarget = event.target.closest('.response');
+  const checkboxOrRadioEle = responseTarget?.querySelector('input[type="checkbox"], input[type="radio"]');
+
+  if (checkboxOrRadioEle) {
+    const inputValue = event.target.value?.trim();
+    const isChecked = checkboxOrRadioEle.checked;
+    if (inputValue && !isChecked) {
+      checkboxOrRadioEle.checked = true;
+    } else if (!inputValue && isChecked) {
+      checkboxOrRadioEle.checked = false;
+    }
+  }
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function execute(...args) {
+      const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+  };
 }
 
 // Check whether the browser supports "month" input type.
@@ -1127,7 +1338,7 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
 // question queue.  It always returns null;
 function checkForSkips(questionElement) {
   // get selected responses
-  let selectedElements = getSelected(questionElement);
+  let selectedElements = getSelectedResponses(questionElement);
 
   let numSelected = selectedElements.filter((x) => x.type != "hidden").length;
   // if there are NO non-hidden responses ...
@@ -1181,28 +1392,27 @@ function checkValid(questionElement) {
 }
 
 //check if grids has all answers
-export function gridHasAllAnswers(questionElement) {
-  let gridRows = Array.from(questionElement.querySelectorAll("[data-gridrow]"));
+export function gridHasAllAnswers(questionFieldset) {
+  let gridRows = Array.from(questionFieldset.querySelectorAll("tr[data-gridrow='true']"));
 
   const checked = (element) => element.checked;
   return gridRows.reduce( (acc,current,index) => {
-    if (current.style.display=='none') return acc
+    if (current.style.display=='none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
-    let currentResponses = Array.from(current.parentElement.querySelectorAll(`[name="${name}"]`))
+    let currentResponses = Array.from(current.parentElement.querySelectorAll(`input[type="radio"][name="${name}"]`))
     return acc && currentResponses.some(checked)
   },true)
 }
 
-export function numberOfUnansweredGridQuestions(questionElement) {
-  let gridRows = Array.from(questionElement.querySelectorAll("[data-gridrow]"));
-
+export function numberOfUnansweredGridQuestions(questionFieldset) {
+  let gridRows = Array.from(questionFieldset.querySelectorAll("tr[data-gridrow='true']"));
   const checked = (element) => element.checked;
   return gridRows.reduce( (acc,current,index) => {
-    if (current.style.display=='none') return acc
+    if (current.style.display=='none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
-    let currentResponses = Array.from(current.parentElement.querySelectorAll(`[name="${name}"]`))
+    let currentResponses = Array.from(current.querySelectorAll(`input[type="radio"][name="${name}"]`));
     return currentResponses.some(checked)?acc:(acc+1)
   },0)
 }
@@ -1226,32 +1436,15 @@ export function radioCbHasAllAnswers(questionElement) {
   }
   return hasAllAnswers;
 }
-export function getSelected(questionElement) {
-  // look for radio boxes, checkboxes, and  hidden elements
-  // for checked items.  Return all checked items.
-  // If nothing is checked, an empty array should be returned.
 
-  var rv1 = [
-    ...questionElement.querySelectorAll(
-      "input[type='radio'],input[type='checkbox']"
-    ),
-  ];
+// Look at radio, checkboxes, input fields, and hidden elements and return all checked or filled items.
+// If nothing is checked, return empty array.
+export function getSelectedResponses(questionElement) {
+  const radiosAndCheckboxes = [...questionElement.querySelectorAll("input[type='radio'],input[type='checkbox']")].filter((x) => x.checked);
+  const inputFields = [...questionElement.querySelectorAll("input[type='number'], input[type='text'], input[type='date'], input[type='month'], input[type='email'], input[type='time'], input[type='tel'], textarea, option")].filter((x) => x.value.length > 0);
+  const hiddenInputs = [...questionElement.querySelectorAll("input[type='hidden']")].filter((x) => x.hasAttribute("checked"));
 
-  var rv2 = [
-    ...questionElement.querySelectorAll(
-      "input[type='number'], input[type='text'], input[type='date'], input[type='month'], input[type='email'], input[type='time'], input[type='tel'], textarea, option"
-    ),
-  ];
-
-  var rv3 = [...questionElement.querySelectorAll("input[type='hidden']")];
-
-  rv1 = rv1.filter((x) => x.checked);
-  rv2 = rv2.filter((x) => x.value.length > 0);
-  rv3 = rv3.filter((x) => x.hasAttribute("checked"));
-
-  // we may need to guarentee that the hidden comes last.
-  rv1 = rv1.concat(rv2);
-  return rv1.concat(rv3);
+  return [...radiosAndCheckboxes, ...inputFields, ...hiddenInputs];
 }
 
 // create a blank object for collecting

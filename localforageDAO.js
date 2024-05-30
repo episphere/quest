@@ -39,7 +39,8 @@ export async function restoreResults(results) {
     if (typeof results[qid] == "string") {
       // in this case get the first input/textarea in the form and fill it in.
       let element = formElement.querySelector("input,textarea,select");
-      if (element.type == "radio") {
+      // null handle element, skip if null (load failing when participant is in the middle of unanswered SOCcer questions)
+      if (element?.type == "radio") {
         let selector = `input[value='${results[qid]}']`;
         let selectedRadioElement = formElement.querySelector(selector);
         if (selectedRadioElement) {
@@ -49,14 +50,17 @@ export async function restoreResults(results) {
         }
         radioAndCheckboxUpdate(selectedRadioElement);
       } else {
-        if (element.type == "submit") {
+        if (element?.type == "submit") {
           console.log(
             `local forage is trying to change the value of a submit button. Question ${qid} response value: ${results[qid]}; skipping this 1 value..`
           );
           return;
         }
-        element.value = results[qid];
-        textboxinput(element, false);
+
+        if (element?.value) {
+          element.value = results[qid];
+          textboxinput(element, false);
+        }
       }
 
       // we should return from here...

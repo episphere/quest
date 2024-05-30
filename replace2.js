@@ -35,6 +35,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   moduleParams.soccer = obj.soccer;
+  moduleParams.delayedParameterArray = obj.delayedParameterArray;
   moduleParams.i18n = obj.lang === 'es' ? es : en;
 
   rootElement = divId;
@@ -44,6 +45,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   if (obj.text) contents = obj.text;
 
+  // TODO: should these stylesheets have local refs instead (pulled from the CDN instead of the GitHub repo)?
   if (obj.url) {
     contents = await (await fetch(obj.url)).text();
     moduleParams.config = contents
@@ -58,17 +60,20 @@ transform.render = async (obj, divId, previousResults = {}) => {
       document.head.appendChild(link2);
     }
   }
+  
+  // Define the Date prototype function toQuestFormat
+  Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
+  const current_date = new Date()
+  
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
-
   // then we must unroll the loops...
-
   contents = unrollLoops(contents);
-
   // #issue 378, note: getMonth 0=Jan,  need to add 1
   // months
 
-  contents = contents.replace(/#currentMonthStr/g, 
+  contents = contents
+    .replace(/#currentMonthStr/g, 
   [
     moduleParams.i18n.januaryShort,
     moduleParams.i18n.februaryShort,
@@ -82,35 +87,29 @@ transform.render = async (obj, divId, previousResults = {}) => {
     moduleParams.i18n.octoberShort,
     moduleParams.i18n.novemberShort,
     moduleParams.i18n.decemberShort
-  ][new Date().getMonth()]);
+  ][new Date().getMonth()])
 
-  let current_date = new Date()
-  Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
-  contents = contents.replace(/#currentMonth/g, current_date.getMonth() + 1);
-  contents = contents.replace(/#currentYear/g, current_date.getFullYear());
-  // issue #405 need #today and today+/- n days...
-  contents = contents.replace(/#today(\s*[+\-]\s*\d+)?/g, function (match, offset) {
-    // if no (+/- offset) we want today...
-    if (!offset || offset.trim().length == 0) {
-      return current_date.toQuestFormat()
-    }
+    .replace(/#currentMonth/g, current_date.getMonth() + 1)
+    .replace(/#currentYear/g, current_date.getFullYear())
+    // issue #405 need #today and today+/- n days...
+    .replace(/#today(\s*[+\-]\s*\d+)?/g, (match, offset) => {
+      // if no (+/- offset) we want today...
+      if (!offset || offset.trim().length == 0) {
+        return current_date.toQuestFormat()
+      }
 
-    // otherwise +/- the offset in number of days...
-    offset = parseInt(offset.replace(/\s/g, ""));
-    let offset_date = new Date()
-    offset_date.setDate(offset_date.getDate() + offset)
-    return offset_date.toQuestFormat()
-  })
+      // otherwise +/- the offset in number of days...
+      offset = parseInt(offset.replace(/\s/g, ""));
+      let offset_date = new Date()
+      offset_date.setDate(offset_date.getDate() + offset)
+      return offset_date.toQuestFormat()
+    })
+    // questionnarie 
+    // hey, lets de-lint the contents.. convert (^|\n{2,}Q1. to [Q1]
+    // note:  the first question wont have the \n\n so we need to look at start of string(^)
+    .replace(/\/\*.*\*\//g, "")
+    .replace(/\/\/.*/g, "");
 
-  // questionnarie 
-
-  // hey, lets de-lint the contents..
-  // convert (^|\n{2,}Q1. to [Q1]
-  // note:  the first question wont have the
-  // \n\n so we need to look at start of string(^)
-
-  contents = contents.replace(/\/\*.*\*\//g, "");
-  contents = contents.replace(/\/\/.*/g, "");
   // contents = contents.replace(/\[DISPLAY IF .*\]/gms, "");
   let nameRegex = new RegExp(/{"name":"(\w*)"}/);
   if (nameRegex.test(contents)) {
@@ -124,6 +123,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questName = "Questionnaire";
     moduleParams.questName = questName;
   }
+
   // first let's deal with breaking up questions..
   // a question starts with the [ID1] regex pattern
   // and end with the next pattern or the end of string...
@@ -139,6 +139,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     "g"
   );
 
+  // TODO: General -> <br> tag replacement -> these read "Empty Group" in Chrome with screen reader, which is not ideal.
   // because firefox cannot handle the "s" tag, encode all newlines
   // as a unit seperator ASCII code 1f (decimal: 31)
   contents = contents.replace(/(?:\r\n|\r|\n)/g, "\u001f");
@@ -194,17 +195,22 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
     }
 
-    let prevButton = (endMatch && endMatch[1]) === "noback"
-      ? ""
-      : `<input type='submit' class='previous w-100' data-clicktype='back' ${questID === 'END' ? `id='lastBackButton'` : ""} value='${moduleParams.i18n.backButton}'></input>`;
+    let prevButton =
+      (endMatch && endMatch[1]) === "noback"
+        ? ""
+        : (questID === 'END')
+          ? "<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>${moduleParams.i18n.backButton}</button>"
+          : "<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>${moduleParams.i18n.backButton}</button>";
 
-    let resetButton = questID === 'END'
-      ? `<input type='submit' class='reset w-100' data-clicktype='submit' id='submitButton' value='${moduleParams.i18n.submitSurveyButton}'></input>`
-      : `<input type='submit' class='reset w-100' data-clicktype='reset' value='${moduleParams.i18n.resetAnswerButton}'></input>`;
+    //debugger;
+    let resetButton = (questID === 'END')
+      ? "<button type='submit' class='reset' id='submitButton' aria-label='Submit your survey' data-click-type='submitSurvey'>${moduleParams.i18n.submitSurveyButton}</button>"
+      : "<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>${moduleParams.i18n.resetAnswerButton}</button>";
 
     let nextButton = endMatch
       ? ""
-      : `<input type='submit' class='next w-100' data-clicktype='next' ${target} value=${moduleParams.i18n.nextButton}></input>`;
+      : `<button type='submit' class='next w-100' ${target} aria-label='Next question' data-click-type='next'>${moduleParams.i18n.nextButton}</button>`;
+
 
     // replace user profile variables...
     questText = questText.replace(/\{\$u:(\w+)}/g, (all, varid) => {
@@ -226,7 +232,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fHash(fullmatch,expr){
       return `<span data-encoded-expression=${encodeURIComponent(expr)}>${expr}</span>`
     }
-
 
     //adding displayif with nested questions. nested display if uses !| to |!
     questText = questText.replace(/!\|(displayif=.+?)\|(.*?)\|!/g, fDisplayIf);
@@ -278,26 +283,29 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
     questText = questText.replace(/\|month\|(?:([^\|]+)\|)?/g, fDate);
     function fDate(fullmatch, opts) {
-      let type = fullmatch.match(/[^|]+/)
+      let type = fullmatch.match(/[^|]+/);
       let { options, elementId } = guaranteeIdSet(opts, type);
-      let optionObj = paramSplit(options)
+      let optionObj = paramSplit(options);
       // can't have the value uri encoded... 
       if (optionObj.hasOwnProperty("value")) {
-        optionObj.value = decodeURIComponent(optionObj.value)
+          optionObj.value = decodeURIComponent(optionObj.value);
       }
+  
+      options = reduceObj(optionObj);
 
-      options = reduceObj(optionObj)
-      // not sure why we need a data-min-date but allow it to be evaluateable.
-      //      if (optionObj.hasOwnProperty("min") && !isNaN(Date.parse(optionObj.min)) ) {
       if (optionObj.hasOwnProperty("min")) {
         options = options + ` data-min-date-uneval=${optionObj.min}`
       }
       if (optionObj.hasOwnProperty("max")) {
         options = options + `  data-max-date-uneval=${optionObj.max}`
       }
-      return `<input type='${type}' ${options}></input>`;
+      
+      const descText = type === 'month' ? "Type month and four-digit year" : type === 'date' ? "Select a date" : "Enter the month and year in format: four digit year - two digit month. YYYY-MM";
+  
+      // Adding placeholders and aria-describedby attributes in one line
+      options += ` placeholder='Select ${type}' aria-describedby='${elementId}-desc' aria-label='Select ${type}'`;
+      return `<input type='${type}' ${options}><span id='${elementId}-desc' class='sr-only'>${descText}</span>`;
     }
-
 
     // replace |tel| with phone input
 
@@ -402,7 +410,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // replace |image|URL|height,width| with a html img tag...
     questText = questText.replace(
       /\|image\|(.*?)\|(?:([0-9]+),([0-9]+)\|)?/g,
-      "<img src=https://$1 height=$2 width=$3>"
+      "<img src=https://$1 height=$2 width=$3 loading='lazy'>"
     );
 
     //regex to test if there are input as a part of radio or checkboxes
@@ -472,7 +480,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     //   + /(?:,(displayif=.+?\))?)?/.source             // an optional displayif
     //   + /\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/         // go to the end of the line or next [
     // )
-    //questText = questText.replace(cbRegEx, fCheck)
+
     questText = questText.replace(
       /\[(\d*)(\*)?(?:\:(\w+))?(?:\|(\w+))?(?:,(displayif\s*=\s*.+?\)\s*)?)?\]\s*(.*?)\s*(?=(?:\[\d)|\n|<br>|$)/g,
       fCheck
@@ -494,6 +502,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (labelID == undefined) {
         labelID = `${elVar}_${value}_label`;
       }
+
       return `<div class='response' ${displayIf}><input type='checkbox' name='${elVar}' value='${value}' id='${elVar}_${value}' ${clearValues}></input><label id='${labelID}' for='${elVar}_${value}'>${label}</label></div>`;
     }
 
@@ -501,37 +510,52 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questText = questText.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
     function fTime(x, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "time");
-      return `<input type='time' ${options}>`;
+      return `
+        <label for='${elementId}' class='sr-only'>Enter Time</label>
+        <input type='time' id='${elementId}' ${options} aria-label='Enter Time'>
+      `;
     }
 
+    // TODO: General: format for number input boxes needs adjustment for screen readers (description text first or aria description)
     // replace |__|__|  with a number box...
     questText = questText.replace(
       /\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g,
       fNum
     );
     function fNum(fullmatch, opts) {
-
-      let value = questText.startsWith('<br>') ? questText.split('<br>')[0] : ''
-
+      const value = questText.startsWith('<br>') ? questText.split('<br>')[0] : '';
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
-
+      
       options = options.replaceAll('\"', "\'");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionObj = paramSplit(options)
 
       //replace options with split values (uri encoded)
       options = reduceObj(optionObj)
-
       if (optionObj.hasOwnProperty("min")) {
         options = options + ` data-min="${optionObj.min}"`
       }
       if (optionObj.hasOwnProperty("max")) {
         options = options + ` data-max="${optionObj.max}"`
       }
+
+      // Handle not converted and not yet calculated min and max values
+      const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.includes('isDefined') && value !== '0' ? value : ''; }
+      const min = minMaxValueTest(optionObj.min);
+      const max = minMaxValueTest(optionObj.max);
+
+      // Build the description text
+      const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? 'between ' + min + ' and ' + max : ''}.`;
+      
+      // Add placeholder and aria-describedby
+      const placeholder = min ? `placeholder="Example: ${min}"` : (max ? `placeholder="Example: ${max}"` : 'placeholder="Enter a value"');
+      options += ` ${placeholder} aria-describedby="${elementId}-desc"`;
+
       //onkeypress forces whole numbers
-      return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options} ></input>`;
-    }
+      return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options}>
+              <div id="${elementId}-desc" class="sr-only">${descriptionText}</div><br>`;
+  }
 
     // replace |__| or [text box:xxx] with an input box...
     questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
@@ -542,11 +566,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
 
     questText = questText.replace(
-      // /\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*)?/g,
       /(.*)?\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?(.*)?/g,
       fText
     );
 
+    // TODO: Inspect ServiceNow/DataDog 'Too Much Recursion' error (Windows 10 / Firefox v125.0.0). One occurrence 5/3/24, Module 4.
     function fText(fullmatch, value1, opts, value2) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
       options = options.replaceAll(/(min|max)len\s*=\s*(\d+)/g,'data-$1len=$2')
@@ -555,10 +579,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
       // the code. As it turns out.  This causes a problem.  Only change the values in the aria-label.
       // if you have (1) xx |__| text with  ' in it.
       // then the apostrophe is put in the aria-label screwing up the rendering 
-      // value1 = value1?.replace(/'/g, "&apos;")
-      // value2 = value2?.replace(/'/g, "&apos;")
 
       // this is really ugly..  What is going on here?
+      // TODO: refactor, test, and remove this console.warn
+      //if (value1 && value1.includes('div')) console.warn('fText:', value1, opts, value2);
       if (value1 && value1.includes('div')) return `${value1}<input type='text' aria-label='${value1.split('>').pop().replace(/'/g, "&apos;")}'name='${questID}' ${options}></input>${value2}`
       if (value1 && value2) return `<span>${value1}</span><input type='text' aria-label='${value1.replace(/'/g, "&apos;")} ${value2.replace(/'/g, "&apos;")}' name='${questID}' ${options}></input><span>${value2}</span>`;
       if (value1) return `<span>${value1}</span><input type='text' aria-label='${value1.replace(/'/g, "&apos;")}' name='${questID}' ${options}></input>`;
@@ -581,41 +605,48 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<textarea id='${elId}' ${options} style="resize:auto;"></textarea>`;
     }
 
-    //check
-    // replace #YNP with Yes No input
+    // replace #YNP with Yes No input: `(1) Yes, (0) No, (99) Prefer not to answer`
     questText = questText.replace(
-      /#YNP/g, 
-        `<div class='response'>
-          <input type='radio' id="${questID}_1" name="${questID}" value="yes"></input>
-          <label for='${questID}_1'>${moduleParams.i18n.yes}</label>
-        </div>
-        
-        <div class='response'>
-          <input type='radio' id="${questID}_0" name="${questID}" value="no"></input>
-          <label for='${questID}_0'>${moduleParams.i18n.no}</label>
-        </div>
-        
-        <div class='response'>
-          <input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer"></input>
-          <label for='${questID}_99'>${moduleParams.i18n.preferNotToAnswer}</label>
-        </div>`
+      /#YNP/g,
+      `<div role="radiogroup" aria-labelledby="yesNoDontKnowLabel">
+        <label id="yesNoDontKnowLabel" class="sr-only">Select "Yes," "No," or "Prefer not to answer" to answer the question.</label>
+        <ul>
+          <li class='response'>
+            <input type='radio' id="${questID}_1" name="${questID}" value="yes">
+            <label for='${questID}_1'>${moduleParams.i18n.yes}</label>
+          </li>
+          <li class='response'>
+            <input type='radio' id="${questID}_0" name="${questID}" value="no">
+            <label for='${questID}_0'>${moduleParams.i18n.no}</label>
+          </li>
+          <li class='response'>
+            <input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer">
+            <label for='${questID}_99'>${moduleParams.i18n.preferNotToAnswer}</label>
+          </li>
+        </ul>
+      </div>
+      `
     );
 
-    //check
-    // replace #YN with Yes No input
-    questText = questText.replace(
-      /#YN/g, 
-        `<div class='response'>
-          <input type='radio' id="${questID}_1" name="${questID}" value="yes"></input>
-          <label for='${questID}_1'>Yes</label>
-        </div>
-        <div class='response'>
-          <input type='radio' id="${questID}_0" name="${questID}" value="no"></input>
-          <label for='${questID}_0'>No</label>
-        </div>`
-    );
-    
+    // replace #YN with Yes No input: `(1) Yes, (0) No`
 
+    questText = questText.replace(
+      /#YN/g,
+      `<div role="radiogroup" aria-labelledby="yesNoLabel">
+        <div id="yesNoLabel" class="sr-only">Select "Yes" or "No" to answer the question.</div>
+        <ul>
+          <li class='response'>
+            <input type='radio' id="${questID}_1" name="${questID}" value="yes">
+            <label for='${questID}_1'>${moduleParams.i18n.yes}</label>
+          </li>
+          <li class='response'>
+            <input type='radio' id="${questID}_0" name="${questID}" value="no">
+            <label for='${questID}_0'>${moduleParams.i18n.no}</label>
+          </li>
+        </ul>
+      </div>
+      `
+    );
 
     // replace [a-zXX] with a checkbox box...
     // handle CB/radio + TEXT + TEXTBOX + ARROW + Text...
@@ -656,7 +687,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       let skipTo = skipToId ? `skipTo=${skipToId}` : "";
       let value = cbValue ? `value=${cbValue}` : "";
-      let rv = `<div class='response'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}></input><label for='${id}'>${labelText}${textBox}</label></div>`;
+      let rv = `<li class='response'><input type='${inputType}' ${forceId} ${name} ${value} ${cbArgs} ${skipTo}><label for='${id}'>${labelText}${textBox}</label></li>`;
       return rv;
     }
     // SAME thing but this time with a textarea...
@@ -701,13 +732,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     // handle skips
     questText = questText.replace(
-      //      /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^>]*?)<\/label>/g,
       /<input ([^>]*?)><\/input><label([^>]*?)>(.*?)\s*->\s*([^<\s]*?)\s*<\/label>/g,
       "<input $1 skipTo='$4'></input><label $2>$3</label>"
     );
     questText = questText.replace(
       /<textarea ([^>]*)><\/textarea>\s*->\s*([^\s<]+)/g,
-      "<textarea $1 skipTo=$2></textarea>"
+      "<textarea $1 skipTo=$2 aria-label='Enter your response'></textarea>"
     );
     questText = questText.replace(/<\/div><br>/g, "</div>");
 
@@ -716,25 +746,30 @@ transform.render = async (obj, divId, previousResults = {}) => {
     if (!questText.includes('input') && (questID !== 'END')) {
       resetButton = '';
     }
-
-
-    let rv = `<form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>${questText}<div>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-3 col-sm-12">
-          ${prevButton}
+    
+    let rv = `
+      <form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>
+        <fieldset>
+          ${questText}
+        </fieldset>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3 col-sm-12">
+              ${prevButton}
+            </div>
+            <div class="col-md-6 col-sm-12">
+              ${resetButton}
+            </div>
+            <div class="col-md-3 col-sm-12">
+              ${nextButton}
+            </div>
+          </div>
         </div>
-        <div class="col-md-6 col-sm-12">
-          ${resetButton}
-        </div>
-        <div class=" col-md-3 col-sm-12">
-          ${nextButton}
-        </div>
-      </div>
-    </div>
-    </div><div class="spacePadding"></div></form>`;
-
+        <div class="spacePadding"></div>
+      </form>`;
+    
     return rv;
+  
   });
 
 
@@ -819,6 +854,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
     }
   }
+  
   let questions = [...document.getElementsByClassName("question")];
   let divElement = document.getElementById(divId);
 
@@ -845,8 +881,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     });
   }
 
-  
-
   if (questions.length > 0) {
     let buttonToRemove = questions[0].querySelector(".previous");
     if (buttonToRemove) {
@@ -861,13 +895,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
   questions.forEach((question) => {
     question.onsubmit = stopSubmit;
   });
-  divElement
-    .querySelectorAll("input[type='submit']")
-    .forEach((submitButton) => {
-      submitButton.addEventListener("click", (event) => {
-        event.target.form.clickType = event.target.clickType;
-      });
-    });
+
+  // TODO: Test -> can these eventListeners be managed in displayQuestion() for scope reduction & memory management?
+  // Concept: test using the nextElement value in place of divElement for these listeners in that function.
+  // Reminder: Why -> maybe that could help the Safari input box focus/slowness issue.
 
   [...divElement.querySelectorAll("input")].forEach((inputElement) => {
     inputElement.addEventListener("keydown", (event) => {
@@ -927,28 +958,31 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // handle text in combobox label...
   [...divElement.querySelectorAll("label input,label textarea")].forEach(inputElement => {
-      let radioCB = document.getElementById(inputElement.closest('label').htmlFor) 
-      let callback = (event)=>{
-          let nchar = event.target.value.length
-          //radioCB.checked = nchar>0;
-          // select if typed in box, DONT UNSELECT
-          if (nchar > 0) radioCB.checked = true
-          radioAndCheckboxUpdate(radioCB)
-          inputElement.dataset.lastValue=inputElement.value
+      let radioCB = document.getElementById(inputElement.id)
+
+      if (radioCB) { 
+        let callback = (event)=>{
+            let nchar = event.target.value.length
+            //radioCB.checked = nchar>0;
+            // select if typed in box, DONT UNSELECT
+            if (nchar > 0) radioCB.checked = true
+            radioAndCheckboxUpdate(radioCB)
+            inputElement.dataset.lastValue=inputElement.value
+        }
+        inputElement.addEventListener("keyup",callback);
+        inputElement.addEventListener("input",callback);
+        radioCB.addEventListener("click",(event=>{
+            console.log("click")
+            if (!radioCB.checked){
+                inputElement.dataset.lastValue=inputElement.value
+                inputElement.value=''
+            }else if ('lastValue' in inputElement.dataset){
+                inputElement.value=inputElement.dataset.lastValue
+            }
+            textboxinput(inputElement)
+        }));
       }
-      inputElement.addEventListener("keyup",callback);
-      inputElement.addEventListener("input",callback);
-      radioCB.addEventListener("click",(event=>{
-          console.log("click")
-          if (!radioCB.checked){
-              inputElement.dataset.lastValue=inputElement.value
-              inputElement.value=''
-          }else if ('lastValue' in inputElement.dataset){
-              inputElement.value=inputElement.dataset.lastValue
-          }
-          textboxinput(inputElement)
-      }))
-  })
+  });
 
 
   document.getElementById("submitModalButton").onclick = () => {
@@ -966,7 +1000,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   resetTree();
   
   if (moduleParams.soccer instanceof Function)
-    moduleParams.soccer();
+    moduleParams.soccer(); // "externalListeners" (PWA)
   moduleParams.questName = questName;
 
 
@@ -993,7 +1027,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
     console.log("... ",popoverTriggerEl)
     new bootstrap.Popover(popoverTriggerEl)
   })
-
 
   return true;
 };
@@ -1101,39 +1134,33 @@ function unrollLoops(txt) {
   return txt;
 }
 
+// Handle the next, reset, and back buttons
 function stopSubmit(event) {
   event.preventDefault();
+  
+  const clickType = event.submitter.getAttribute('data-click-type');
+  const buttonClicked = event.target.querySelector(`.${clickType}`);
 
-  switch (event.submitter.dataset.clicktype) {
-
-    case "back":
+  switch (clickType) {
+    case 'previous':
       resetChildren(event.target.elements);
-      event.target.value = undefined;
-
-      let prevButtonClicked = event.target.getElementsByClassName("previous")[0];
-      previousClicked(prevButtonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
-
+      previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
       break;
 
-    case "reset":
+    case 'reset':
       resetChildren(event.target.elements);
-      event.target.value = undefined;
-
-      break;
-    
-    case "next":
-      let nextButtonClicked = event.target.getElementsByClassName("next")[0];
-      nextClick(nextButtonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
-
       break;
 
-    case "submit":
+    case 'submitSurvey':
       new bootstrap.Modal(document.getElementById('submitModal')).show();
+      break;
 
+    case 'next':
+      nextClick(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
       break;
 
     default:
-
+      console.error(`ERROR: Unknown button clicked: ${clickType}`);
   }
 }
 

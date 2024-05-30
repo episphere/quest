@@ -4,47 +4,54 @@ input[type="checkbox"] + label {
 }
 
 
-/* CSS for grids... */
-.quest-grid{
+/* CSS for grids... note: this has been duplicated from ActiveLogic.css. I haven't had time to check why, so I'm continuing the process for now. */
+/* '.quest-grid' impacts all grids and list grids. '.quest-grid.table-layout' (increased specificity) handles the new table-based grids. */
+/* TODO: the list CSS is deprecated. This can be removed once the table-layout structure is in production */
+/* CSS for ALL (list and table) Grids... */
+.quest-grid {
   width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  margin-top: 10px;
+}
+
+.quest-grid * {
+  padding: 4px;
+  text-align: center;
+}
+
+/* CSS for LIST grids... TODO: the list CSS is deprecated. */
+.quest-grid {
   display: grid;
   grid-template-columns: auto repeat(12,minmax(0px,auto));
-
-  font-family:Arial, Helvetica, sans-serif;
-  font-size: small;
   overflow-x: auto;
+  gap: 1px;
+  overflow-y: visible;
 }
 
 .quest-grid > .nr {
   grid-column-start: 1;
   text-align: start;
+  align-self: center;
 }
 
 ul.quest-grid{
   padding: 0px;
-  min-width: min-content;
   list-style-type: none;
-  text-align: center;
-}
-
-ul.quest-grid:li{
-  padding: 0px;
   min-width: min-content;
-  list-style-type: none;
-  text-align: center;
 }
-
-
 
 @media screen and (min-width: 576px) {
   ul.quest-grid input{
       display: inline;
+      height: 1rem;
   }
   ul.quest-grid label{
       display: none;
   }
 }
-
 
 /** 
 I chose 576px because this matches the default breakpoint
@@ -55,10 +62,13 @@ for bootstrap -xs
       display: block;
       width:100%;
   }
-  ul.quest-grid{
+  ul.quest-grid {
       min-width: min-content;
       list-style-type: none;
       text-align: left;
+  }
+  ul.quest-grid > li {
+      margin-top: 2px;
   }
 
   li {
@@ -75,12 +85,236 @@ for bootstrap -xs
 
   ul.quest-grid li.nr:not(:first-child){
       padding-top: 10px;
+  }   
+}
+
+/* CSS for TABLE grids... */
+.quest-grid.table-layout {
+  display: inline-table;
+}
+
+.quest-grid.table-layout tr {
+  width: auto;
+  display: table-row;
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+ 
+.quest-grid.table-layout th.hr {
+  padding: .2vw;
+  text-align: center;
+  vertical-align: middle;
+  height: auto;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  font-weight: normal;
+  font-size: clamp(11px, 1.8vw, 16px);
+  word-wrap: break-word;
+}
+
+.quest-grid.table-layout th.nr {
+  padding: clamp(5px, 1vw, 10px);
+  text-align: center;
+  vertical-align: middle;
+  height: auto;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+
+.quest-grid.table-layout td {
+  padding: .5vw;
+  text-align: center;
+  vertical-align: middle;
+  height: auto;
+  position: relative;
+  background-color: transparent;
+  border: none;
+}
+
+.quest-grid.table-layout th.nr, .quest-grid.table-layout td.nr {
+  text-align: left;
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+
+.quest-grid.table-layout input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.quest-grid.table-layout .custom-label {
+  position: relative;
+  height: clamp(19px, 2vw, 34px);
+  min-width: clamp(19px, 2vw, 34px);
+  color: transparent;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  overflow: hidden;
+  padding: 1em;
+}
+
+.quest-grid.table-layout .custom-label::before {
+  content: '';
+  display: block;
+  width: clamp(19px, 2vw, 34px);
+  height: clamp(19px, 2vw, 34px);
+  border: 0.15vw solid #b3b3b3;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+}
+
+.quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
+  content: '';
+  display: block;
+  width: clamp(14px, 1.4vw, 23px);
+  height: clamp(14px, 1.4vw, 23px);
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #327ABB;
+}
+
+.quest-grid.table-layout .custom-label:hover {
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.quest-grid .custom-label:hover::before {
+  border-color: #1c5d86;
+  box-shadow: 0 0 .75vw #b3b3b3;
+}
+
+.quest-grid.table-layout input[type="radio"]:checked + .custom-label {
+  border: none;
+  background-color: transparent;
+  color: transparent;
+} 
+
+@media screen and (min-width: 576px) {
+  /* Emphasize the first table column. Then let the browser calculate the width for the remaining columns */
+  .quest-grid.table-layout th:first-child, .quest-grid td:first-child {
+    width: 25%;
+    font-weight: normal;
+    font-size: clamp(12px, 1.5vw, 16px);
+  }
+}
+
+/** 
+I chose 576px because this matches the default breakpoint
+for bootstrap -xs
+**/
+@media screen and (max-width: 576px) {
+  .quest-grid.table-layout, .quest-grid.table-layout thead, .quest-grid.table-layout td  { 
+    display: block;
   }
 
-  ul.quest-grid li label {
-      display: unset;
-      padding-left: 5px;
+  .quest-grid.table-layout th.nr {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .quest-grid.table-layout .custom-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    cursor: pointer;
+    display: block;
   }
 
-    
+  .quest-grid.table-layout tbody {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quest-grid.table-layout thead tr { 
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .quest-grid.table-layout tr { 
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #a3a3a3;
+    border-radius: 4px;
+    margin-top: 10px; 
+    padding: 5px;
+  }
+
+  .quest-grid.table-layout td { 
+    display: block;
+    width: 100%;
+    margin-bottom: 3px;
+    text-align: center;
+    min-height: 100px;
+    height: auto;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 16px;
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .quest-grid.table-layout td:hover {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+
+  .quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
+    display: none;
+  }
+
+  .quest-grid.table-layout .custom-label::before {
+    display: none;
+  }
+
+  .quest-grid.table-layout td input[type="radio"]:checked + .custom-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #327ABB;
+    color: white;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    padding: 0 5px;
+    box-sizing: border-box;
+    z-index: 1;
+    text-transform: none;
+    line-height: normal;
+  }
+
+ .quest-grid.table-layout td::before {
+    content: attr(data-header);
+    font-size: 16px;
+    color: #333;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 0 3px;
+  }
 }
