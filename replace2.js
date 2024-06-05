@@ -753,7 +753,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         <fieldset>
           ${questText}
         </fieldset>
-        <div class="container">
+        <div class="py-0">
           <div class="row">
             <div class="col-md-3 col-sm-12 order-3 order-md-1">
               ${prevButton}
