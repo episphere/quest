@@ -755,13 +755,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
         </fieldset>
         <div class="container">
           <div class="row">
-            <div class="col-md-3 col-sm-12">
+            <div class="col-md-3 col-sm-12 order-3 order-md-1">
               ${prevButton}
             </div>
-            <div class="col-md-6 col-sm-12">
+            <div class="col-md-6 col-sm-12 order-2">
               ${resetButton}
             </div>
-            <div class="col-md-3 col-sm-12">
+            <div class="col-md-3 col-sm-12 order-1 order-md-3">
               ${nextButton}
             </div>
           </div>
