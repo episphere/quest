@@ -1,4 +1,4 @@
-{
+const es = {
     "backButton": "Atrás",
     "resetAnswerButton": "Restablecer Respuesta",
     "submitSurveyButton": "Enviar Encuesta",
@@ -63,3 +63,5 @@
     "novemberShort": "Nov",
     "decemberShort": "Dic"
 }
+
+export default es;

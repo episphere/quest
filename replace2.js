@@ -4,10 +4,8 @@ import { parseGrid, grid_replace_regex } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
 import { responseRequestedModal, responseRequiredModal, responseErrorModal, submitModal  } from "./common.js";
 
-import en from "./i18n/en.json" with {type: 'json'};
-import es from "./i18n/es.json" with {type: 'json'};
-
-
+import en from "./i18n/en.js";
+import es from "./i18n/es.js";
 
 export let transform = function () {
   // init
