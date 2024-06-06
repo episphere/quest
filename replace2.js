@@ -191,17 +191,17 @@ transform.render = async (obj, divId, previousResults = {}) => {
       (endMatch && endMatch[1]) === "noback"
         ? ""
         : (questID === 'END')
-          ? "<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>BACK</button>"
-          : "<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>BACK</button>";
+          ? "<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>Back</button>"
+          : "<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>Back</button>";
 
     //debugger;
     let resetButton = (questID === 'END')
       ? "<button type='submit' class='reset' id='submitButton' aria-label='Submit your survey' data-click-type='submitSurvey'>Submit Survey</button>"
-      : "<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>RESET ANSWER</button>";
+      : "<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>Reset Answer</button>";
 
     let nextButton = endMatch
       ? ""
-      : `<button type='submit' class='next w-100' ${target} aria-label='Next question' data-click-type='next'>NEXT</button>`;
+      : `<button type='submit' class='next w-100' ${target} aria-label='Next question' data-click-type='next'>Next</button>`;
 
 
     // replace user profile variables...
@@ -753,7 +753,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         <fieldset>
           ${questText}
         </fieldset>
-        <div class="container">
+        <div class="py-0">
           <div class="row">
             <div class="col-md-3 col-sm-12 order-3 order-md-1">
               ${prevButton}

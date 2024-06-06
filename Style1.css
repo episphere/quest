@@ -73,8 +73,8 @@ input[type="checkbox"] {
   padding-bottom: 5px;
   font-family: "Arial", "sans-serif";
   text-align: left;
-  text-transform: uppercase;
-  /* vertical-align: middle; */
+  /* text-transform: uppercase;
+  vertical-align: middle; */
   display: block;
 }
 
