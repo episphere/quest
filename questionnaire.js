@@ -1205,8 +1205,8 @@ export function displayQuestion(nextElement) {
 
   questionQueue.ptree();
 
-  // manage the question-specific listeners
-  refreshListeners(nextElement);
+  // manage the question-specific listeners in a live environment (skip in the renderer)
+  if (moduleParams.renderObj?.activate) refreshListeners(nextElement);
   return nextElement;
 }
 
@@ -1467,7 +1467,7 @@ export function gridHasAllAnswers(questionFieldset) {
     if (current.style.display=='none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
-    let currentResponses = Array.from(current.parentElement.querySelectorAll(`input[type="radio"][name="${name}"]`))
+    let currentResponses = Array.from(current.parentElement.querySelectorAll(`input[type="radio"][name="${name}"], input[type="checkbox"][name="${name}"]`))
     return acc && currentResponses.some(checked)
   },true)
 }
@@ -1479,7 +1479,7 @@ export function numberOfUnansweredGridQuestions(questionFieldset) {
     if (current.style.display=='none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
-    let currentResponses = Array.from(current.querySelectorAll(`input[type="radio"][name="${name}"]`));
+    let currentResponses = Array.from(current.querySelectorAll(`input[type="radio"][name="${name}"], input[type="checkbox"][name="${name}"]`));
     return currentResponses.some(checked)?acc:(acc+1)
   },0)
 }

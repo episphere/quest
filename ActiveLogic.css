@@ -204,6 +204,7 @@ for bootstrap -xs
   font-size: clamp(12px, 1.5vw, 16px);
 }
 
+.quest-grid.table-layout input[type="checkbox"],
 .quest-grid.table-layout input[type="radio"] {
   position: absolute;
   opacity: 0;
@@ -241,6 +242,7 @@ for bootstrap -xs
   background-color: transparent;
 }
 
+.quest-grid.table-layout input[type="checkbox"]:checked + .custom-label::after,
 .quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
   content: '';
   display: block;
@@ -265,6 +267,7 @@ for bootstrap -xs
   box-shadow: 0 0 .75vw #b3b3b3;
 }
 
+.quest-grid.table-layout input[type="checkbox"]:checked + .custom-label,
 .quest-grid.table-layout input[type="radio"]:checked + .custom-label {
   border: none;
   background-color: transparent;
@@ -345,6 +348,7 @@ for bootstrap -xs
     color: #333;
   }
 
+  .quest-grid.table-layout input[type="checkbox"]:checked + .custom-label::after,
   .quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
     display: none;
   }
@@ -353,6 +357,7 @@ for bootstrap -xs
     display: none;
   }
 
+  .quest-grid.table-layout td input[type="checkbox"]:checked + .custom-label,
   .quest-grid.table-layout td input[type="radio"]:checked + .custom-label {
     position: absolute;
     top: 0;
