@@ -182,14 +182,13 @@ transform.render = async (obj, divId, previousResults = {}) => {
       (endMatch && endMatch[1]) === "noback"
         ? ""
         : (questID === 'END')
-
-          ? "<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>${moduleParams.i18n.backButton}</button>"
-          : "<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>${moduleParams.i18n.backButton}</button>";
+          ? `<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>${moduleParams.i18n.backButton}</button>`
+          : `<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>${moduleParams.i18n.backButton}</button>`;
 
     //debugger;
     let resetButton = (questID === 'END')
-      ? "<button type='submit' class='reset' id='submitButton' aria-label='Submit your survey' data-click-type='submitSurvey'>${moduleParams.i18n.submitSurveyButton}</button>"
-      : "<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>${moduleParams.i18n.resetAnswerButton}</button>";
+      ? `<button type='submit' class='reset' id='submitButton' aria-label='Submit your survey' data-click-type='submitSurvey'>${moduleParams.i18n.submitSurveyButton}</button>`
+      : `<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>${moduleParams.i18n.resetAnswerButton}</button>`;
 
     let nextButton = endMatch
       ? ""
