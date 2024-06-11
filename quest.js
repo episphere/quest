@@ -102,7 +102,6 @@ async function startUp() {
       document.getElementById("pagestyle").setAttribute("href", "Style1.css")
     }
   }
-
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
   document.getElementById("clearMem").addEventListener("click",clearLocalForage)
