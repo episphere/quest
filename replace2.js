@@ -71,22 +71,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // months
 
   contents = contents
-    .replace(/#currentMonthStr/g, 
-  [
-    moduleParams.i18n.januaryShort,
-    moduleParams.i18n.februaryShort,
-    moduleParams.i18n.marchShort,
-    moduleParams.i18n.aprilShort,
-    moduleParams.i18n.mayShort,
-    moduleParams.i18n.juneShort,
-    moduleParams.i18n.julyShort,
-    moduleParams.i18n.augustShort,
-    moduleParams.i18n.septemberShort,
-    moduleParams.i18n.octoberShort,
-    moduleParams.i18n.novemberShort,
-    moduleParams.i18n.decemberShort
-  ][new Date().getMonth()])
-
+    .replace(/#currentMonthStr/g, moduleParams.i18n.months[new Date().getMonth()])
     .replace(/#currentMonth/g, current_date.getMonth() + 1)
     .replace(/#currentYear/g, current_date.getFullYear())
     // issue #405 need #today and today+/- n days...
