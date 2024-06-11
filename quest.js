@@ -102,7 +102,7 @@ async function startUp() {
       document.getElementById("pagestyle").setAttribute("href", "Style1.css")
     }
   }
-  
+
   document.getElementById("increaseSizeButton").onclick = increaseSize;
   document.getElementById("decreaseSizeButton").onclick = decreaseSize;
   document.getElementById("clearMem").addEventListener("click",clearLocalForage)
@@ -209,11 +209,16 @@ document.getElementById("viewCache").addEventListener("click",()=>{
 
 window.onload = function () {
   startUp();
-  document.querySelectorAll('input.form-check-input').forEach( (el) => {
+  document.querySelectorAll('#logic,#styling').forEach( (el) => {
     el.addEventListener("change",(event)=>{
       console.log(event.target.id,event.target.checked)
       questLF.setItem(event.target.id,event.target.checked)
       setStylingAndLogic()
     })
+  })
+  document.querySelector("#hide-markup").addEventListener("change",(event)=>{
+    console.log(event.target.checked)
+    document.getElementById("markup").style.display=(event.target.checked)?"none":"initial"
+    document.getElementById("renderText").style.display=(event.target.checked)?"none":"initial"
   })
 };
