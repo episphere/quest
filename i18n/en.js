@@ -50,18 +50,7 @@ const en = {
     "validationCountMore": "You have selected {0} items.  Please select at least {1}",
     "validationCountLess": "You have selected {0} items.  Please select no more than {1}",
 
-    "januaryShort": "Jan",
-    "februaryShort": "Feb",
-    "marchShort": "Mar",
-    "aprilShort": "Apr",
-    "mayShort": "May",
-    "juneShort": "Jun",
-    "julyShort": "Jul",
-    "augustShort": "Aug",
-    "septemberShort": "Sep",
-    "octoberShort": "Oct",
-    "novemberShort": "Nov",
-    "decemberShort": "Dec"
+    "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 }
 
 export default en;
