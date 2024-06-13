@@ -509,10 +509,8 @@ export function textboxinput(inputElement, validate = true) {
   }
   if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
     if (inputElement.getAttribute("modalvalue")) {
-      document.getElementById(
-        "modalResponseBody"
-      ).innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
-      new bootstrap.Modal(document.getElementById('softModalResponse')).show()
+      document.getElementById("modalResponseBody").innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
+      new bootstrap.Modal(document.getElementById('softModalResponse')).show();
     }
   }
   if (inputElement.className == "SSN") {
@@ -754,7 +752,7 @@ function showModal(norp, retrieve, store, rootElement) {
     // Fieldset is the parent of the inputs for all but grid questions. Grid questions are in a table.
     const fieldset = norp.form.querySelector('fieldset') || norp.form.querySelector('tbody');
 
-    let numBlankResponses = [fieldset.children]
+    let numBlankResponses = [...fieldset.children]
       .filter(x => 
         x.tagName !== 'DIV' && x.tagName !== 'BR' &&
         x.type && x.type !== 'hidden' &&

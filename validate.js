@@ -263,7 +263,7 @@ function validate_count(inputElement){
 
         lastElement = lastElement.item(lastElement.length - 1).closest(".response");
 
-        if (hasMin && selectedCoun < minCount) {
+        if (hasMin && selectedCount < minCount) {
             validationError(lastElement, translate("validationCountMore", [selectedCount, minCount]));
         } 
         else if (hasMax && selectedCount > maxCount) {
