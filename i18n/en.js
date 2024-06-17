@@ -1,4 +1,6 @@
 const en = {
+    "language": "en",
+    
     "backButton": "Back",
     "resetAnswerButton": "Reset Answer",
     "submitSurveyButton": "Submit Survey",

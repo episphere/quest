@@ -1092,7 +1092,7 @@ function unrollLoops(txt) {
       //replace all user-named combo and radio boxes
       currentText = currentText.replaceAll(rb_cb_regex,(all,g1)=>all.replace(g1,`${g1}_${loopIndx}`))
 
-      currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx, moduleParams.i18n)}`)
+      currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx, moduleParams.i18n.language)}`)
 
       ids.map(
         (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
