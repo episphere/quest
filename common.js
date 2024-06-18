@@ -68,7 +68,7 @@ export const responseErrorModal = () => {
               <div class="modal-content">
                   <div class="modal-header">
                       <h5 class="modal-title" id="softModalResponseTitle">${translate('responseErrorLabel')}</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                       </button>
                   </div>
@@ -76,8 +76,8 @@ export const responseErrorModal = () => {
                       <p>${translate('responseErrorBody')}</p>
                   </div>
                   <div id="softModalResponseFooter" class="modal-footer">
-                      <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">${translate('correctButton')}</button>
-                      <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">${translate('incorrectButton')}</button>
+                      <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal" data-bs-dismiss="modal">${translate('correctButton')}</button>
+                      <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">${translate('incorrectButton')}</button>
                   </div>
               </div>
           </div>
