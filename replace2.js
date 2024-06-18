@@ -1034,8 +1034,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // handle text in combobox label...
   [...divElement.querySelectorAll("label input,label textarea")].forEach(inputElement => {
-      let radioCB = document.getElementById(inputElement.id)
-
+      let radioCB = document.getElementById(inputElement.closest('label').htmlFor);
       if (radioCB) { 
         let callback = (event)=>{
             let nchar = event.target.value.length
