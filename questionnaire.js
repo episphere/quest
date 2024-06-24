@@ -500,8 +500,13 @@ function exchangeValue(element, attrName, newAttrName) {
 
 // TODO: Look here for Safari text input delay issue.
 export function textboxinput(inputElement, validate = true) {
-  
+
   let evalBool = "";
+  const modalElement = document.getElementById('softModalResponse');
+  if (!modalElement.classList.contains('show')) {
+  
+  const modal = new bootstrap.Modal(modalElement);
+
   if (inputElement.getAttribute("modalif") && inputElement.value != "") {
     evalBool = math.evaluate(
       decodeURIComponent(inputElement.getAttribute("modalif").replace(/value/, inputElement.value))
@@ -510,9 +515,11 @@ export function textboxinput(inputElement, validate = true) {
   if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
     if (inputElement.getAttribute("modalvalue")) {
       document.getElementById("modalResponseBody").innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
-      new bootstrap.Modal(document.getElementById('softModalResponse')).show();
+
+      modal.show();
     }
   }
+}
   if (inputElement.className == "SSN") {
     // handles SSN auto-format
     parseSSN(inputElement);

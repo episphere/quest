@@ -532,7 +532,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? 'between ' + min + ' and ' + max : ''}.`;
       
       // Add placeholder and aria-describedby
-      const placeholder = min ? `placeholder="Example: ${min}"` : (max ? `placeholder="Example: ${max}"` : 'placeholder="Enter a value"');
+      const placeholder = min ? `placeholder="${moduleParams.i18n.example}: ${min}"` : (max ? `placeholder="${moduleParams.i18n.example}: ${max}"` : `placeholder=${moduleParams.i18n.enterValue}`);
       options += ` ${placeholder} aria-describedby="${elementId}-desc"`;
 
       //onkeypress forces whole numbers
@@ -941,7 +941,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // handle text in combobox label...
   [...divElement.querySelectorAll("label input,label textarea")].forEach(inputElement => {
-      let radioCB = document.getElementById(inputElement.id)
+      let radioCB = document.getElementById(inputElement.closest('label').htmlFor);
 
       if (radioCB) { 
         let callback = (event)=>{
@@ -1004,7 +1004,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   })
 
   // enable all popovers...
-  console.log("...")
+  
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => {
     console.log("... ",popoverTriggerEl)
