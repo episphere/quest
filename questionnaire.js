@@ -553,7 +553,7 @@ export function textboxinput(inputElement, validate = true) {
   if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
     if (inputElement.getAttribute("modalvalue")) {
       document.getElementById(
-        "modalResponseBody"
+        "softModalResponseBody"
       ).innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
       new bootstrap.Modal(document.getElementById('softModalResponse')).show()
     }

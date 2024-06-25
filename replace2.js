@@ -835,8 +835,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
             <p>There is an error with this response. Is this correct?</p>
           </div>
           <div id="softModalResponseFooter" class="modal-footer">
-            <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
-            <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
+            <button type="button" id=modalResponseContinueButton class="btn btn-success" data-bs-dismiss="modal" data-dismiss="modal">Correct</button>
+            <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-bs-dismiss="modal" data-dismiss="modal">Incorrect</button>
           </div>
         </div>
       </div>
