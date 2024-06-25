@@ -57,10 +57,8 @@ export async function restoreResults(results) {
           return;
         }
 
-        if (element?.value) {
-          element.value = results[qid];
-          textboxinput(element, false);
-        }
+        element.value = results[qid];
+        textboxinput(element, false);
       }
 
       // we should return from here...
