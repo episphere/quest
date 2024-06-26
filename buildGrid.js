@@ -1,3 +1,4 @@
+import { translate } from "./common.js";
 
 export const grid_replace_regex = /\|grid(\!|\?)*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
 
@@ -113,93 +114,23 @@ function buildHtmlTable(grid_obj){
     grid_html += `</tr>`;
   });
   
-  grid_html+=`</tbody></table>
+  grid_html += `</tbody></table>
     <div class="container">
       <div class="row">
         <div class="col-md-3 col-sm-12">
-          <button type="submit" class="previous w-100" aria-label="Back to the previous section" data-click-type="previous">Back</button>
+          <button type="submit" class="previous w-100" aria-label="Back to the previous section" data-click-type="previous">${translate("backButton")}</button>
         </div>
         <div class="col-md-6 col-sm-12">
-          <button type="submit" class="reset w-100" aria-label="Reset answer for this question" data-click-type="reset">Reset Answer</button>
+          <button type="submit" class="reset w-100" aria-label="Reset answer for this question" data-click-type="reset">${translate("resetAnswerButton")}</button>
         </div>
         <div class="col-md-3 col-sm-12">
-          <button type="submit" class="next w-100" aria-label="Go to the next section" data-click-type="next">Next</button>
+          <button type="submit" class="next w-100" aria-label="Go to the next section" data-click-type="next">${translate("nextButton")}</button>
         </div>
       </div>
     </div>
   </form>`;
 
   return grid_html;
-}
-
-function buildHtml_og(grid_obj) {
-  let grid_head =
-    '<div class="d-flex align-items-center border"><div class="col">Select an answer for each row below:</div>';
-  grid_obj.responses.forEach((resp) => {
-    grid_head += `<div class="col-1">${resp.text}</div>`;
-  });
-  grid_head += "</div>";
-  let grid_table_body = "";
-  grid_obj.questions.forEach((question) => 
-  {
-    // check for row-level display if
-    let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
-
-    // check for displayif inside row text
-    let question_text = grid_text_displayif(question.question_text)
-
-    grid_table_body += `<div id="${question.id}" ${displayif} data-gridrow=true class="d-flex align-items-stretch"><div class="col d-flex align-items-left justify-content-left border"><span>${question_text}<span></div>`;
-    grid_obj.responses.forEach((resp, resp_indx) => {
-      grid_table_body += `<div class="col-1 d-flex align-items-center justify-content-center border"><input gridcell type="${resp.type}" name="${question.id}" id="${question.id}_${resp_indx}" value="${resp.value}" grid class="grid-input-element show-button"/></div>`;
-    });
-    grid_table_body += "</div>";
-  });
-
-  let small_format = "";
-  grid_obj.questions.forEach((question) => {
-    let displayif = question.displayif ? ` displayif="${question.displayif}"` : '';
-    // check for displayif inside question text
-    let question_text = grid_text_displayif(question.question_text)
-    small_format += `<div id="${question.id}_sm" ${displayif}><div class="pt-4">${question_text}</div>`;
-    grid_obj.responses.forEach((resp, resp_indx) => {
-      small_format += `<div class="response text-center"><input data-is-small-grid-cell="1" type="${resp.type}" class="d-none grid-input-element" name="${question.id}_sm" id="${question.id}_sm_${resp_indx}" value="${resp.value}"  aria-label='(${question.question_text}, ${resp.text})'/><label class="w-100" for="${question.id}_sm_${resp_indx}">${resp.text}</label></div>`;
-    });
-    small_format += "</div>";
-  });
-  let gridPrompt = "hardedit='false' softedit='false'";
-
-  if (grid_obj.prompt) {
-    if (grid_obj.prompt === '!') {
-      gridPrompt = "hardedit='true' softedit='false'";
-    }
-    else if (grid_obj.prompt === '?') {
-      gridPrompt = "hardedit='false' softedit='true'";
-    }
-  }
-  //remove , from display if for form if it exists
-  grid_obj.args = grid_obj.args.replace(",displayif", " displayif");
-  let shared_text = grid_text_displayif(grid_obj.shared_text)
-  shared_text = grid_replace_piped_variables(shared_text)
-  let html_text = `<form ${grid_obj.args} class="container question" grid ${gridPrompt}>
-  ${shared_text}<div class="d-none d-lg-block" data-grid="large" style="background-color: rgb(193,225,236)">
-  ${grid_head}${grid_table_body}</div><div class="d-lg-none" data-grid="small">${small_format}</div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3 col-sm-12">
-        <input type='submit' class='previous w-100' value='BACK'/>
-      </div>
-      <div class="col-md-6 col-sm-12">
-        <input type='submit' class='reset w-100' value='RESET ANSWER'/>
-      </div>
-      <div class="col-md-3 col-sm-12">
-        <input type='submit' class='next w-100' value='NEXT'/>
-      </div>
-    </div>
-  </div>
-  </form>`;
-
-  //for some reason spacing needs to be removed
-  return html_text.replace(/(\r\n|\n|\r)/gm, "");;
 }
 
 // note the text should contain the entirity of ONE grid!

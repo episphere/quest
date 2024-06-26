@@ -1,24 +1,11 @@
-import {
-  questionQueue,
-  nextClick,
-  previousClicked,
-  moduleParams,
-  rbAndCbClick,
-  textBoxInput,
-  handleXOR,
-  displayQuestion,
-  parseSSN,
-  parsePhoneNumber,
-  submitQuestionnaire,
-  textboxinput,
-  math,
-  radioAndCheckboxUpdate
-} from "./questionnaire.js";
+import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput, handleXOR, displayQuestion, parseSSN, parsePhoneNumber, submitQuestionnaire, textboxinput, math, radioAndCheckboxUpdate } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
+import { responseRequestedModal, responseRequiredModal, responseErrorModal, submitModal  } from "./common.js";
 
-
+import en from "./i18n/en.js";
+import es from "./i18n/es.js";
 
 export let transform = function () {
   // init
@@ -42,10 +29,13 @@ let reduceObj = (obj) => {
 }
 
 transform.render = async (obj, divId, previousResults = {}) => {
+  
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   moduleParams.soccer = obj.soccer;
   moduleParams.delayedParameterArray = obj.delayedParameterArray;
+  moduleParams.i18n = obj.lang === 'es' ? es : en;
+
   rootElement = divId;
   let contents = "";
 
@@ -78,8 +68,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // then we must unroll the loops...
   contents = unrollLoops(contents);
   // #issue 378, note: getMonth 0=Jan,  need to add 1
+  // months
+
   contents = contents
-    .replace(/#currentMonthStr/g, ["Jan", "Feb", "Mar", 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][new Date().getMonth()])
+    .replace(/#currentMonthStr/g, moduleParams.i18n.months[new Date().getMonth()])
     .replace(/#currentMonth/g, current_date.getMonth() + 1)
     .replace(/#currentYear/g, current_date.getFullYear())
     // issue #405 need #today and today+/- n days...
@@ -141,8 +133,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     questArgs,
     questText
   ) {
-    // questText = questText.replace(/\/\*[\s\S]+\*\//g, "");
-    // questText = questText.replace(/\/\/.*\n/g, "");
+
     questText = questText.replace(/\u001f/g, "\n");
     questText = questText.replace(/(?:\r\n|\r|\n)/g, "<br>");
     questText = questText.replace(/\[_#\]/g, "");
@@ -191,17 +182,17 @@ transform.render = async (obj, divId, previousResults = {}) => {
       (endMatch && endMatch[1]) === "noback"
         ? ""
         : (questID === 'END')
-          ? "<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>Back</button>"
-          : "<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>Back</button>";
+          ? `<button type='submit' class='previous w-100' id='lastBackButton' aria-label='Back to the previous section' data-click-type='previous'>${moduleParams.i18n.backButton}</button>`
+          : `<button type='submit' class='previous w-100' aria-label='Back to the previous question' data-click-type='previous'>${moduleParams.i18n.backButton}</button>`;
 
     //debugger;
     let resetButton = (questID === 'END')
-      ? "<button type='submit' class='reset' id='submitButton' aria-label='Submit your survey' data-click-type='submitSurvey'>Submit Survey</button>"
-      : "<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>Reset Answer</button>";
+      ? `<button type='submit' class='reset' id='submitButton' aria-label='Submit your survey' data-click-type='submitSurvey'>${moduleParams.i18n.submitSurveyButton}</button>`
+      : `<button type='submit' class='reset w-100' aria-label='Reset this answer' data-click-type='reset'>${moduleParams.i18n.resetAnswerButton}</button>`;
 
     let nextButton = endMatch
       ? ""
-      : `<button type='submit' class='next w-100' ${target} aria-label='Next question' data-click-type='next'>Next</button>`;
+      : `<button type='submit' class='next w-100' ${target} aria-label='Next question' data-click-type='next'>${moduleParams.i18n.nextButton}</button>`;
 
 
     // replace user profile variables...
@@ -241,17 +232,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       text = text.replace(/\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?\s*(.*?)/g, fText);
       text = text.replace(/\|___\|((\w+)\|)?/g, fTextArea);
       text = text.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
-      text = text.replace(
-        /#YNP/g,
-        `(1) Yes
-         (0) No
-         (99) Prefer not to answer`
-      );
-      text = questText.replace(
-        /#YN/g,
-        `(1) Yes
-         (0) No`
-      );
+      text = text.replace(/#YNP/g, translate('yesNoPrefer')); //check
+      text = questText.replace(/#YN/g, translate('yesNo')); //check
+
       return `<span class='displayif' ${condition}>${text}</span>`;
     }
 
@@ -336,7 +319,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fState(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "state");
       return `<select ${options}>
-        <option value='' disabled selected>Choose a state: </option>
+        <option value='' disabled selected>${moduleParams.i18n.chooseState}: </option>
         <option value='AL'>Alabama</option>
         <option value='AK'>Alaska</option>
         <option value='AZ'>Arizona</option>
@@ -444,7 +427,6 @@ transform.render = async (obj, divId, previousResults = {}) => {
         if (match.input[i] == "(") cnt++;
         if (match.input[i] == ")") cnt--;
         if (match.input[i] == "\n") break;
-        //if (match.input[i] == "\n")throw new SyntaxError("parenthesis mismatch near ", match[0]);
 
         end = i + 1;
         if (cnt == 0) break;
@@ -550,7 +532,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? 'between ' + min + ' and ' + max : ''}.`;
       
       // Add placeholder and aria-describedby
-      const placeholder = min ? `placeholder="Example: ${min}"` : (max ? `placeholder="Example: ${max}"` : 'placeholder="Enter a value"');
+      const placeholder = min ? `placeholder="${moduleParams.i18n.example}: ${min}"` : (max ? `placeholder="${moduleParams.i18n.example}: ${max}"` : `placeholder=${moduleParams.i18n.enterValue}`);
       options += ` ${placeholder} aria-describedby="${elementId}-desc"`;
 
       //onkeypress forces whole numbers
@@ -614,15 +596,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
         <ul>
           <li class='response'>
             <input type='radio' id="${questID}_1" name="${questID}" value="yes">
-            <label for='${questID}_1'>Yes</label>
+            <label for='${questID}_1'>${moduleParams.i18n.yes}</label>
           </li>
           <li class='response'>
             <input type='radio' id="${questID}_0" name="${questID}" value="no">
-            <label for='${questID}_0'>No</label>
+            <label for='${questID}_0'>${moduleParams.i18n.no}</label>
           </li>
           <li class='response'>
             <input type='radio' id="${questID}_99" name="${questID}" value="prefer not to answer">
-            <label for='${questID}_99'>Prefer not to answer</label>
+            <label for='${questID}_99'>${moduleParams.i18n.preferNotToAnswer}</label>
           </li>
         </ul>
       </div>
@@ -638,11 +620,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
         <ul>
           <li class='response'>
             <input type='radio' id="${questID}_1" name="${questID}" value="yes">
-            <label for='${questID}_1'>Yes</label>
+            <label for='${questID}_1'>${moduleParams.i18n.yes}</label>
           </li>
           <li class='response'>
             <input type='radio' id="${questID}_0" name="${questID}" value="no">
-            <label for='${questID}_0'>No</label>
+            <label for='${questID}_0'>${moduleParams.i18n.no}</label>
           </li>
         </ul>
       </div>
@@ -782,85 +764,10 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
+
   // add the HTML/HEAD/BODY tags...
-  document.getElementById(divId).innerHTML =
-    contents + `
-    <div class="modal" id="softModal" tabindex="-1" role="dialog" aria-labelledby="softModalTitle" aria-modal="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="softModalTitle" tabindex="-1">Response Requested</h5>
-            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div id="modalBody" class="modal-body" aria-describedby="modalBodyText">
-            <p id="modalBodyText">There is 1 unanswered question on this page. Would you like to continue?</p>
-          </div>
-          <div id="softModalFooter" class="modal-footer">
-            <button type="button" id="modalContinueButton" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Continue Without Answering</button>
-            <button type="button" id="modalCloseButton" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="hardModal" tabindex="-1" role="dialog" aria-labelledby="hardModalLabel" aria-modal="true" aria-describedby="hardModalBodyText">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="hardModalLabel">Response Required</h5>
-            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p id="hardModalBodyText">There is 1 unanswered question on this page. Please answer this question.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Answer the Question</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="softModalResponse" tabindex="-1" role="dialog" aria-labelledby="softModalResponseTitle" aria-modal="true" aria-describedby="softModalResponseBody">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="softModalResponseTitle">Response Requested</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div id="softModalResponseBody" class="modal-body">
-            <p>There is an error with this response. Is this correct?</p>
-          </div>
-          <div id="softModalResponseFooter" class="modal-footer">
-            <button type="button" id=modalResponseContinueButton class="btn btn-success" data-dismiss="modal">Correct</button>
-            <button type="button" id=modalResponseCloseButton class="btn btn-danger" data-dismiss="modal">Incorrect</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel" aria-modal="true" aria-describedby="submitModalBodyText">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="submitModalLabel">Submit Answers</h5>
-            <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-              <p id="submitModalBodyText">Are you sure you want to submit your answers?</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="submitModalButton" class="btn btn-success" data-dismiss="modal" data-bs-dismiss="modal">Submit</button>
-            <button type="button" id="cancelModal" class="btn btn-danger" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+  document.getElementById(divId).innerHTML = contents + responseRequestedModal() + responseRequiredModal() + responseErrorModal() + submitModal();
+
 
   function setActive(id) {
     let active = document.getElementById(id);
@@ -1035,6 +942,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   // handle text in combobox label...
   [...divElement.querySelectorAll("label input,label textarea")].forEach(inputElement => {
       let radioCB = document.getElementById(inputElement.closest('label').htmlFor);
+
       if (radioCB) { 
         let callback = (event)=>{
             let nchar = event.target.value.length
@@ -1096,7 +1004,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   })
 
   // enable all popovers...
-  console.log("...")
+  
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => {
     console.log("... ",popoverTriggerEl)
@@ -1106,18 +1014,25 @@ transform.render = async (obj, divId, previousResults = {}) => {
   return true;
 };
 
-function ordinal(a) {
+function ordinal(a, lang) {
+  
   if (Number.isInteger(a)) {
-    switch (a % 10) {
-      case 1: return ((a % 100) == 11 ? `${a}th` : `${a}st`);
-      case 2: return ((a % 100) == 12 ? `${a}th` : `${a}nd`);
-      case 3: return ((a % 100) == 13 ? `${a}th` : `${a}rd`);
-      default: return (`${a}th`)
+    if (lang === "es") {
+      return `${a}o`;
+    }
+    else {
+      switch (a % 10) {
+        case 1: return ((a % 100) == 11 ? `${a}th` : `${a}st`);
+        case 2: return ((a % 100) == 12 ? `${a}th` : `${a}nd`);
+        case 3: return ((a % 100) == 13 ? `${a}th` : `${a}rd`);
+        default: return (`${a}th`)
+      } 
     }
   }
-  return ""
-
+  
+  return "";
 }
+
 function unrollLoops(txt) {
   // all the questions in the loops...
   // each element in res is a loop in the questionnaire...
@@ -1177,11 +1092,12 @@ function unrollLoops(txt) {
       //replace all user-named combo and radio boxes
       currentText = currentText.replaceAll(rb_cb_regex,(all,g1)=>all.replace(g1,`${g1}_${loopIndx}`))
 
-      currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx)}`)
+      currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx, moduleParams.i18n.language)}`)
 
       ids.map(
         (id) => (currentText = currentText.replace(/#loop/g, "" + loopIndx))
       );
+
 
       // replace  _\d_\d#prev with _{$loopIndex-1}
       // we do it twice to match a previous bug..

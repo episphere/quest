@@ -61,6 +61,7 @@ async function startUp() {
       transform.render(
         {
           text: ta.value,
+          lang: document.getElementById("langSelect").value
         },
         "rendering",
         previousResults
