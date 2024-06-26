@@ -995,7 +995,7 @@ function exitLoop(nextElement) {
     let loopIndex = parseInt(nextElement.getAttribute("loopindx"));
 
     if (isNaN(loopMax) || isNaN(firstQuestion) || isNaN(loopIndex)) {
-      console.error(`LoopMax, firstQuestion, or loopIndex is NaN for ${nextElement.id}`);
+      console.error(`LoopMax, firstQuestion, or loopIndex is NaN for ${nextElement.id}: loopMax=${loopMax}, firstQuestion=${firstQuestion}, loopIndex=${loopIndex}`);
       return nextElement;
     }
 
