@@ -39,6 +39,9 @@ export async function restoreResults(results) {
     if (typeof results[qid] == "string") {
       // in this case get the first input/textarea in the form and fill it in.
       let element = formElement.querySelector("input,textarea,select");
+      // If the element is not on the page
+      // it could have been dynamically create (think SOCcer...) just return..
+      if (!element) return
       // null handle element, skip if null (load failing when participant is in the middle of unanswered SOCcer questions)
       if (element?.type == "radio") {
         let selector = `input[value='${results[qid]}']`;
