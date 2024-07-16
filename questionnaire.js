@@ -1093,7 +1093,7 @@ export function displayQuestion(nextElement) {
   );
 
   // check all responses for next question
-  [...nextElement.children]
+  [...(nextElement.querySelector('fieldset')?.children || [])]
     .filter((x) => {
       return x.hasAttribute("displayif");
     })
@@ -1101,6 +1101,7 @@ export function displayQuestion(nextElement) {
       let f = evaluateCondition(elm.getAttribute("displayif"));
       elm.style.display = f ? null : "none";
     });
+    
   // check for displayif spans...
   Array.from(nextElement.querySelectorAll("span[displayif],div[displayif]"))
     .map(elm => {
@@ -1135,6 +1136,7 @@ export function displayQuestion(nextElement) {
   
   // Check if grid elements need to be shown. Elm is a <tr>. If f !== true, remove the row (elm) from the DOM.
   Array.from(nextElement.querySelectorAll("[data-gridrow][data-displayif]")).forEach((elm) => {
+    console.log(`GRID displayif: ${elm}`)
     const f = evaluateCondition(decodeURIComponent(elm.dataset.displayif));
     console.log(`checking the datagrid for displayif... ${elm.dataset.questionId} ${f}`)
 
