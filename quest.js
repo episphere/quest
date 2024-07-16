@@ -1,6 +1,7 @@
 import { transform } from "./replace2.js";
 import { questionQueue, moduleParams } from "./questionnaire.js";
 
+
 let prevRes = {};
 
 // Make it easier to create a TH.
@@ -119,6 +120,19 @@ async function startUp() {
   };
 
   let myTree = questionQueue;
+
+  document.querySelectorAll('#logic,#styling').forEach( (el) => {
+    el.addEventListener("change",(event)=>{
+      console.log(event.target.id,event.target.checked)
+      questLF.setItem(event.target.id,event.target.checked)
+      setStylingAndLogic()
+    })
+  })
+  document.querySelector("#hide-markup").addEventListener("change",(event)=>{
+    console.log(event.target.checked)
+    document.getElementById("markup").style.display=(event.target.checked)?"none":"initial"
+    document.getElementById("renderText").style.display=(event.target.checked)?"none":"initial"
+  })
 }
 
 function increaseSize() {
@@ -206,18 +220,8 @@ document.getElementById("viewCache").addEventListener("click",()=>{
   getCachedResponses()
 })
 
-window.onload = function () {
-  startUp();
-  document.querySelectorAll('#logic,#styling').forEach( (el) => {
-    el.addEventListener("change",(event)=>{
-      console.log(event.target.id,event.target.checked)
-      questLF.setItem(event.target.id,event.target.checked)
-      setStylingAndLogic()
-    })
-  })
-  document.querySelector("#hide-markup").addEventListener("change",(event)=>{
-    console.log(event.target.checked)
-    document.getElementById("markup").style.display=(event.target.checked)?"none":"initial"
-    document.getElementById("renderText").style.display=(event.target.checked)?"none":"initial"
-  })
+if (document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded",startUp)
+} else {
+  startUp()
 };
