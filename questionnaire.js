@@ -1093,14 +1093,11 @@ export function displayQuestion(nextElement) {
   );
 
   // check all responses for next question
-  [...nextElement.children]
-    .filter((x) => {
-      return x.hasAttribute("displayif");
-    })
-    .map((elm) => {
-      let f = evaluateCondition(elm.getAttribute("displayif"));
-      elm.style.display = f ? null : "none";
-    });
+  [...nextElement.querySelectorAll('[displayif]')].map((elm) => {
+    let f = evaluateCondition(elm.getAttribute("displayif"));
+    elm.style.display = f ? null : "none";
+  });
+
   // check for displayif spans...
   Array.from(nextElement.querySelectorAll("span[displayif],div[displayif]"))
     .map(elm => {
