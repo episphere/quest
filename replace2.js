@@ -1211,11 +1211,13 @@ function stopSubmit(event) {
   switch (clickType) {
     case 'previous':
       resetChildren(event.target.elements);
+      event.target.value = undefined;
       previousClicked(buttonClicked, moduleParams.renderObj.retrieve, moduleParams.renderObj.store, rootElement);
       break;
 
     case 'reset':
       resetChildren(event.target.elements);
+      event.target.value = undefined;
       break;
 
     case 'submitSurvey':
