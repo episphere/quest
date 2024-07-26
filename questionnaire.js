@@ -1513,7 +1513,7 @@ export function evaluateCondition(txt) {
       if (typeof x === "string") {
         let element = document.getElementById(x);
         if (element != null) {
-          if (element.hasAttribute('grid') && (element.type === "radio" || element.type === "checkbox")) {
+          if (element.dataset.grid && (element.type === "radio" || element.type === "checkbox")) {
             //for displayif conditions with grid elements
             x = element.checked ? 1 : 0;
           }
