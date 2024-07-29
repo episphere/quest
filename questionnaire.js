@@ -2,17 +2,12 @@ import { Tree } from "./tree.js";
 import { knownFunctions } from "./knownFunctions.js";
 import { removeQuestion } from "./localforageDAO.js";
 import { validateInput, validationError } from "./validate.js"
-
+import { translate } from "./common.js";
 
 export const moduleParams = {};
 import  * as mathjs  from 'https://cdn.skypack.dev/mathjs@11.2.0';
 export const math=mathjs.create(mathjs.all)
 window.math = math
-
-//let script = document.createElement("script");
-//script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.2.0/math.js"
-//document.body.appendChild(script);
-
 
 
 // create a class YearMonth custom datatype for use in mathjs to handle
@@ -316,25 +311,11 @@ function getKeyedValue(x) {
   let array = x.toString().split('.')
   // convert null or undefined to undefined...
   let obj = math._value(`${array.splice(0, 1)}`) ?? undefined
+  
   return array.reduce((prev, curr) => {
     if ( math.isUndefined(prev) ) return prev
     return prev[curr] ?? undefined
   }, obj)
-
-  /*
-  if (math.exists(`${array[0]}`)) {
-    // we need to get the object and see
-    // if the object has the appropriate keys.
-    let obj = math._value(`${array.splice(0, 1)}`)
-    let tst = array.reduce((prev, curr) => {
-      if (math.isUndefined(prev)) return prev
-      return prev[curr]
-    }, obj)
-    tst
-  } else {
-    return false
-  }
-  */
 }
 
 // Tell mathjs about the YearMonth class
@@ -380,11 +361,18 @@ export function isFirstQuestion() {
   return questionQueue.isEmpty() || questionQueue.isFirst();
 }
 
-function numberOfInputs(element) {
-  let resps = Array.from(
-    element.querySelectorAll("input, textarea, select")
-  ).reduce((acc, current) => {
-    //if (["submit", "button"].includes(current.type)) return acc;
+/**
+ * Determine the storage format for the response data.
+ * Grid questions are stored as objects. Ensure each key is stored with the response.
+ * Single response (radio) input questions are stored as primitives.
+ * Multi-selection (checkbox) input questions are stored as arrays.
+ * @param {HTMLElement} form - the form element being evaluated.
+ * @returns {boolean} - true if the key must be stored with the response (Object), false otherwise (primitive).
+ */
+function isObjectStore(form) {
+  if (form.dataset?.grid === 'true') return true;
+
+  const responseInputs = Array.from(form.querySelectorAll("input, textarea, select")).reduce((acc, current) => {
     if (current.type == "submit" || current.type == "hidden") return acc;
     if (["radio", "checkbox"].includes(current.type)) {
       acc[current.name] = true;
@@ -393,24 +381,28 @@ function numberOfInputs(element) {
     }
     return acc;
   }, {});
-  return Object.keys(resps).length;
+
+  return Object.keys(responseInputs).length !== 1;
 }
 
 function setFormValue(form, value, id) {
-  if (value === "") {
-    value = undefined
+  if (value === "" || Array.isArray(value) && value.length === 0) {
+    value = undefined;
   }
-  if (numberOfInputs(form) == 1) {
+
+  if (!id || id.trim() === "") return;
+
+  if (!isObjectStore(form)) {
     form.value = value;
   } else {
     if (!form.value) {
       form.value = {};
     }
+
     form.value[id] = value;
     if (value == undefined) {
       delete form.value[id]
     }
-
   }
 }
 
@@ -463,24 +455,6 @@ export function parsePhoneNumber(event) {
 
     return null;
   }
-  //   let newVal = "";
-
-  //   if (val.length > 4) {
-  //     element.value = val;
-  //   }
-  //   if (val.length > 3 && val.length < 6) {
-  //     newVal += val.substr(0, 3) + "-";
-  //     val = val.substr(3);
-  //   }
-  //   if (val.length > 5) {
-  //     debugger;
-  //     newVal += val.substr(0, 3) + "-";
-  //     newVal += val.substr(3, 3) + "-";
-  //     val = val.substr(6);
-  //   }
-  //   newVal += val;
-  //   element.value = newVal;
-  // }
 }
 
 export function callExchangeValues(nextElement) {
@@ -537,14 +511,13 @@ function exchangeValue(element, attrName, newAttrName) {
 
 // TODO: Look here for Safari text input delay issue.
 export function textboxinput(inputElement, validate = true) {
-  /////////// To change all max attributes to input element ///////////
-  // [...inputElement.parentElement.parentElement.children]
-  //   .filter((x) => x.hasAttribute("max"))
-  //   .map((x) =>
-  //     x.getAttribute("max").replace(x.getAttribute("max"), inputElement.value)
-  //   );
-  ///////////////////////////////////////////////////////////////////////
+
   let evalBool = "";
+  const modalElement = document.getElementById('softModalResponse');
+  if (!modalElement.classList.contains('show')) {
+  
+  const modal = new bootstrap.Modal(modalElement);
+
   if (inputElement.getAttribute("modalif") && inputElement.value != "") {
     evalBool = math.evaluate(
       decodeURIComponent(inputElement.getAttribute("modalif").replace(/value/, inputElement.value))
@@ -552,12 +525,12 @@ export function textboxinput(inputElement, validate = true) {
   }
   if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
     if (inputElement.getAttribute("modalvalue")) {
-      document.getElementById(
-        "modalResponseBody"
-      ).innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
-      new bootstrap.Modal(document.getElementById('softModalResponse')).show()
+      document.getElementById("modalResponseBody").innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
+
+      modal.show();
     }
   }
+}
   if (inputElement.className == "SSN") {
     // handles SSN auto-format
     parseSSN(inputElement);
@@ -568,20 +541,6 @@ export function textboxinput(inputElement, validate = true) {
       validateInput(inputElement)
     }
   }
-
-
-  // THIS IS CHECKED VIA A EVENT LISTENER...  No need to check now..
-  // what is going on here...
-  // we are checking if we should click the checkbox/radio button..
-  // first see if the parent is a div and the first child is a checkbox...
-  // if (
-  //   inputElement.parentElement &&
-  //   inputElement.parentElement.tagName == "LABEL"
-  // ) {
-  //   let rbCb = inputElement.parentElement.previousSibling;
-  //   rbCb.checked = inputElement.value.length > 0;
-  //   radioAndCheckboxUpdate(rbCb);
-  // }
 
   // BUG 423: radio button not changing value
   let radioWithText = inputElement.closest(".response")?.querySelector("input[type='radio']")
@@ -660,8 +619,6 @@ function clearSelection(inputElement) {
   if (!inputElement.form || !inputElement.name) return;
   let sameName = [
     ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}],input[name = ${inputElement.name}] + label > input`)
-//    ...inputElement.form.querySelectorAll(`input[name = ${inputElement.name}]`),
-//    ...inputElement.form.querySelectorAll(`input:not([type="submit"])`),
   ].filter((x) => x.type != "hidden");
 
   /* 
@@ -776,12 +733,12 @@ export function nextClick(norp, retrieve, store, rootElement) {
 }
 
 function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
-  const prompt = `There ${num > 1 ? "are" : "is"} ${num} question${num > 1 ? "s" : ""} unanswered on this page.`;
+  const prompt = translate("basePrompt", [num > 1 ? "are" : "is", num, num > 1 ? "s" : ""]);
   
   const modalID = soft ? 'softModal' : 'hardModal';
   const modal = new bootstrap.Modal(document.getElementById(modalID));
-  const softModalText = "Would you like to continue?";
-  const hardModalText = `Please answer the question${num > 1 ? "s" : ""}.`;
+  const softModalText = translate("softPrompt");
+  const hardModalText = translate("hardPrompt", [num > 1 ? "s" : ""]);
   document.getElementById(soft ? "modalBodyText" : "hardModalBodyText").innerText = `${prompt} ${soft ? softModalText : hardModalText}`;
 
   if (soft) {
@@ -813,7 +770,7 @@ function showModal(norp, retrieve, store, rootElement) {
     // Fieldset is the parent of the inputs for all but grid questions. Grid questions are in a table.
     const fieldset = norp.form.querySelector('fieldset') || norp.form.querySelector('tbody');
 
-    let numBlankResponses = [fieldset.children]
+    let numBlankResponses = [...fieldset.children]
       .filter(x => 
         x.tagName !== 'DIV' && x.tagName !== 'BR' &&
         x.type && x.type !== 'hidden' &&
@@ -873,8 +830,6 @@ async function updateTreeInLocalForage() {
   }
 
   let questName = moduleParams.questName;
-  // do you want a JSON string or a JS Object in LF???
-  // await localforage.setItem(questName + ".treeJSON", questionQueue.JSON());
   await localforage.setItem(questName + ".treeJSON", questionQueue.toVanillaObject());
 }
 
@@ -968,7 +923,7 @@ async function nextPage(norp, retrieve, store, rootElement) {
 
   //Check if questionElement exists first so its not pushing undefineds
   //TODO if store is not defined, call lfstore -> redefine store to be store or lfstore
-  //if (questionElement.value) {
+
   if (store) {
     try {
       // show a loading indicator for variables in delayedParameterArray (they take extra time to process)
@@ -1012,6 +967,7 @@ async function nextPage(norp, retrieve, store, rootElement) {
 
   //hide the current question
   questionElement.classList.remove("active");
+
   displayQuestion(nextElement);
   window.scrollTo(0, 0);
 }
@@ -1136,8 +1092,11 @@ export function displayQuestion(nextElement) {
     console.log(`checking the datagrid for displayif... ${elm.dataset.questionId} ${f}`)
 
     if (f !== true) {
-      elm.remove();
-      //elm.closest('tr').remove(); // this is the same as elm.remove()...slower but more flexible. temp leaving in case there are cases I've missed.
+      elm.dataset.hidden = "true";
+      elm.style.display = "none";
+    } else {
+      delete elm.dataset.hidden;
+      elm.style.display = "";
     }
   });
 
@@ -1387,9 +1346,7 @@ export async function previousClicked(norp, retrieve, store, rootElement) {
   } else removeQuestion(moduleParams.questName, norp.form.id);
 
   updateTree();
-  // prevElement.parentElement.scrollIntoView();
-  // document.getElementById(rootElement).scrollIntoView();
-  // window.scrollTo(0, 0);
+
   return prevElement;
 }
 
@@ -1433,11 +1390,6 @@ function checkForSkips(questionElement) {
 
   // make an array of the Elements, not the input elments...
   var ids = selectedElements.map((x) => x.getAttribute("skipTo"));
-  //selectedElements = ids.map((x) => document.getElementById(x));
-
-  // add all the ids for the selected elements with the skipTo attribute to the question queue
-  //var ids = selectedElements.map(x => x.id);
-  //questionQueue.addChildren(ids);
 
   // add all the selected elements with the skipTo attribute to the question queue
   if (ids.length > 0) {
@@ -1543,18 +1495,9 @@ function getResults(element) {
 // x is the questionnaire text
 
 export function evaluateCondition(txt) {
-  let mjsfun = Object.getOwnPropertyNames(myFunctions)
 
   txt = decodeURIComponent(txt)
   console.log("evaluateCondition: ===>", txt)
-  // if someone passes (#currentYear - 2), this becomes 2022 - 2.
-  // we need to evaluate this to 2020...
-  //  if (mjsfun.some(f => txt.includes(f)) ||
-  //    (/^\s*[\(\d][\(\)\s\+\-\*\/\d]+[\d\)]$/.test(txt))) {
-  //    let v = math.evaluate(txt)
-  //    console.log(`${txt} ==> ${v}`)
-  //    return v
-  //  }
 
   // try to evaluate using mathjs...
   // if we fail, fall back to old evaluation...
@@ -1570,7 +1513,7 @@ export function evaluateCondition(txt) {
       if (typeof x === "string") {
         let element = document.getElementById(x);
         if (element != null) {
-          if (element.hasAttribute('grid') && (element.type === "radio" || element.type === "checkbox")) {
+          if (element.dataset.grid && (element.type === "radio" || element.type === "checkbox")) {
             //for displayif conditions with grid elements
             x = element.checked ? 1 : 0;
           }

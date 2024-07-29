@@ -105,7 +105,17 @@
                                 <input class="form-check-input" type="checkbox" role="switch" id="hide-markup">
                             </label>
                         </div>
+                        <div>
+                            <label for="langSelect">Language:</label>
+                            <div class="input-group mb-3">
+                                <select id="langSelect" class="form-select" aria-label="quest-locale">
+                                    <option value="en" selected>en-US</option>
+                                    <option value="es">en-MX</option>                        
+                                </select>
+                            </div>
+                        </div>
                     </form>
+
                     <div class="border flex-grow-1 p-1">
                         <h3>Previous Results</h3>
                         <textarea id="json_input" aria-label="json input" style="width: 100%; height:150px"></textarea>
