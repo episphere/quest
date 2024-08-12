@@ -2,7 +2,7 @@ import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, 
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
-import { responseRequestedModal, responseRequiredModal, responseErrorModal, submitModal  } from "./common.js";
+import { responseRequestedModal, responseRequiredModal, responseErrorModal, submitModal } from "./common.js";
 
 import en from "./i18n/en.js";
 import es from "./i18n/es.js";
@@ -29,7 +29,7 @@ let reduceObj = (obj) => {
 }
 
 transform.render = async (obj, divId, previousResults = {}) => {
-  
+
   moduleParams.renderObj = obj;
   moduleParams.previousResults = previousResults;
   moduleParams.soccer = obj.soccer;
@@ -58,11 +58,11 @@ transform.render = async (obj, divId, previousResults = {}) => {
       document.head.appendChild(link2);
     }
   }
-  
+
   // Define the Date prototype function toQuestFormat
   Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
   const current_date = new Date()
-  
+
   // first... build grids...
   contents = contents.replace(grid_replace_regex, parseGrid);
   // then we must unroll the loops...
@@ -146,7 +146,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     //handle options for question
     questOpts = questOpts ? questOpts : "";
-    questOpts = questOpts.replaceAll(/(min|max)-count\s*=\s*(\d+)/g,'data-$1-count=$2')
+    questOpts = questOpts.replaceAll(/(min|max)-count\s*=\s*(\d+)/g, 'data-$1-count=$2')
 
     // handle displayif on the question...
     // if questArgs is undefined set it to blank.
@@ -211,8 +211,8 @@ transform.render = async (obj, divId, previousResults = {}) => {
       return `<span forId='${forId}' optional='${optional}'>${forId}</span>`;
     }
     // replace {#id} with span tag
-    questText=questText.replace(/\{\#([^}#]+)\}/g,fHash)
-    function fHash(fullmatch,expr){
+    questText = questText.replace(/\{\#([^}#]+)\}/g, fHash)
+    function fHash(fullmatch, expr) {
       return `<span data-encoded-expression=${encodeURIComponent(expr)}>${expr}</span>`
     }
 
@@ -271,9 +271,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       let optionObj = paramSplit(options);
       // can't have the value uri encoded... 
       if (optionObj.hasOwnProperty("value")) {
-          optionObj.value = decodeURIComponent(optionObj.value);
+        optionObj.value = decodeURIComponent(optionObj.value);
       }
-  
+
       options = reduceObj(optionObj);
 
       if (optionObj.hasOwnProperty("min")) {
@@ -282,9 +282,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
       if (optionObj.hasOwnProperty("max")) {
         options = options + `  data-max-date-uneval=${optionObj.max}`
       }
-      
+
       const descText = type === 'month' ? "Type month and four-digit year" : type === 'date' ? "Select a date" : "Enter the month and year in format: four digit year - two digit month. YYYY-MM";
-  
+
       // Adding placeholders and aria-describedby attributes in one line
       options += ` placeholder='Select ${type}' aria-describedby='${elementId}-desc' aria-label='Select ${type}'`;
       return `<input type='${type}' ${options}><span id='${elementId}-desc' class='sr-only'>${descText}</span>`;
@@ -312,6 +312,12 @@ transform.render = async (obj, divId, previousResults = {}) => {
     function fSSNsm(fullmatch, opts) {
       const { options, elementId } = guaranteeIdSet(opts, "SSNsm");
       return `<input type='text' ${options} class="SSNsm" inputmode="numeric" maxlength="4" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
+    }
+    // replace |zip| with text input
+    questText = questText.replace(/\|zip\|(?:([^\|\<]+[^\|]+)\|)?/g, fzip);
+    function fzip(fullmatch, opts) {
+      const { options, elementId } = guaranteeIdSet(opts, "zip");
+      return `<input type='text' ${options} id=${elementId} class="zipcode" pattern="^[0-9]{5}(?:-[0-9]{4})?$"   placeholder="_ _ _ _ _"></input>`;
     }
 
     // replace |state| with state dropdown
@@ -509,7 +515,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       const value = questText.startsWith('<br>') ? questText.split('<br>')[0] : '';
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
-      
+
       options = options.replaceAll('\"', "\'");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionObj = paramSplit(options)
@@ -530,7 +536,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       // Build the description text
       const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? 'between ' + min + ' and ' + max : ''}.`;
-      
+
       // Add placeholder and aria-describedby
       const placeholder = min ? `placeholder="${moduleParams.i18n.example}: ${min}"` : (max ? `placeholder="${moduleParams.i18n.example}: ${max}"` : `placeholder=${moduleParams.i18n.enterValue}`);
       options += ` ${placeholder} aria-describedby="${elementId}-desc"`;
@@ -538,7 +544,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       //onkeypress forces whole numbers
       return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questID}' ${options}>
               <div id="${elementId}-desc" class="sr-only">${descriptionText}</div><br>`;
-  }
+    }
 
     // replace |__| or [text box:xxx] with an input box...
     questText = questText.replace(/\[text\s?box(?:\s*:\s*(\w+))?\]/g, fTextBox);
@@ -556,7 +562,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     // TODO: Inspect ServiceNow/DataDog 'Too Much Recursion' error (Windows 10 / Firefox v125.0.0). One occurrence 5/3/24, Module 4.
     function fText(fullmatch, value1, opts, value2) {
       let { options, elementId } = guaranteeIdSet(opts, "txt");
-      options = options.replaceAll(/(min|max)len\s*=\s*(\d+)/g,'data-$1len=$2')
+      options = options.replaceAll(/(min|max)len\s*=\s*(\d+)/g, 'data-$1len=$2')
       // if value1 or 2 contains an apostrophe, convert it to
       // and html entity.  This may need to be preformed in other parts
       // the code. As it turns out.  This causes a problem.  Only change the values in the aria-label.
@@ -687,7 +693,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
     //displaylist...
     questText = questText.replace(/\|(displayList\(.+?\))\s*(:)?\|/g, fDisplayList);
-    function fDisplayList(all,args,nl) {
+    function fDisplayList(all, args, nl) {
       args = args.replaceAll('\'', "\"");
       let tag = (nl) ? "div" : "span"
       return `<${tag} class='displayList' data-displayList-args='${args}'>${args}</${tag}>`;
@@ -729,7 +735,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
     if (!questText.includes('input') && (questID !== 'END')) {
       resetButton = '';
     }
-    
+
     let rv = `
       <form class='question' id='${questID}' ${questOpts} ${questArgs} novalidate hardEdit='${hardBool}' softEdit='${softBool}'>
         <fieldset>
@@ -750,9 +756,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
         </div>
         <div class="spacePadding"></div>
       </form>`;
-    
+
     return rv;
-  
+
   });
 
 
@@ -837,7 +843,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
       }
     }
   }
-  
+
   let questions = [...document.getElementsByClassName("question")];
   let divElement = document.getElementById(divId);
 
@@ -893,9 +899,9 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // Firefox does not alway GRAB focus when the arrows are clicked.
   // If a changeEvent fires, grab focus.
-  let numberInput = divElement.querySelectorAll("input[type='number']").forEach( (inputElement)=> {
-    inputElement.addEventListener("change",(event)=>{
-      if (event.target!=document.activeElement) event.target.focus()      
+  let numberInput = divElement.querySelectorAll("input[type='number']").forEach((inputElement) => {
+    inputElement.addEventListener("change", (event) => {
+      if (event.target != document.activeElement) event.target.focus()
     });
   })
 
@@ -934,37 +940,37 @@ transform.render = async (obj, divId, previousResults = {}) => {
   rbCb.forEach((rcElement) => {
     rcElement.onchange = rbAndCbClick;
   });
- 
+
   [...divElement.querySelectorAll("[data-hidden]")].forEach((x) => {
     x.style.display = "none";
   });
 
   // handle text in combobox label...
   [...divElement.querySelectorAll("label input,label textarea")].forEach(inputElement => {
-      let radioCB = document.getElementById(inputElement.closest('label').htmlFor);
+    let radioCB = document.getElementById(inputElement.closest('label').htmlFor);
 
-      if (radioCB) { 
-        let callback = (event)=>{
-            let nchar = event.target.value.length
-            //radioCB.checked = nchar>0;
-            // select if typed in box, DONT UNSELECT
-            if (nchar > 0) radioCB.checked = true
-            radioAndCheckboxUpdate(radioCB)
-            inputElement.dataset.lastValue=inputElement.value
-        }
-        inputElement.addEventListener("keyup",callback);
-        inputElement.addEventListener("input",callback);
-        radioCB.addEventListener("click",(event=>{
-            console.log("click")
-            if (!radioCB.checked){
-                inputElement.dataset.lastValue=inputElement.value
-                inputElement.value=''
-            }else if ('lastValue' in inputElement.dataset){
-                inputElement.value=inputElement.dataset.lastValue
-            }
-            textboxinput(inputElement)
-        }));
+    if (radioCB) {
+      let callback = (event) => {
+        let nchar = event.target.value.length
+        //radioCB.checked = nchar>0;
+        // select if typed in box, DONT UNSELECT
+        if (nchar > 0) radioCB.checked = true
+        radioAndCheckboxUpdate(radioCB)
+        inputElement.dataset.lastValue = inputElement.value
       }
+      inputElement.addEventListener("keyup", callback);
+      inputElement.addEventListener("input", callback);
+      radioCB.addEventListener("click", (event => {
+        console.log("click")
+        if (!radioCB.checked) {
+          inputElement.dataset.lastValue = inputElement.value
+          inputElement.value = ''
+        } else if ('lastValue' in inputElement.dataset) {
+          inputElement.value = inputElement.dataset.lastValue
+        }
+        textboxinput(inputElement)
+      }));
+    }
   });
 
 
@@ -981,7 +987,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
   };
 
   resetTree();
-  
+
   if (moduleParams.soccer instanceof Function)
     moduleParams.soccer(); // "externalListeners" (PWA)
   moduleParams.questName = questName;
@@ -989,25 +995,25 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   // add an event listener to validate confirm...
   // if the user was lazy and used confirm instead of data-confirm, fix it now
-  document.querySelectorAll("[confirm]").forEach( (element) => {
+  document.querySelectorAll("[confirm]").forEach((element) => {
     element.dataset.confirm = element.getAttribute("confirm")
     element.removeAttribute("confirm")
   })
-  document.querySelectorAll("[data-confirm]").forEach( (element) => {
+  document.querySelectorAll("[data-confirm]").forEach((element) => {
     console.log(element.dataset.confirm)
     if (!document.getElementById(element.dataset.confirm)) {
-      console.warn(`... cannot confirm ${element.id}. `)      
+      console.warn(`... cannot confirm ${element.id}. `)
       delete element.dataset.confirm
     }
     let otherElement = document.getElementById(element.dataset.confirm)
-    otherElement.dataset.conformationFor=element.id
+    otherElement.dataset.conformationFor = element.id
   })
 
   // enable all popovers...
-  
+
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => {
-    console.log("... ",popoverTriggerEl)
+    console.log("... ", popoverTriggerEl)
     new bootstrap.Popover(popoverTriggerEl)
   })
 
@@ -1015,7 +1021,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 };
 
 function ordinal(a, lang) {
-  
+
   if (Number.isInteger(a)) {
     if (lang === "es") {
       return `${a}o`;
@@ -1026,10 +1032,10 @@ function ordinal(a, lang) {
         case 2: return ((a % 100) == 12 ? `${a}th` : `${a}nd`);
         case 3: return ((a % 100) == 13 ? `${a}th` : `${a}rd`);
         default: return (`${a}th`)
-      } 
+      }
     }
   }
-  
+
   return "";
 }
 
@@ -1090,7 +1096,7 @@ function unrollLoops(txt) {
       })
 
       //replace all user-named combo and radio boxes
-      currentText = currentText.replaceAll(rb_cb_regex,(all,g1)=>all.replace(g1,`${g1}_${loopIndx}`))
+      currentText = currentText.replaceAll(rb_cb_regex, (all, g1) => all.replace(g1, `${g1}_${loopIndx}`))
 
       currentText = currentText.replace(/\{##\}/g, `${ordinal(loopIndx, moduleParams.i18n.language)}`)
 
@@ -1120,7 +1126,7 @@ function unrollLoops(txt) {
 // Handle the next, reset, and back buttons
 function stopSubmit(event) {
   event.preventDefault();
-  
+
   const clickType = event.submitter.getAttribute('data-click-type');
   const buttonClicked = event.target.querySelector(`.${clickType}`);
 

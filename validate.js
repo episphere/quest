@@ -75,7 +75,7 @@ export function validationError(inputElement, errorMsg) {
 function validate_number(inputElement) {
 
     callExchangeValues(inputElement);
-    
+
     let belowMin =
         inputElement.dataset.min &&
         math.evaluate(`${inputElement.value} < ${inputElement.dataset.min}`);
@@ -194,11 +194,21 @@ function validate_text(inputElement) {
         }
     }
 
+    if (inputElement.classList.contains("zipcode")) {
+        let patternRegex = new RegExp(inputElement.getAttribute("pattern"));
+        console.log(inputElement.value, "===>", patternRegex.test(inputElement.value));
+        if (!patternRegex.test(inputElement.value)) {
+            validationError(inputElement, "Please enter a zip code in this format: 99999 ")
+            return;
+        }
+        clearValidationError(inputElement)
+    }
+
     // check string length of text response
     if ("minlen" in inputElement.dataset || "maxlen" in inputElement.dataset) {
         let textLen = inputElement.value.length;
         // the user has not entered anything.  Dont bark yet...
-        if (textLen == 0){
+        if (textLen == 0) {
             clearValidationError(inputElement);
             return;
         }
@@ -209,7 +219,7 @@ function validate_text(inputElement) {
         let maxLen = inputElement.dataset.maxlen ?? -2
         let valueLen = inputElement.value.length
 
-        if (minLen == maxLen && valueLen != minLen){
+        if (minLen == maxLen && valueLen != minLen) {
             if (valueLen < minLen) {
                 validationError(inputElement, translate("validationTextShortExact", [minLen]));
             }
@@ -220,41 +230,42 @@ function validate_text(inputElement) {
             return;
         }
 
-        if (hasMin && valueLen < minLen){
+        if (hasMin && valueLen < minLen) {
             validationError(inputElement, translate("validationTextShort", [minLen]));
             return;
         }
 
-        if (hasMax && valueLen > maxLen){
+        if (hasMax && valueLen > maxLen) {
             validationError(inputElement, translate("validationTextLong", [maxLen]));
             return
         }
+
 
         clearValidationError(inputElement)
     }
 
     let checkConfirmation = "confirm" in inputElement.dataset || "conformationFor" in inputElement.dataset;
 
-    if (checkConfirmation){
+    if (checkConfirmation) {
         let otherId = inputElement.dataset.confirm ?? inputElement.dataset.conformationFor
         let otherElement = document.getElementById(otherId)
 
         if (otherElement.value != inputElement.value) {
             validationError(inputElement, translate("validationMismatch"));
             validationError(otherElement, translate("validationMismatch"));
-        } else{
+        } else {
             clearValidationError(inputElement)
             clearValidationError(otherElement)
         }
     }
 }
 
-function validate_count(inputElement){
+function validate_count(inputElement) {
 
     let hasMin = 'minCount' in inputElement.form?.dataset;
     let hasMax = 'maxCount' in inputElement.form?.dataset;
-    
-    if (hasMin || hasMax){
+
+    if (hasMin || hasMax) {
         let minCount = inputElement.form.dataset.minCount;
         let maxCount = inputElement.form.dataset.maxCount;
 
@@ -265,10 +276,10 @@ function validate_count(inputElement){
 
         if (hasMin && selectedCount < minCount) {
             validationError(lastElement, translate("validationCountMore", [selectedCount, minCount]));
-        } 
+        }
         else if (hasMax && selectedCount > maxCount) {
             validationError(lastElement, translate("validationCountLess", [selectedCount, maxCount]));
-        } 
+        }
         else {
             clearValidationError(lastElement)
         }
