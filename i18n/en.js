@@ -42,6 +42,7 @@ const en = {
     "validationDateBefore": "Date must be before {0}/{1}/{2}",
     "validationEmailAddress": "Please enter an email address in this format: user@example.com",
     "validationPhoneNumber": "Please enter a phone number in this format: 999-999-9999",
+    "validationZipCode": "Please enter a zip code in this format: 99999",
     "validationSocialFull": "Please enter a valid Social Security Number in this format: 999-99-9999",
     "validationSocialPartial": "Please enter the last four digits of a Social Security Number in this format: 9999",
     "validationTextShortExact": "Entered text is too short (should have {0} characters)",
