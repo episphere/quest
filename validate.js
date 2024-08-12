@@ -198,7 +198,7 @@ function validate_text(inputElement) {
         let patternRegex = new RegExp(inputElement.getAttribute("pattern"));
         console.log(inputElement.value, "===>", patternRegex.test(inputElement.value));
         if (!patternRegex.test(inputElement.value)) {
-            validationError(inputElement, "Please enter a zip code in this format: 99999 ")
+            validationError(inputElement, translate("validationZipCode"))
             return;
         }
         clearValidationError(inputElement)
