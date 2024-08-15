@@ -42,7 +42,7 @@ const es = {
     "validationDateBefore": "La fecha debe ser anterior al {0}/{1}/{2}",
     "validationEmailAddress": "Ingrese una dirección de correo electrónico con este formato: user@example.com",
     "validationPhoneNumber": "Ingrese un número de teléfono con este formato: 999-999-9999",
-    "validationZipCode": "Please enter a zip code in this format: 99999",
+    "validationZipCode": "Por favor ponga un código postal en este formato: 99999",
     "validationSocialFull": "Ingrese un número de Seguro Social válido con este formato: 999-99-9999",
     "validationSocialPartial": "Ingrese los últimos cuatro dígitos de un número de Seguro Social con este formato: 9999",
     "validationTextShortExact": "El texto ingresado es demasiado corto (debe tener {0} caracteres)",
