@@ -1,4 +1,4 @@
-import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput, handleXOR, displayQuestion, parseSSN, parsePhoneNumber, submitQuestionnaire, textboxinput, math, radioAndCheckboxUpdate } from "./questionnaire.js";
+import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput, handleXOR, displayQuestion, parseSSN, parsePhoneNumber, submitQuestionnaire, textboxinput, math, radioAndCheckboxUpdate, evaluateCondition } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
@@ -531,14 +531,36 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
       // Handle not converted and not yet calculated min and max values
       const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.includes('isDefined') && value !== '0' ? value : ''; }
-      const min = minMaxValueTest(optionObj.min);
-      const max = minMaxValueTest(optionObj.max);
+      // Evaluate min and max, ensuring they are valid numbers or get evaluated if they aren't.
+      const evaluateMinMax = (value) => {
+        let result = minMaxValueTest(value);
+        if (result && isNaN(result)) {
+          result = evaluateCondition(result);
+          if (isNaN(result)) result = '';  // Reset if still not a number after evaluation
+        }
+        return result;
+      };
+
+      // Process min and max values
+      let min = evaluateMinMax(optionObj.min);
+      let max = evaluateMinMax(optionObj.max);
 
       // Build the description text
-      const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? 'between ' + min + ' and ' + max : ''}.`;
+      const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? `between ${min} and ${max}` : ''}.`;
+      const defaultPlaceholder = `placeholder="${moduleParams.i18n.enterValue}"`;
+      
+      // Use default placeholder when min to max range is a large distribution, e.g. max weight (999) and max age (125).
+      // Same for min == 0. Show default placeholder for those cases.
+      let placeholder;
+      if (max && max > 100) {
+        placeholder = defaultPlaceholder;
+      } else if (min && max) {
+        const avgValue = Math.floor((parseInt(min, 10) + parseInt(max, 10)) / 2);
+        placeholder = `placeholder="${moduleParams.i18n.example}: ${avgValue}"`;
+      } else {
+        placeholder = defaultPlaceholder;
+      }
 
-      // Add placeholder and aria-describedby
-      const placeholder = min ? `placeholder="${moduleParams.i18n.example}: ${min}"` : (max ? `placeholder="${moduleParams.i18n.example}: ${max}"` : `placeholder=${moduleParams.i18n.enterValue}`);
       options += ` ${placeholder} aria-describedby="${elementId}-desc"`;
 
       //onkeypress forces whole numbers
