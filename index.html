@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
+
+    <link id="pagestyle" href="Default.css" rel="stylesheet" type="text/css">
+    <link id="pagelogic" href="Default.css" rel="stylesheet" type="text/css">
+    <link href="Quest.css" rel="stylesheet" type="text/css">
+    <script src="replace2.js" type="module"></script>
+    <script src="buildGrid.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <title>Quest</title>
+</head>
+<body class="w-100">
+    <nav id="questNavbar" class="navbar navbar-expand-sm quest-bg-gradient" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand text-baskerville" href="#">Quest</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#questNavContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="questNavContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="offcanvas" href="#settings">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/episphere/quest-dev" target="_blank">Source</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/episphere/quest/wiki" target="_blank">Wiki</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/episphere/quest-dev/issues" target="_blank">Issues</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://gitter.im/episphere/quest" target="_blank">Talk to us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="offcanvas" href="#cache" role="button" id="viewCurrentResponses">View Current Responses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="Reference" href="https://doi.org/10.1186/s12911-023-02338-6" target="_blank">Paper</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="offcanvas" href="#helpOC" role="button">Help</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid" id="tool">
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="settings" aria-labelledby="settingLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="settingLabel">Settings</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="d-flex flex-wrap">
+                    <form class="form border flex-grow-1 p-1 d-flex flex-column">
+                        <h3>Questionnaire Options</h3>
+                        <div>
+                            <label for="url" class="form-label">Module URL </label>
+                            <div class="input-group mb-3">
+                                <input id="url" class="form-control" aria-label="url" onchange="submitURL()">
+                                <input type="button" aria-label="submit" value="Load" onclick="submitURL()"></input>
+                            </div>
+                            
+                            <label for="tb" class="form-label">Save Module</label>
+                            <div class="input-group mb-3">
+                                <input id="tb" class="form-control" aria-label="File Name" style="margin-top: 10px;">
+                                <button type="button" class="btn">.txt</button>
+                                <button aria-label="Save" onclick="saveDoc()">Save</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-check form-switch mt-2">
+                                Use Styling
+                                <input class="form-check-input" type="checkbox" role="switch" id="styling" data-sheet-on="Style1.css" data-sheet-off="Default.css">
+                            </label>
+                        </div>
+                        <div>
+                            <label class="form-check form-switch mt-2">
+                                Activate Logic
+                                <input class="form-check-input" type="checkbox" role="switch" id="logic"  data-sheet-on="ActiveLogic.css" data-sheet-off="Default.css">
+                            </label>
+                        </div>
+                        <div>
+                            <label class="form-check form-switch mt-2">
+                                Hide Markup
+                                <input class="form-check-input" type="checkbox" role="switch" id="hide-markup">
+                            </label>
+                        </div>
+                        <div>
+                            <label for="langSelect">Language:</label>
+                            <div class="input-group mb-3">
+                                <select id="langSelect" class="form-select" aria-label="quest-locale">
+                                    <option value="en" selected>en-US</option>
+                                    <option value="es">en-MX</option>                        
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="border flex-grow-1 p-1">
+                        <h3>Previous Results</h3>
+                        <textarea id="jsonInput" aria-label="json input" style="width: 100%; height:150px"></textarea>
+                        <div class="col" style="margin-top: 10px;">
+                            <input type="button" id="updater" value="add JSON to memory"/>
+                            <input type="button" id="clearMem" value="Clear Memory"/>
+                            <div id="loadDisplay"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        <div class="row">
+            <div class="col-12 col-md-6" id="markup">
+                <div class="d-flex flex-wrap justify-content-between">
+                    <span class="me-1 h4">Markup</span> 
+                    <div class="d-flex align-items-end">
+                        <span class="me-1 h5">(<a href="https://raw.githubusercontent.com/episphere/quest/main/questionnaires/demo.txt" id="demo">Demo</a>)</span>
+                        <label for="buttonFlex" id="fontSpan" class=" me-1 h5">Change Font Size </label>
+                        <button id="increaseSizeButton" aria-label="increaseSize" class="me-1 h4">&CirclePlus;</button>
+                        <button id="decreaseSizeButton" aria-label="decreaseSize" class="me-1 h4">&CircleMinus;</button>
+                    </div>
+                </div>
+                <textarea class="form-control" id="markupTextArea" placeholder="type, paste, or upload questionnaire markup"></textarea>
+            </div>
+            <div class="col-12 col-md-6">
+                <h4 id="renderText" style="color: navy;">Rendering</h4>
+                <div id="rendering"></div>
+            </div>
+        </div>
+    </div>
+    <div id="helpOC" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="helpOCLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="helpOCLabel">Help</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">How do I load a module from a URL</h5>
+                    <p class="card-text">The questionnaire module load/save features were
+                        hidden to save space on the screen.  Click "settings" in the menu and 
+                        type the URL in the <i>Module URL</i> box.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="cache" class="offcanvas offcanvas-end" tabindex="-1" aria-labelledby="cacheLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="cacheLabel">Current Responses</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <table class="table table-striped" id="currentResponsesTable"></table>
+        </div>
+    </div>
+</body>
+<script>
+    function changeStyle(sheet) {
+        document.getElementById("pagestyle").setAttribute("href", sheet)
+    }
+    function changeLogic(sheet) {
+        document.getElementById("pagelogic").setAttribute("href", sheet)
+    }
+</script>
+
+
+<script>
+    function goToLink() {
+        let a = document.createElement('a')
+        a.href = "https://github.com/episphere/quest/upload/master/questionnaires"
+        a.target = "_blank"
+        a.click()
+    }
+    document.getElementById("demo").addEventListener("click", (event) => {
+        event.preventDefault();
+
+        const demoUrl = document.getElementById("demo").href;
+        
+        let newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('url', demoUrl);
+        window.location.href = newUrl.toString();
+    })
+</script>
+<script>
+    function saveDoc() {
+        let bb = new Blob([markupTextArea.value])
+        let url = URL.createObjectURL(bb);
+        let a = document.createElement('a');
+        a.href = url;
+        let tb = document.getElementById('tb')
+        if (tb.value == 0) { tb.value = "demo" }
+        a.download = tb.value;
+        a.click() // then download it automatically 
+        return a
+    }
+</script>
+<script>
+    function submitURL() {
+        let url = document.getElementById("url").value
+        let newUrl = new URL(window.location.href);
+        newUrl.searchParams.set('url', url);
+        window.location.href = newUrl.toString();
+    }
+</script>
+<script>
+    function onFileSelected(event) {
+        let file = event.target.files[0]
+        let reader = new FileReader()
+        reader.onload = function (event) {
+            let markupTextArea = document.getElementById("markupTextArea")
+            markupTextArea.value = event.target.result
+            markupTextArea.onkeyup()
+        }
+        reader.readAsText(file)
+
+    }
+</script>
+<script>
+    let searchParams = new URLSearchParams(location.search)
+    if (location.hash.split('&').includes('run') || searchParams.has('run')) {
+        document.getElementById('logic').checked=true;
+        changeLogic("ActiveLogic.css");
+        document.getElementById('questNavbar').style.display = 'none';
+        document.getElementById('markup').style.display = 'none';
+        document.getElementById('renderText').style.display = 'none';
+    }
+    let styleRegex = /^style=([^&\s]+)/
+    let styleIndx = location.hash.split("&").findIndex((x) => styleRegex.exec(x))
+    if (styleIndx > -1) {
+        let styleSheet = location.hash.split("&")[styleIndx].match(styleRegex)[1]
+        console.log(styleSheet)
+        changeStyle(styleSheet)
+    } else if (searchParams.has('style')) {
+        changeStyle(searchParams.get('style'))
+    }
+
+    let myTree = {};
+
+
+</script>
+
+<script src="quest.js" type="module"></script>
+
+</html>

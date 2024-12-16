@@ -1,0 +1,155 @@
+#questionnaire {
+  font-family: Arial, sans-serif;
+  height: 70%;
+  border: solid 2px black;
+  padding: 20px;
+}
+
+#welcome {
+  margin: 10px 0px;
+}
+
+#thankYou.active,
+.question.active {
+  display: block;
+}
+
+/* this is an answer with a text area...*/
+
+.freeresponse {
+  display: flex;
+  width: 80%;
+}
+
+/* select labels inside freesponses */
+
+.freeresponse label {
+  flex-grow: 1;
+  text-align: left;
+  width: auto;
+}
+
+.freeresponse textarea,
+input[type="text"] {
+  flex-grow: 1;
+}
+
+input.styling[type="radio"] {
+  display: inline;
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+.show-button {
+  display: inline !important;
+}
+
+.response {
+  margin-top: 15px;
+}
+
+.response > label {
+  display: block;
+  border-radius: 6px;
+  background-color: rgb(240, 240, 240);
+  border: solid 3px rgb(240, 240, 240);
+  width: 100%;
+  padding-left: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-family: "Arial", "sans-serif";
+  text-align: left;
+  display: block;
+}
+
+.response > label:hover {
+  background-color: rgb(230, 230, 230);
+  border: solid 3px rgb(230, 230, 230);
+}
+
+textarea + label {
+  float: right;
+}
+
+input[type="number"] {
+  display: initial;
+  margin-top: 10px;
+}
+
+input[type="number"] + label {
+  display: none;
+}
+
+input[type="text"] {
+  display: initial;
+}
+
+input[type="text"] + label {
+  display: none;
+}
+
+textarea {
+  display: block;
+}
+
+textarea + label {
+  display: none;
+}
+
+.question.active textarea {
+  width: 95%;
+}
+
+/* select all labels immediatle after a checked radio box */
+
+input[type="radio"]:checked + label {
+  border: solid 3px rgb(130, 193, 230);
+  background-color: rgb(60, 145, 222);
+  color: white;
+}
+
+input[type="checkbox"]:checked + label {
+  border: solid 3px rgb(130, 193, 230);
+  background-color: rgb(60, 145, 222);
+  color: white;
+}
+
+.next,
+.previous,
+.reset {
+  background-color: rgb(50, 122, 187);
+  color: white;
+  border: solid 3px rgb(50, 122, 187);
+  border-radius: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 10px;
+  outline: none;
+}
+
+.next:hover,
+.reset:hover,
+.previous:hover {
+  background-color: rgb(55, 133, 203);
+  border: solid 3px rgb(55, 133, 203);
+}
+
+.next:focus,
+.previous:focus,
+.reset:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(50, 122, 187, 0.5);
+  border-color: rgb(255, 255, 255);
+}
+
+form {
+  padding-top: 30px;
+}
