@@ -66,15 +66,31 @@ input[type="checkbox"].form-check-input{
 }
 
 .popover-dismiss {
-  background: linear-gradient(
-    rgb(240, 173, 78),
-    rgb(240, 173, 78)
-  ) !important;
-  border: 1px solid rgb(175, 175, 175) !important;
-  padding-top: 3px !important;
-  padding-bottom: 3px !important;
+  background: #1c5d86;
+  color: white;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  text-decoration: none;
 }
 
+.popover-dismiss:hover,
+.popover-dismiss:focus {
+  background-color: #0056b3;
+  color: white;
+  text-decoration: none;
+}
+
+.popover-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  font-weight: bold;
+}
+
+.popover-body {
+  color: #212529;
+  font-size: 0.9rem;
+}
 
 .text-baskerville {
   font-family: 'Libre Baskerville', serif;

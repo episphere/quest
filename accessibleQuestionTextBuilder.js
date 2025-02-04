@@ -119,57 +119,78 @@ function buildQuestionText(fieldsetEle) {
 // Start after the focus node since the initial question is handled above for all cases.
 // Swap those nodes (text, <b>, <u>, <i>, and embedded <br>) into divs and add a tabindex to make them focusable for screen reader accessibility.
 function handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, focusNode) {
-    let currentQuestion = '';
-    let nodesToRemove = [];
-
     let startIndex = childNodes.indexOf(focusNode) + 1;
+
+    // Array holds the question objects
+    let questions = [];
+
+    // Question and nodes accumulated each iteration, added to the questions array at the end of each iteration.
+    let currentQuestionFragments = [];
+    let currentNodesToRemove = [];
+
     for (let i = startIndex; i < childNodes.length; i++) {
         const node = childNodes[i];
 
         // Stop at the first input/Table/Label node. Multi-question surveys don't have these nodes.
-        // Note: This may require future adjustment depending on future survey structure.
         if (['INPUT', 'TABLE', 'LABEL'].includes(node.tagName)) {
             break;
         }
 
         // If the node is a text node and not empty, add it to the current question.
         if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim() !== '') {
-            currentQuestion += node.textContent.trim() + ' ';
-            nodesToRemove.push(node);
-            // If currentQuestion is popluated and the node is a <br>, that marks the end of a question. Note: exclude text nodes with '\n' only.
-            // Wrap the current question in a div and add a tabindex. Remove the next <br> node if it exists to preserve spacing.
+            currentQuestionFragments.push(node.textContent.trim());
+            currentNodesToRemove.push(node);
+
+        // If currentQuestion is popluated and the node is a <br>, that marks the end of a question. Note: exclude text nodes with '\n' only.
+        // Wrap the current question in a div and add a tabindex. Remove the next <br> node if it exists to preserve spacing.
         } else if (['U', 'B', 'I'].includes(node.tagName)) {
             const tag = node.tagName.toLowerCase();
-            currentQuestion += `<${tag}>${node.textContent.trim()}</${tag}> `;
-            nodesToRemove.push(node);
+            const wrappedText = `<${tag}>${node.textContent.trim()}</${tag}>`;
+            currentQuestionFragments.push(wrappedText);
+            currentNodesToRemove.push(node);
 
-            // If currentQuestion is popluated and the node is a <br>, retain the br for accurate spacing.
+        // If currentQuestion is popluated and the node is a <br>, retain the br for accurate spacing.
         } else if (node.tagName === 'BR') {
-            if (currentQuestion && currentQuestion.trim() !== '') {
-                currentQuestion += '<br>';
-                nodesToRemove.push(node);
-            }
-        }
-        // If currentQuestion is popluated and the node is a <div>, these parameters mark the end of the quesiton.
-        else if (currentQuestion && currentQuestion.trim() !== '' && node.classList?.contains('response')) {
-            const div = document.createElement('div');
-            div.innerHTML = currentQuestion.trim();
-            div.setAttribute('tabindex', '0');
-            div.setAttribute('role', 'alert');
-
-            // Insert the new div before the first node to remove
-            fieldsetEle.insertBefore(div, nodesToRemove[0]);
-
-            // Remove the tracked nodes in reverse order
-            for (let j = nodesToRemove.length - 1; j >= 0; j--) {
-                fieldsetEle.removeChild(nodesToRemove[j]);
+            if (currentQuestionFragments.length > 0) {
+                currentQuestionFragments.push('<br>');
+                currentNodesToRemove.push(node);
             }
 
-            // Reset the current question and nodes to remove to begin searching for the next question.
-            nodesToRemove = [];
-            currentQuestion = '';
+        // If currentQuestion is populated and the node is a <div>, these parameters mark the end of the question. Build the question object.
+        } else if (node.classList?.contains('response') && currentQuestionFragments.length > 0) {
+            const questionHTML = currentQuestionFragments.join(' ');
+
+            questions.push({
+                questionHTML,
+                nodesToRemove: [...currentNodesToRemove],
+                insertBeforeRef: currentNodesToRemove[0],
+            });
+
+            // Reset for the next question
+            currentQuestionFragments = [];
+            currentNodesToRemove = [];
         }
     }
+
+    // Do the DOM manipulation. Edge case to skip: caption text after a single question (e.g. Mod 1: How old is your mother today? __<Input>__ "Mother’s age")
+    if (questions.length === 1 && !questions[0].questionHTML.includes('?')) return;
+
+    questions.forEach(question => {
+        const { questionHTML, nodesToRemove, insertBeforeRef } = question;
+
+        // Create the new div with the question text and insert it into the fieldset
+        const div = document.createElement('div');
+        div.innerHTML = questionHTML;
+        div.setAttribute('tabindex', '0');
+        div.setAttribute('role', 'alert');
+
+        fieldsetEle.insertBefore(div, insertBeforeRef);
+
+        // Remove the nodes that were replaced in reverse order to avoid index issues.
+        for (let i = nodesToRemove.length - 1; i >= 0; i--) {
+            fieldsetEle.removeChild(nodesToRemove[i]);
+        }
+    });
 }
 
 /**
@@ -235,27 +256,42 @@ function manageLegendTag(fieldsetEle, questionElements) {
  * The forid spans are embedded in those displayifs, and the user's previous responses are injected.
  * Get all the span elements with class="displayif"
  * Iterate each span, pull the forid, and check & update the value from stateManager
+ * Note: Some summary pages use forIds without displayifs. Handle those as a backup.
+ * If/else if logic looks like it could be redundant, but it's not due to variation in markdown structures.
+ * Always check for displayifs first before handling raw forIds.
  * @param {HTMLElement} legend - The legend element containing the question text (and dynamic responses)
  * @returns {void} - The forid values are updated directly in the legend
  */
 
 function manageLegendDisplayIfs(legend) {
-    const displayIfSpans = Array.from(legend.querySelectorAll('span.displayif'));
-    if (displayIfSpans.length === 0) return;
-
-    const appState = getStateManager();
-    displayIfSpans.forEach(span => {
-        const forIDSpans = span.querySelectorAll('[forid]');
-        forIDSpans.forEach(forIDSpan => {
-            const forID = forIDSpan.getAttribute('forid');
+    const manageForIdSpans = (forIdSpanArray) => {
+        const appState = getStateManager();
+        forIdSpanArray.forEach(forIdSpan => {
+            const forID = forIdSpan.getAttribute('forid');
             const foundValue = appState.findResponseValue(forID) ?? '';
 
             foundValue === ''
-                ? forIDSpan.style.display = 'none'
-                : forIDSpan.style.display = null;
-            forIDSpan.textContent = foundValue;
+                ? forIdSpan.style.display = 'none'
+                : forIdSpan.style.display = null;
+            forIdSpan.textContent = foundValue;
         });
-    });
+    }
+    
+    // If the legend contains displayifs, manage those first.
+    const displayIfSpans = Array.from(legend.querySelectorAll('span.displayif'));
+    if (displayIfSpans.length > 0) {
+        displayIfSpans.forEach(span => {
+            const forIdSpans = span.querySelectorAll('[forid]');
+            manageForIdSpans(forIdSpans);
+        });
+        return;
+    }
+    
+    // If no displayifs are found, check for raw forIds.
+    const forIdSpans = Array.from(legend.querySelectorAll('[forid]'));
+    if (forIdSpans.length > 0) {
+        manageForIdSpans(forIdSpans);
+    }
 }
 
 function removeBRAfterLegend(fieldsetEle) {

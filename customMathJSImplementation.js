@@ -58,7 +58,6 @@ export const customMathJSFunctions = {
     if (typeof x === 'number') return true;
 
     if (x.toString().includes('.')) {
-      console.warn('EXISTS - X toString INCLUDES .', x);
       return !math.isUndefined(this.getKeyedValue(x));
     }
     
@@ -95,13 +94,24 @@ export const customMathJSFunctions = {
   },
 
   getKeyedValue: function(x) {
+    // handle keys with dot notation. E.g. valueOrDefault("D_378988419.D_807765962")
+    if (!x.toString().includes('.')) {
+      console.error('invalid use of getKeyedValue (called on key without dot notation');
+      return undefined;
+    }
+    
+    // Skip sentences and other non-key values such as multi-sentence survey text & responses
+    if (!/^[A-Za-z0-9_.]+$/.test(x)) {
+      return undefined;
+    }
+
     const array = x.toString().split('.');
     const key = array.shift();
     const obj = this._value(key);
     
     // Return early if the initial object is undefined
     if (math.isUndefined(obj)) return undefined;
-    
+
     return array.reduce((prev, curr) => {
       if (math.isUndefined(prev)) return undefined;
       return prev[curr] ?? undefined;

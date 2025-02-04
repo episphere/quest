@@ -194,11 +194,6 @@ export class QuestionProcessor {
       otherElement.dataset.confirmationFor = element.id;
     });
 
-    // enable all popovers...
-    [...newQuestionEle.querySelectorAll('[data-bs-toggle="popover"]')].forEach(popoverTriggerEl => {
-      new bootstrap.Popover(popoverTriggerEl);
-    });
-
     // remove the first 'previous' button and the final 'next' button.
     if (isFirstQuestion) {
       newQuestionEle.querySelector(".previous").remove();
@@ -766,7 +761,7 @@ export class QuestionProcessor {
     function fPopover(fullmatch, buttonText, title, popText) {
       title = title ? title : "";
       popText = popText.replace(/"/g, "&quot;")
-      return `<a tabindex="0" class="popover-dismiss btn" role="button" title="${title}" data-toggle="popover" data-bs-toggle="popover" data-trigger="focus" data-bs-trigger="focus" data-content="${popText}" data-bs-content="${popText}">${buttonText}</a>`;
+      return `<a tabindex="0" class="popover-dismiss btn" role="button" title="${title}" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="${popText}">${buttonText}</a>`;
     }
 
     // replace |hidden|value| 
