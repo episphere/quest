@@ -5,8 +5,8 @@ import { validateInput, validationError } from "./validate.js"
 import { translate } from "./common.js";
 
 export const moduleParams = {};
-import  * as mathjs  from 'https://cdn.skypack.dev/mathjs@11.2.0';
-export const math=mathjs.create(mathjs.all)
+import * as mathjs from 'https://cdn.skypack.dev/mathjs@11.2.0';
+export const math = mathjs.create(mathjs.all)
 window.math = math
 
 
@@ -44,8 +44,8 @@ YearMonth.prototype.subtract = function (n) {
 }
 
 // Note: YearMonth - YearMonth = integer
-YearMonth.prototype.subMonth = function(ym){
-  return (12*(parseInt(this.year)-parseInt(ym.year)) + parseInt(this.month)-parseInt(ym.month));
+YearMonth.prototype.subMonth = function (ym) {
+  return (12 * (parseInt(this.year) - parseInt(ym.year)) + parseInt(this.month) - parseInt(ym.month));
 }
 
 // This works in all cases except x=new String(),
@@ -60,7 +60,7 @@ export const myFunctions = {
   exists: function (x) {
     if (!x) return false;
     if (x.toString().includes('.')) {
-      return !math.isUndefined( getKeyedValue(x) )
+      return !math.isUndefined(getKeyedValue(x))
     }
     let element = document.getElementById(x);
 
@@ -93,6 +93,11 @@ export const myFunctions = {
 
     let element = document.getElementById(x);
     let returnValue = (element) ? element.value : moduleParams.previousResults[x]
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(returnValue)) {
+      return `${returnValue.slice(5, 7)}/${returnValue.slice(8, 10)}/${returnValue.slice(0, 4)}`
+    }
+
     return returnValue
   },
   valueEquals: function (id, value) {
@@ -108,8 +113,8 @@ export const myFunctions = {
     // if the element does not exist return FALSE
     return (element_value == value)
   },
-  equals: function(id, value){
-    return math.valueEquals(id,value)
+  equals: function (id, value) {
+    return math.valueEquals(id, value)
   },
   valueIsOneOf: function (id, ...values) {
     if (myFunctions.doesNotExist(id)) return false;
@@ -184,11 +189,11 @@ export const myFunctions = {
   // if the value of id is a string
   // return the string length, otherwise
   // return -1
-  valueLength: function(id){
+  valueLength: function (id) {
     // if id is not passed in return FALSE
     if (math.doesNotExist(id)) return false;
     let element_value = math._value(id);
-    if (isString(element_value)){
+    if (isString(element_value)) {
       return element_value.length
     }
     return -1;
@@ -217,7 +222,7 @@ export const myFunctions = {
   someSelected: function (...ids) {
     return (ids.some(id => math.isSelected(id)))
   },
-  noneSelected: function(...ids){
+  noneSelected: function (...ids) {
     return (!ids.some(id => math.isSelected(id)))
   },
   // defaultValue accepts an Id and a value or a Id/Value
@@ -236,8 +241,8 @@ export const myFunctions = {
     if (v == null) v = defaultValue[defaultValue.length - 1]
     return (v)
   },
-  selectionCount: function(x,countReset=false){
-    let [questionId,name] = x.split(':')
+  selectionCount: function (x, countReset = false) {
+    let [questionId, name] = x.split(':')
     name = name ?? questionId
 
     if (!math.exists(questionId)) return 0
@@ -245,14 +250,14 @@ export const myFunctions = {
 
     // BUG FIX:  if the data-reset ("none of the above") is selected
     let questionElement = document.getElementById(questionId)
-    if ( Array.isArray(v)  || Array.isArray(v[name]) ) {
-      v = Array.isArray(v)?v:v[name]
-      if (countReset){
+    if (Array.isArray(v) || Array.isArray(v[name])) {
+      v = Array.isArray(v) ? v : v[name]
+      if (countReset) {
         return v.length;
       }
       // there is a chance that nothing is selected (v.length==0) in that case you will the 
       // selector will find nothing.  Use the "?" because you cannot find the dataset on a null object.  
-      return questionElement.querySelector(`input[type="checkbox"][name="${name}"]:checked`)?.dataset["reset"]?0:v.length
+      return questionElement.querySelector(`input[type="checkbox"][name="${name}"]:checked`)?.dataset["reset"] ? 0 : v.length
     }
 
     // if we want object to return the number of keys
@@ -311,9 +316,9 @@ function getKeyedValue(x) {
   let array = x.toString().split('.')
   // convert null or undefined to undefined...
   let obj = math._value(`${array.splice(0, 1)}`) ?? undefined
-  
+
   return array.reduce((prev, curr) => {
-    if ( math.isUndefined(prev) ) return prev
+    if (math.isUndefined(prev)) return prev
     return prev[curr] ?? undefined
   }, obj)
 }
@@ -474,14 +479,14 @@ function exchangeValue(element, attrName, newAttrName) {
   // may have to do this for dates too.  <- yeah, had to!
   // Firefox and Safari for MacOS think <input type="month"> has type="text"...
   // so month selection calendar is not shown.
-  if ( (element.getAttribute("type") == "month" && /^\d{4}-\d{1,2}$/.test(attr)) || 
-       (element.getAttribute("type") == "date" && /^\d{4}-\d{1,2}-\d{1,2}$/.test(attr)) ){
-    
+  if ((element.getAttribute("type") == "month" && /^\d{4}-\d{1,2}$/.test(attr)) ||
+    (element.getAttribute("type") == "date" && /^\d{4}-\d{1,2}-\d{1,2}$/.test(attr))) {
+
     // if leading zero for single digit month was stripped by the browser, add it back.
     if (element.getAttribute("type") == "month" && /^\d{4}-\d$/.test(attr)) {
       attr = attr.replace(/-(\d)$/, '-0$1')
     }
-    
+
     element.setAttribute(newAttrName, attr)
     return element;
   }
@@ -515,22 +520,22 @@ export function textboxinput(inputElement, validate = true) {
   let evalBool = "";
   const modalElement = document.getElementById('softModalResponse');
   if (!modalElement.classList.contains('show')) {
-  
-  const modal = new bootstrap.Modal(modalElement);
 
-  if (inputElement.getAttribute("modalif") && inputElement.value != "") {
-    evalBool = math.evaluate(
-      decodeURIComponent(inputElement.getAttribute("modalif").replace(/value/, inputElement.value))
-    );
-  }
-  if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
-    if (inputElement.getAttribute("modalvalue")) {
-      document.getElementById("modalResponseBody").innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
+    const modal = new bootstrap.Modal(modalElement);
 
-      modal.show();
+    if (inputElement.getAttribute("modalif") && inputElement.value != "") {
+      evalBool = math.evaluate(
+        decodeURIComponent(inputElement.getAttribute("modalif").replace(/value/, inputElement.value))
+      );
+    }
+    if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
+      if (inputElement.getAttribute("modalvalue")) {
+        document.getElementById("modalResponseBody").innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
+
+        modal.show();
+      }
     }
   }
-}
   if (inputElement.className == "SSN") {
     // handles SSN auto-format
     parseSSN(inputElement);
@@ -544,7 +549,7 @@ export function textboxinput(inputElement, validate = true) {
 
   // BUG 423: radio button not changing value
   let radioWithText = inputElement.closest(".response")?.querySelector("input[type='radio']")
-  if (radioWithText && inputElement.value?.trim() !== ''){
+  if (radioWithText && inputElement.value?.trim() !== '') {
     radioWithText.click()
     radioAndCheckboxUpdate(radioWithText)
   }
@@ -734,7 +739,7 @@ export function nextClick(norp, retrieve, store, rootElement) {
 
 function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
   const prompt = translate("basePrompt", [num > 1 ? "are" : "is", num, num > 1 ? "s" : ""]);
-  
+
   const modalID = soft ? 'softModal' : 'hardModal';
   const modal = new bootstrap.Modal(document.getElementById(modalID));
   const softModalText = translate("softPrompt");
@@ -757,7 +762,7 @@ function setNumberOfQuestionsInModal(num, norp, retrieve, store, soft) {
   document.getElementById("softModalTitle").focus();
 
   let modalElement = modal._element;
-  modalElement.querySelector('.close').addEventListener('keydown', function(event) {
+  modalElement.querySelector('.close').addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
       modal.hide();
     }
@@ -771,7 +776,7 @@ function showModal(norp, retrieve, store, rootElement) {
     const fieldset = norp.form.querySelector('fieldset') || norp.form.querySelector('tbody');
 
     let numBlankResponses = [...fieldset.children]
-      .filter(x => 
+      .filter(x =>
         x.tagName !== 'DIV' && x.tagName !== 'BR' &&
         x.type && x.type !== 'hidden' &&
         x.value !== undefined &&
@@ -780,7 +785,7 @@ function showModal(norp, retrieve, store, rootElement) {
       ).reduce((t, x) =>
         x.value.length == 0 ? t + 1 : t, 0
       );
-      
+
     let hasNoResponses = getSelectedResponses(fieldset).filter((x) => x.type !== "hidden").length === 0;
 
     if (fieldset.hasAttribute("radioCheckboxAndInput")) {
@@ -852,10 +857,10 @@ function getNextQuestionId(currentFormElement) {
 }
 
 function showLoadingIndicator() {
-    const loadingIndicator = document.createElement('div');
-    loadingIndicator.id = 'loadingIndicator';
-    loadingIndicator.innerHTML = '<div class="spinner"></div>';
-    document.body.appendChild(loadingIndicator);
+  const loadingIndicator = document.createElement('div');
+  loadingIndicator.id = 'loadingIndicator';
+  loadingIndicator.innerHTML = '<div class="spinner"></div>';
+  document.body.appendChild(loadingIndicator);
 }
 
 function hideLoadingIndicator() {
@@ -1015,7 +1020,7 @@ function exitLoop(nextElement) {
       nextElement = document.getElementById(nextQuestionId.value);
     }
   }
-  
+
   return nextElement;
 }
 
@@ -1059,16 +1064,16 @@ export function displayQuestion(nextElement) {
       elm.style.display = f ? null : "none";
     });
   Array.from(nextElement.querySelectorAll("span[data-encoded-expression]"))
-  .map(elm=>{
+    .map(elm => {
       let f = evaluateCondition(decodeURIComponent(elm.dataset.encodedExpression))
-      elm.innerText=f;
-  })
+      elm.innerText = f;
+    })
 
   //Sets the brs after non-displays to not show as well
   nextElement.querySelectorAll(`[style*="display: none"]+br`).forEach((e) => {
     e.style = "display: none"
   })
-  
+
   // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
   nextElement.querySelectorAll("br").forEach((br) => {
     br.setAttribute("aria-hidden", "true");
@@ -1083,7 +1088,7 @@ export function displayQuestion(nextElement) {
       e.innerText = math.evaluate(decodeURIComponent(e.dataset.gridreplace))
     }
   });
-  
+
   // Check if grid elements need to be shown. Elm is a <tr>. If f !== true, remove the row (elm) from the DOM.
   Array.from(nextElement.querySelectorAll("[data-gridrow][data-displayif]")).forEach((elm) => {
     const f = evaluateCondition(decodeURIComponent(elm.dataset.displayif));
@@ -1175,11 +1180,11 @@ function refreshListeners(nextElement) {
 
 function removeListeners() {
   const textInputs = document.querySelectorAll('input[type="text"]');
-  
+
   // Remove input listeners from all text inputs
   if (debounceHandler) {
     textInputs.forEach(textInput => {
-        textInput.removeEventListener('input', debounceHandler);
+      textInput.removeEventListener('input', debounceHandler);
     });
   }
 
@@ -1197,20 +1202,20 @@ function addListeners(nextElement) {
   if (!debounceHandler) {
     debounceHandler = debounce(handleOtherTextInputKeyPress, 200); // 200ms
   }
-  
+
   // Find the associated checkbox/radio element. Note: Some are checkboxes and some are radios though they look the same.
   textInputs.forEach(textInput => {
-      textInput.addEventListener('input', debounceHandler);
-      const responseContainer = textInput.closest('.response');
+    textInput.addEventListener('input', debounceHandler);
+    const responseContainer = textInput.closest('.response');
 
-      if (responseContainer) {
-          const checkboxOrRadio = responseContainer.querySelector('input[type="checkbox"], input[type="radio"]');
-          if (checkboxOrRadio) {
-              checkboxOrRadio.addEventListener('click', () => {
-                  textInput.focus(); // Focus the text input on checkbox/radio click
-              });
-          }
+    if (responseContainer) {
+      const checkboxOrRadio = responseContainer.querySelector('input[type="checkbox"], input[type="radio"]');
+      if (checkboxOrRadio) {
+        checkboxOrRadio.addEventListener('click', () => {
+          textInput.focus(); // Focus the text input on checkbox/radio click
+        });
       }
+    }
   });
 
   // Attach event listeners to modal and close buttons (for screen readers)
@@ -1229,7 +1234,7 @@ function focusQuestionText(fieldsetEle) {
     existingTempSpans.forEach(span => span.remove());
     // Find the initial text in the fieldset
     let textContent = findInitialText(fieldsetEle);
-    
+
     if (textContent) {
       // Remove all instances of 'null' (generated from displayIf cases)
       textContent = textContent.replace(/null/g, '');
@@ -1239,24 +1244,24 @@ function focusQuestionText(fieldsetEle) {
       tempSpan.classList.add('sr-only');
       tempSpan.textContent = textContent + ' ';
       tempSpan.setAttribute('aria-live', 'assertive');
-      
+
       // Insert it into fieldset, then focus
       fieldsetEle.insertBefore(tempSpan, fieldsetEle.firstChild);
       tempSpan.focus();
-      
+
       // Hide the temporary span after it's been read by the screen reader
       setTimeout(() => {
         tempSpan.setAttribute('aria-hidden', 'true');
       }, 500);
     }
-    
+
     questionFocusSet = true;
   }
 }
 
 function findInitialText(element) {
   let textContent = '';
-  
+
   for (const node of element.childNodes) {
     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
       textContent += node.textContent.trim() + ' ';
@@ -1266,7 +1271,7 @@ function findInitialText(element) {
       break;
     }
   }
-  
+
   return textContent.trim() || null;
 }
 
@@ -1308,12 +1313,12 @@ function handleOtherTextInputKeyPress(event) {
 function debounce(func, wait) {
   let timeout;
   return function execute(...args) {
-      const later = () => {
-          clearTimeout(timeout);
-          func(...args);
-      };
+    const later = () => {
       clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
   };
 }
 
@@ -1410,25 +1415,25 @@ export function gridHasAllAnswers(questionFieldset) {
   let gridRows = Array.from(questionFieldset.querySelectorAll("tr[data-gridrow='true']"));
 
   const checked = (element) => element.checked;
-  return gridRows.reduce( (acc,current,index) => {
-    if (current.style.display=='none') return acc // skip hidden rows
+  return gridRows.reduce((acc, current, index) => {
+    if (current.style.display == 'none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
     let currentResponses = Array.from(current.parentElement.querySelectorAll(`input[type="radio"][name="${name}"], input[type="checkbox"][name="${name}"]`))
     return acc && currentResponses.some(checked)
-  },true)
+  }, true)
 }
 
 export function numberOfUnansweredGridQuestions(questionFieldset) {
   let gridRows = Array.from(questionFieldset.querySelectorAll("tr[data-gridrow='true']"));
   const checked = (element) => element.checked;
-  return gridRows.reduce( (acc,current,index) => {
-    if (current.style.display=='none') return acc // skip hidden rows
+  return gridRows.reduce((acc, current, index) => {
+    if (current.style.display == 'none') return acc // skip hidden rows
 
     let name = current.dataset.questionId
     let currentResponses = Array.from(current.querySelectorAll(`input[type="radio"][name="${name}"], input[type="checkbox"][name="${name}"]`));
-    return currentResponses.some(checked)?acc:(acc+1)
-  },0)
+    return currentResponses.some(checked) ? acc : (acc + 1)
+  }, 0)
 }
 
 
