@@ -9,6 +9,18 @@ import * as mathjs from 'https://cdn.skypack.dev/mathjs@11.2.0';
 export const math = mathjs.create(mathjs.all)
 window.math = math
 
+Date.prototype.formatDate = function (locale = navigator.languages[0]) {
+  console.log(locale)
+  return Intl.DateTimeFormat(locale, { timeZone: "UTC" }).format(this)
+}
+
+Date.prototype.formatYearMonth = function (locale = navigator.languages[0]) {
+  return Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "numeric",
+    timeZone: "UTC"
+  }).format(this)
+}
 
 // create a class YearMonth custom datatype for use in mathjs to handle
 // the month class...
@@ -94,8 +106,13 @@ export const myFunctions = {
     let element = document.getElementById(x);
     let returnValue = (element) ? element.value : moduleParams.previousResults[x]
 
-    if (/^\d{4}-\d{2}-\d{2}$/.test(returnValue)) {
-      return `${returnValue.slice(5, 7)}/${returnValue.slice(8, 10)}/${returnValue.slice(0, 4)}`
+    // We have a YYYY-MM-DD or YYYY-MM
+    if (/^\d{4}-\d{2}(?:-\d{2})?$/.test(returnValue)) {
+      let dte = new Date(returnValue)
+      if (returnValue.length > 7) {
+        return dte.formatDate()
+      }
+      return dte.formatYearMonth()
     }
 
     return returnValue
