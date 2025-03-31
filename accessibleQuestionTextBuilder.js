@@ -1,5 +1,5 @@
-import { moduleParams } from './questionnaire.js';
-import { getStateManager } from './stateManager.js';
+import { evaluateCondition } from './evaluateConditions.js';
+import { handleForIDAttributes, moduleParams } from './questionnaire.js';
 
 /**
  * Initialize the question text and focus management for screen readers.
@@ -17,9 +17,11 @@ export function manageAccessibleQuestion(fieldsetEle, questionFocusSet) {
         let focusableEle = buildQuestionText(fieldsetEle);
 
         // Focus the hidden, focusable element
-        setTimeout(() => {
-            focusableEle.focus({ preventScroll: true });
-        }, 500);
+        if (!moduleParams.isRenderer) {
+            setTimeout(() => {
+                focusableEle.focus({ preventScroll: true });
+            }, 500);
+        }
 
         questionFocusSet = true;
     }
@@ -46,6 +48,13 @@ function buildQuestionText(fieldsetEle) {
         (node.nodeType === Node.ELEMENT_NODE &&
             !['INPUT', 'BR', 'LABEL', 'LEGEND', 'TABLE'].includes(node.tagName) &&
             !node.classList.contains('response'));
+    
+    const isTerminalText = (text) => {
+        const trimmed = text.trim();
+        return trimmed.endsWith('?') ||
+            trimmed.endsWith('...') ||
+            trimmed.endsWith('tion:');
+    };
 
     const childNodes = Array.from(fieldsetEle.childNodes);
 
@@ -86,14 +95,31 @@ function buildQuestionText(fieldsetEle) {
                 break;
             }
 
+            // Stop collecting for legend if we hit text + number input node.
+            if (node.nodeType === Node.TEXT_NODE && nodeIndex + 1 < childNodes.length && childNodes[nodeIndex + 1] && childNodes[nodeIndex + 1].tagName === 'INPUT' && (childNodes[nodeIndex + 1].type === 'number')) {
+                focusNode = node;
+                break;
+            }
+
             questionElements.push(node.cloneNode(true));
             
+            // Stop collecting for legend if we hit the text node with a question-terminating condition.
+            // Let the handleMultiQuestionSurveyAccessibility() handle the focus node.
+            if (node.nodeType === Node.TEXT_NODE && isTerminalText(node.textContent)) {
+                break;
+            }
+
             // Stop looping if the text contains the 'a summary' text (otherwise the summary prompts get compressed).
             if (node.textContent && node.textContent.includes('a summary')) {
                 focusNode = node.nextSibling;
                 break;
             }
+
         } else if (node.tagName === 'BR') {
+            if (nodeIndex + 2 < childNodes.length && childNodes[nodeIndex + 1] && childNodes[nodeIndex + 1].tagName === 'BR' && childNodes[nodeIndex + 2] && childNodes[nodeIndex + 2].tagName === 'BR') {
+                //remove one <br> tag to ensure only two <br> tags are present after the <b> tag.
+                fieldsetEle.removeChild(node); // Remove the first <br> tag.
+            }
             continue; // Skip <br> tags.
         } else {
             focusNode = node; // The focus node splits questions and responses. The invisible focusable element is placed here.
@@ -109,8 +135,7 @@ function buildQuestionText(fieldsetEle) {
     }
     
     // Create the <legend> tag for screen readers and move the question text into it.
-    const updatedFieldset = manageLegendTag(fieldsetEle, questionElements);
-
+    const updatedFieldset = manageAccessibleFieldset(fieldsetEle, questionElements);
     // Create and return the hidden, focusable element for screen reader focus management.
     return createFocusableElement(updatedFieldset, focusNode);
 }
@@ -201,14 +226,17 @@ function handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, focusNo
  * @param {Array<Node>} questionElements - array of nodes to be added to the legend.
  */
 
-function manageLegendTag(fieldsetEle, questionElements) {
+function manageAccessibleFieldset(fieldsetEle, questionElements) {
+    // On return to question, the legend will already be built.
     const existingLegend = fieldsetEle.querySelector('legend');
     if (existingLegend) {
-        // Update the existing displayifs in case the user changed a response.
-        manageLegendDisplayIfs(existingLegend);
+        // Update the existing displayifs and forids in case the user changed a response.
+        const returnToQuestion = true;
+        manageFieldsetConditionals(fieldsetEle, returnToQuestion);
         return fieldsetEle;
     }
     
+    // Typical path: new question is loaded. Build the legend.
     let legendEle = document.createElement('legend');
     legendEle.classList.add('question-text');
 
@@ -223,29 +251,84 @@ function manageLegendTag(fieldsetEle, questionElements) {
         }
     });
 
-    // Manage displayifs in the legend (question text) for summary pages and dynamic questions.
-    manageLegendDisplayIfs(legendEle);
-
     // The table case: no fieldset exists, create it.
     const table = fieldsetEle.querySelector('table');
     if (table) {
         // Create a new <fieldset> element, then add the <legend> to it.
         const newFieldset = document.createElement('fieldset');
         newFieldset.appendChild(legendEle);
+        manageFieldsetConditionals(newFieldset);
 
         // Move the table inside the new <fieldset>
         table.parentNode.insertBefore(newFieldset, table);
         newFieldset.appendChild(table);
-        removeBRAfterLegend(newFieldset);
-
+        handleQuestionBRElements(newFieldset);
         return newFieldset;
 
     } else {
         // Insert the <legend> as the first child of the existing <fieldset> for non-table questions.
         fieldsetEle.insertBefore(legendEle, fieldsetEle.firstChild);
-        removeBRAfterLegend(fieldsetEle);
+        manageFieldsetConditionals(fieldsetEle);
+        handleQuestionBRElements(fieldsetEle);
         return fieldsetEle;
     }
+}
+
+// If we're reuturning to a question, we need to re-check all conditionals for changes.
+function manageFieldsetConditionals(fieldset, returnToQuestion = false) {
+    const legend = fieldset.querySelector('legend');
+    if (!legend) return;
+
+    const questionElement = fieldset.closest('.question');
+    const isSummaryPage = questionElement?.id?.includes('SUM');
+
+    // Insert a <br> tag between the legend and the first displayif element. User hasupdated attribute to prevent multiple updates.
+    const nextLegendSibling = legend.nextElementSibling;
+    if (nextLegendSibling && nextLegendSibling.classList.contains('displayif') && nextLegendSibling.style.display !== 'none' && nextLegendSibling.getAttribute('hasupdate') !== 'true') {
+        const brEle1 = document.createElement('br');
+        const brEle2 = document.createElement('br');
+        brEle1.setAttribute('hasupdate', 'true');
+        brEle2.setAttribute('hasupdate', 'true');
+        const afterElement = nextLegendSibling.nextElementSibling;
+        fieldset.insertBefore(brEle1, afterElement);
+        fieldset.insertBefore(brEle2, afterElement);
+        nextLegendSibling.setAttribute('hasupdate', 'true');
+    }
+
+    // Collect text nodes that are adjacent to a hidden element with the displayif attribute.
+    if (!isSummaryPage) {
+        for (let i = 0; i < fieldset.childNodes.length; i++) {
+            const node = fieldset.childNodes[i];
+            const prevElem = node.previousElementSibling;
+            const nextElem = node.nextElementSibling;
+
+            // use hasupdate attribute to prevent multiple updates
+            if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+                if ((node.getAttribute('hasupdate') !== 'true' &&
+                    prevElem && prevElem.classList.contains('displayif') && prevElem.style.display === 'none' &&
+                    nextElem && !nextElem.classList.contains('response'))) {
+                        node.style.display = 'none';
+                        node.setAttribute('hasupdate', 'true');
+                }
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                if ((prevElem && prevElem.classList.contains('response') && prevElem.hasAttribute('displayif') && prevElem.style.display === 'none') ||
+                    (nextElem && nextElem.classList.contains('response') && nextElem.hasAttribute('displayif') && nextElem.style.display === 'none')) {
+                    const cleaned = node.textContent.replace(/\s+/g, ' ');
+                    // Set its content to the cleaned version
+                    node.textContent = cleaned.trim() ? cleaned : '';
+                }
+            }
+        }
+    }
+
+    // Handle displayifs and forids in the fieldset and it's child (legend). Separate for speficity.
+    const fieldsetForIdSpans = Array.from(fieldset.querySelectorAll('[forid]'))
+        .filter(el => !legend.contains(el));
+
+    handleForIDAttributes(fieldsetForIdSpans, returnToQuestion);
+    manageLegendDisplayIfs(legend, returnToQuestion);
 }
 
 /**
@@ -263,45 +346,142 @@ function manageLegendTag(fieldsetEle, questionElements) {
  * @returns {void} - The forid values are updated directly in the legend
  */
 
-function manageLegendDisplayIfs(legend) {
-    const manageForIdSpans = (forIdSpanArray) => {
-        const appState = getStateManager();
-        forIdSpanArray.forEach(forIdSpan => {
-            const forID = forIdSpan.getAttribute('forid');
-            const foundValue = appState.findResponseValue(forID) ?? '';
-
-            foundValue === ''
-                ? forIdSpan.style.display = 'none'
-                : forIdSpan.style.display = null;
-            forIdSpan.textContent = foundValue;
-        });
-    }
-    
+function manageLegendDisplayIfs(legend, returnToQuestion) {
     // If the legend contains displayifs, manage those first.
-    const displayIfSpans = Array.from(legend.querySelectorAll('span.displayif'));
+    // Toggle visibility and update values based on the user's previous responses.
+    const displayIfSpans = Array.from(legend.querySelectorAll("span.displayif"));
     if (displayIfSpans.length > 0) {
         displayIfSpans.forEach(span => {
-            const forIdSpans = span.querySelectorAll('[forid]');
-            manageForIdSpans(forIdSpans);
+
+            const displayIfAttribute = span.getAttribute('displayif');
+            let conditionBool = evaluateCondition(displayIfAttribute);
+            if (conditionBool) {
+                span.style.display = '';
+            } else {
+                span.style.display = 'none';
+            }
+
+            if (/^\d{9}$/.test(span?.textContent?.trim())) {
+                span.textContent = '';
+            }
         });
+
+        const forIdSpans = legend.querySelectorAll('[forid]');
+        if (forIdSpans.length > 0) {
+            handleForIDAttributes(forIdSpans, returnToQuestion);
+        }
+
+        resolveLegendDisplayIfWhitespace(legend);
         return;
     }
-    
+
     // If no displayifs are found, check for raw forIds.
     const forIdSpans = Array.from(legend.querySelectorAll('[forid]'));
     if (forIdSpans.length > 0) {
-        manageForIdSpans(forIdSpans);
+        handleForIDAttributes(forIdSpans, returnToQuestion);
     }
 }
 
+function resolveLegendDisplayIfWhitespace(legend) {
+    if (!legend) return;
+
+    const textNodes = [];
+
+    // Collect text nodes. Only process text nodes between displayif spans.
+    for (let i = 0; i < legend.childNodes.length; i++) {
+        const node = legend.childNodes[i];
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            const prevElem = node.previousElementSibling;
+            const nextElem = node.nextElementSibling;
+
+            if ((prevElem && prevElem.classList?.contains('displayif') && prevElem.style.display === 'none') || (nextElem && nextElem.classList?.contains('displayif') && nextElem.style.display === 'none')) {
+                textNodes.push(node);
+            }
+        }
+    }
+
+    if (textNodes.length === 0) return;
+    normalizeCollectedTextNodes(textNodes);
+}
+
+// Normalize collected nodes: replace sequences of whitespace with a single space
+function normalizeCollectedTextNodes(textNodeArray) {
+    textNodeArray.forEach(textNode => {
+        textNode.textContent = textNode.textContent.replace(/\s+/g, ' ');
+
+        if (textNode.textContent.trim() === '') {
+            const nextElement = textNode.nextElementSibling;
+            if (nextElement &&
+                nextElement.classList?.contains('displayif') &&
+                nextElement.style.display === 'none') {
+                textNode.textContent = '';
+            }
+        }
+    });
+}
+
+// Remove <br> tags after the legend tag when multiple exist (too much whitespace between questions and responses).
 function removeBRAfterLegend(fieldsetEle) {
     const legendEle = fieldsetEle.querySelector('legend');
     if (!legendEle) return;
     let nextSibling = legendEle.nextSibling;
-    while (nextSibling?.tagName === 'BR' && nextSibling.nextSibling?.tagName === 'BR') {
+    while (nextSibling?.tagName === 'BR' && nextSibling.nextSibling?.tagName === 'BR' && nextSibling.style.display !== 'none' && nextSibling.getAttribute('hasupdate') !== 'true') {
         fieldsetEle.removeChild(nextSibling);
         nextSibling = legendEle.nextSibling;
     }
+}
+
+/**
+ * Traverse the question DOM and handle <br> elements.
+ * @param {HTMLElement} fieldset - The question's fieldset element.
+ * @param {number} maxBrs - The maximum number of <br> elements between HTMLElements.
+ */
+
+function handleQuestionBRElements(fieldset, maxBrs = 3) {
+    const questionElement = fieldset.closest('.question');
+
+    // Remove any <br> elements after the legend tag.
+    removeBRAfterLegend(fieldset);
+
+    //special handling for summary pages
+    const isSummaryPage = questionElement.id.includes('SUM');
+    if (isSummaryPage) {
+        maxBrs = 1;
+    }
+
+    let consecutiveBrs = [];
+
+    // Traverse the DOM tree to find all <br> elements
+    questionElement.querySelectorAll('br').forEach((br) => {
+        if (consecutiveBrs.length > 0 && consecutiveBrs[consecutiveBrs.length - 1].nextElementSibling === br) {
+            consecutiveBrs.push(br);
+        } else {
+            if (consecutiveBrs.length > maxBrs) {
+                // Remove all but the first two <br> elements
+                consecutiveBrs.slice(maxBrs).forEach((extraBr) => extraBr.remove());
+            }
+            // Reset the array to start tracking a new sequence
+            consecutiveBrs = [br];
+        }
+    });
+
+    // Final check in case the last sequence of <br>s is at the end of the document
+    if (consecutiveBrs.length > maxBrs) {
+        consecutiveBrs.slice(maxBrs).forEach((extraBr) => extraBr.remove());
+    }
+
+    //Set the brs after non-displays to not show as well
+    if (!isSummaryPage) {
+        [...questionElement.querySelectorAll(`[style*="display: none"]+br`)].forEach((e) => {
+            e.style = "display: none"
+        });
+    }
+
+    // Add aria-hidden to all remaining br elements. This keeps the screen reader from reading them as 'Empty Group'.
+    [...questionElement.querySelectorAll("br")].forEach((br) => {
+        br.setAttribute("aria-hidden", "true");
+    });
 }
 
 /**
@@ -371,7 +551,7 @@ export function closeModalAndFocusQuestion(event) {
 
 // Custom Accessible handling for up/down arrow keys.
 // This ensures focus doesn't trap accessible navigation in lists that have 'Other' text inputs.
-// Only active when moduleParams.activate is true (inactive in the renderer because focus() causes issues).
+// Only active when moduleParams.isRenderer is false (inactive in the renderer because focus() causes issues).
 export function handleUpDownArrowKeys(event) {
     if (event.key === 'ArrowDown') {
         event.preventDefault();

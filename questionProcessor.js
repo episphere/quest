@@ -332,7 +332,9 @@ export class QuestionProcessor {
 
     this.setCurrentQuestionIndex('update', index);
 
-    this.manageActiveQuestionClass(question, questionToUnload);
+    if (!moduleParams.renderFullQuestionList) {
+      this.manageActiveQuestionClass(question, questionToUnload);
+    }
 
     return question;
   }
@@ -355,7 +357,9 @@ export class QuestionProcessor {
 
     this.setCurrentQuestionIndex('update', index);
 
-    this.manageActiveQuestionClass(question, questionToUnload);
+    if (!moduleParams.renderFullQuestionList) {
+      this.manageActiveQuestionClass(question, questionToUnload);
+    }
     
     return question;
   }
@@ -619,7 +623,7 @@ export class QuestionProcessor {
   /**
    * For some input elements, the input ID and the form ID are different.
    * This is a legacy case, where we need to continue supporting existing surveys.
-   * Process: Search questions for the elementID. If found, return the parent formID.
+   * Process: Search questions for the elementID. If found, evaluate the found element.
    * This supports 'forid' replacement and displayif conditionals.
    * @param {string} elementID - The ID of the input element to find.
    * @returns {string} - The ID of the input element's form, required for evaluating some conditionals, or null if not found.
@@ -632,13 +636,43 @@ export class QuestionProcessor {
       if (question) {
         const foundElement = question.querySelector(`#${elementID}`);
         if (foundElement) {
+          const displayIfAttribute = foundElement.getAttribute('displayif');
+          if (displayIfAttribute) {
+            if (!this.evaluateConditionInFormSearch(displayIfAttribute)) {
+              return '';
+            }
+          }
+          // If the found element is hidden, it is not a valid result.
+          if (foundElement.style.display === 'none') {
+            return '';
+          }
           return question.id;
+        // If the elementID matches the questionID, there's no new property to replace/return.
+        } else if (question.id === elementID) {
+          return '';
         }
       }
     }
 
     moduleParams.errorLogger(`Error, findRelatedFormID (formID not found): ${moduleParams.questName}, elementID: ${elementID}`);
-    return null;
+    return '';
+  }
+
+  // This can be extended to handle other speficic conditionals in the form search for complex cases.
+  // The doesNotExist case handles multi-page dependencies (e.g. address entry where the user is asked to enter missing values actoss multiple questions in Module 3).
+  evaluateConditionInFormSearch(displayIfAttribute) {
+    if (displayIfAttribute.includes('doesNotExist')) {
+      const idRegex = /"(D_\d+(?:_\d+)*)"/;
+      const match = displayIfAttribute.match(idRegex);
+      if (match && match[1]) {
+          const appState = getStateManager();
+          const foundValue = appState.findResponseValue(match[1]);
+          if (foundValue == null || foundValue === '') {
+            return false;
+          }
+      }
+    }
+    return true;
   }
 
   replaceDateTags(content) {
@@ -1089,10 +1123,10 @@ export class QuestionProcessor {
       const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? `between ${min} and ${max}` : ''}.`;
       const defaultPlaceholder = `placeholder="${moduleParams.i18n.enterValue}"`;
 
-      // Use default placeholder when min to max range is a large distribution, e.g. max weight (999) and max age (125).
+      // Use default placeholder when min to max range is a large distribution, e.g. max weight (999) and max age (125), max pills (100).
       // Same for min == 0. Show default placeholder for those cases.
       let placeholder;
-      if (max && max > 100) {
+      if (max && max >= 50) {
         placeholder = defaultPlaceholder;
       } else if (min && max) {
         const avgValue = Math.floor((parseInt(min, 10) + parseInt(max, 10)) / 2);

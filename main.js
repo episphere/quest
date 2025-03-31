@@ -15,7 +15,7 @@ transform.render = async (obj, divID, previousResults = {}) => {
   try {
     // Set the global moduleParams object with data needed for different parts of the app.
     setModuleParams(obj, divID, previousResults);
-    
+
     // if the object has a 'text' field, the contents have been prefetched and passed in. Else, fetch the survey contents.
     const markdown = moduleParams.text || await fetch(moduleParams.url).then(response => response.text());
     
@@ -89,7 +89,6 @@ function loadQuestionQueue(treeJSON) {
 
 function getActiveQuestionID(questionsArray) {
   if (questionsArray.length === 0) {
-    if (moduleParams.isRenderer) moduleParams.errorLogger('No questions found in the survey.');
     return;
   }
 
@@ -134,7 +133,7 @@ function setInitialQuestionOnStartup(questionProcessor, activeQuestionID, initia
 }
 
 function setModuleParams(obj, divID, previousResults) {
-  moduleParams.url = obj.url;
+  moduleParams.url = obj.url || '';
   moduleParams.text = obj.text || '';
   moduleParams.store = obj.store;
   moduleParams.retrieve = obj.retrieve;

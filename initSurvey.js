@@ -41,7 +41,7 @@ export async function initSurvey(markdown) {
  * @returns {Object} - The retrieved data from the retrieve function or null.
  */
 async function fetchAndProcessResources() {
-    // Helper function to unwrap the data from the retrieve function response. This format is necessary for fillForm().
+    // Helper function to unwrap the data from the retrieve function response.
     function unwrapData(data) {
         if (data && typeof data === 'object' && !Array.isArray(data)) {
             const keys = Object.keys(data);

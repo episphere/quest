@@ -1,5 +1,6 @@
 import { rbAndCbClick, handleXOR, parseSSN, parsePhoneNumber, textboxinput, radioAndCheckboxUpdate, moduleParams } from "./questionnaire.js";
-import { clearValidationError } from "./validate.js";
+import { clearValidationError, validationError } from "./validate.js";
+import { hideLoadingIndicator, showLoadingIndicator, translate } from './common.js';
 import { nextButtonClicked, getPreviousQuestion } from "./questionnaire.js";
 import { getStateManager } from "./stateManager.js";
 import { closeModalAndFocusQuestion, handleUpDownArrowKeys, handleRadioCheckboxListEvents, handleRadioCheckboxTableEvents, updateAriaLiveSelectionAnnouncer, updateAriaLiveSelectionAnnouncerTable, clearSelectionAnnouncement } from "./accessibleQuestionTextBuilder.js";
@@ -55,7 +56,7 @@ function handleClickEvent(event) {
     // Handle text inputs in radio/checkbox lists (e.g. "Other" text inputs). They're inside a response container..
     // Auto-focus the text input if the outer response element (radio or checkbox) is clicked.
     // Note: Some are checkboxes and some are radios though they look the same.
-    // Skip in the renderer because focus() causes issues (ensure moduleParams.activate === true).
+    // Skip in the renderer because focus() causes issues.
     if (!moduleParams.isRenderer) {
       const responseContainer = target.closest('.response');
       const textInputElement = responseContainer?.querySelector('input[type="text"], textarea');
@@ -263,21 +264,25 @@ function handleSubmitSurveyClick() {
   });
 }
 
+// Event listener to submit the survey and reload the page.
+// The short delay allows the host app to process reload on success. If host app doesn't reload, this app will reload the page on success.
+// Handle any case other than 200, in the catch block and show the error message.
 function addSubmitSurveyListener() {
   const submitModalButton = moduleParams.questDiv.querySelector('#submitModalButton');
   submitModalButton.addEventListener('click', async () => {
-    const lastBackButton = moduleParams.questDiv.querySelector('#lastBackButton');
-    if (lastBackButton) {
-      lastBackButton.remove();
-    }
-    const submitButton = moduleParams.questDiv.querySelector('#submitButton');
-    if (submitButton) {
-      submitButton.remove();
-    }
+    clearValidationError();
+    showLoadingIndicator();
 
-    // Submit the survey and reload the page.
-    const appState = getStateManager();
-    await appState.submitSurvey();
-    location.reload();
+    try {
+      const appState = getStateManager();  
+      const submitSurveyResponse = await appState.submitSurvey();
+      if (submitSurveyResponse?.code !== 200) {
+        throw new Error('Submit survey failed');
+      }
+    } catch (error) {
+      hideLoadingIndicator();
+      moduleParams.errorLogger(error);
+      validationError(moduleParams.questDiv.querySelector('legend'), translate("storeErrorBody"));
+    }
   });
 }
