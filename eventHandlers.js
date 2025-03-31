@@ -56,7 +56,7 @@ function handleClickEvent(event) {
     // Handle text inputs in radio/checkbox lists (e.g. "Other" text inputs). They're inside a response container..
     // Auto-focus the text input if the outer response element (radio or checkbox) is clicked.
     // Note: Some are checkboxes and some are radios though they look the same.
-    // Skip in the renderer because focus() causes issues (ensure moduleParams.activate === true).
+    // Skip in the renderer because focus() causes issues.
     if (!moduleParams.isRenderer) {
       const responseContainer = target.closest('.response');
       const textInputElement = responseContainer?.querySelector('input[type="text"], textarea');

@@ -152,11 +152,16 @@ export const customMathJSFunctions = {
     if (this.doesNotExist(id)) return false;
     // compare as strings so "1" == "1"
     values = values.map(v => v.toString())
-    let test_values = math._value(id);
+    let test_values = this._value(id);
 
     // catch if we have a combobox...
     if (test_values[id]) {
       test_values = test_values[id]
+    }
+
+    // Check for concept id arrays as strings. Convert to array for comparison.
+    if (typeof test_values === 'string' && /^\d{9}(,\d{9})*$/.test(test_values)) {
+      test_values = test_values.split(',');
     }
 
     if (Array.isArray(test_values)) {
@@ -164,6 +169,7 @@ export const customMathJSFunctions = {
     }
     return values.includes(test_values.toString())
   },
+  
   /**
    * checks whether the value for id is 
    * between the values of lowerLimit and upperLimit inclusively

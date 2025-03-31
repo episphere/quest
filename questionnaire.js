@@ -929,14 +929,15 @@ export async function prepareQuestionDOM(questionElement) {
   if (moduleParams.showProgressBarInQuest) {  
     updateProgressBar(questionProcessor);
   }
-  
-  if (!moduleParams.isRenderer) {
+
+  if (moduleParams.activate) {
     handleUserScrollLocation();
-    
+
     // Handle accessibility features after the question renders.
     // The question text is at the opening fieldset tag OR at the top of the nextElement form for tables.
     questionFocusSet = manageAccessibleQuestion(questionElement.querySelector('fieldset') || questionElement, questionFocusSet);
   }
+
   // Popovers get initialized last, after all other DOM and accessibility operations, to ensure they are in the DOM and visible (Bootstrap 5 requirement).
   initializePopovers();
 }

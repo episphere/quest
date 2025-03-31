@@ -1,5 +1,5 @@
 import { transform } from "./main.js";
-import { moduleParams, questionQueue } from "./questionnaire.js";
+import { moduleParams } from "./questionnaire.js";
 import { getStateManager } from "./stateManager.js";
 
 class QuestRenderer {
@@ -17,37 +17,135 @@ class QuestRenderer {
   }
 
   async fetchModule(url) {
-    const response = await fetch(url);
-    if (!response.ok) {
-      return `<h3>Problem retrieving questionnaire module <i>${url}</i>:</h3> HTTP response code: ${response.status}`;
+    try {
+      // Check if it's a GitHub URL. Convert to GitHub Raw if needed.
+      let urlToFetch = url;
+
+      if (url.includes('github.com') && !url.includes('raw.githubusercontent.com')) {
+        urlToFetch = this.convertToGitHubRawUrl(url);
+      }
+
+      const response = await fetch(urlToFetch);
+
+      if (!response.ok) {
+        console.error(`Failed to fetch from ${urlToFetch}: ${response.status} ${response.statusText}`);
+
+        // Reset URL in history
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+
+        return `Problem retrieving questionnaire module ${url}:
+            HTTP response code: ${response.status}
+            
+            This may be due to CORS restrictions.
+            
+            Try the following:
+              • Using a raw GitHub URL (raw.githubusercontent.com)
+              • Hosting the file on a CORS-enabled server
+              • Using a local file instead`;
+      }
+
+      return await response.text();
+    } catch (error) {
+      console.error(`Error fetching module from ${url}:`, error);
+
+      // Reset URL in history
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
+
+      // Check if it looks like a CORS error
+      const errorMessage = error.toString().toLowerCase();
+      const likelyCORSError =
+        errorMessage.includes('cors') ||
+        errorMessage.includes('network') ||
+        errorMessage.includes('failed to fetch');
+
+      let helpText = '';
+      if (likelyCORSError) {
+        helpText = `This appears to be a CORS restriction. If using GitHub, make sure to use the raw URL format.`;
+      }
+
+      return `Error retrieving questionnaire module ${url}: ${error.message}.\n${helpText}`;
     }
-    return await response.text();
+  }
+
+  // Handle both blob and raw paths in in the format: https://github.com/username/repo/blob/branch/path/to/file.txt
+  convertToGitHubRawUrl(url) {
+    if (url.includes('github.com')) {
+      let rawUrl = url;
+      rawUrl = rawUrl.replace('github.com', 'raw.githubusercontent.com');
+      rawUrl = rawUrl.replace('/blob/', '/').replace('/raw/', '/');
+
+      console.log("Converted GitHub URL:", rawUrl);
+      return rawUrl;
+    }
+
+    return url;
   }
 
   async startUp() {
     await this.initializeLocalForage();
+    await this.loadPreviousResultsFromStorage();
     this.setInitialUIState();
-    await this.handleURLParams();
+    await this.processURLParams();
     this.setUpEventListeners();
-    await this.setUpDebouncedRendering();
+    await this.setUpRenderingListeners();
   }
 
   async initializeLocalForage() {
-    this.questLocalForage = await localforage.createInstance({
-      name: "questParams",
-      storeName: "params",
-    });
+    try {
+      this.questLocalForage = await localforage.createInstance({
+        name: "questParams",
+        storeName: "params",
+      });
 
-    // Retrieve logic and styling from local storage or set default values
-    this.logicFromStorage = (await this.questLocalForage.getItem("logic")) ?? false;
-    this.stylingFromStorage = (await this.questLocalForage.getItem("styling")) ?? false;
+      // Retrieve logic and styling from local storage or set default values
+      try {
+        this.logicFromStorage = await this.questLocalForage.getItem("logic");
+        this.logicFromStorage = this.logicFromStorage ?? false;
+      } catch (error) {
+        console.warn("Failed to retrieve logic setting:", error);
+        this.logicFromStorage = false;
+      }
+
+      try {
+        this.stylingFromStorage = await this.questLocalForage.getItem("styling");
+        this.stylingFromStorage = this.stylingFromStorage ?? false;
+      } catch (error) {
+        console.warn("Failed to retrieve styling setting:", error);
+        this.stylingFromStorage = false;
+      }
+
+    } catch(error) {
+      console.error("Failed to initialize LocalForage:", error);
+      // Fallback if LocalForage fails
+      this.questLocalForage = {
+        getItem: (key) => {
+          console.warn("Using memory for getItem (LF fallback):", key);
+          return Promise.resolve(null);
+        },
+        setItem: (key, value) => {
+          console.warn("Using memory for setItem (LF fallback):", key);
+          return Promise.resolve(value);
+        },
+        clear: () => {
+          console.warn("Using memory for clear (LF fallback)");
+          return Promise.resolve();
+        }
+      };
+      this.logicFromStorage = false;
+      this.stylingFromStorage = false;
+    }
   }
 
   setInitialUIState() {
-    if (
-      location.hash.split("&").includes("run") ||
-      this.searchParams.has("run")
-    ) {
+    if (location.hash.split("&").includes("run") || this.searchParams.has("run")) {
       document.getElementById("logic").checked = true;
       document.getElementById("styling").checked = this.stylingFromStorage;
       document.getElementById("questNavbar").style.display = "none";
@@ -61,61 +159,73 @@ class QuestRenderer {
     this.setStylingAndLogic();
   }
 
-  async handleURLParams() {
+  async processURLParams() {
+    // Set parameters from URL and hash
+    const searchParams = new URLSearchParams(location.search);
+    const hashStr = location.hash.substring(1);
+
+    // Create URLSearchParams object from the hash
+    const hashParams = new URLSearchParams(hashStr.includes('?') || hashStr.includes('&') ? hashStr : '');
+
+    // Process run parameter (from either source)
+    const runMode = searchParams.has('run') || hashParams.has('run');
+    if (runMode) {
+      document.getElementById('logic').checked = true;
+      document.getElementById('styling').checked = this.stylingFromStorage;
+      document.getElementById('questNavbar').style.display = 'none';
+      document.getElementById('markup').style.display = 'none';
+      document.getElementById('renderText').style.display = 'none';
+
+      const parentElement = document.getElementById("rendering").parentElement;
+      parentElement.classList.remove("col-12", "col-md-6");
+    }
+
+    // Handle style parameter
+    let styleSheet = null;
+    if (searchParams.has('style')) {
+      styleSheet = searchParams.get('style');
+      document.getElementById("logic").dataset.sheetOn = styleSheet;
+    } else if (hashParams.has('style')) {
+      styleSheet = hashParams.get('style');
+      document.getElementById("logic").dataset.sheetOn = styleSheet;
+    }
+
+    if (styleSheet) {
+      document.getElementById("pagestyle").setAttribute("href", styleSheet);
+    } else if (runMode && !styleSheet) {
+      document.getElementById("pagestyle").setAttribute("href", "Style1.css");
+    }
+
+    // Handle URL to load (from either source)
+    let urlToLoad = null;
+    if (searchParams.has('url')) {
+      urlToLoad = searchParams.get('url');
+    } else {
+      // Extract URL from hash if it exists
+      const hashContent = decodeURIComponent(location.hash.substring(1));
+      if (hashContent && !hashContent.includes('=') && !hashContent.includes('&')) {
+        urlToLoad = hashContent;
+      }
+    }
+
+    if (urlToLoad) {
+      await this.loadModule(urlToLoad);
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname + '#' + urlToLoad
+      );
+    }
+
     // Handle previous results from URL parameters
-    this.searchParams.forEach((value, key) => {
-      if (!["run", "style", "url"].includes(key)) {
+    searchParams.forEach((value, key) => {
+      if (!["run", "style", "url", "config"].includes(key)) {
         this.previousResults[key] = value;
       }
     });
 
-
-    // Load previous results from local storage if not provided in URL
-    if (Object.keys(this.previousResults).length === 0) {
-      await this.loadPreviousResultsFromStorage();
-    }
-
-    this.jsonInput.value = JSON.stringify(this.previousResults, null, 3);
-
-    // Handle URL parameters and fragment identifiers
-    const fragmentUrl = decodeURIComponent(location.hash.substring(1));
-    if (fragmentUrl.length > 0) {
-      await this.loadModule(fragmentUrl);
-
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname + '#' + fragmentUrl
-      );
-
-    } else if (this.searchParams.has("url")) {
-      const url = this.searchParams.get("url");
-      await this.loadModule(url);
-
-      // Update the URL to remove ?url=... and add #url
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname + "#" + url
-      );
-    }
-
-    if (this.searchParams.has("config")) {
-      console.warn('TESTING: Loading config from URL', confirm.markdown);
-      await this.loadModule(confirm.markdown);
-    }
-
-    if (this.searchParams.has("style")) {
-      document.getElementById("logic").dataset.sheetOn = this.searchParams.get("style");
-    }
-
-    if (this.searchParams.has("run")) {
-      const parentElement = document.getElementById("rendering").parentElement;
-      parentElement.classList.remove("col-12", "col-md-6");
-      if (!this.searchParams.has("style")) {
-        document.getElementById("pagestyle").setAttribute("href", "Style1.css");
-      }
-    }
+    // Set the styling and logic based on current checkboxes
+    this.setStylingAndLogic();
   }
 
   async loadModule(url) {
@@ -123,11 +233,19 @@ class QuestRenderer {
     await this.renderMarkup();
   }
 
+  // Fill the Settings -> Previous Results textarea with the previousResults object
   async loadPreviousResultsFromStorage() {
-    const cachedPreviousResults =
-      (await this.questLocalForage.getItem("previousResults")) ?? "";
-    this.previousResults =
-      cachedPreviousResults.length > 0 ? JSON.parse(cachedPreviousResults) : {};
+    try {
+      const cachedPreviousResults = await this.questLocalForage.getItem("previousResults") ?? "";
+      this.previousResults = cachedPreviousResults.length > 0 ? JSON.parse(cachedPreviousResults) : {};
+
+      // Also update the textarea display
+      this.jsonInput.value = cachedPreviousResults.length > 0 ? cachedPreviousResults : "";
+    } catch (error) {
+      console.error("Error loading previous results:", error);
+      this.previousResults = {};
+      this.jsonInput.value = "";
+    }
   }
 
   setUpEventListeners() {
@@ -147,19 +265,11 @@ class QuestRenderer {
     });
 
     // Increase and decrease font size
-    document.getElementById("increaseSizeButton").addEventListener("click", this.increaseMarkupTextSize);
-    document.getElementById("decreaseSizeButton").addEventListener("click", this.decreaseMarkupTextSize);
+    document.getElementById("increaseSizeButton").addEventListener("click", () => this.increaseMarkupTextSize());
+    document.getElementById("decreaseSizeButton").addEventListener("click", () => this.decreaseMarkupTextSize());
 
     // Clear local forage
-    document.getElementById("clearMem").addEventListener("click", this.clearLocalForage.bind(this));
-
-    // Styling and logic checkboxes
-    document.querySelectorAll("#logic,#styling").forEach((ele) => {
-      ele.addEventListener("change", (event) => {
-        this.questLocalForage.setItem(event.target.id, event.target.checked);
-        this.setStylingAndLogic();
-      });
-    });
+    document.getElementById("clearMem").addEventListener("click", () => this.clearLocalForage());
 
     // Hide markup checkbox
     document.querySelector("#hide-markup").addEventListener("change", (event) => {
@@ -167,32 +277,77 @@ class QuestRenderer {
       document.getElementById("renderText").style.display = event.target.checked ? "none" : "initial";
     });
 
-    // View current responses
-    document.getElementById("viewCurrentResponses").addEventListener("click", this.buildCurrentResponseTable.bind(this));
+    // Save document, load from URL, and Demo buttons
+    document.getElementById("saveBtn").addEventListener("click", () => this.saveDoc());
+    document.getElementById("loadURLBtn").addEventListener("click", () => this.submitURL());
+    document.getElementById("demo").addEventListener("click", (event) => this.handleDemoClick(event));
+    
+    // View current responses tab
+    document.getElementById("viewCurrentResponses").addEventListener("click", () => this.buildCurrentResponseTable());
 
     // JSON input handling for the renderer "Settings" tab
     document.getElementById("updater").addEventListener("click", async () => {
-      await this.updatePreviousResults();
+      await this.updatePreviousResultsJSON();
+    });
+
+    // Changes to the logic and styling checkboxes
+    document.querySelectorAll("#logic,#styling").forEach((ele) => {
+      ele.addEventListener("change", async (event) => {
+        // Save the current markdown content and new checkbox state
+        const currentMarkdown = this.markupTextAreaEle.value;
+        await this.questLocalForage.setItem(event.target.id, event.target.checked);
+
+        // Update stylesheet references
+        this.setStylingAndLogic();
+
+        // If there's content to reload, re-render it
+        if (currentMarkdown && currentMarkdown.trim() !== "") {
+          await this.renderMarkup();
+        }
+      });
     });
   }
 
-  setUpDebouncedRendering() {
-    this.markupTextAreaEle.addEventListener("keyup", async () => {
-      await this.renderMarkup();
+  async setUpRenderingListeners() {
+    this.markupTextAreaEle.addEventListener("keyup", () => {
+      this.debounce(async () => await this.renderMarkup());
     });
+  }
+
+  debounce(func, tt = 500) {
+    if (this.debounceTimeout) {
+      clearTimeout(this.debounceTimeout);
+    }
+    this.debounceTimeout = setTimeout(async () => {
+      try {
+        await func(this.previousResults);
+      } catch (error) {
+        console.error("Error in debounced function:", error);
+      }
+    }, tt);
   }
 
   async renderMarkup() {
-    this.debounce(async (previousResults) => {
+    try {
+      // Clear the rendering container first
+      const renderingContainer = document.getElementById("rendering");
+      if (renderingContainer) {
+        renderingContainer.innerHTML = '';
+      }
+
       const renderObj = {
-        text: this.markupTextAreaEle.value,
-        lang: document.getElementById("langSelect").value,
-        activate: document.getElementById("logic").checked,
-        isRenderer: true,
+        text: this.markupTextAreaEle.value,                   // Survey text
+        lang: document.getElementById("langSelect").value,    // Survey language
+        activate: document.getElementById("logic").checked,   // Activate logic: Full question list = not checked, one question at a time = checked
+        isRenderer: true,                                     // Renderer flag: Built-in renderer = true vs embedded usage = false (e.g. the MyConnect implementation)
       };
 
-      await transform.render(renderObj, "rendering", previousResults);
-    });
+      await transform.render(renderObj, "rendering", this.previousResults);
+    } catch (error) {
+      console.error("Error during rendering:", error);
+      document.getElementById("rendering").innerHTML =
+        `<div class="alert alert-danger">Error rendering: ${error.message}</div>`;
+    }
   }
 
   increaseMarkupTextSize() {
@@ -240,14 +395,17 @@ class QuestRenderer {
 
     if (Object.keys(responses).length === 0) {
       this.insertEmptyTableRow(tableBodyElement, "No responses found. Please load a survey first.");
+      return;
     }
 
-    Object.entries(responses).forEach(([key, value]) => {
-      const row = tableBodyElement.insertRow();
-      let cell = row.insertCell();
-      cell.innerText = key;
-      cell = row.insertCell();
-      cell.innerHTML = `<pre>${JSON.stringify(value, null, 3)}</pre>`;
+    Object.entries(responses)
+      .filter(([key, value]) => key !== 'treeJSON' && value != null)
+      .forEach(([key, value]) => {
+        const row = tableBodyElement.insertRow();
+        let cell = row.insertCell();
+        cell.innerText = key;
+        cell = row.insertCell();
+        cell.innerHTML = `<pre>${JSON.stringify(value, null, 3)}</pre>`;
     });
   }
 
@@ -261,14 +419,20 @@ class QuestRenderer {
   async clearLocalForage() {
     try {
       await localforage.clear();
-      this.loadDisplay.innerHTML = "local forage cleared";
+      await this.questLocalForage.removeItem("previousResults");
+      
+      // Clear the PreviousResults data
+      this.previousResults = {};
+      this.jsonInput.value = "";
+
+      // Update the display message
+      this.loadDisplay.innerHTML = "Previous results cleared successfully";
+
     } catch (err) {
-      this.loadDisplay.innerHTML = "caught error" + err;
+      console.error("Error clearing LocalForage:", err);
+      this.loadDisplay.innerHTML = "Error clearing LocalForage: " + err;
       moduleParams.errorLogger("Error while clearing local forage:", err);
     }
-
-    questionQueue.clear();
-    this.previousResults = {};
   }
 
   setStylingAndLogic() {
@@ -287,35 +451,70 @@ class QuestRenderer {
     setValueFromCheckboxSelection("pagelogic", "logic"); // Logicsheet
   }
 
-  debounce(func, tt = 500) {
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
-    }
-    this.debounceTimeout = setTimeout(() => func(this.previousResults), tt);
-  }
-
-  async updatePreviousResults() {
+  async updatePreviousResultsJSON() {
     let txt = "";
     try {
-      this.previousResults =
-        this.jsonInput.value.length > 0
-          ? JSON.parse(this.jsonInput.value)
-          : {};
-      await this.questLocalForage.setItem("previousResults", this.jsonInput.value);
-      txt = "Added JSON successfully.";
+      if (this.jsonInput.value.length > 0) {
+        JSON.parse(this.jsonInput.value);
+
+        this.previousResults = JSON.parse(this.jsonInput.value);
+        await this.questLocalForage.setItem("previousResults", this.jsonInput.value);
+        txt = "Added JSON successfully.";
+
+      } else {
+        this.previousResults = {};
+        await this.questLocalForage.setItem("previousResults", "");
+        txt = "Cleared previous results.";
+      }
+
     } catch (err) {
-      txt = "Caught error: " + err;
+      txt = "Error: Invalid JSON format.";
+      console.error("Error updating previous results:", err);
     }
     this.loadDisplay.innerText = txt;
   }
+
+  saveDoc() {
+    // Get the markup text area element properly
+    const markupTextArea = document.getElementById("markupTextArea");
+    const tb = document.getElementById("tb");
+    // Use a default file name if the user hasn't provided one
+    const fileName = tb.value && tb.value.trim() ? tb.value.trim() : "demo";
+    const blob = new Blob([markupTextArea.value], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    return a;
+  }
+
+  submitURL() {
+    let url = document.getElementById("url").value
+    let newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('url', url);
+    window.location.href = newUrl.toString();
+  }
+
+  handleDemoClick(event) {
+    event.preventDefault();
+    const demoUrl = document.getElementById("demo").href;
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set("url", demoUrl);
+    window.location.href = newUrl.toString();
+  }
 }
 
+// Initialize the renderer
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", async () => {
     const questRenderer = new QuestRenderer();
     await questRenderer.startUp();
   });
+
 } else {
-  const questRenderer = new QuestRenderer();
-  questRenderer.startUp();
+  (async () => {
+    const questRenderer = new QuestRenderer();
+    await questRenderer.startUp();
+  })();
 }

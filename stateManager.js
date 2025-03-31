@@ -159,6 +159,43 @@ const createStateManager = (store, initialState = {}) => {
         }, 5000);
     }
 
+    // Remove null and undefined values for the surveyState logging (in the renderer).
+    function printLoggableSurveyState() {
+        const removeUndefinedValues = (filteredSurveyState) => {
+            if (!filteredSurveyState || typeof filteredSurveyState !== 'object') return filteredSurveyState;
+
+            // Handle arrays
+            if (Array.isArray(filteredSurveyState)) {
+                return filteredSurveyState
+                    .map(item => removeUndefinedValues(item))
+                    .filter(item => item !== undefined);
+            }
+
+            // Handle objects
+            const result = {};
+            Object.entries(filteredSurveyState).forEach(([key, value]) => {
+                const cleanValue = removeUndefinedValues(value);
+                if (cleanValue !== undefined) {
+                    result[key] = cleanValue;
+                }
+            });
+
+            return result;
+        }
+
+        const filteredSurveyState = { ...surveyState };
+        delete filteredSurveyState.treeJSON;
+
+        Object.keys(filteredSurveyState).forEach(key => {
+            if (filteredSurveyState[key] == null) {
+                delete filteredSurveyState[key];
+            }
+        });
+
+        const loggableSurveyState = removeUndefinedValues(filteredSurveyState);
+        console.log('StateManager -> SURVEY STATE:', loggableSurveyState);
+    };
+
     const stateManager = {
         // Set a response as the user updates form inputs. This is called on input change.
         // Single value responses are stored directly in the activeQuestionState object (case 1), multi-value responses are stored in an object (default case).
@@ -296,7 +333,10 @@ const createStateManager = (store, initialState = {}) => {
             surveyState = { ...surveyState, ...activeQuestionState };
             activeQuestionState = {};
 
-            if (moduleParams.isRenderer) console.log('StateManager -> SURVEY STATE:', surveyState); 
+            // Log the survey state in the renderer. Omit the treeJSON property and remove undefined keys for clarity.
+            if (moduleParams.isRenderer) {
+                printLoggableSurveyState();
+            }
 
             // Use .then() instead of await to avoid blocking the UI.
             // On error: revert to the previous question and restore the previous state (handleStoreError()).
@@ -429,7 +469,7 @@ const createStateManager = (store, initialState = {}) => {
                         value = existingResponse[compoundKey];
                     }
                 }
-                
+
                 if (value != null) {
                     foundResponseCache[compoundKey] = value;
                     return value;
@@ -451,13 +491,33 @@ const createStateManager = (store, initialState = {}) => {
 
             if (!questionID) {
                 const foundKeyArray = Object.keys(responseToQuestionMappingObj).filter((key) => key.startsWith(compoundKey));
-                
-                if (foundKeyArray.length > 1) {
-                    moduleParams.errorLogger('StateManager -> findResponseValue: (MULTIPLE FOUND - searching with startsWith):', compoundKey);
+                if (foundKeyArray.length === 0) {
+                    return undefined;
                 }
 
-                foundKey = foundKeyArray[0]
-                if (!foundKey) {
+                // Handle conflict where multiple keys are found by searching for an exact match instead of just returning the first found key.
+                // This seems to be specific to IMS testing, prior to Concept ID variable transformation.
+                // E.G. 'CURWORKST' and 'CURWORKSTNUM' was susceptible to returning the wrong result based on results ordering.
+                // Exact match for coupound keys with '.'. Compare up to the '.' for compound keys without '.'
+                const candidateKeys = /^[A-Za-z]+$/.test(compoundKey)
+                    ? foundKeyArray.filter(key =>
+                        compoundKey.includes('.')
+                            ? key === compoundKey
+                            : key.split('.')[0] === compoundKey
+                    )
+                    : foundKeyArray;
+
+                if (candidateKeys.length === 0) {
+                    moduleParams.errorLogger(`StateManager -> findResponseValue: No exact match found for ${compoundKey}. Logged for inspection. This is not necessarily an error.`);
+                    return undefined;
+                } else if (candidateKeys.length > 1) {
+                    moduleParams.errorLogger(`StateManager -> findResponseValue: (Multiple candidate keys found): ${candidateKeys}. Attempting to resolve with the first key.`);
+                    foundKey = candidateKeys[0];
+                } else {
+                    foundKey = candidateKeys[0];
+                }
+                
+                if (foundKey == null || foundKey === '') {
                     return undefined;
                 }
                 pathToData = responseToQuestionMappingObj[foundKey];

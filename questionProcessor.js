@@ -332,7 +332,9 @@ export class QuestionProcessor {
 
     this.setCurrentQuestionIndex('update', index);
 
-    this.manageActiveQuestionClass(question, questionToUnload);
+    if (!moduleParams.renderFullQuestionList) {
+      this.manageActiveQuestionClass(question, questionToUnload);
+    }
 
     return question;
   }
@@ -355,7 +357,9 @@ export class QuestionProcessor {
 
     this.setCurrentQuestionIndex('update', index);
 
-    this.manageActiveQuestionClass(question, questionToUnload);
+    if (!moduleParams.renderFullQuestionList) {
+      this.manageActiveQuestionClass(question, questionToUnload);
+    }
     
     return question;
   }

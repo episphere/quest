@@ -17,9 +17,11 @@ export function manageAccessibleQuestion(fieldsetEle, questionFocusSet) {
         let focusableEle = buildQuestionText(fieldsetEle);
 
         // Focus the hidden, focusable element
-        setTimeout(() => {
-            focusableEle.focus({ preventScroll: true });
-        }, 500);
+        if (!moduleParams.isRenderer) {
+            setTimeout(() => {
+                focusableEle.focus({ preventScroll: true });
+            }, 500);
+        }
 
         questionFocusSet = true;
     }
@@ -549,7 +551,7 @@ export function closeModalAndFocusQuestion(event) {
 
 // Custom Accessible handling for up/down arrow keys.
 // This ensures focus doesn't trap accessible navigation in lists that have 'Other' text inputs.
-// Only active when moduleParams.activate is true (inactive in the renderer because focus() causes issues).
+// Only active when moduleParams.isRenderer is false (inactive in the renderer because focus() causes issues).
 export function handleUpDownArrowKeys(event) {
     if (event.key === 'ArrowDown') {
         event.preventDefault();
