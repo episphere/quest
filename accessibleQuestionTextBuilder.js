@@ -482,6 +482,10 @@ function handleQuestionBRElements(fieldset, maxBrs = 3) {
     [...questionElement.querySelectorAll("br")].forEach((br) => {
         br.setAttribute("aria-hidden", "true");
     });
+
+    if (isSummaryPage) {
+        handleSummaryUIEdgeCases(fieldset, questionElement?.id);
+    }
 }
 
 /**
@@ -786,3 +790,27 @@ export function clearSelectionAnnouncement() {
         liveRegion.textContent = '';
     }
 }
+
+// This can be extended to handle specific summary page edge cases without impacting the general summary page cases.
+// Spacing is a specific issue on summary pages due to different summary markdown structures and conditionals.
+// This can handle alignment edge cases for summary pages on a case-by-case.
+function handleSummaryUIEdgeCases(fieldset, questionID) {
+    if (!fieldset || !questionID) return;
+
+    if (questionID.includes('PREGSUMMARY') && !fieldset.hasAttribute('data-preg-summary-updated')) {
+        let referenceNode = null;
+        for (const node of fieldset.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().startsWith('Age when pregnancy began:')) {
+                referenceNode = node;
+                break;
+            }
+        }
+
+        if (referenceNode) {
+            const newBr = document.createElement('br');
+            fieldset.insertBefore(newBr, referenceNode);
+            fieldset.setAttribute('data-preg-summary-updated', 'true');
+        }
+    }
+}
+
