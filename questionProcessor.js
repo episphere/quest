@@ -93,6 +93,7 @@ export class QuestionProcessor {
         questionsArr.push({
           fullMatch: match[0],
           questionID: match[1],
+          questionIDExactSearch: match[1].replace(/[?!]$/, ''),
           questOpts: match[2] || '',
           questArgs: match[3] || '',
           questText: questionContent,
@@ -116,6 +117,7 @@ export class QuestionProcessor {
             questionsArr.push({
               fullMatch: match[0],
               questionID: questionID,
+              questionIDExactSearch: questionID.replace(/[?!]$/, ''),
               questOpts: null,
               questArgs: null,
               questText: null,
@@ -127,6 +129,7 @@ export class QuestionProcessor {
             questionsArr.push({
               fullMatch: match[0],
               questionID: match[1],
+              questionIDExactSearch: match[1].replace(/[?!]$/, ''),
               questOpts: match[2] || '',
               questArgs: match[3] || '',
               questText: arrayItem.trim(),
@@ -247,14 +250,17 @@ export class QuestionProcessor {
       moduleParams.errorLogger('Error, findQuestion (no questionID provided):', questionID); 
     }
 
-    let index;
+    let index = -1;
 
     if (questionID.startsWith('_CONTINUE')) {
       return this.findStartOfNextLoopIteration(questionID);
     } else if (questionID === 'END') {
       index = this.questions.length - 1;
     } else {
-      index = this.questions.findIndex(question => question.questionID.startsWith(questionID));
+      index = this.questions.findIndex(question => question.questionIDExactSearch === questionID);
+      if (index === -1) {
+        index = this.questions.findIndex(question => question.questionID.startsWith(questionID));
+      }
     }
 
     if (index !== -1) {
