@@ -10,24 +10,42 @@ const debouncedHandleInputEvent = debounce(handleInputEvent, 250);
 // Add event listeners to the div element (questContainer) -> delegate events to the parent div.
 // Note: 'focusout' is used instead of 'blur' because 'blur' does not bubble to the parent div.
 export function addEventListeners() {
+
+  if (!moduleParams.questDiv) {
+    moduleParams.errorLogger('Error: questDiv is not defined');
+    return;
+  }
+
+  // Remove existing listeners, then add new ones to avoid duplicate listeners.
+  moduleParams.questDiv.removeEventListener('click', handleClickEvent);
+  moduleParams.questDiv.removeEventListener('change', handleChangeEvent);
+  moduleParams.questDiv.removeEventListener('keydown', handleKeydownEvent);
+  moduleParams.questDiv.removeEventListener('keyup', handleKeyupEvent);
+  moduleParams.questDiv.removeEventListener('input', debouncedHandleInputEvent);
+  moduleParams.questDiv.removeEventListener('focusout', handleBlurFocusoutEvent);
+  moduleParams.questDiv.removeEventListener('submit', handleSubmitEvent);
+
   moduleParams.questDiv.addEventListener('click', handleClickEvent);
   moduleParams.questDiv.addEventListener('change', handleChangeEvent);
   moduleParams.questDiv.addEventListener('keydown', handleKeydownEvent);
   moduleParams.questDiv.addEventListener('keyup', handleKeyupEvent);
   moduleParams.questDiv.addEventListener('input', debouncedHandleInputEvent);
   moduleParams.questDiv.addEventListener('focusout', handleBlurFocusoutEvent);
-  moduleParams.questDiv.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    await handleSubmitEvent(event);  // Calls the async function
-  });
+  moduleParams.questDiv.addEventListener('submit', handleSubmitEvent);
 
-  // Attach event listeners to modal and close buttons (for screen readers)
   // Modals are at the questDiv level, not embedded in the question.
   const modal = moduleParams.questDiv.querySelector('#softModal');
   const closeButton = moduleParams.questDiv.querySelector('#closeModal');
 
-  modal?.addEventListener('click', closeModalAndFocusQuestion);
-  closeButton?.addEventListener('click', closeModalAndFocusQuestion);
+  if (modal) {
+    modal.removeEventListener('click', closeModalAndFocusQuestion);
+    modal.addEventListener('click', closeModalAndFocusQuestion);
+  }
+
+  if (closeButton) {
+    closeButton.removeEventListener('click', closeModalAndFocusQuestion);
+    closeButton.addEventListener('click', closeModalAndFocusQuestion);
+  }
 
   addSubmitSurveyListener();
 }
@@ -265,24 +283,34 @@ function handleSubmitSurveyClick() {
 }
 
 // Event listener to submit the survey and reload the page.
-// The short delay allows the host app to process reload on success. If host app doesn't reload, this app will reload the page on success.
-// Handle any case other than 200, in the catch block and show the error message.
+// Show the error message in the catch block.
 function addSubmitSurveyListener() {
   const submitModalButton = moduleParams.questDiv.querySelector('#submitModalButton');
-  submitModalButton.addEventListener('click', async () => {
+  if (!submitModalButton) {
+    return;
+  }
+
+  async function submitSurveyHandler() {
     clearValidationError();
     showLoadingIndicator();
 
     try {
-      const appState = getStateManager();  
-      const submitSurveyResponse = await appState.submitSurvey();
-      if (submitSurveyResponse?.code !== 200) {
-        throw new Error('Submit survey failed');
-      }
+      const appState = getStateManager();
+      await appState.submitSurvey();
+      hideLoadingIndicator();
     } catch (error) {
       hideLoadingIndicator();
-      moduleParams.errorLogger(error);
+      moduleParams.errorLogger(`Submit survey failed with code: ${error.code || 'unknown'}. Error: ${error}`);
       validationError(moduleParams.questDiv.querySelector('legend'), translate("storeErrorBody"));
     }
-  });
+  }
+
+  // Check for existing listener (custom _questSubmitHandler property)
+  if (submitModalButton._questSubmitHandler) {
+    submitModalButton.removeEventListener('click', submitModalButton._questSubmitHandler);
+  }
+
+  // Add the listener and store the ref for removal.
+  submitModalButton.addEventListener('click', submitSurveyHandler);
+  submitModalButton._questSubmitHandler = submitSurveyHandler;
 }
