@@ -1,5 +1,5 @@
 import { getStateManager } from './stateManager.js';
-import { create, all } from 'https://cdn.skypack.dev/pin/mathjs@v13.0.3-l5exVmFmmRoBpcv9HZ2w/mode=imports,min/optimized/mathjs.js';
+import { create, all } from 'https://cdn.jsdelivr.net/npm/mathjs@13.0.3/+esm';
 import { moduleParams } from './questionnaire.js';
 export const math = create(all);
 
