@@ -5,7 +5,7 @@ import { validateInput, validationError } from "./validate.js"
 import { translate } from "./common.js";
 
 export const moduleParams = {};
-import  * as mathjs  from 'https://cdn.skypack.dev/mathjs@11.2.0';
+import  * as mathjs  from 'https://cdn.jsdelivr.net/npm/mathjs@15.2.0/+esm'
 export const math=mathjs.create(mathjs.all)
 window.math = math
 
