@@ -1,4 +1,4 @@
-import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput, handleXOR, displayQuestion, parseSSN, parsePhoneNumber, submitQuestionnaire, textboxinput, math, radioAndCheckboxUpdate, evaluateCondition } from "./questionnaire.js";
+import { questionQueue, nextClick, previousClicked, moduleParams, rbAndCbClick, textBoxInput, handleXOR, displayQuestion, parseSSN, parsePhoneNumber, submitQuestionnaire, textboxinput, math, radioAndCheckboxUpdate, evaluateCondition, updateProgressBar } from "./questionnaire.js";
 import { restoreResults } from "./localforageDAO.js";
 import { parseGrid, grid_replace_regex } from "./buildGrid.js";
 import { clearValidationError } from "./validate.js";
@@ -798,8 +798,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
   //removing random &#x1f; unit separator chars
   contents = contents.replace(//g, "");
 
+  let b5_progress_bar = `
+  <div id="b5_prog_bar" class="progress my-2">
+    <div id="b5_prog_bar_bar" class="progress-bar text-black overflow-visible" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
+      <span id="b5_prog_bar_label"> 0/0 0%</span>
+    </div>
+  </div>`
+
   // add the HTML/HEAD/BODY tags...
-  document.getElementById(divId).innerHTML = contents + responseRequestedModal() + responseRequiredModal() + responseErrorModal() + submitModal();
+  document.getElementById(divId).innerHTML = b5_progress_bar + contents + responseRequestedModal() + responseRequiredModal() + responseErrorModal() + submitModal();
 
 
   function setActive(id) {
@@ -813,6 +820,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
         element.classList.remove("active");
       }
     );
+    updateProgressBar(id)
     // make the id active...
     console.log(`setting ${id} active`);
     displayQuestion(active);

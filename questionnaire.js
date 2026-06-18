@@ -927,7 +927,7 @@ async function nextPage(norp, retrieve, store, rootElement) {
   if (store) {
     try {
       // show a loading indicator for variables in delayedParameterArray (they take extra time to process)
-      if (moduleParams.delayedParameterArray.includes(nextElement.id)) showLoadingIndicator();
+      if (moduleParams.delayedParameterArray?.includes(nextElement.id)) showLoadingIndicator();
 
       let formData = {};
       formData[`${questName}.${questionElement.id}`] = questionElement.value;
@@ -1158,6 +1158,8 @@ export function displayQuestion(nextElement) {
   updateTree();
 
   questionQueue.ptree();
+
+  updateProgressBar(nextElement.id)
 
   // manage the question-specific listeners in a live environment (skip in the renderer)
   if (moduleParams.renderObj?.activate) refreshListeners(nextElement);
@@ -1582,3 +1584,22 @@ export function evaluateCondition(txt) {
 }
 window.evaluateCondition = evaluateCondition
 window.questionQueue = questionQueue
+
+export function updateProgressBar(id){
+  
+  const ids = Array.from(document.querySelectorAll("form.question")).map( (q)=>q.id)
+  if (ids.length==0) document.getElementById("b5_prog_bar").display="none"
+
+  console.log(`================ UPDATING PROGRESS BAR ID=${id}`)
+  if (!ids?.length){
+    return
+  }
+  let indx = ids.indexOf(id)+1;
+  let progress = Math.round(indx/ids.length*1000)/10;
+  document.getElementById("b5_prog_bar_label").innerText=`${indx}/${ids.length} ${progress}%`
+  let pb=document.getElementById("b5_prog_bar_bar")
+  pb.style.width=`${(progress<50)?progress+2:progress}%`
+  pb.ariaValueNow=`${indx}`
+  pb.ariaValueMin="1"
+  pb.ariaValueMax=`${ids.length}`
+}
