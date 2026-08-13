@@ -197,6 +197,6 @@ describe('questionnaire runtime helpers', () => {
     expect(isMobileDevice()).toBe(true);
     window.matchMedia.mockReturnValueOnce({ matches: false });
     expect(isMobileDevice()).toBe(false);
-    expect(window.matchMedia).toHaveBeenCalledWith('(max-width: 576px)');
+    expect(window.matchMedia).toHaveBeenCalledWith('(max-width: 575.98px)');
   });
 });

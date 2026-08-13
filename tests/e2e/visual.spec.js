@@ -56,6 +56,37 @@ test.describe('stable participant styling @visual', () => {
     );
   });
 
+  test('keeps keyboard focus visible on list and grid choices', async ({ page }, testInfo) => {
+    await openParticipant(page);
+    await waitInHarness(page, 550);
+    const listChoice = activeQuestion(page, 'CHOICE').locator('#CHOICE_1');
+    await listChoice.focus();
+    await page.keyboard.press('Space');
+    await expect(listChoice).toBeFocused();
+    await expect(listChoice).toBeChecked();
+    await stabilizeVisual(page, testInfo);
+
+    await expect(activeQuestion(page, 'CHOICE')).toHaveScreenshot(
+      'participant-choice-keyboard-focus.png',
+      screenshotOptions,
+    );
+
+    await openParticipant(page, { fixture: 'gridResponsive.txt' });
+    await goNext(page);
+    await waitInHarness(page, 550);
+    const gridChoice = activeQuestion(page, 'GRID_RATE').locator('#GRID_WALK_1');
+    await gridChoice.focus();
+    await page.keyboard.press('Space');
+    await expect(gridChoice).toBeFocused();
+    await expect(gridChoice).toBeChecked();
+    await stabilizeVisual(page, testInfo);
+
+    await expect(activeQuestion(page, 'GRID_RATE')).toHaveScreenshot(
+      'participant-grid-keyboard-focus.png',
+      screenshotOptions,
+    );
+  });
+
   test('keeps validation and modal states visually reviewable', async ({ page }, testInfo) => {
     await openParticipant(page, { fixture: 'validation.txt' });
     await activeQuestion(page, 'BOUNDED').locator('#bounded').fill('9');

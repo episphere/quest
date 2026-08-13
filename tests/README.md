@@ -27,7 +27,7 @@ existing `transform.render(...)` API.
   and authoring checks in Firefox and WebKit; the full authoring suite remains
   in Chromium.
 - `npm run test:e2e:responsive` — the phone and tablet Chromium contracts.
-- `npm run test:e2e:windows` — the Windows-user-agent accessibility branch.
+- `npm run test:e2e:windows` — Windows-user-agent parity checks that guard against OS-sniffed behavior; this does not simulate JAWS.
 - `npm run test:known-defects` — visible expected failures for confirmed
   pre-existing defects.
 - `npm run test:pr` — the complete local equivalent of the required CI lanes.

@@ -19,6 +19,7 @@ describe('parseGrid', () => {
     expect(decodeURIComponent(form.getAttribute('displayif'))).toBe('equals(ELIGIBLE,1)');
     expect(form.querySelectorAll('tbody tr')).toHaveLength(2);
     expect(form.querySelectorAll('input[type="radio"]')).toHaveLength(4);
+    expect(form.querySelector('#srFocusHelper')).toBeNull();
     expect(form.querySelector('#ROW1_0').value).toBe('1');
     expect(form.querySelector('span[data-gridreplace="name"]')).not.toBeNull();
     expect(form.querySelector('span[data-gridreplace="firstName"]')).not.toBeNull();

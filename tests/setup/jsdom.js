@@ -56,6 +56,10 @@ class BootstrapComponentStub {
     return this.instances.get(element) ?? null;
   }
 
+  static getOrCreateInstance(element, options) {
+    return this.getInstance(element) ?? new this(element, options);
+  }
+
   show() {
     this._element?.classList.add('show');
     this._element?.dispatchEvent(new Event('shown.bs.modal'));
@@ -64,6 +68,14 @@ class BootstrapComponentStub {
   hide() {
     this._element?.classList.remove('show');
     this._element?.dispatchEvent(new Event('hidden.bs.modal'));
+  }
+
+  toggle() {
+    if (this._element?.classList.contains('show')) {
+      this.hide();
+    } else {
+      this.show();
+    }
   }
 
   dispose() {

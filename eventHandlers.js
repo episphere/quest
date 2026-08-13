@@ -3,9 +3,10 @@ import { clearValidationError, validationError } from "./validate.js";
 import { hideLoadingIndicator, showLoadingIndicator, translate } from './common.js';
 import { nextButtonClicked, getPreviousQuestion } from "./questionnaire.js";
 import { getStateManager } from "./stateManager.js";
-import { closeModalAndFocusQuestion, handleUpDownArrowKeys, handleRadioCheckboxListEvents, handleRadioCheckboxTableEvents, updateAriaLiveSelectionAnnouncer, updateAriaLiveSelectionAnnouncerTable, clearSelectionAnnouncement } from "./accessibleQuestionTextBuilder.js";
+import { closeModalAndFocusQuestion, updateAriaLiveSelectionAnnouncer, updateAriaLiveSelectionAnnouncerTable, clearSelectionAnnouncement } from "./accessibleQuestionTextBuilder.js";
 // Debounced version of handleInputEvent
 const debouncedHandleInputEvent = debounce(handleInputEvent, 250);
+let pointerActivatedChoice = null;
 
 // Add event listeners to the div element (questContainer) -> delegate events to the parent div.
 // Note: 'focusout' is used instead of 'blur' because 'blur' does not bubble to the parent div.
@@ -18,6 +19,8 @@ export function addEventListeners() {
 
   // Remove existing listeners, then add new ones to avoid duplicate listeners.
   moduleParams.questDiv.removeEventListener('click', handleClickEvent);
+  moduleParams.questDiv.removeEventListener('pointerdown', handlePointerDownEvent);
+  moduleParams.questDiv.removeEventListener('pointercancel', clearPointerActivatedChoice);
   moduleParams.questDiv.removeEventListener('change', handleChangeEvent);
   moduleParams.questDiv.removeEventListener('keydown', handleKeydownEvent);
   moduleParams.questDiv.removeEventListener('keyup', handleKeyupEvent);
@@ -26,6 +29,8 @@ export function addEventListeners() {
   moduleParams.questDiv.removeEventListener('submit', handleSubmitEvent);
 
   moduleParams.questDiv.addEventListener('click', handleClickEvent);
+  moduleParams.questDiv.addEventListener('pointerdown', handlePointerDownEvent);
+  moduleParams.questDiv.addEventListener('pointercancel', clearPointerActivatedChoice);
   moduleParams.questDiv.addEventListener('change', handleChangeEvent);
   moduleParams.questDiv.addEventListener('keydown', handleKeydownEvent);
   moduleParams.questDiv.addEventListener('keyup', handleKeyupEvent);
@@ -33,27 +38,46 @@ export function addEventListeners() {
   moduleParams.questDiv.addEventListener('focusout', handleBlurFocusoutEvent);
   moduleParams.questDiv.addEventListener('submit', handleSubmitEvent);
 
-  // Modals are at the questDiv level, not embedded in the question.
-  const modal = moduleParams.questDiv.querySelector('#softModal');
-  const closeButton = moduleParams.questDiv.querySelector('#closeModal');
-
-  if (modal) {
-    modal.removeEventListener('click', closeModalAndFocusQuestion);
-    modal.addEventListener('click', closeModalAndFocusQuestion);
-  }
-
-  if (closeButton) {
-    closeButton.removeEventListener('click', closeModalAndFocusQuestion);
-    closeButton.addEventListener('click', closeModalAndFocusQuestion);
-  }
+  // These modals are siblings of the questions. Restore question context
+  // after either one closes, regardless of whether it was dismissed by a
+  // button, Escape, or a backdrop click.
+  const responseModals = moduleParams.questDiv.querySelectorAll('#softModal, #hardModal');
+  responseModals.forEach((modal) => {
+    modal.removeEventListener('hidden.bs.modal', closeModalAndFocusQuestion);
+    modal.addEventListener('hidden.bs.modal', closeModalAndFocusQuestion);
+  });
 
   addSubmitSurveyListener();
+}
+
+function handlePointerDownEvent(event) {
+  const target = event.target;
+  if (!(target instanceof Element)) {
+    pointerActivatedChoice = null;
+    return;
+  }
+
+  if (target.matches('input[type="radio"], input[type="checkbox"]')) {
+    pointerActivatedChoice = target;
+    return;
+  }
+
+  const labelControl = target.closest('label')?.control;
+  pointerActivatedChoice = labelControl?.matches('input[type="radio"], input[type="checkbox"]')
+    ? labelControl
+    : null;
+}
+
+function clearPointerActivatedChoice() {
+  pointerActivatedChoice = null;
 }
 
 function handleClickEvent(event) {
   const target = event.target;
   
   if (target.matches('input[type="radio"], input[type="checkbox"]')) {
+    const wasPointerActivated = pointerActivatedChoice === target;
+    clearPointerActivatedChoice();
     rbAndCbClick(event);
     
     // Handle radio button and checkbox clicks for label inputs
@@ -72,10 +96,12 @@ function handleClickEvent(event) {
     }
 
     // Handle text inputs in radio/checkbox lists (e.g. "Other" text inputs). They're inside a response container..
-    // Auto-focus the text input if the outer response element (radio or checkbox) is clicked.
+    // Auto-focus the text input if the outer response element (radio or checkbox) is clicked with a pointer.
+    // Keyboard and assistive-technology activation emit a click with detail 0;
+    // keep focus on the native choice for those paths.
     // Note: Some are checkboxes and some are radios though they look the same.
     // Skip in the renderer because focus() causes issues.
-    if (!moduleParams.isRenderer) {
+    if (!moduleParams.isRenderer && wasPointerActivated) {
       const responseContainer = target.closest('.response');
       const textInputElement = responseContainer?.querySelector('input[type="text"], textarea');
       if (textInputElement && !textInputElement.value && target.checked) {
@@ -99,30 +125,21 @@ function handleChangeEvent(event) {
     rbAndCbClick(event);
   }
 
-  // VoiceOver (MAC) handles table focus well, but JAWS (Windows) does not.
-  // Ensure we're not in the renderer (skip this handling for the renderer).
-  // We check if the environment is Windows and the target is a radio or checkbox to improve accessible UX for JAWS users.
+  // Announce the resulting state without replacing the native control's focus
+  // or keyboard behavior. Screen readers and browsers manage those directly.
   if (!moduleParams.isRenderer && target.matches('input[type="radio"], input[type="checkbox"]')) {
-    
     const isTable = target.closest('table') !== null;
-    if (moduleParams.isWindowsEnvironment) {
-      if (isTable) {
-        handleRadioCheckboxTableEvents(event);
-      } else {
-        handleRadioCheckboxListEvents(event);
-      }
+    if (isTable) {
+      updateAriaLiveSelectionAnnouncerTable(target.closest('.response'));
     } else {
-      if (isTable) {
-        updateAriaLiveSelectionAnnouncerTable(target.closest('.response'));
-      } else {
-        updateAriaLiveSelectionAnnouncer(target.closest('.response')); 
-      }
+      updateAriaLiveSelectionAnnouncer(target.closest('.response'));
     }
   }
 }
 
 function handleKeydownEvent(event) {
   const target = event.target;
+  clearPointerActivatedChoice();
   
   // Prevent form submission on enter key
   if (target.matches('input') && event.keyCode === 13) {
@@ -134,11 +151,6 @@ function handleKeydownEvent(event) {
     handleXOR(target);
   }
 
-  if (target.matches('input[type="text"], input[type="email"], input[type="tel"], textarea, select')) {
-    if (!moduleParams.isRenderer && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
-      handleUpDownArrowKeys(event);
-    }
-  }
 }
 
 function handleKeyupEvent(event) {

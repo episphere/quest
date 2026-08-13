@@ -55,6 +55,8 @@ Run KBD-MAC and KBD-WIN without a screen reader. Repeat in both Chrome and Edge 
 
 Raw browser key expectations apply only to this keyboard-only baseline. Do not file a failure solely because a screen reader reserves or reroutes one of these keys.
 
+Standards note for issue #1587: a custom element with `role="button"` must activate with both Enter and Space, as specified by the [WAI-ARIA button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/). Native `<select>` interaction is implemented by the browser and operating system; the portable Quest contract is that the control remains native, its keys are not canceled, and committed state persists—not that Space, Enter, or Escape has one identical expand/select/collapse sequence in every environment. See the [HTML Standard's select element](https://html.spec.whatwg.org/multipage/form-elements.html#the-select-element) and [WCAG 2.1.1 keyboard guidance](https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html).
+
 ## VoiceOver with Safari — issue #1079
 
 First run with Quick Nav off. Repeat response navigation and activation with Quick Nav on, and record the VoiceOver command actually used.
@@ -78,10 +80,10 @@ Run each browser once. State explicitly whether each observation occurred in Vir
 2. In Virtual Cursor, navigate to the survey and confirm the first question is announced once with its group name.
 3. Enumerate form controls. Every choice must expose radio/checkbox role, name, and checked state; a focusable generic response container is not an adequate replacement.
 4. Enter Forms Mode and activate a choice with the JAWS default action. Confirm visual state, DOM state, and live announcement agree.
-5. Use the response container/list navigation supplied for Windows. Confirm there is no dead tab stop and no double activation.
+5. Tab through the response list. Focus must land on native inputs and actions only; generic response containers and empty helper elements must not become stops.
 6. For radio groups, verify native group exclusivity and arrow behavior while in the appropriate mode.
-7. For “Other” text responses, use Up/Down navigation around the embedded text field. Confirm focus neither traps nor skips the neighboring response.
-8. Exercise both grid fixtures. After a radio selection, confirm the next row prompt is announced; after the last radio row, confirm focus proceeds to Next. In the checkbox grid, confirm an intermediate selection stays in its cell and the terminal selection proceeds to Next.
+7. For “Other” text responses, confirm Up/Down remains native text-editing navigation and Tab/Shift+Tab leaves the field in document order. Quest must not turn editing arrows into response-navigation commands.
+8. Exercise both grid fixtures. In Forms Mode, radio arrows must move only within the current row's native group, and Tab must reach the next row. Selecting a radio or checkbox must not automatically move focus to another row or to Next. Confirm JAWS announces the row prompt, column option, and checked state together.
 9. Repeat Next, Back, validation, state restoration, async success/error, and modal focus scenarios from the VoiceOver matrix.
 10. Exit Forms Mode and confirm the Virtual Cursor resumes at a sensible location in the active question.
 
@@ -106,7 +108,7 @@ Copy this table into the issue or test report for every execution. Do not replac
 
 | Field | Recorded value |
 | --- | --- |
-| Protocol version | 1.0.0 |
+| Protocol version | 1.1.0 |
 | Quest commit and Quest version |  |
 | Questionnaire fixture/version |  |
 | Environment ID |  |
