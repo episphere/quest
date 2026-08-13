@@ -111,9 +111,10 @@ describe('locked production markup edge cases', () => {
     expect(unmatchedParagraph).toContain('today?</p>');
 
     const breakQuest = await renderFreshQuest({
-      // Keep both authored production blocks intact; placing the dependent
-      // source after the active target lets Quest resolve the pipe without
-      // changing the malformed target markup under characterization.
+      // Participant mode mounts the first question block, so keep the malformed
+      // dependent target first. The later production source remains searchable
+      // by QuestionProcessor, which resolves the pipe without rewriting either
+      // authored block under characterization.
       markdown: survey('PRODUCTION_NONSTANDARD_BREAK', nonstandardBreak, medicationSource),
     });
     const fertilityQuestion = breakQuest.root.querySelector('#D_466346054');

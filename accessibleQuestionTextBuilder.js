@@ -47,6 +47,7 @@ export function manageAccessibleQuestion(fieldsetEle, questionFocusSet) {
 
 function buildQuestionText(fieldsetEle) {
     let focusNode = null;
+    let multiQuestionStartIndex = null;
 
     // The conditions for building textContent (survey questions) for the screen reader.
     const textNodeConditional = (node) =>
@@ -114,6 +115,11 @@ function buildQuestionText(fieldsetEle) {
             // before any subsequent prompts in a multi-question fieldset).
             if (node.nodeType === Node.TEXT_NODE && isTerminalText(node.textContent)) {
                 focusNode = node.nextSibling;
+                // The next sibling is the first node that has not been
+                // consumed by the primary prompt. It may be either the first
+                // response or the first fragment of a subsequent prompt, so
+                // the compound-question scan must include it.
+                multiQuestionStartIndex = nodeIndex + 1;
                 break;
             }
 
@@ -139,7 +145,11 @@ function buildQuestionText(fieldsetEle) {
     if (!focusNode) {
         focusNode = fieldsetEle.querySelector('legend') || fieldsetEle.lastChild || fieldsetEle;
     } else {
-        handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, focusNode);
+        handleMultiQuestionSurveyAccessibility(
+            childNodes,
+            fieldsetEle,
+            multiQuestionStartIndex ?? childNodes.indexOf(focusNode) + 1,
+        );
     }
     
     // Create the <legend> tag for screen readers and move the question text into it.
@@ -149,11 +159,10 @@ function buildQuestionText(fieldsetEle) {
 }
 
 // Find additional questions (e.g. QoL multi-question surveys).
-// Start after the focus node since the initial question is handled above for all cases.
+// Start at the supplied unconsumed-node index since the initial question is
+// handled above for all cases.
 // Swap those nodes (text, <b>, <u>, <i>, and embedded <br>) into divs and add a tabindex to make them focusable for screen reader accessibility.
-function handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, focusNode) {
-    let startIndex = childNodes.indexOf(focusNode) + 1;
-
+function handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, startIndex) {
     // Array holds the question objects
     let questions = [];
 

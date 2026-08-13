@@ -40,6 +40,31 @@ For the keyboard-only command guide, see
 
 “Current” must be replaced with exact version numbers in the test record. Playwright WebKit is not Safari plus VoiceOver, and Chromium with a Windows user-agent string is not JAWS.
 
+## Test record
+
+Create a separate record for every environment, browser, assistive-technology mode, and fixture run. Do not use one blanket result for a scenario or environment.
+
+Record these fields before starting:
+
+| Field | Required value |
+| --- | --- |
+| Date and tester | Test date and tester name or initials |
+| Quest revision | Exact commit SHA and Quest version, if versioned |
+| Environment | Environment-matrix ID and exact operating-system version/build |
+| Browser | Browser name and exact version |
+| Assistive technology | Name and exact version, or `None` for keyboard-only runs |
+| Mode | Full Keyboard Access, Quick Nav, Virtual Cursor, or Forms Mode state, as applicable |
+| Fixture and viewport | Fixture filename and viewport dimensions |
+| Automated prerequisite | Exact command and its pass/fail result |
+
+Record every numbered or table step separately:
+
+| Scenario and step | Result | Actual focus, role/name/state, and spoken output | Evidence or defect |
+| --- | --- | --- | --- |
+| Example: VoiceOver step 2 | `PASS`, `FAIL`, `BLOCKED`, or `NOT RUN` | Record the observed result. Do not write only “as expected” | Link evidence or explain the blocker/omission |
+
+Use `BLOCKED` only when an external condition prevents the step. Use `NOT RUN` only with a reason. A scenario passes only when every required step has an explicit `PASS`; an aggregate environment-level pass cannot replace the per-step record.
+
 ## Keyboard-only baseline — issue #1587
 
 Run KBD-MAC and KBD-WIN without a screen reader. Repeat in both Chrome and Edge for KBD-WIN.

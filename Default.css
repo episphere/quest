@@ -9,6 +9,12 @@ input[type="checkbox"] + label {
   white-space: pre-line;
 }
 
+/* Preserve Bootstrap's legend clearance when Quest inserts its hidden
+  focus target between the legend and the first response. */
+.question fieldset > legend + .screen-reader-focus + * {
+  clear: left;
+}
+
 /* CSS for grids */
 .quest-grid.table-layout {
   width: 100%;
@@ -16,8 +22,7 @@ input[type="checkbox"] + label {
   table-layout: fixed;
   font-family: Arial, Helvetica, sans-serif;
   font-size: medium;
-  /* Preserve the established gap above grids without a focusable spacer node. */
-  margin-top: calc(10px + 1.5rem);
+  margin-top: 10px;
   overflow-x: auto;
   gap: 1px;
   overflow-y: visible;
@@ -168,8 +173,6 @@ input[type="checkbox"] + label {
 @media screen and (max-width: 575.98px) {
   .quest-grid.table-layout {
     display: block;
-    /* Block table margins collapse on mobile; retain the former spacer height. */
-    padding-top: 1.5rem;
   }
 
   .quest-grid.table-layout tbody,

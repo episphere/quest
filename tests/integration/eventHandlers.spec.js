@@ -149,6 +149,28 @@ describe('delegated runtime event handling', () => {
     expect(arrowDown.defaultPrevented).toBe(false);
   });
 
+  it('records a standalone textarea response on delegated focusout', async () => {
+    const quest = await renderFreshQuest({ markdown: NATIVE_ARROW_SURVEY });
+    const textarea = quest.root.querySelector('#notes');
+
+    textarea.value = 'Persist this response';
+    textarea.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+
+    expect(quest.state.getActiveQuestionState().NOTES).toBe('Persist this response');
+  });
+
+  it('removes a standalone textarea response when its form is reset programmatically', async () => {
+    const quest = await renderFreshQuest({ markdown: NATIVE_ARROW_SURVEY });
+    const textarea = quest.root.querySelector('#notes');
+    textarea.value = 'Remove this response';
+    textarea.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+
+    const { resetChildren } = await import('../../eventHandlers.js');
+    expect(() => resetChildren(textarea.form)).not.toThrow();
+
+    expect(quest.state.getActiveQuestionState().NOTES).toBeUndefined();
+  });
+
   it('does not cancel native select navigation, activation, or dismissal keys (CONNECT-1587)', async () => {
     const quest = await renderFreshQuest({ markdown: NATIVE_SELECT_SURVEY });
     const select = quest.root.querySelector('#home_state');
@@ -260,6 +282,43 @@ describe('delegated runtime event handling', () => {
     expect(hiddenPopover).toHaveBeenCalledOnce();
     expect(hiddenModal).not.toHaveBeenCalled();
     expect(trigger.classList.contains('show')).toBe(false);
+    expect(bootstrap.Popover.getInstance(trigger)).toBeNull();
+  });
+
+  it('does not emit duplicate popover lifecycle events for repeated show or hide calls', async () => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    const instance = bootstrap.Popover.getInstance(trigger);
+    const shownPopover = vi.fn();
+    const hiddenPopover = vi.fn();
+    trigger.addEventListener('shown.bs.popover', shownPopover);
+    trigger.addEventListener('hidden.bs.popover', hiddenPopover);
+
+    instance.hide();
+    expect(hiddenPopover).not.toHaveBeenCalled();
+
+    instance.show();
+    instance.show();
+    expect(shownPopover).toHaveBeenCalledOnce();
+
+    instance.hide();
+    instance.hide();
+    expect(hiddenPopover).toHaveBeenCalledOnce();
+  });
+
+  it('disposes an initialized but unopened popover without emitting a hidden event', async () => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    const hiddenPopover = vi.fn();
+    trigger.addEventListener('hidden.bs.popover', hiddenPopover);
+
+    expect(bootstrap.Popover.getInstance(trigger)).not.toBeNull();
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+
+    const { disposePopovers } = await import('../../questionnaire.js');
+    disposePopovers(quest.root);
+
+    expect(hiddenPopover).not.toHaveBeenCalled();
     expect(bootstrap.Popover.getInstance(trigger)).toBeNull();
   });
 

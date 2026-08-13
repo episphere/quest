@@ -87,6 +87,10 @@ async function expectGridFocusIndicatorUnclipped(label) {
     const labelStyle = getComputedStyle(element);
     const markerStyle = getComputedStyle(element, '::before');
     const pixels = (value) => Number.parseFloat(value) || 0;
+    const markerWidth = pixels(markerStyle.width)
+      + (markerStyle.boxSizing === 'border-box'
+        ? 0
+        : pixels(markerStyle.borderLeftWidth) + pixels(markerStyle.borderRightWidth));
     const markerHeight = pixels(markerStyle.height)
       + (markerStyle.boxSizing === 'border-box'
         ? 0
@@ -95,18 +99,63 @@ async function expectGridFocusIndicatorUnclipped(label) {
       0,
       pixels(markerStyle.outlineWidth) + pixels(markerStyle.outlineOffset),
     );
+    const labelRect = element.getBoundingClientRect();
+    const markerCenterX = labelRect.left + (labelRect.width / 2);
+    const markerCenterY = labelRect.top + (labelRect.height / 2);
+    const paintBounds = {
+      left: markerCenterX - (markerWidth / 2) - focusExtent,
+      right: markerCenterX + (markerWidth / 2) + focusExtent,
+      top: markerCenterY - (markerHeight / 2) - focusExtent,
+      bottom: markerCenterY + (markerHeight / 2) + focusExtent,
+    };
+    const clippingAncestors = [];
+    let ancestor = element.parentElement;
+
+    while (ancestor) {
+      const style = getComputedStyle(ancestor);
+      const clipsX = ['hidden', 'clip', 'scroll', 'auto'].includes(style.overflowX);
+      const clipsY = ['hidden', 'clip', 'scroll', 'auto'].includes(style.overflowY);
+      if (clipsX || clipsY) {
+        const rect = ancestor.getBoundingClientRect();
+        clippingAncestors.push({
+          tagName: ancestor.tagName,
+          id: ancestor.id,
+          className: ancestor.className,
+          clipsX,
+          clipsY,
+          containsX: !clipsX
+            || (paintBounds.left >= rect.left - 0.5 && paintBounds.right <= rect.right + 0.5),
+          containsY: !clipsY
+            || (paintBounds.top >= rect.top - 0.5 && paintBounds.bottom <= rect.bottom + 0.5),
+        });
+      }
+      ancestor = ancestor.parentElement;
+    }
 
     return {
+      focusPaintWidth: markerWidth + (2 * focusExtent),
       focusPaintHeight: markerHeight + (2 * focusExtent),
-      labelHeight: element.getBoundingClientRect().height,
+      labelWidth: labelRect.width,
+      labelHeight: labelRect.height,
+      overflowX: labelStyle.overflowX,
       overflowY: labelStyle.overflowY,
+      clippingAncestors,
     };
   });
 
   expect(
+    geometry.overflowX === 'visible'
+      || geometry.labelWidth + 0.5 >= geometry.focusPaintWidth,
+    `Grid focus indicator is horizontally clipped: ${JSON.stringify(geometry)}`,
+  ).toBe(true);
+  expect(
     geometry.overflowY === 'visible'
       || geometry.labelHeight + 0.5 >= geometry.focusPaintHeight,
-    `Grid focus indicator is clipped: ${JSON.stringify(geometry)}`,
+    `Grid focus indicator is vertically clipped: ${JSON.stringify(geometry)}`,
+  ).toBe(true);
+  expect(
+    geometry.clippingAncestors.every(({ containsX, containsY }) => containsX && containsY),
+    `A grid ancestor clips the focus indicator: ${JSON.stringify(geometry)}`,
   ).toBe(true);
 }
 

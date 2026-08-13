@@ -84,11 +84,13 @@ test.describe('participant responsive layout @responsive @canonical', () => {
     const question = activeQuestion(page, 'GRID_RATE');
     const table = question.locator('table.quest-grid');
     await expect(table).toBeVisible();
+    await expect(table).toHaveCSS('margin-top', '10px');
 
     if (testInfo.project.name === 'chromium-phone') {
       await expect(table.locator('thead')).toHaveCSS('display', 'none');
       await expect(table.locator('td.response').first()).toHaveCSS('display', 'block');
       await expect(table.locator('td.response').first()).toHaveAttribute('data-header', /^\s*Never$/);
+      await expect(table).toHaveCSS('padding-top', '0px');
     } else {
       await expect(table).toHaveCSS('display', 'inline-table');
       await expect(table.locator('tr').first()).toHaveCSS('display', 'table-row');
@@ -250,6 +252,8 @@ test.describe('participant responsive layout @responsive @canonical', () => {
     await question.locator('tr[data-question-id="GRID_WALK"] label', { hasText: 'Sometimes' }).click();
     await page.mouse.move(0, 0);
 
+    // Keep response text visible: label rendering is part of the mobile-grid
+    // regression contract, so masking it would hide a previously observed bug.
     await expect(question).toHaveScreenshot(
       `participant-grid-${testInfo.project.name}.png`,
       {

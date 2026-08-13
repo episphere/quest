@@ -47,6 +47,24 @@ describe('accessible question text construction', () => {
     expect(fieldset.querySelectorAll('.response')).toHaveLength(2);
   });
 
+  it('retains the first formatted fragment after a punctuated primary prompt', async () => {
+    const { quest, accessibility } = await loadAccessibilityFixture(`
+      <form class="question active" id="PUNCTUATED_MULTI_PROMPT">
+        <fieldset>How severe is your fatigue?<b>Pain level:</b> Are you experiencing pain?<div class="response"><input id="PUNCTUATED_MULTI_PROMPT_1"></div></fieldset>
+      </form>
+    `);
+    const fieldset = quest.root.querySelector('fieldset');
+
+    accessibility.manageAccessibleQuestion(fieldset, false);
+
+    const legend = fieldset.querySelector(':scope > legend');
+    const followUp = fieldset.querySelector(':scope > div[role="alert"][tabindex="0"]');
+    expect(legend.textContent).toBe('How severe is your fatigue?');
+    expect(followUp?.innerHTML).toContain('<b>Pain level:</b>');
+    expect(followUp?.textContent).toContain('Pain level: Are you experiencing pain?');
+    expect(fieldset.querySelectorAll('.response')).toHaveLength(1);
+  });
+
   it('creates a fieldset around table questions that do not originally have one', async () => {
     const { quest, accessibility } = await loadAccessibilityFixture(`
       <form class="question active" id="TABLE_QUESTION">

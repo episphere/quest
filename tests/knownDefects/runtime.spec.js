@@ -169,18 +169,15 @@ describe('characterized Quest runtime defects', () => {
     expect(quest.root.querySelector('#NOTES [data-click-type="reset"]')).not.toBeNull();
   });
 
-  it.fails(`${runtimeDefects.textareaReset.localDefectId}: clears a standalone textarea and its active response`, async () => {
+  it.fails(`${runtimeDefects.textareaReset.localDefectId}: clears a standalone textarea's visible value`, async () => {
     const quest = await renderFreshQuest({ markdown: STANDALONE_TEXTAREA_SURVEY });
     const textarea = quest.root.querySelector('#notes');
     textarea.value = 'Clear this response';
-    textarea.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
-    expect(quest.state.getActiveQuestionState().NOTES).toBe('Clear this response');
 
     const { resetChildren } = await import('../../eventHandlers.js');
     resetChildren(textarea.form);
 
     expect(textarea.value).toBe('');
-    expect(quest.state.getActiveQuestionState().NOTES).toBeUndefined();
   });
 
   it.fails(`${runtimeDefects.corpusMalformedCondition.localDefectId}: rejects a truncated function expression`, async () => {

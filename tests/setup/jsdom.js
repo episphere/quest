@@ -62,13 +62,17 @@ class BootstrapComponentStub {
   }
 
   show() {
-    this._element?.classList.add('show');
-    this._element?.dispatchEvent(new Event(`shown.bs.${this.constructor.eventNamespace}`));
+    if (!this._element || this._element.classList.contains('show')) return;
+
+    this._element.classList.add('show');
+    this._element.dispatchEvent(new Event(`shown.bs.${this.constructor.eventNamespace}`));
   }
 
   hide() {
-    this._element?.classList.remove('show');
-    this._element?.dispatchEvent(new Event(`hidden.bs.${this.constructor.eventNamespace}`));
+    if (!this._element || !this._element.classList.contains('show')) return;
+
+    this._element.classList.remove('show');
+    this._element.dispatchEvent(new Event(`hidden.bs.${this.constructor.eventNamespace}`));
   }
 
   toggle() {
