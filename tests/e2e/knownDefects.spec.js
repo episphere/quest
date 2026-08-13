@@ -1,20 +1,13 @@
 import { test, expect } from './support/test.js';
 import { activeQuestion, goNext, openParticipant, waitInHarness } from './support/harness.js';
 import { analyzeQuestAxe, matchesAxeDefect } from './support/axe.js';
-import { accessibilityDefects, axeDefects, runtimeDefects } from '../knownDefects/registry.js';
+import { accessibilityDefects, axeDefects } from '../knownDefects/registry.js';
 
 const CHOICE_SEMANTIC_PROJECTS = new Set([
   'chromium-desktop',
   'webkit-desktop',
   'chromium-windows-ua',
 ]);
-const NATIVE_KEYBOARD_ENGINES = new Set([
-  'chromium-desktop',
-  'firefox-desktop',
-  'webkit-desktop',
-  'chromium-windows-ua',
-]);
-
 async function axeFindingsForDefect(page, defect) {
   const findings = await analyzeQuestAxe(page);
   return findings.filter((finding) => matchesAxeDefect(finding, defect));
@@ -102,62 +95,4 @@ test.describe('open accessibility regressions @known-defect', () => {
     await expect(question.getByRole('radio', { name: /Cycling.*Often|Often.*Cycling/ })).not.toBeChecked();
   });
 
-  test('restores focus to the submit trigger after Escape closes its dialog', async ({ page }, testInfo) => {
-    test.skip(!NATIVE_KEYBOARD_ENGINES.has(testInfo.project.name), 'The modal focus contract runs in every desktop engine.');
-
-    await openParticipant(page, { fixture: 'validation.txt' });
-    await waitInHarness(page, 550);
-    await activeQuestion(page, 'BOUNDED').locator('#bounded').fill('2');
-    await goNext(page);
-    await expect(activeQuestion(page, 'END')).toBeVisible();
-    await waitInHarness(page, 550);
-    const trigger = activeQuestion(page, 'END').getByRole('button', { name: 'Submit your survey' });
-    const modal = page.locator('#submitModal');
-    await trigger.click();
-    await expect(modal).toHaveClass(/show/);
-    await expect(page.locator('#submitModalTitle')).toBeFocused();
-    await page.keyboard.press('Escape');
-    await waitInHarness(page, 700);
-    await expect(modal).not.toHaveClass(/show/);
-    test.fail(true, `${runtimeDefects.submitFocusRestore.localDefectId}: ${runtimeDefects.submitFocusRestore.reason}`);
-    expect(await trigger.evaluate((element) => element === document.activeElement)).toBe(true);
-  });
-
-  test('keeps focus on a response dialog when the pending question-focus timer completes', async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== 'chromium-desktop', 'The timer race is characterized once in Chromium.');
-
-    await page.addInitScript(() => {
-      const nativeSetTimeout = window.setTimeout.bind(window);
-      const nativeClearTimeout = window.clearTimeout.bind(window);
-      const pendingFocusTimers = new Map();
-      let nextTimerId = 1_000_000;
-
-      window.setTimeout = (callback, delay, ...args) => {
-        if (delay !== 500) return nativeSetTimeout(callback, delay, ...args);
-        const timerId = nextTimerId;
-        nextTimerId += 1;
-        pendingFocusTimers.set(timerId, { callback, args });
-        return timerId;
-      };
-      window.clearTimeout = (timerId) => {
-        if (!pendingFocusTimers.delete(timerId)) nativeClearTimeout(timerId);
-      };
-      window.releasePendingQuestionFocusTimers = () => {
-        window.setTimeout = nativeSetTimeout;
-        window.clearTimeout = nativeClearTimeout;
-        const pending = [...pendingFocusTimers.values()];
-        pendingFocusTimers.clear();
-        pending.forEach(({ callback, args }) => callback(...args));
-        return pending.length;
-      };
-    });
-    await openParticipant(page);
-    await goNext(page);
-    const title = page.locator('#softModalTitle');
-    await expect(title).toBeFocused();
-    expect(await page.evaluate(() => window.releasePendingQuestionFocusTimers())).toBe(1);
-    await waitInHarness(page, 25);
-    test.fail(true, `${runtimeDefects.modalQuestionFocusRace.localDefectId}: ${runtimeDefects.modalQuestionFocusRace.reason}`);
-    await expect(title).toBeFocused();
-  });
 });

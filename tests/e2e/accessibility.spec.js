@@ -383,6 +383,46 @@ test.describe('participant accessibility contract @canonical @windows-a11y', () 
     await waitInHarness(page, 700);
 
     await expect(page.locator('#submitModal')).not.toHaveClass(/show/);
+    await expect(trigger).toBeFocused();
+    await expectHealthyHarness(page);
+  });
+
+  test('keeps focus on a response dialog when delayed question focus runs', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-desktop', 'The deterministic focus-timer race runs once in Chromium.');
+
+    await page.addInitScript(() => {
+      const nativeSetTimeout = window.setTimeout.bind(window);
+      const nativeClearTimeout = window.clearTimeout.bind(window);
+      const pendingFocusTimers = new Map();
+      let nextTimerId = 1_000_000;
+
+      window.setTimeout = (callback, delay, ...args) => {
+        if (delay !== 500) return nativeSetTimeout(callback, delay, ...args);
+        const timerId = nextTimerId;
+        nextTimerId += 1;
+        pendingFocusTimers.set(timerId, { callback, args });
+        return timerId;
+      };
+      window.clearTimeout = (timerId) => {
+        if (!pendingFocusTimers.delete(timerId)) nativeClearTimeout(timerId);
+      };
+      window.releasePendingQuestionFocusTimers = () => {
+        window.setTimeout = nativeSetTimeout;
+        window.clearTimeout = nativeClearTimeout;
+        const pending = [...pendingFocusTimers.values()];
+        pendingFocusTimers.clear();
+        pending.forEach(({ callback, args }) => callback(...args));
+        return pending.length;
+      };
+    });
+
+    await openParticipant(page);
+    await goNext(page);
+    const title = page.locator('#softModalTitle');
+    await expect(title).toBeFocused();
+    expect(await page.evaluate(() => window.releasePendingQuestionFocusTimers())).toBe(1);
+    await waitInHarness(page, 25);
+    await expect(title).toBeFocused();
     await expectHealthyHarness(page);
   });
 });

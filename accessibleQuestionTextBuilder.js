@@ -19,7 +19,13 @@ export function manageAccessibleQuestion(fieldsetEle, questionFocusSet) {
         // Focus the hidden, focusable element
         if (!moduleParams.isRenderer) {
             setTimeout(() => {
-                focusableEle.focus({ preventScroll: true });
+                // A response or submit dialog may open before this delayed
+                // question-focus handoff runs. Keep focus in the active modal
+                // instead of returning it to content behind the dialog.
+                const openModal = moduleParams.questDiv?.querySelector('.modal.show');
+                if (focusableEle.isConnected && !openModal) {
+                    focusableEle.focus({ preventScroll: true });
+                }
             }, 500);
         }
 

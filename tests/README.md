@@ -57,6 +57,7 @@ prove that the current Connect PWA never calls `preventDefault()` or
 `stopImmediatePropagation()` first; that requires one focused integration test
 in the PWA when the accessibility investigation resumes.
 
-See `docs/accessibilityManualTest.md` for the VoiceOver and JAWS
-acceptance protocol. Automated browser tests characterize intended native
-keyboard behavior but do not claim to run either screen reader.
+See `docs/keyboardNavigation.md` for the keyboard command guide and
+`docs/accessibilityManualTest.md` for the VoiceOver and JAWS acceptance
+protocol. Automated browser tests characterize intended native keyboard
+behavior but not either screen reader.

@@ -225,7 +225,7 @@ async function handleQuestButtons(event) {
       break;
 
     case 'submitSurvey':
-      handleSubmitSurveyClick();
+      handleSubmitSurveyClick(event.submitter);
       break;
 
     case 'next':
@@ -275,18 +275,26 @@ function debounce(func, wait) {
   };
 }
 
-function handleSubmitSurveyClick() {
-  const submitModal = new bootstrap.Modal(moduleParams.questDiv.querySelector('#submitModal'));
+function handleSubmitSurveyClick(submitTrigger) {
+  const submitModalElement = moduleParams.questDiv.querySelector('#submitModal');
+  const submitModal = new bootstrap.Modal(submitModalElement);
   const submitModalBodyTextEle = moduleParams.questDiv.querySelector('#submitModalBodyText');
   submitModalBodyTextEle.setAttribute('tabindex', '0');
-  submitModalBodyTextEle.setAttribute('role', 'alert'); 
+  submitModalBodyTextEle.setAttribute('role', 'alert');
+
+  // Bootstrap cannot infer the control because Quest opens this
+  // modal programmatically. Restore focus after Escape, Cancel, or Close.
+  submitModalElement.addEventListener('hidden.bs.modal', () => {
+    if (submitTrigger?.isConnected) {
+      submitTrigger.focus({ preventScroll: true });
+    }
+  }, { once: true });
 
   submitModal.show();
 
   //Force focus to the modal title
   moduleParams.questDiv.querySelector('#submitModalTitle').focus();
 
-  let submitModalElement = submitModal._element;
   submitModalElement.querySelector('.btn-close').addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
       submitModal.hide();

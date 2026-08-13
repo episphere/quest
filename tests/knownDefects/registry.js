@@ -45,8 +45,6 @@ export const runtimeDefects = Object.freeze({
   missingConfirmationTarget: defect('QD-QP-003', 'Missing confirmation target handling', 'A confirmation input that references a missing peer removes its invalid attribute but then dereferences the missing peer.'),
   missingQuestionId: defect('QD-QP-004', 'Missing question-ID lookup', 'findQuestion logs a missing ID but then calls startsWith on the absent value instead of returning its documented not-found result.'),
   explicitCombinedChoiceName: defect('QD-QP-005', 'Explicit name metadata on legacy combined choices', 'The combined-choice parser interpolates the full regular-expression match array, producing a duplicated comma-separated name instead of the authored name.'),
-  submitFocusRestore: defect('QD-A11Y-001', 'Submit-dialog Escape focus restoration', 'The dialog closes on Escape but leaves focus inactive instead of returning it to the Submit Survey trigger.'),
-  modalQuestionFocusRace: defect('QD-A11Y-002', 'Question-to-modal focus handoff', 'A pending delayed question-focus callback can run after a response dialog opens and move focus away from the dialog title.'),
   staleSelectionAnnouncement: defect('QD-A11Y-003', 'Selection announcement after navigation', 'A delayed selection announcement can repopulate the live region after Next or Back explicitly clears it.'),
   textareaReset: defect('QD-RESET-001', 'Standalone textarea Reset behavior', 'Standalone textarea questions do not receive a Reset action, and the existing reset routine does not clear textarea values.', {
     sourcePaths: [
