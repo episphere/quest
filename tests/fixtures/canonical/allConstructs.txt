@@ -1,0 +1,81 @@
+// Renderer fixture for syntax that is uncommon or absent in the locked production survey corpus.
+{"name":"TEST_ALL_CONSTRUCTS"}
+
+[PLAIN] Plain informational question with a user value {$u:firstName}, a saved value {$SAVED:fallback}, and an expression {#1 + 1}.
+|displayif=equals(SHOW_INLINE,1)|Inline conditional text|
+|displayif=equals(SHOW_BLOCK,1):|Block conditional text|
+|displayList(LIST_VALUE)|
+|displayList(LIST_VALUE):|
+|popup|More information|Help title|Synthetic help text|
+|image|episphere.github.io/quest/images/FemaleBaldness1.png|40,80|
+
+[RADIO?] Radio choices, including response metadata and an explicit skip.
+(1) First radio
+(2:RADIO_GROUP|SECOND_RADIO_LABEL,displayif=equals(SHOW_RADIO,1)) Second radio -> CHECKBOX
+
+[CHECKBOX?|min-count=1 max-count=2|] Checkbox choices, including XOR/reset and response display logic.
+[1] First checkbox
+[2,displayif=equals(SHOW_CHECKBOX,1)] Second checkbox
+[99*] None of these
+
+[COMBINED?] Checkbox with an embedded text box and skip.
+[807835037|COMBINED_OTHER_LABEL] Other [text box:COMBINED_TEXT] -> EMAIL
+
+[COMBINED_TEXTAREA?] Radio with an embedded text area and skip.
+(1:COMBINED_TEXTAREA_GROUP|COMBINED_TEXTAREA_LABEL) Other details <textarea id="COMBINED_TEXTAREA_VALUE"></textarea> -> EMAIL
+
+[CONFIRM?] Authored confirmation relationship.
+<input type="text" id="CONFIRM_ORIGINAL">
+<input type="text" id="CONFIRM_COPY" confirm="CONFIRM_ORIGINAL">
+
+[EMAIL?] Email address |@|id=EMAIL_VALUE|
+
+[PHONE?] Telephone |tel|id=PHONE_VALUE|
+
+[FULL_SSN?] Full SSN |SSN|id=FULL_SSN_VALUE|
+
+[SHORT_SSN?] Last four SSN digits |SSNsm|id=SHORT_SSN_VALUE|
+
+[ZIP?] ZIP code |zip|id=ZIP_VALUE|
+
+[STATE?] State |state|id=STATE_VALUE|
+
+[DATE?] Date |date|id=DATE_VALUE min=2020-01-01 max=2030-12-31|
+
+[MONTH?] Month |month|id=MONTH_VALUE min=2020-01 max=2030-12|
+
+[TIME?] Time |time|id=TIME_VALUE|
+
+[NUMBER?] Number |__|__|id=NUMBER_VALUE min=1 max=10|
+
+[TEXT?] Text before |__|id=TEXT_VALUE minlen=2 maxlen=12| text after.
+
+[TEXTBOX?] Text-box macro [text box:TEXTBOX_VALUE]
+
+[TEXTAREA?] Long answer |___|TEXTAREA_VALUE|
+
+[HIDDEN] Hidden host value |hidden|id=HIDDEN_VALUE|
+
+[YES_NO?] Yes/no macro. #YN
+
+[YES_NO_PREFER?] Yes/no/prefer-not macro. #YNP
+
+[DEFAULT_SKIP] Default hidden transition.
+< -> GRID_RADIO >
+
+[NO_RESPONSE_SKIP?] No-response transition.
+|__|id=OPTIONAL_VALUE|
+< #NR -> GRID_RADIO >
+
+|grid?|id="GRID_RADIO" displayif=equals(SHOW_GRID,1)|Radio grid {$u:firstName}|[GRID_ROW_A] First row;[GRID_ROW_B,displayif=equals(SHOW_ROW,1)] Second row;|(1: Never)(2: Often)|
+
+|grid!|id="GRID_CHECKBOX"|Checkbox grid|[GRID_CHECK_ROW] A row;|[1: Alpha][2: Beta]|
+
+[D_900000002?] Loop count |__|__|id=D_900000002 min=0 max=2|
+
+<loop max=2>
+[LOOP_ITEM?,displayif=greaterThanOrEqual(D_900000002,#loop)] Loop item {##}.
+|__|id=LOOP_ITEM_VALUE|
+</loop>
+
+[END,end] Construct rendering complete.

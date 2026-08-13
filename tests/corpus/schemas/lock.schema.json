@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://episphere.github.io/quest/tests/corpus/lock.schema.json",
+  "title": "Quest questionnaire corpus lock",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "repository",
+    "repositoryUrl",
+    "defaultBranch",
+    "commit",
+    "cacheRoot",
+    "sourceDirectory",
+    "environment",
+    "expectedFileCount",
+    "expectedModuleCount",
+    "expectedLanguageCounts",
+    "questionIdParityExceptions",
+    "files"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "repository": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+    "repositoryUrl": { "type": "string", "format": "uri" },
+    "defaultBranch": { "type": "string", "minLength": 1 },
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "cacheRoot": { "type": "string", "minLength": 1 },
+    "sourceDirectory": { "const": "prod" },
+    "environment": { "const": "prod" },
+    "expectedFileCount": { "type": "integer", "minimum": 1 },
+    "expectedModuleCount": { "type": "integer", "minimum": 1 },
+    "expectedLanguageCounts": {
+      "type": "object",
+      "required": ["en", "es"],
+      "properties": {
+        "en": { "type": "integer", "minimum": 1 },
+        "es": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "questionIdParityExceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["module", "onlyIn", "ids"],
+        "properties": {
+          "module": { "type": "string", "minLength": 1 },
+          "onlyIn": { "enum": ["en", "es"] },
+          "ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "module",
+          "locale",
+          "language",
+          "path",
+          "questName",
+          "version",
+          "sourceQuestionCount",
+          "sha256",
+          "gitBlobSha"
+        ],
+        "properties": {
+          "module": { "type": "string", "minLength": 1 },
+          "locale": { "enum": ["en", "es"] },
+          "language": { "enum": ["en", "es"] },
+          "path": { "type": "string", "pattern": "^prod/.+" },
+          "questName": { "type": "string", "pattern": "^\\w+$" },
+          "version": { "type": "string", "minLength": 1 },
+          "sourceQuestionCount": { "type": "integer", "minimum": 1 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "gitBlobSha": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+        },
+        "oneOf": [
+          {
+            "properties": {
+              "locale": { "const": "en" },
+              "language": { "const": "en" }
+            }
+          },
+          {
+            "properties": {
+              "locale": { "const": "es" },
+              "language": { "const": "es" }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

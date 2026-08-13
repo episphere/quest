@@ -1,0 +1,361 @@
+{
+  "$schema": "./schemas/lock.schema.json",
+  "schemaVersion": 1,
+  "repository": "episphere/questionnaire",
+  "repositoryUrl": "https://github.com/episphere/questionnaire.git",
+  "defaultBranch": "main",
+  "commit": "7ae99a22af325cf0e14be047a7636462db9bfd50",
+  "cacheRoot": ".cache/questionnaire",
+  "sourceDirectory": "prod",
+  "environment": "prod",
+  "expectedFileCount": 29,
+  "expectedModuleCount": 15,
+  "expectedLanguageCounts": {
+    "en": 15,
+    "es": 14
+  },
+  "questionIdParityExceptions": [
+    {
+      "module": "module1",
+      "onlyIn": "en",
+      "ids": [
+        "D_927516732"
+      ]
+    },
+    {
+      "module": "module2",
+      "onlyIn": "es",
+      "ids": [
+        "D_186488870"
+      ]
+    },
+    {
+      "module": "moduleBiospecimen",
+      "onlyIn": "es",
+      "ids": [
+        "SRVMTW_MODULEINTRO_V1R0"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "module": "module1",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/module1.txt",
+      "questName": "D_726699695_V2",
+      "version": "4.0",
+      "sourceQuestionCount": 316,
+      "sha256": "c36e2ceb44808d43538d04f43c336085ec73c05614ad5791fbb6e58582b8e107",
+      "gitBlobSha": "862e5a2e53acc7b40774665445626b0961090443"
+    },
+    {
+      "module": "module1",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/module1Spanish.txt",
+      "questName": "D_726699695_V2",
+      "version": "4.0",
+      "sourceQuestionCount": 315,
+      "sha256": "f7a768ede6036e68742ea7d0bea3f0debc3f30aa4ab51774b637a9fbbe9e1d2e",
+      "gitBlobSha": "af57a0cec8372e876af4db1d9deb11093179fccc"
+    },
+    {
+      "module": "module2",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/module2.txt",
+      "questName": "D_745268907_V2",
+      "version": "2.3",
+      "sourceQuestionCount": 359,
+      "sha256": "a7b9dba4edd27d55ccb3830b0b54b8d4fa7003a1d2a9c1c79749aaeeaa4f664f",
+      "gitBlobSha": "151e62fca9dcc8a20c3759d7f807709c82b956cb"
+    },
+    {
+      "module": "module2",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/module2Spanish.txt",
+      "questName": "D_745268907_V2",
+      "version": "2.3",
+      "sourceQuestionCount": 360,
+      "sha256": "c8545d3286b47909c9f9048df73467459cccabbeb7dfe7676756ea9474164bb5",
+      "gitBlobSha": "e5bdfc6ba6bf90be23d6625770f2fbcd7de482d3"
+    },
+    {
+      "module": "module3",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/module3.txt",
+      "questName": "D_965707586",
+      "version": "1.6",
+      "sourceQuestionCount": 314,
+      "sha256": "73f6a1ba8bb0ce4b3c1cb56566b3c46b0d8552ff299be81a57ed6c4d4597ea8f",
+      "gitBlobSha": "5270dc457bbf49abdb7e443ee18c64056274740d"
+    },
+    {
+      "module": "module3",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/module3Spanish.txt",
+      "questName": "D_965707586",
+      "version": "1.6",
+      "sourceQuestionCount": 314,
+      "sha256": "4c78a6b2f3db419e87c7701b938a30c56c87c0c4ae2864d9eeb33e16a207e3b8",
+      "gitBlobSha": "f148cb40d11fe00311e3a2a5199a06edcdbee4e1"
+    },
+    {
+      "module": "module4",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/module4.txt",
+      "questName": "D_716117817",
+      "version": "2.0",
+      "sourceQuestionCount": 367,
+      "sha256": "008faf8420a7a657692c7e04a3615f171c53f675411fd3fd049f329a62124fe4",
+      "gitBlobSha": "02a954153ae23ec64e4d9b17a64c4241e85c9654"
+    },
+    {
+      "module": "module4",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/module4Spanish.txt",
+      "questName": "D_716117817",
+      "version": "2.0",
+      "sourceQuestionCount": 367,
+      "sha256": "c1705fb2632f8c2fda8f22a716fb006eecacde9aa75b153611c4e7f15aec5c3f",
+      "gitBlobSha": "e13239cd096cef57672ac3a0d5bb94559aa15a4c"
+    },
+    {
+      "module": "module2024ConnectExperience",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/module2024ConnectExperience.txt",
+      "questName": "D_506648060",
+      "version": "1.1",
+      "sourceQuestionCount": 43,
+      "sha256": "70f70eb07acec537f634c96b66c29596e68baee11812f367bfc89317cb818fe7",
+      "gitBlobSha": "ab9dd0d671250abda77e1ddd5d0e51d98f39897d"
+    },
+    {
+      "module": "module2024ConnectExperience",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/module2024ConnectExperienceSpanish.txt",
+      "questName": "D_506648060",
+      "version": "1.1",
+      "sourceQuestionCount": 43,
+      "sha256": "1bb9757b35913beca279af01bb99ee9c776684fbf7d056289f71c898e5cfef9f",
+      "gitBlobSha": "7be966c2ddd98bba5c1def60a245796d48f5bb98"
+    },
+    {
+      "module": "module2026ROIPreferences",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/module2026ROIPreferences.txt",
+      "questName": "D_312845734",
+      "version": "1.0",
+      "sourceQuestionCount": 16,
+      "sha256": "bb14766a8d7fd626d2234254db78c1c7e84b0503f4734ddafa31239763b160a9",
+      "gitBlobSha": "57f35700286c391850a2ec359870aa702e8ad808"
+    },
+    {
+      "module": "module2026ROIPreferences",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/module2026ROIPreferencesSpanish.txt",
+      "questName": "D_312845734",
+      "version": "1.0",
+      "sourceQuestionCount": 16,
+      "sha256": "c31cf93e57d0c26fb630b940d906cce1f42440e434dea4049ca46859a8423227",
+      "gitBlobSha": "ba7be12487f90e1aa862d4f18870b8b8c45e0dd7"
+    },
+    {
+      "module": "moduleBiospecimen",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleBiospecimen.txt",
+      "questName": "D_299215535",
+      "version": "1.4",
+      "sourceQuestionCount": 52,
+      "sha256": "3511079715fecaf0498d2a3f197f3cce400a9a4674af0947ff740b68ddfb5d22",
+      "gitBlobSha": "420ac712f7f4f2307ac8d12494b8ff96537ae68a"
+    },
+    {
+      "module": "moduleBiospecimen",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleBiospecimenSpanish.txt",
+      "questName": "D_299215535",
+      "version": "1.4",
+      "sourceQuestionCount": 53,
+      "sha256": "16f3ae9976bc65506da60281fe17e27f6701109e6a5b67d9b65e044805259192",
+      "gitBlobSha": "ed33370e87f565bf25e31a2e36583f7701f1d504"
+    },
+    {
+      "module": "moduleCOVID19",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleCOVID19.txt",
+      "questName": "D_793330426",
+      "version": "1.3",
+      "sourceQuestionCount": 97,
+      "sha256": "5d3dfa29799998557fd85d168869f9b1f122d3d957f443a7a423ec12304c6426",
+      "gitBlobSha": "114e83e88cacad5070bc75a54d5ec7eb319da4a2"
+    },
+    {
+      "module": "moduleCOVID19",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleCOVID19Spanish.txt",
+      "questName": "D_793330426",
+      "version": "1.3",
+      "sourceQuestionCount": 97,
+      "sha256": "3aec9221ab9dedd091d46b6eee3de1085e49f3a7c93e98e4ee8b47da969b9c43",
+      "gitBlobSha": "3d9ad926b9075409c920fb6827194beae69a9b53"
+    },
+    {
+      "module": "moduleCancerScreeningHistory",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleCancerScreeningHistory.txt",
+      "questName": "D_369168474",
+      "version": "1.2",
+      "sourceQuestionCount": 144,
+      "sha256": "65207c189b9b62836afc43cb80c12b416612b3d246a71d257804e0924c7817b2",
+      "gitBlobSha": "60befaf4c26ff151308cea9b0149d7cba353c237"
+    },
+    {
+      "module": "moduleCancerScreeningHistory",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleCancerScreeningHistorySpanish.txt",
+      "questName": "D_369168474",
+      "version": "1.2",
+      "sourceQuestionCount": 144,
+      "sha256": "dd93c2e963d9c0f2eb202667a45748ca576aefed4157f315a6e8ddef95eb7c38",
+      "gitBlobSha": "6bf4cc485646af1d3caeb7d028f849af9b27c4b5"
+    },
+    {
+      "module": "moduleClinicalBloodUrine",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleClinicalBloodUrine.txt",
+      "questName": "D_826163434",
+      "version": "1.4",
+      "sourceQuestionCount": 21,
+      "sha256": "da2014adad00d371c0044fdfe1095af570e253c293ea3e88023045d51762a91e",
+      "gitBlobSha": "6787fad926c177db284bb7a1a4919c9277ab2ea8"
+    },
+    {
+      "module": "moduleClinicalBloodUrine",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleClinicalBloodUrineSpanish.txt",
+      "questName": "D_826163434",
+      "version": "1.4",
+      "sourceQuestionCount": 21,
+      "sha256": "2898151d137c3f33ecf857b4f82561d6c42ae0c6c1947d47a1317ba24c9de987",
+      "gitBlobSha": "c6b36385c2f751a80d032db0d1ae494420b76f70"
+    },
+    {
+      "module": "moduleDietScreener",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleDietScreener",
+      "questName": "D_515124081",
+      "version": "1.0",
+      "sourceQuestionCount": 3,
+      "sha256": "bfe990625139d13c6125245a441c8fcb666bcbac905e577ef374df8f708f5dca",
+      "gitBlobSha": "8cba1d923c79f508c7071946b35f4800e71cfb2d"
+    },
+    {
+      "module": "moduleDietScreener",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleDietScreenerSpanish.txt",
+      "questName": "D_515124081",
+      "version": "1.0",
+      "sourceQuestionCount": 3,
+      "sha256": "40a21887c151720e2ce65450154e0ab8b21f5d94c6324de3f8417b35e2d5564a",
+      "gitBlobSha": "b0ae2f197d3f779ac7b77c8391adbdc8c8f46d59"
+    },
+    {
+      "module": "moduleMenstrual",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleMenstrual.txt",
+      "questName": "D_912367929",
+      "version": "1.1",
+      "sourceQuestionCount": 5,
+      "sha256": "13de3a43aed31befdda5be4c805a3b885e36df9275f742a19ca931e360e159b2",
+      "gitBlobSha": "ccb21cd54e37537f29cd233f06a068fea80a21c6"
+    },
+    {
+      "module": "moduleMenstrual",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleMenstrualSpanish.txt",
+      "questName": "D_912367929",
+      "version": "1.1",
+      "sourceQuestionCount": 5,
+      "sha256": "6424161524cbfd2ba9884e0db0106f1dcb37132473125de2abeeae9c8ae6cc8f",
+      "gitBlobSha": "90938931c3073074aabc5ca960f490c0065a5184"
+    },
+    {
+      "module": "moduleMouthwash",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleMouthwash.txt",
+      "questName": "D_390351864",
+      "version": "1.1",
+      "sourceQuestionCount": 34,
+      "sha256": "5d352f4bebe7c0a16cb835c24b44c93c7ce00af4a9b5c8a345ce3662036c70fd",
+      "gitBlobSha": "d5927538e61b6865c08598cc8e64bceca4de8435"
+    },
+    {
+      "module": "moduleMouthwash",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleMouthwashSpanish.txt",
+      "questName": "D_390351864",
+      "version": "1.1",
+      "sourceQuestionCount": 34,
+      "sha256": "e7516c4836ad310bc8be26f7c96cb9e1f23ee0bcbc529677e34db332fd76637a",
+      "gitBlobSha": "d5cb40d2b4cb94f3f976e0279f975bc4b53e5fc8"
+    },
+    {
+      "module": "moduleQoL",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/moduleQoL.txt",
+      "questName": "D_601305072",
+      "version": "1.0",
+      "sourceQuestionCount": 11,
+      "sha256": "6e1e8c3af357783996395be2a6b6907cf02f936c5cb8275717477f3e05c51b7e",
+      "gitBlobSha": "53866c298eeaf084f911960f31ff9ff0b89f449a"
+    },
+    {
+      "module": "moduleQoL",
+      "locale": "es",
+      "language": "es",
+      "path": "prod/moduleQoLSpanish.txt",
+      "questName": "D_601305072",
+      "version": "1.0",
+      "sourceQuestionCount": 11,
+      "sha256": "c068aab47cb94768399a635e7e98a48078e29e36391db55987ce33701edbf4a1",
+      "gitBlobSha": "5f66e5c0be990b5946bec022529cafe21802cc53"
+    },
+    {
+      "module": "ssnModule",
+      "locale": "en",
+      "language": "en",
+      "path": "prod/ssnModule.txt",
+      "questName": "D_166676176",
+      "version": "1.0",
+      "sourceQuestionCount": 3,
+      "sha256": "400e5fb271c1d434c6c397f370b32fced6d16ea2a2f589720ac220ba82bbeb1b",
+      "gitBlobSha": "ae65c7a998fc636da237cb8a65f81849cf1ac57a"
+    }
+  ]
+}

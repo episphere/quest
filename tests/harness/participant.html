@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quest participant harness</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "https://cdn.jsdelivr.net/npm/mathjs@13.0.3/+esm": "/tests/harness/mathjsLocal.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="connect-container">
+      <header class="connect-test-header">
+        <a id="host-before" href="#questionnaireRoot">Participant dashboard</a>
+      </header>
+
+      <main id="host-main" tabindex="-1">
+        <div id="root">
+          <div class="row">
+            <div class="col-md-1" aria-hidden="true"></div>
+            <div
+              class="col-md-10"
+              id="questionnaireRoot"
+              aria-label="Survey"
+              style="visibility: hidden"
+            ></div>
+            <div class="col-md-1" aria-hidden="true"></div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="connect-test-footer">
+        <button id="host-after" type="button">Return to dashboard</button>
+      </footer>
+    </div>
+
+    <script type="module" src="./participant.js"></script>
+  </body>
+</html>

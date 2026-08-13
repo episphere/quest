@@ -1,0 +1,38 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: #212529;
+}
+
+.connect-container {
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
+
+.connect-test-header,
+.connect-test-footer {
+  padding: 0.75rem 1rem;
+  background: #f5f7f9;
+}
+
+.connect-test-header {
+  border-bottom: 1px solid #d9dee3;
+}
+
+.connect-test-footer {
+  border-top: 1px solid #d9dee3;
+}
+
+#root {
+  min-height: 28rem;
+  padding: 0 0.75rem 1.5rem;
+}
+
+#questionnaireRoot {
+  min-width: 0;
+}

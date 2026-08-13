@@ -1,0 +1,10 @@
+// Canonical host-provided asynchronous question fixture.
+{"name":"TEST_ASYNC"}
+
+[SEED?] Select a category.
+(1) Clinical
+(2) Research
+
+[ASYNC?]
+
+[END,end] You have reached the end of this test survey. Submit your answers.

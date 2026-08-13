@@ -1,0 +1,8 @@
+// Canonical Windows focus fixture for checkbox-grid cell and terminal branches.
+{"name":"TEST_GRID_CHECKBOX_FOCUS"}
+
+[GRID_LEAD] The next question uses a checkbox response grid.
+
+|grid!|id="GRID_CHECK"|Which support options apply?|[GRID_CHECK_ROW_A] First need;[GRID_CHECK_ROW_B] Second need;|[1: Phone][2: Email]|
+
+[END,end] You have reached the end of this test survey. Submit your answers.

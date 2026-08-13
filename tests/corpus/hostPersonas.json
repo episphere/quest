@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "personas": [
+    {
+      "id": "external-values-missing",
+      "description": "Exercises does-not-exist and fallback behavior with no cross-survey results.",
+      "previousResults": {},
+      "userProfile": {
+        "D_644459734": "2024-06-15",
+        "age": "45",
+        "yob": "1979",
+        "firstName": "Test Participant"
+      },
+      "asyncOutcome": "success"
+    },
+    {
+      "id": "external-branch-primary",
+      "description": "Uses the primary constants referenced by current production branch conditions.",
+      "previousResults": {
+        "D_407056417": "536341288",
+        "D_613744428": "353358909",
+        "D_750420077": "578416151",
+        "D_784967158": "551525967"
+      },
+      "userProfile": {
+        "D_644459734": "2024-06-15",
+        "age": "45",
+        "yob": "1979",
+        "firstName": "Test Participant"
+      },
+      "asyncOutcome": "success"
+    },
+    {
+      "id": "external-branch-alternate",
+      "description": "Uses alternate constants referenced by current production branch conditions.",
+      "previousResults": {
+        "D_407056417": "654207589",
+        "D_613744428": "104430631",
+        "D_750420077": "434651539",
+        "D_784967158": "738284740"
+      },
+      "userProfile": {
+        "D_644459734": "2024-06-15",
+        "age": "45",
+        "yob": "1979",
+        "firstName": "Test Participant"
+      },
+      "asyncOutcome": "success"
+    },
+    {
+      "id": "async-empty",
+      "description": "Exercises an async host callback that resolves without usable response options.",
+      "previousResults": {},
+      "userProfile": {
+        "D_644459734": "2024-06-15",
+        "age": "45",
+        "yob": "1979",
+        "firstName": "Test Participant"
+      },
+      "asyncOutcome": "empty"
+    },
+    {
+      "id": "async-error",
+      "description": "Exercises an async host callback rejection without using live services.",
+      "previousResults": {},
+      "userProfile": {
+        "D_644459734": "2024-06-15",
+        "age": "45",
+        "yob": "1979",
+        "firstName": "Test Participant"
+      },
+      "asyncOutcome": "rejection"
+    },
+    {
+      "id": "async-delayed",
+      "description": "Exercises deterministic delayed completion for every supported async host callback.",
+      "previousResults": {},
+      "userProfile": {
+        "D_644459734": "2024-06-15",
+        "age": "45",
+        "yob": "1979",
+        "firstName": "Test Participant"
+      },
+      "asyncOutcome": "delayed"
+    }
+  ],
+  "asyncHooks": {
+    "module1:D_761310265": {
+      "module": "module1",
+      "questionId": "D_761310265",
+      "markupKey": "[D_761310265?]",
+      "function": "soccer",
+      "args": ["D_627122657", "D_796828094"],
+      "fixtureResult": "soccer"
+    },
+    "module1:D_279637054": {
+      "module": "module1",
+      "questionId": "D_279637054",
+      "markupKey": "[D_279637054?]",
+      "function": "soccer",
+      "args": ["D_118061122", "D_518387017"],
+      "fixtureResult": "soccer"
+    },
+    "moduleMenstrual:END": {
+      "module": "moduleMenstrual",
+      "questionId": "END",
+      "markupKey": "[END]",
+      "function": "resetMenstrualCycle",
+      "args": ["D_951357171"],
+      "fixtureResult": "resetMenstrualCycle"
+    },
+    "moduleMouthwash:END": {
+      "module": "moduleMouthwash",
+      "questionId": "END",
+      "markupKey": "[END]",
+      "function": "resetMouthwash",
+      "args": ["D_667908442"],
+      "fixtureResult": "resetMouthwash"
+    }
+  },
+  "asyncFixtures": {
+    "success": {
+      "outcomes": [{ "kind": "resolve" }],
+      "results": {
+        "soccer": [
+          {
+            "code": "TEST-SOC-0",
+            "title": "Test occupation result"
+          }
+        ],
+        "resetMenstrualCycle": { "completed": true },
+        "resetMouthwash": { "completed": true }
+      }
+    },
+    "empty": {
+      "outcomes": [{ "kind": "resolve", "value": null }],
+      "results": {
+        "soccer": [],
+        "resetMenstrualCycle": null,
+        "resetMouthwash": null
+      }
+    },
+    "rejection": {
+      "outcomes": [{ "kind": "reject", "message": "Deterministic host callback failure" }],
+      "results": {}
+    },
+    "delayed": {
+      "delayMs": 75,
+      "outcomes": [{ "kind": "resolve", "delayMs": 75 }],
+      "results": {
+        "soccer": [
+          {
+            "code": "TEST-SOC-DELAYED",
+            "title": "Delayed occupation result"
+          }
+        ],
+        "resetMenstrualCycle": { "completed": true },
+        "resetMouthwash": { "completed": true }
+      }
+    }
+  }
+}

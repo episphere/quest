@@ -1,0 +1,18 @@
+// Regression fixture for production-shaped nested text controls used by presence conditions.
+{"name":"TEST_NESTED_TEXT_PRESENCE"}
+
+[D_470013848?] Which type of phone do you use?
+[807835037] Other phone |__|id=D_495052121|
+
+[D_731524314?] Which type of tablet do you use?
+[807835037] Other tablet |__|id=D_638847244|
+
+[D_403175318?] Which type of computer do you use?
+[807835037] Other computer |__|id=D_507471937|
+
+[D_260186214?] Which device do you use most often?
+(793072415,displayif=equals(D_470013848,807835037)) {$D_495052121} |displayif=doesNotExist("D_495052121")|Other phone|
+(401230883,displayif=equals(D_731524314,807835037)) {$D_638847244} |displayif=doesNotExist("D_638847244")|Other tablet|
+(320254475,displayif=equals(D_403175318,807835037)) {$D_507471937} |displayif=doesNotExist("D_507471937")|Other computer|
+
+[END,end] End of regression fixture.

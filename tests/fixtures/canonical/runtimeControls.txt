@@ -1,0 +1,27 @@
+// Canonical participant fixture: one stable example of each common control.
+{"name":"TEST_RUNTIME"}
+
+[CHOICE?] Which color do you prefer?
+(1) Blue
+(2) Green
+
+[CHECKS?] Which messages would you like to receive? Select all that apply.
+[1] Email
+[2] Text message
+
+[TEXT?] What nickname should we use?
+|__|id=nickname minlen=2 maxlen=20|
+
+[NUMBER?] How many visits have you completed?
+|__|__|id=visit_count min=1 max=10|
+
+[STATE?] In which state do you live?
+|state|id=home_state|
+
+[DATE?] What was the date of your latest visit?
+|date|id=visit_date|
+
+[TIME?] What time did your latest visit begin?
+|time|id=visit_time|
+
+[END,end] You have reached the end of this test survey. Submit your answers.
