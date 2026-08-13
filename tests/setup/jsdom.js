@@ -46,6 +46,7 @@ function installOfflineNetworkBoundary() {
 
 class BootstrapComponentStub {
   static instances = new WeakMap();
+  static eventNamespace = 'modal';
 
   constructor(element) {
     this._element = element;
@@ -62,12 +63,12 @@ class BootstrapComponentStub {
 
   show() {
     this._element?.classList.add('show');
-    this._element?.dispatchEvent(new Event('shown.bs.modal'));
+    this._element?.dispatchEvent(new Event(`shown.bs.${this.constructor.eventNamespace}`));
   }
 
   hide() {
     this._element?.classList.remove('show');
-    this._element?.dispatchEvent(new Event('hidden.bs.modal'));
+    this._element?.dispatchEvent(new Event(`hidden.bs.${this.constructor.eventNamespace}`));
   }
 
   toggle() {
@@ -89,8 +90,14 @@ beforeEach(() => {
   document.body.innerHTML = '';
 
   globalThis.bootstrap = {
-    Modal: class ModalStub extends BootstrapComponentStub {},
-    Popover: class PopoverStub extends BootstrapComponentStub {},
+    Modal: class ModalStub extends BootstrapComponentStub {
+      static instances = new WeakMap();
+      static eventNamespace = 'modal';
+    },
+    Popover: class PopoverStub extends BootstrapComponentStub {
+      static instances = new WeakMap();
+      static eventNamespace = 'popover';
+    },
   };
 
   window.matchMedia = vi.fn().mockImplementation((query) => ({

@@ -241,6 +241,28 @@ describe('delegated runtime event handling', () => {
     expect(trigger.classList.contains('show')).toBe(false);
   });
 
+  it('disposes an open popover after its hidden lifecycle event', async () => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    const instance = bootstrap.Popover.getInstance(trigger);
+    const hiddenPopover = vi.fn();
+    const hiddenModal = vi.fn();
+    trigger.addEventListener('hidden.bs.popover', hiddenPopover);
+    trigger.addEventListener('hidden.bs.modal', hiddenModal);
+
+    instance.show();
+    trigger.setAttribute('aria-describedby', 'synthetic-popover');
+    expect(trigger.classList.contains('show')).toBe(true);
+
+    const { disposePopovers } = await import('../../questionnaire.js');
+    disposePopovers(quest.root);
+
+    expect(hiddenPopover).toHaveBeenCalledOnce();
+    expect(hiddenModal).not.toHaveBeenCalled();
+    expect(trigger.classList.contains('show')).toBe(false);
+    expect(bootstrap.Popover.getInstance(trigger)).toBeNull();
+  });
+
   it('updates the live selection announcement without requiring listeners on individual controls', async () => {
     vi.useFakeTimers();
     const quest = await renderFreshQuest();
