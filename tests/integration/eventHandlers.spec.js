@@ -359,8 +359,11 @@ describe('delegated runtime event handling', () => {
     await vi.advanceTimersByTimeAsync(0);
 
     expect(quest.root.querySelector('form.active')?.id).toBe('Q2');
-    await vi.advanceTimersByTimeAsync(500);
-    expect(document.activeElement).toBe(quest.root.querySelector('#Q2 .screen-reader-focus'));
+    const focusTarget = quest.root.querySelector('#Q2 .screen-reader-focus');
+    await vi.advanceTimersByTimeAsync(499);
+    expect(document.activeElement).not.toBe(focusTarget);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(document.activeElement).toBe(focusTarget);
   });
 
   it('keeps host controls outside the delegated event boundary unchanged', async () => {

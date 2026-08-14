@@ -58,6 +58,19 @@ async function expectModalFocusCycle(page, modal, firstFocusable, lastFocusable)
   await expect(lastFocusable).toBeFocused();
 }
 
+async function closeUnansweredModalWithKeyboard(page, {
+  modal,
+  dialog,
+  questionId,
+  key,
+}) {
+  const closeButton = dialog.getByRole('button', { name: 'Close' });
+  await closeButton.focus();
+  await page.keyboard.press(key);
+  await expect(modal).not.toHaveClass(/show/);
+  await expect(activeQuestion(page, questionId).locator('.screen-reader-focus')).toBeFocused();
+}
+
 async function traverseHostBoundary(page, key, terminalId, maximumPresses = 20) {
   const path = [];
   for (let press = 0; press < maximumPresses; press += 1) {
@@ -278,12 +291,46 @@ test.describe('participant accessibility contract @canonical @windows-a11y', () 
       );
     }
     await dialog.getByRole('button', { name: 'Close' }).click();
-    await waitInHarness(page, 700);
 
     await expect(modal).not.toHaveClass(/show/);
     await expect(activeQuestion(page, 'CHOICE').locator('.screen-reader-focus')).toBeFocused();
     await expectHealthyHarness(page);
   });
+
+  for (const key of ['Enter', 'Space']) {
+    test(`promptly restores requested and required question context when Close is activated with ${key}`, async ({ page }) => {
+      await openParticipant(page, { fixture: 'unansweredModals.txt' });
+      await expect(activeQuestion(page, 'SOFT').locator('.screen-reader-focus')).toBeFocused();
+      await goNext(page);
+
+      const softModal = page.locator('#softModal');
+      const softDialog = page.getByRole('dialog', { name: 'Response Requested' });
+      await expect(softModal).toHaveClass(/show/);
+      await closeUnansweredModalWithKeyboard(page, {
+        modal: softModal,
+        dialog: softDialog,
+        questionId: 'SOFT',
+        key,
+      });
+
+      await goNext(page);
+      await softDialog.getByRole('button', { name: 'Continue Without Answering' }).click();
+      await expect(activeQuestion(page, 'HARD')).toBeVisible();
+      await expect(activeQuestion(page, 'HARD').locator('.screen-reader-focus')).toBeFocused();
+      await goNext(page);
+
+      const hardModal = page.locator('#hardModal');
+      const hardDialog = page.getByRole('dialog', { name: 'Response Required' });
+      await expect(hardModal).toHaveClass(/show/);
+      await closeUnansweredModalWithKeyboard(page, {
+        modal: hardModal,
+        dialog: hardDialog,
+        questionId: 'HARD',
+        key,
+      });
+      await expectHealthyHarness(page);
+    });
+  }
 
   test('distinguishes requested and required unanswered-response dialogs', async ({ page }, testInfo) => {
     await openParticipant(page, { fixture: 'unansweredModals.txt' });

@@ -117,22 +117,36 @@ describe('screen-reader and keyboard behavior', () => {
     expect(nativeArrow.defaultPrevented).toBe(false);
   });
 
-  it.each(['softModal', 'hardModal'])('reconstructs and restores question focus after closing %s', async (modalId) => {
+  it.each(['softModal', 'hardModal'])('restores question focus after closing %s', async (modalId) => {
     const quest = await renderFreshQuest();
     const modal = quest.root.querySelector(`#${modalId}`);
     const focusTarget = quest.root.querySelector('#Q1 .screen-reader-focus');
 
     // The initial render already schedules a 500 ms focus. Remove it so a
-    // passing assertion proves the hidden-modal handler's 100 ms + 500 ms chain.
+    // passing assertion proves the hidden-modal handler itself restores focus.
     vi.clearAllTimers();
     expect(document.activeElement).not.toBe(focusTarget);
 
     modal.dispatchEvent(new Event('hidden.bs.modal'));
 
-    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(99);
     expect(document.activeElement).not.toBe(focusTarget);
-    await vi.advanceTimersByTimeAsync(500);
+    await vi.advanceTimersByTimeAsync(1);
     expect(document.activeElement).toBe(focusTarget);
     expect(quest.root.querySelectorAll('#Q1 .screen-reader-focus')).toHaveLength(1);
+  });
+
+  it('leaves a missing target for question preparation instead of rebuilding on modal close', async () => {
+    const quest = await renderFreshQuest();
+    const modal = quest.root.querySelector('#softModal');
+    const originalFocusTarget = quest.root.querySelector('#Q1 .screen-reader-focus');
+
+    vi.clearAllTimers();
+    originalFocusTarget.remove();
+    modal.dispatchEvent(new Event('hidden.bs.modal'));
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(quest.root.querySelector('#Q1 .screen-reader-focus')).toBeNull();
+    expect(document.activeElement).not.toBe(originalFocusTarget);
   });
 });

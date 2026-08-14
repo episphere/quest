@@ -71,4 +71,49 @@ test.describe('host-provided asynchronous questions @core @canonical', () => {
     const snapshot = await expectHealthyHarness(page, { allowErrors: true });
     expect(snapshot.logs.errors.some((entry) => entry.message.includes('Synthetic async failure'))).toBe(true);
   });
+
+  test('waits for delayed async markup before focusing after optional-modal continuation', async ({ page }) => {
+    await openParticipant(page, {
+      markdown: `
+        {"name":"TEST_ASYNC_MODAL"}
+
+        [OPTIONAL?] You may continue without answering.
+        (1) Optional response
+
+        [ASYNC?]
+
+        [END,end] Async modal focus testing complete.
+      `,
+      asyncQuestionsMap: ASYNC_MAP,
+      asyncQuestionHtml: ASYNC_HTML,
+      asyncDelayMs: 400,
+    });
+    await expect(activeQuestion(page, 'OPTIONAL').locator('.screen-reader-focus')).toBeFocused();
+
+    await page.evaluate(() => {
+      window.__asyncQuestionFocusHistory = [];
+      document.addEventListener('focusin', (event) => {
+        if (!event.target.matches?.('.screen-reader-focus')) return;
+        const question = event.target.closest('form.question');
+        window.__asyncQuestionFocusHistory.push({
+          questionId: question?.id ?? null,
+          hasResponseMarkup: Boolean(question?.querySelector('.response')),
+        });
+      }, true);
+    });
+
+    await goNext(page);
+    const dialog = page.getByRole('dialog', { name: 'Response Requested' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Continue Without Answering' }).click();
+
+    await expect(activeQuestion(page, 'ASYNC').locator('#ASYNC_A')).toHaveCount(1);
+    await expect(activeQuestion(page, 'ASYNC').locator('.screen-reader-focus')).toBeFocused();
+
+    const asyncFocusHistory = await page.evaluate(() => window.__asyncQuestionFocusHistory);
+    const asyncQuestionFocus = asyncFocusHistory.filter(({ questionId }) => questionId === 'ASYNC');
+    expect(asyncQuestionFocus.length).toBeGreaterThan(0);
+    expect(asyncQuestionFocus.every(({ hasResponseMarkup }) => hasResponseMarkup)).toBe(true);
+    await expectHealthyHarness(page);
+  });
 });

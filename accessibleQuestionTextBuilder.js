@@ -1,13 +1,15 @@
 import { evaluateCondition } from './evaluateConditions.js';
 import { handleForIDAttributes, moduleParams } from './questionnaire.js';
 
+const QUESTION_TRANSITION_FOCUS_DELAY_MS = 500;
+const MODAL_RETURN_FOCUS_DELAY_MS = 100;
+
 /**
  * Initialize the question text and focus management for screen readers.
  * This drives the screen reader's question announcement and focus when a question is loaded.
  * Set the focus after a brief timeout to ensure the screen reader has time to process the new content.
  * @param {HTMLElement} fieldsetEle - The fieldset element containing the question text.
  * @param {Boolean} questionFocusSet - The flag to manage screen reader focus.
- * @param {Boolean} isModalClose - The flag to reset the questionFocusSet flag on modal close.
  * @returns {Boolean} - The updated questionFocusSet flag.
  */
 
@@ -19,20 +21,24 @@ export function manageAccessibleQuestion(fieldsetEle, questionFocusSet) {
         // Focus the hidden, focusable element
         if (!moduleParams.isRenderer) {
             setTimeout(() => {
-                // A response or submit dialog may open before this delayed
-                // question-focus handoff runs. Keep focus in the active modal
-                // instead of returning it to content behind the dialog.
-                const openModal = moduleParams.questDiv?.querySelector('.modal.show');
-                if (focusableEle.isConnected && !openModal) {
-                    focusableEle.focus({ preventScroll: true });
-                }
-            }, 500);
+                focusAccessibleQuestionTarget(focusableEle);
+            }, QUESTION_TRANSITION_FOCUS_DELAY_MS);
         }
 
         questionFocusSet = true;
     }
 
     return questionFocusSet;
+}
+
+function focusAccessibleQuestionTarget(focusableEle) {
+    // A response or submit dialog may open before a scheduled question-focus
+    // handoff runs. Keep focus in the active modal instead of returning it to
+    // content behind the dialog.
+    const openModal = moduleParams.questDiv?.querySelector('.modal.show');
+    if (focusableEle?.isConnected && !openModal) {
+        focusableEle.focus({ preventScroll: true });
+    }
 }
 
 /**
@@ -560,19 +566,26 @@ function createFocusableElement(fieldsetEle, focusNode) {
 
 /**
  * Restore question context after an unanswered-response modal closes.
- * Re-build the question text and focus management for screen readers.
+ * Focus the question target after Bootstrap finishes hiding the modal.
  */
 export function closeModalAndFocusQuestion() {
-    // Find the active question after Bootstrap has finished hiding the modal.
-    // For a soft-modal continuation this may be the newly activated question;
-    // for every dismissal it remains the question that requested a response.
+    if (moduleParams.isRenderer) return;
+
+    // Retain the short modal-settle buffer. For a soft-modal continuation, the newly
+    // activated question is already in the DOM when Bootstrap's hidden event runs.
     const activeQuestion = moduleParams.questDiv.querySelector('.question.active');
-    if (activeQuestion) {
-        const questionFocusSet = false;
-        setTimeout(() => {
-            manageAccessibleQuestion(activeQuestion.querySelector('fieldset') || activeQuestion, questionFocusSet);
-        }, 100);
-    }
+    if (!activeQuestion) return;
+
+    const accessibleQuestion = activeQuestion.querySelector('fieldset') || activeQuestion;
+    const focusableEle = accessibleQuestion.querySelector('span.screen-reader-focus');
+    // An async question can be active while its host content is still loading.
+    // Its normal prepareQuestionDOM path owns construction and focus once the
+    // final markup is available.
+    if (!focusableEle) return;
+
+    setTimeout(() => {
+        focusAccessibleQuestionTarget(focusableEle);
+    }, MODAL_RETURN_FOCUS_DELAY_MS);
 }
 
 // Update the aria-live region with the current selection announcement in a list (for screen readers).
