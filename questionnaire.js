@@ -1224,11 +1224,16 @@ function handlePopoverKeydown(event) {
     event.preventDefault();
     getOrCreatePopover(event.currentTarget).toggle();
   } else if (event.key === 'Escape') {
-    const popover = bootstrap.Popover.getInstance(event.currentTarget);
-    if (popover) {
+    const trigger = event.currentTarget;
+    const popover = bootstrap.Popover.getInstance(trigger);
+    // Popover instances are created eagerly, so require this trigger's rendered tip to be open.
+    const popoverId = trigger.getAttribute('aria-describedby');
+    const popoverElement = popoverId && trigger.ownerDocument.getElementById(popoverId);
+
+    if (popover && popoverElement?.classList.contains('show')) {
       event.preventDefault();
       popover.hide();
-      event.currentTarget.focus({ preventScroll: true });
+      trigger.focus({ preventScroll: true });
     }
   }
 }

@@ -86,6 +86,17 @@ test.describe('production-shaped popover accessibility @canonical', () => {
     await expect(trigger).toBeFocused();
     await expect(helpPopover(page)).toHaveCount(0);
 
+    const closedEscape = await trigger.evaluate((element) => {
+      const event = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Escape' });
+      const dispatchResult = element.dispatchEvent(event);
+      return {
+        defaultPrevented: event.defaultPrevented,
+        dispatchResult,
+      };
+    });
+    expect(closedEscape).toEqual({ defaultPrevented: false, dispatchResult: true });
+    await expect(helpPopover(page)).toHaveCount(0);
+
     await page.keyboard.press('Enter');
     const popover = helpPopover(page);
     await expect(popover).toBeVisible();

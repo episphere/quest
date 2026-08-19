@@ -101,6 +101,60 @@ beforeEach(() => {
     Popover: class PopoverStub extends BootstrapComponentStub {
       static instances = new WeakMap();
       static eventNamespace = 'popover';
+
+      static nextTipId = 1;
+
+      constructor(element) {
+        super(element);
+        this._tip = null;
+      }
+
+      _getTipElement() {
+        if (!this._tip) {
+          this._tip = this._element.ownerDocument.createElement('div');
+          this._tip.id = `test-popover-${this.constructor.nextTipId++}`;
+          this._tip.classList.add('popover');
+          this._tip.setAttribute('role', 'tooltip');
+        }
+
+        return this._tip;
+      }
+
+      show() {
+        const tip = this._getTipElement();
+        if (tip.classList.contains('show')) return;
+
+        this._element.setAttribute('aria-describedby', tip.id);
+        this._element.ownerDocument.body.append(tip);
+        tip.classList.add('show');
+        this._element.dispatchEvent(new Event(`shown.bs.${this.constructor.eventNamespace}`));
+      }
+
+      hide() {
+        const tip = this._tip;
+        if (!tip?.classList.contains('show')) return;
+
+        tip.classList.remove('show');
+        this._element.removeAttribute('aria-describedby');
+        tip.remove();
+        this._tip = null;
+        this._element.dispatchEvent(new Event(`hidden.bs.${this.constructor.eventNamespace}`));
+      }
+
+      toggle() {
+        if (this._tip?.classList.contains('show')) {
+          this.hide();
+        } else {
+          this.show();
+        }
+      }
+
+      dispose() {
+        this._element.removeAttribute('aria-describedby');
+        this._tip?.remove();
+        this._tip = null;
+        super.dispose();
+      }
     },
   };
 

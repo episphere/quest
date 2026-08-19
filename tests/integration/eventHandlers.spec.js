@@ -238,29 +238,42 @@ describe('delegated runtime event handling', () => {
     const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
     const instance = bootstrap.Popover.getInstance(trigger);
     expect(instance).not.toBeNull();
+    const hidePopover = vi.spyOn(instance, 'hide');
     expect(trigger.dataset.bsTrigger).toBe('manual');
 
     trigger.focus();
-    expect(trigger.classList.contains('show')).toBe(false);
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+
+    const closedEscape = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Escape' });
+    expect(trigger.dispatchEvent(closedEscape)).toBe(true);
+    expect(closedEscape.defaultPrevented).toBe(false);
+    expect(hidePopover).not.toHaveBeenCalled();
 
     const space = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: ' ' });
     expect(trigger.dispatchEvent(space)).toBe(false);
     expect(space.defaultPrevented).toBe(true);
-    expect(trigger.classList.contains('show')).toBe(true);
+    const popoverId = trigger.getAttribute('aria-describedby');
+    const popoverElement = document.getElementById(popoverId);
+    expect(popoverElement).not.toBeNull();
+    expect(popoverElement.classList.contains('show')).toBe(true);
 
     const escape = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Escape' });
     expect(trigger.dispatchEvent(escape)).toBe(false);
     expect(escape.defaultPrevented).toBe(true);
-    expect(trigger.classList.contains('show')).toBe(false);
+    expect(hidePopover).toHaveBeenCalledOnce();
+    expect(popoverElement.classList.contains('show')).toBe(false);
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
     expect(document.activeElement).toBe(trigger);
 
     const click = new MouseEvent('click', { bubbles: true, cancelable: true });
     expect(trigger.dispatchEvent(click)).toBe(false);
     expect(click.defaultPrevented).toBe(true);
-    expect(trigger.classList.contains('show')).toBe(true);
+    const reopenedPopoverElement = document.getElementById(trigger.getAttribute('aria-describedby'));
+    expect(reopenedPopoverElement).not.toBeNull();
+    expect(reopenedPopoverElement.classList.contains('show')).toBe(true);
 
     trigger.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
-    expect(trigger.classList.contains('show')).toBe(false);
+    expect(reopenedPopoverElement.classList.contains('show')).toBe(false);
   });
 
   it('disposes an open popover after its hidden lifecycle event', async () => {
@@ -273,15 +286,17 @@ describe('delegated runtime event handling', () => {
     trigger.addEventListener('hidden.bs.modal', hiddenModal);
 
     instance.show();
-    trigger.setAttribute('aria-describedby', 'synthetic-popover');
-    expect(trigger.classList.contains('show')).toBe(true);
+    const popoverElement = document.getElementById(trigger.getAttribute('aria-describedby'));
+    expect(popoverElement).not.toBeNull();
+    expect(popoverElement.classList.contains('show')).toBe(true);
 
     const { disposePopovers } = await import('../../questionnaire.js');
     disposePopovers(quest.root);
 
     expect(hiddenPopover).toHaveBeenCalledOnce();
     expect(hiddenModal).not.toHaveBeenCalled();
-    expect(trigger.classList.contains('show')).toBe(false);
+    expect(popoverElement.classList.contains('show')).toBe(false);
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
     expect(bootstrap.Popover.getInstance(trigger)).toBeNull();
   });
 
