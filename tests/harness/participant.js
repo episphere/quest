@@ -5,6 +5,7 @@ import '../../Style1.css';
 
 import * as bootstrap from 'bootstrap';
 import { transform } from '../../main.js';
+import { moduleParams } from '../../questionnaire.js';
 import { getStateManager } from '../../stateManager.js';
 
 globalThis.bootstrap = bootstrap;
@@ -175,10 +176,24 @@ function stateSnapshot() {
   } : null;
 }
 
+function runtimeSnapshot() {
+  const stateManager = getStateManager(true);
+  const processor = stateManager?.getQuestionProcessor();
+  return {
+    basePath: moduleParams.basePath ?? null,
+    processor: processor ? {
+      questionCount: processor.questions.length,
+      processedQuestionCount: processor.processedQuestions.size,
+      questionIds: processor.questions.map(({ questionID }) => questionID),
+    } : null,
+  };
+}
+
 function snapshot() {
   return serializable({
     activeQuestionId: questRoot.querySelector('form.question.active')?.id ?? null,
     focusedElement: describeTarget(document.activeElement),
+    runtime: runtimeSnapshot(),
     state: stateSnapshot(),
     logs,
   });

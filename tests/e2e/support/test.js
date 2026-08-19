@@ -8,18 +8,8 @@ const canonicalImageAsset = {
   url: 'https://episphere.github.io/quest/images/FemaleBaldness1.png',
   path: join(repositoryRoot, 'tests', 'e2e', 'assets', 'FemaleBaldness1.png'),
 };
-const questRuntimeAssets = [
-  {
-    url: 'https://episphere.github.io/quest-dev/ActiveLogic.css',
-    path: join(repositoryRoot, 'ActiveLogic.css'),
-  },
-  {
-    url: 'https://episphere.github.io/quest-dev/Style1.css',
-    path: join(repositoryRoot, 'Style1.css'),
-  },
-];
 const versionedQuestRuntimeAsset = /^https:\/\/cdn\.jsdelivr\.net\/gh\/episphere\/quest@v[^/]+\/(ActiveLogic|Style1)\.css$/;
-const FIREFOX_INSTALL_TRIGGER_DEPRECATION = /^\[JavaScript Warning: "InstallTrigger is deprecated and will be removed in the future\." \{file: "http:\/\/127\.0\.0\.1:\d+\/main\.js" line: 179\}\] \[source: http:\/\/127\.0\.0\.1:\d+\/main\.js\]$/;
+const FIREFOX_INSTALL_TRIGGER_DEPRECATION = /^\[JavaScript Warning: "InstallTrigger is deprecated and will be removed in the future\." \{file: "http:\/\/127\.0\.0\.1:\d+\/main\.js(?:\?[^"\]]+)?" line: \d+\}\] \[source: http:\/\/127\.0\.0\.1:\d+\/main\.js(?:\?[^\]]+)?\]$/;
 
 const testServerPort = process.env.QUEST_PLAYWRIGHT_PORT ?? '4173';
 const LOCAL_ORIGINS = new Set([
@@ -85,21 +75,6 @@ export async function installOfflineDiagnostics(page) {
       path: canonicalImageAsset.path,
     });
   });
-
-  // A Connect render normally supplies prefetched Markdown and retains the
-  // questionnaire URL. Quest uses the nonempty URL as the signal to fetch
-  // its two runtime stylesheets. Fulfill that production branch with the
-  // exact checked-in CSS while keeping the browser deny-by-default.
-  for (const asset of questRuntimeAssets) {
-    await page.route(asset.url, async (route) => {
-      diagnostics.fulfilledExternalRequests.push(asset.url);
-      await route.fulfill({
-        status: 200,
-        contentType: 'text/css',
-        path: asset.path,
-      });
-    });
-  }
 
   await page.route(versionedQuestRuntimeAsset, async (route) => {
     const url = route.request().url();

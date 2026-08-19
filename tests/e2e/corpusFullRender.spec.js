@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect } from './support/test.js';
-import { expectHealthyHarness } from './support/harness.js';
+import { expectHealthyHarness, harnessSnapshot } from './support/harness.js';
 import { corpusLock, lockedCorpusPath, repositoryRoot } from './support/corpus.js';
 
 const personaRegistry = JSON.parse(readFileSync(join(repositoryRoot, 'tests', 'corpus', 'hostPersonas.json'), 'utf8'));
@@ -74,8 +74,6 @@ test.describe('locked production full-list rendering @corpus @full-render', () =
 
       const renderSummary = await page.locator('#questionnaireRoot').evaluate(async (root) => {
         const forms = [...root.querySelectorAll('form.question')];
-        const { getStateManager } = await import('/stateManager.js');
-        const processor = getStateManager(true).getQuestionProcessor();
         const emptyForms = forms.flatMap((form) => {
           const body = form.querySelector('fieldset, table');
           const hasContent = body && (
@@ -88,24 +86,23 @@ test.describe('locked production full-list rendering @corpus @full-render', () =
           formCount: forms.length,
           emptyForms,
           ids: forms.map((form) => form.id),
-          processorQuestionCount: processor.questions.length,
-          processedQuestionCount: processor.processedQuestions.size,
-          processorQuestionIds: processor.questions.map(({ questionID }) => questionID),
         };
       });
+      const processorSummary = (await harnessSnapshot(page)).runtime.processor;
+      expect(processorSummary, `${diagnosticLabel(record)}: the harness must expose its active processor`).not.toBeNull();
 
       expect(
         renderSummary.formCount,
         `${diagnosticLabel(record)}: the renderer must append every form produced by QuestionProcessor.`,
-      ).toBe(renderSummary.processorQuestionCount);
+      ).toBe(processorSummary.questionCount);
       expect(
-        renderSummary.processedQuestionCount,
+        processorSummary.processedQuestionCount,
         `${diagnosticLabel(record)}: full-list mode must convert every QuestionProcessor entry.`,
-      ).toBe(renderSummary.processorQuestionCount);
+      ).toBe(processorSummary.questionCount);
       expect(
         renderSummary.ids,
         `${diagnosticLabel(record)}: rendered forms must remain in QuestionProcessor order.`,
-      ).toEqual(renderSummary.processorQuestionIds.map(renderedFormId));
+      ).toEqual(processorSummary.questionIds.map(renderedFormId));
       expect(renderSummary.emptyForms, `${diagnosticLabel(record)}: forms must have an ID and rendered content`).toEqual([]);
       expect(
         [...new Set(renderSummary.ids.filter((id, index) => (

@@ -6,6 +6,7 @@ import {
   harnessSnapshot,
   openParticipant,
   selectLabeledResponse,
+  waitInHarness,
 } from './support/harness.js';
 
 const CONTROL_PROJECTS = new Set([
@@ -120,6 +121,7 @@ test.describe('participant controls @core @canonical', () => {
 
   test('delegated keyboard submits activate Next, Reset, and Back with Enter and Space @windows-a11y', async ({ page }) => {
     await openParticipant(page, { fixture: 'navigationState.txt' });
+    await waitInHarness(page, 550);
 
     async function pressAction(name, key, expectedQuestionId) {
       const button = activeQuestion(page).getByRole('button', { name });
@@ -191,16 +193,14 @@ test.describe('participant controls @core @canonical', () => {
     expect(snapshot.logs.errors).toEqual([]);
   });
 
-  test('uses prefetched text while loading the URL-signaled Quest styles from locked local files', async ({ page, diagnostics }) => {
+  test('uses prefetched text while loading URL-signaled styles beside the local Quest module', async ({ page }) => {
     const questionnaireUrl = 'https://questionnaire.test/prod/module.txt';
     await openParticipant(page, { url: questionnaireUrl, questVersion: '2.0.0-test' });
 
     await expect(activeQuestion(page, 'CHOICE')).toBeVisible();
     await expect(page.locator('head link[rel="stylesheet"][href^="blob:"]')).toHaveCount(2);
-    expect(diagnostics.fulfilledExternalRequests).toEqual(expect.arrayContaining([
-      'https://episphere.github.io/quest-dev/ActiveLogic.css',
-      'https://episphere.github.io/quest-dev/Style1.css',
-    ]));
+    const questBasePath = (await harnessSnapshot(page)).runtime.basePath;
+    expect(questBasePath).toBe(new URL('/', page.url()).href);
 
     const snapshot = await expectHealthyHarness(page);
     expect(snapshot.logs.renders[0].config).toMatchObject({

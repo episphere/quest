@@ -22,60 +22,58 @@ describe('screen-reader and keyboard behavior', () => {
     vi.useRealTimers();
   });
 
-  it('uses native list controls while adding Windows-specific refocus and announcements', async () => {
+  it('keeps focus on a native list control while announcing its changed state', async () => {
     const quest = await renderFreshQuest();
-    quest.moduleParams.isWindowsEnvironment = true;
     const radio = quest.root.querySelector('#Q1_2');
 
+    radio.focus();
     radio.click();
     radio.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
 
-    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(300);
     expect(document.activeElement).toBe(radio);
     expect(quest.root.querySelector('#ariaLiveSelectionAnnouncer').textContent).toContain('Second answer Selected.');
   });
 
-  it('moves the Windows table focus helper to the next visible row after a radio selection', async () => {
+  it('keeps focus on a native grid radio after its state changes', async () => {
     const quest = await renderFreshQuest({
       markdown: GRID_SURVEY,
       persistedData: { treeJSON: treeAt('GRID') },
     });
-    quest.moduleParams.isWindowsEnvironment = true;
     const firstRowChoice = quest.root.querySelector('#ROW_ONE_0');
 
+    firstRowChoice.focus();
     firstRowChoice.click();
     firstRowChoice.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
 
-    const helper = quest.root.querySelector('#srFocusHelper');
-    await vi.advanceTimersByTimeAsync(100);
-    expect(document.activeElement).toBe(helper);
-    expect(helper.closest('tr')?.dataset.questionId).toBe('ROW_TWO');
-    expect(helper.parentElement.tagName).toBe('TH');
+    await vi.advanceTimersByTimeAsync(300);
+    expect(document.activeElement).toBe(firstRowChoice);
+    expect(firstRowChoice.checked).toBe(true);
+    expect(quest.root.querySelector('#srFocusHelper')).toBeNull();
   });
 
-  it('moves the Windows table focus helper to Next after the final row selection', async () => {
+  it('keeps focus on a native final-row grid radio instead of advancing on selection', async () => {
     const quest = await renderFreshQuest({
       markdown: GRID_SURVEY,
       persistedData: { treeJSON: treeAt('GRID') },
     });
-    quest.moduleParams.isWindowsEnvironment = true;
     const finalRowChoice = quest.root.querySelector('#ROW_TWO_1');
 
+    finalRowChoice.focus();
     finalRowChoice.click();
     finalRowChoice.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
 
-    const helper = quest.root.querySelector('#srFocusHelper');
-    await vi.advanceTimersByTimeAsync(100);
-    expect(document.activeElement).toBe(helper);
-    expect(helper.closest('button')).toBe(quest.root.querySelector('#GRID .next'));
+    await vi.advanceTimersByTimeAsync(300);
+    expect(document.activeElement).toBe(finalRowChoice);
+    expect(finalRowChoice.checked).toBe(true);
+    expect(quest.root.querySelector('#GRID .next')).not.toBe(document.activeElement);
   });
 
-  it('announces table selections without adding non-native selection commands on macOS paths', async () => {
+  it('announces table selections without adding non-native selection commands', async () => {
     const quest = await renderFreshQuest({
       markdown: GRID_SURVEY,
       persistedData: { treeJSON: treeAt('GRID') },
     });
-    quest.moduleParams.isWindowsEnvironment = false;
     const choice = quest.root.querySelector('#ROW_ONE_1');
 
     choice.click();
@@ -86,7 +84,7 @@ describe('screen-reader and keyboard behavior', () => {
     expect(choice.getAttribute('role')).toBeNull();
   });
 
-  it('uses Up and Down only to leave nested text fields, without overriding radio native keys', async () => {
+  it('leaves Up and Down under native text and radio control', async () => {
     const quest = await renderFreshQuest();
     const fieldset = quest.root.querySelector('#Q1 fieldset');
     fieldset.innerHTML = `
@@ -99,14 +97,18 @@ describe('screen-reader and keyboard behavior', () => {
     const secondText = fieldset.querySelector('#SECOND_TEXT');
 
     secondText.focus();
-    secondText.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'ArrowUp' }));
+    const textArrowUp = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'ArrowUp' });
+    secondText.dispatchEvent(textArrowUp);
     await vi.advanceTimersByTimeAsync(0);
-    expect(document.activeElement).toBe(fieldset.querySelector('#FIRST_RADIO'));
+    expect(textArrowUp.defaultPrevented).toBe(false);
+    expect(document.activeElement).toBe(secondText);
 
     firstText.focus();
-    firstText.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'ArrowDown' }));
+    const textArrowDown = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'ArrowDown' });
+    firstText.dispatchEvent(textArrowDown);
     await vi.advanceTimersByTimeAsync(0);
-    expect(document.activeElement).not.toBe(firstText);
+    expect(textArrowDown.defaultPrevented).toBe(false);
+    expect(document.activeElement).toBe(firstText);
 
     const radio = fieldset.querySelector('#SECOND_RADIO');
     radio.focus();
@@ -115,24 +117,36 @@ describe('screen-reader and keyboard behavior', () => {
     expect(nativeArrow.defaultPrevented).toBe(false);
   });
 
-  it('reconstructs and restores question focus after closing the soft-response modal', async () => {
+  it.each(['softModal', 'hardModal'])('restores question focus after closing %s', async (modalId) => {
     const quest = await renderFreshQuest();
-    const modal = quest.root.querySelector('#softModal');
+    const modal = quest.root.querySelector(`#${modalId}`);
     const focusTarget = quest.root.querySelector('#Q1 .screen-reader-focus');
 
     // The initial render already schedules a 500 ms focus. Remove it so a
-    // passing assertion proves the close handler's 100 ms + 500 ms chain.
+    // passing assertion proves the hidden-modal handler itself restores focus.
     vi.clearAllTimers();
     expect(document.activeElement).not.toBe(focusTarget);
-    modal.style.display = 'block';
 
-    modal.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    modal.dispatchEvent(new Event('hidden.bs.modal'));
 
-    expect(modal.style.display).toBe('none');
-    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(99);
     expect(document.activeElement).not.toBe(focusTarget);
-    await vi.advanceTimersByTimeAsync(500);
+    await vi.advanceTimersByTimeAsync(1);
     expect(document.activeElement).toBe(focusTarget);
     expect(quest.root.querySelectorAll('#Q1 .screen-reader-focus')).toHaveLength(1);
+  });
+
+  it('leaves a missing target for question preparation instead of rebuilding on modal close', async () => {
+    const quest = await renderFreshQuest();
+    const modal = quest.root.querySelector('#softModal');
+    const originalFocusTarget = quest.root.querySelector('#Q1 .screen-reader-focus');
+
+    vi.clearAllTimers();
+    originalFocusTarget.remove();
+    modal.dispatchEvent(new Event('hidden.bs.modal'));
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(quest.root.querySelector('#Q1 .screen-reader-focus')).toBeNull();
+    expect(document.activeElement).not.toBe(originalFocusTarget);
   });
 });

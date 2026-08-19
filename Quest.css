@@ -81,6 +81,17 @@ input[type="checkbox"].form-check-input{
   text-decoration: none;
 }
 
+.question .popover-dismiss:focus-visible {
+  outline: 3px solid #1c5d86;
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .question .popover-dismiss:focus-visible {
+    outline-color: CanvasText;
+  }
+}
+
 .popover-header {
   background-color: #f8f9fa;
   border-bottom: 1px solid #e9ecef;

@@ -91,6 +91,25 @@ test.describe('checked-in authoring application @authoring', () => {
     await expect(page.locator('#pagestyle')).toHaveAttribute('href', 'Default.css');
     await expect(page.locator('#pagelogic')).toHaveAttribute('href', 'Default.css');
 
+    await page.locator('#rendering').evaluate((rendering) => {
+      const probe = document.createElement('form');
+      probe.id = 'default-layout-probe';
+      probe.className = 'question';
+      probe.innerHTML = `
+        <fieldset>
+          <legend>Question prompt</legend>
+          <span class="screen-reader-focus" tabindex="-1"></span>
+          <div class="response">Response</div>
+        </fieldset>
+      `;
+      rendering.append(probe);
+    });
+    const defaultLayoutProbe = page.locator(
+      '#default-layout-probe fieldset > legend + .screen-reader-focus + *',
+    );
+    await expect(defaultLayoutProbe).toHaveCSS('clear', 'left');
+    await page.locator('#default-layout-probe').evaluate((probe) => probe.remove());
+
     await openAuthoringSettings(page);
     await page.getByRole('switch', { name: 'Activate Logic' }).check();
     await expect(page.locator('#pagelogic')).toHaveAttribute('href', 'ActiveLogic.css');

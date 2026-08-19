@@ -2,10 +2,24 @@ import { defineConfig, devices } from '@playwright/test';
 
 const testServerPort = Number.parseInt(process.env.QUEST_PLAYWRIGHT_PORT ?? '4173', 10);
 const testServerOrigin = `http://127.0.0.1:${testServerPort}`;
+const nonWindowsUserAgent = (deviceName) => devices[deviceName].userAgent
+  .replace('Windows NT 10.0; Win64; x64', 'Macintosh; Intel Mac OS X 10_15_7');
 
 const desktopProjects = [
-  { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
-  { name: 'firefox-desktop', use: { ...devices['Desktop Firefox'] } },
+  {
+    name: 'chromium-desktop',
+    use: {
+      ...devices['Desktop Chrome'],
+      userAgent: nonWindowsUserAgent('Desktop Chrome'),
+    },
+  },
+  {
+    name: 'firefox-desktop',
+    use: {
+      ...devices['Desktop Firefox'],
+      userAgent: nonWindowsUserAgent('Desktop Firefox'),
+    },
+  },
   { name: 'webkit-desktop', use: { ...devices['Desktop Safari'] } },
 ];
 
@@ -36,6 +50,7 @@ export default defineConfig({
       name: 'chromium-phone',
       use: {
         ...devices['Desktop Chrome'],
+        userAgent: nonWindowsUserAgent('Desktop Chrome'),
         viewport: { width: 390, height: 844 },
         isMobile: true,
         hasTouch: true,
@@ -45,6 +60,7 @@ export default defineConfig({
       name: 'chromium-tablet',
       use: {
         ...devices['Desktop Chrome'],
+        userAgent: nonWindowsUserAgent('Desktop Chrome'),
         viewport: { width: 820, height: 1180 },
         hasTouch: true,
       },

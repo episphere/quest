@@ -1,7 +1,9 @@
 import { test, expect } from './support/test.js';
 import {
   activeQuestion,
+  expectHealthyHarness,
   flushHarness,
+  goBack,
   goNext,
   harnessSnapshot,
   openParticipant,
@@ -72,6 +74,15 @@ test.describe('deep participant grid coverage @canonical @responsive', () => {
     expect(stored.state.survey).toMatchObject({ D_981441822: expectedRows });
     expect(stored.logs.storeCalls).toHaveLength(2);
     expect(stored.logs.storeCalls.at(-1).changes['TEST_PRODUCTION_GRID.D_981441822']).toEqual(expectedRows);
-    // The focus-helper lifecycle is asserted in the separate QD-GRID-002 expected-red contract.
+
+    await goBack(page);
+    await expect(grid).toBeVisible();
+    for (const [rowId, value] of Object.entries(expectedRows)) {
+      await expect(grid.locator(`input[name="${rowId}"][value="${value}"]`)).toBeChecked();
+    }
+    const focusTarget = grid.locator('.screen-reader-focus');
+    await expect(focusTarget).toHaveAttribute('tabindex', '-1');
+    await expect(focusTarget).toBeFocused();
+    await expectHealthyHarness(page);
   });
 });

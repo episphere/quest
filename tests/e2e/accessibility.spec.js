@@ -2,6 +2,7 @@ import { test, expect } from './support/test.js';
 import {
   activeQuestion,
   expectHealthyHarness,
+  harnessSnapshot,
   goBack,
   goNext,
   openParticipant,
@@ -57,6 +58,19 @@ async function expectModalFocusCycle(page, modal, firstFocusable, lastFocusable)
   await expect(lastFocusable).toBeFocused();
 }
 
+async function closeUnansweredModalWithKeyboard(page, {
+  modal,
+  dialog,
+  questionId,
+  key,
+}) {
+  const closeButton = dialog.getByRole('button', { name: 'Close' });
+  await closeButton.focus();
+  await page.keyboard.press(key);
+  await expect(modal).not.toHaveClass(/show/);
+  await expect(activeQuestion(page, questionId).locator('.screen-reader-focus')).toBeFocused();
+}
+
 async function traverseHostBoundary(page, key, terminalId, maximumPresses = 20) {
   const path = [];
   for (let press = 0; press < maximumPresses; press += 1) {
@@ -105,8 +119,33 @@ test.describe('participant accessibility contract @canonical @windows-a11y', () 
     await expectHealthyHarness(page);
   });
 
+  test('exposes list choices through their native roles, names, and checked state', async ({ page }) => {
+    await openParticipant(page);
+
+    const radioQuestion = activeQuestion(page, 'CHOICE');
+    await expect(radioQuestion.getByRole('radio')).toHaveCount(2);
+    await expect(radioQuestion.getByRole('radio', { name: 'Blue' })).not.toBeChecked();
+    await expect(radioQuestion.getByRole('radio', { name: 'Green' })).not.toBeChecked();
+
+    await selectLabeledResponse(page, 'Blue');
+    await expect(radioQuestion.getByRole('radio', { name: 'Blue' })).toBeChecked();
+    await expect(radioQuestion.getByRole('radio', { name: 'Green' })).not.toBeChecked();
+    await goNext(page);
+
+    const checkboxQuestion = activeQuestion(page, 'CHECKS');
+    await expect(checkboxQuestion.getByRole('checkbox')).toHaveCount(2);
+    await expect(checkboxQuestion.getByRole('checkbox', { name: 'Email' })).not.toBeChecked();
+    await expect(checkboxQuestion.getByRole('checkbox', { name: 'Text message' })).not.toBeChecked();
+
+    await selectLabeledResponse(page, 'Email');
+    await expect(checkboxQuestion.getByRole('checkbox', { name: 'Email' })).toBeChecked();
+    await expect(checkboxQuestion.getByRole('checkbox', { name: 'Text message' })).not.toBeChecked();
+    await expectHealthyHarness(page);
+  });
+
   test('keeps the deliberate action-button tab order on a later question', async ({ page }, testInfo) => {
     await openParticipant(page, { fixture: 'navigationState.txt' });
+    await waitInHarness(page, 550);
     await selectLabeledResponse(page, 'Yes');
     await goNext(page);
 
@@ -144,12 +183,17 @@ test.describe('participant accessibility contract @canonical @windows-a11y', () 
 
   test('moves focus into the new question after Next and Back', async ({ page }) => {
     await openParticipant(page, { fixture: 'navigationState.txt' });
+    await waitInHarness(page, 550);
     await selectLabeledResponse(page, 'Yes');
     await goNext(page);
 
-    await expect(activeQuestion(page, 'DETAIL').locator('.screen-reader-focus')).toBeFocused();
+    const detailFocusTarget = activeQuestion(page, 'DETAIL').locator('.screen-reader-focus');
+    await expect(detailFocusTarget).toHaveAttribute('tabindex', '-1');
+    await expect(detailFocusTarget).toBeFocused();
     await goBack(page);
-    await expect(activeQuestion(page, 'PATH').locator('.screen-reader-focus')).toBeFocused();
+    const pathFocusTarget = activeQuestion(page, 'PATH').locator('.screen-reader-focus');
+    await expect(pathFocusTarget).toHaveAttribute('tabindex', '-1');
+    await expect(pathFocusTarget).toBeFocused();
     await expect(activeQuestion(page, 'PATH').locator('#PATH_1')).toBeChecked();
     await expectHealthyHarness(page);
   });
@@ -203,17 +247,16 @@ test.describe('participant accessibility contract @canonical @windows-a11y', () 
     await page.locator('#host-before').focus();
     const forward = await traverseHostBoundary(page, 'Tab', 'host-after');
     expect(forward.slice(0, -1).every((entry) => entry.inQuest)).toBe(true);
-    expect(forward.some((entry) => entry.screenReaderFocus)).toBe(true);
+    expect(forward.some((entry) => entry.screenReaderFocus)).toBe(false);
+    expect(forward.some((entry) => entry.responseTabStop)).toBe(false);
     expect(forward.some((entry) => entry.clickType === 'next')).toBe(true);
     expect(forward.some((entry) => entry.clickType === 'reset')).toBe(true);
-    if (testInfo.project.name === 'chromium-windows-ua') {
-      expect(forward.some((entry) => entry.responseTabStop)).toBe(true);
-    }
 
     await page.locator('#host-after').focus();
     const reverse = await traverseHostBoundary(page, 'Shift+Tab', 'host-before');
     expect(reverse.slice(0, -1).every((entry) => entry.inQuest)).toBe(true);
-    expect(reverse.some((entry) => entry.screenReaderFocus)).toBe(true);
+    expect(reverse.some((entry) => entry.screenReaderFocus)).toBe(false);
+    expect(reverse.some((entry) => entry.responseTabStop)).toBe(false);
     expect(reverse.some((entry) => entry.clickType === 'next')).toBe(true);
     expect(reverse.some((entry) => entry.clickType === 'reset')).toBe(true);
     await expectHealthyHarness(page);
@@ -248,10 +291,110 @@ test.describe('participant accessibility contract @canonical @windows-a11y', () 
       );
     }
     await dialog.getByRole('button', { name: 'Close' }).click();
-    await waitInHarness(page, 700);
 
     await expect(modal).not.toHaveClass(/show/);
     await expect(activeQuestion(page, 'CHOICE').locator('.screen-reader-focus')).toBeFocused();
+    await expectHealthyHarness(page);
+  });
+
+  for (const key of ['Enter', 'Space']) {
+    test(`promptly restores requested and required question context when Close is activated with ${key}`, async ({ page }) => {
+      await openParticipant(page, { fixture: 'unansweredModals.txt' });
+      await expect(activeQuestion(page, 'SOFT').locator('.screen-reader-focus')).toBeFocused();
+      await goNext(page);
+
+      const softModal = page.locator('#softModal');
+      const softDialog = page.getByRole('dialog', { name: 'Response Requested' });
+      await expect(softModal).toHaveClass(/show/);
+      await closeUnansweredModalWithKeyboard(page, {
+        modal: softModal,
+        dialog: softDialog,
+        questionId: 'SOFT',
+        key,
+      });
+
+      await goNext(page);
+      await softDialog.getByRole('button', { name: 'Continue Without Answering' }).click();
+      await expect(activeQuestion(page, 'HARD')).toBeVisible();
+      await expect(activeQuestion(page, 'HARD').locator('.screen-reader-focus')).toBeFocused();
+      await goNext(page);
+
+      const hardModal = page.locator('#hardModal');
+      const hardDialog = page.getByRole('dialog', { name: 'Response Required' });
+      await expect(hardModal).toHaveClass(/show/);
+      await closeUnansweredModalWithKeyboard(page, {
+        modal: hardModal,
+        dialog: hardDialog,
+        questionId: 'HARD',
+        key,
+      });
+      await expectHealthyHarness(page);
+    });
+  }
+
+  test('distinguishes requested and required unanswered-response dialogs', async ({ page }, testInfo) => {
+    await openParticipant(page, { fixture: 'unansweredModals.txt' });
+    await expect(activeQuestion(page, 'SOFT').locator('.screen-reader-focus')).toBeFocused();
+    await goNext(page);
+
+    const softModal = page.locator('#softModal');
+    const softDialog = page.getByRole('dialog', { name: 'Response Requested' });
+    await expect(softModal).toHaveClass(/show/);
+    await expect(page.locator('#softModalTitle')).toBeFocused();
+    await expect(softDialog.locator('#modalBodyText')).toHaveText(
+      'There is 1 question unanswered on this page. Would you like to continue?',
+    );
+    await expect(softDialog.getByRole('button')).toHaveCount(3);
+    await expect(softDialog.getByRole('button', { name: 'Close' })).toBeVisible();
+    await expect(softDialog.getByRole('button', { name: 'Continue Without Answering' })).toBeVisible();
+    await expect(softDialog.getByRole('button', { name: 'Answer the Question' })).toBeVisible();
+
+    await softDialog.getByRole('button', { name: 'Answer the Question' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(softModal).not.toHaveClass(/show/);
+    await expect(activeQuestion(page, 'SOFT')).toBeVisible();
+    await expect(activeQuestion(page, 'SOFT').locator('.screen-reader-focus')).toBeFocused();
+
+    await goNext(page);
+    await softDialog.getByRole('button', { name: 'Continue Without Answering' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(activeQuestion(page, 'HARD')).toBeVisible();
+    expect((await harnessSnapshot(page)).state.survey).not.toHaveProperty('SOFT');
+
+    await expect(activeQuestion(page, 'HARD').locator('.screen-reader-focus')).toBeFocused();
+    await goNext(page);
+
+    const hardModal = page.locator('#hardModal');
+    const hardDialog = page.getByRole('dialog', { name: 'Response Required' });
+    await expect(hardModal).toHaveClass(/show/);
+    await expect(page.locator('#hardModalLabel')).toBeFocused();
+    await expect(hardDialog.locator('#hardModalBodyText')).toHaveText(
+      'There is 1 question unanswered on this page. Please answer the question.',
+    );
+    await expect(hardDialog.getByRole('button')).toHaveCount(2);
+    await expect(hardDialog.getByRole('button', { name: 'Close' })).toBeVisible();
+    await expect(hardDialog.getByRole('button', { name: 'Answer the Question' })).toBeVisible();
+    await expect(hardDialog.getByRole('button', { name: 'Continue Without Answering' })).toHaveCount(0);
+
+    if (testInfo.project.name !== 'webkit-desktop') {
+      await expectModalFocusCycle(
+        page,
+        hardModal,
+        hardDialog.getByRole('button', { name: 'Close' }),
+        hardDialog.getByRole('button', { name: 'Answer the Question' }),
+      );
+    }
+    await hardDialog.getByRole('button', { name: 'Answer the Question' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(hardModal).not.toHaveClass(/show/);
+    await expect(activeQuestion(page, 'HARD')).toBeVisible();
+    await expect(activeQuestion(page, 'HARD').locator('.screen-reader-focus')).toBeFocused();
+    expect((await harnessSnapshot(page)).state.survey).not.toHaveProperty('HARD');
+
+    await selectLabeledResponse(page, 'Required response');
+    await goNext(page);
+    await expect(activeQuestion(page, 'END')).toBeVisible();
+    expect((await harnessSnapshot(page)).state.survey).toMatchObject({ HARD: '1' });
     await expectHealthyHarness(page);
   });
 
@@ -287,6 +430,46 @@ test.describe('participant accessibility contract @canonical @windows-a11y', () 
     await waitInHarness(page, 700);
 
     await expect(page.locator('#submitModal')).not.toHaveClass(/show/);
+    await expect(trigger).toBeFocused();
+    await expectHealthyHarness(page);
+  });
+
+  test('keeps focus on a response dialog when delayed question focus runs', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'chromium-desktop', 'The deterministic focus-timer race runs once in Chromium.');
+
+    await page.addInitScript(() => {
+      const nativeSetTimeout = window.setTimeout.bind(window);
+      const nativeClearTimeout = window.clearTimeout.bind(window);
+      const pendingFocusTimers = new Map();
+      let nextTimerId = 1_000_000;
+
+      window.setTimeout = (callback, delay, ...args) => {
+        if (delay !== 500) return nativeSetTimeout(callback, delay, ...args);
+        const timerId = nextTimerId;
+        nextTimerId += 1;
+        pendingFocusTimers.set(timerId, { callback, args });
+        return timerId;
+      };
+      window.clearTimeout = (timerId) => {
+        if (!pendingFocusTimers.delete(timerId)) nativeClearTimeout(timerId);
+      };
+      window.releasePendingQuestionFocusTimers = () => {
+        window.setTimeout = nativeSetTimeout;
+        window.clearTimeout = nativeClearTimeout;
+        const pending = [...pendingFocusTimers.values()];
+        pendingFocusTimers.clear();
+        pending.forEach(({ callback, args }) => callback(...args));
+        return pending.length;
+      };
+    });
+
+    await openParticipant(page);
+    await goNext(page);
+    const title = page.locator('#softModalTitle');
+    await expect(title).toBeFocused();
+    expect(await page.evaluate(() => window.releasePendingQuestionFocusTimers())).toBe(1);
+    await waitInHarness(page, 25);
+    await expect(title).toBeFocused();
     await expectHealthyHarness(page);
   });
 });
@@ -320,6 +503,14 @@ test.describe('automated accessibility scan @axe', () => {
     await activeQuestion(page, 'BOUNDED').locator('#bounded').fill('9');
     await goNext(page);
     await expect(activeQuestion(page).locator('.validation-container')).toBeVisible();
+    // Let Quest's delayed question-focus construction finish before axe chooses
+    // a selector for the validation span. Otherwise the selector varies based
+    // on whether the screen-reader focus marker exists at scan time.
+    await waitInHarness(page, 550);
+    // The validation click can leave Firefox's pointer over the repositioned
+    // Next button. Keep this scan on the validation state, not an accidental
+    // and browser-layout-dependent hover state.
+    await page.mouse.move(0, 0);
     await expectNoUnwaivedAxeViolations(page, VALIDATION_AXE_BASELINE);
     await expectHealthyHarness(page);
   });

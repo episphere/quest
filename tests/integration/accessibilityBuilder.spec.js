@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderFreshQuest } from '../helpers/questRuntime.js';
 
 async function loadAccessibilityFixture(markup) {
@@ -24,6 +24,7 @@ describe('accessible question text construction', () => {
     expect(legend.textContent).toContain('Section heading');
     expect(legend.textContent).toContain('Choose an answer.');
     expect(fieldset.querySelectorAll('.screen-reader-focus')).toHaveLength(1);
+    expect(fieldset.querySelector('.screen-reader-focus').tabIndex).toBe(-1);
     expect([...fieldset.querySelectorAll('br')].every((br) => br.getAttribute('aria-hidden') === 'true')).toBe(true);
     expect(fieldset.querySelectorAll('br').length).toBeLessThanOrEqual(3);
   });
@@ -44,6 +45,24 @@ describe('accessible question text construction', () => {
     expect(followUp).not.toBeNull();
     expect(followUp.textContent).toContain('Follow-up question?');
     expect(fieldset.querySelectorAll('.response')).toHaveLength(2);
+  });
+
+  it('retains the first formatted fragment after a punctuated primary prompt', async () => {
+    const { quest, accessibility } = await loadAccessibilityFixture(`
+      <form class="question active" id="PUNCTUATED_MULTI_PROMPT">
+        <fieldset>How severe is your fatigue?<b>Pain level:</b> Are you experiencing pain?<div class="response"><input id="PUNCTUATED_MULTI_PROMPT_1"></div></fieldset>
+      </form>
+    `);
+    const fieldset = quest.root.querySelector('fieldset');
+
+    accessibility.manageAccessibleQuestion(fieldset, false);
+
+    const legend = fieldset.querySelector(':scope > legend');
+    const followUp = fieldset.querySelector(':scope > div[role="alert"][tabindex="0"]');
+    expect(legend.textContent).toBe('How severe is your fatigue?');
+    expect(followUp?.innerHTML).toContain('<b>Pain level:</b>');
+    expect(followUp?.textContent).toContain('Pain level: Are you experiencing pain?');
+    expect(fieldset.querySelectorAll('.response')).toHaveLength(1);
   });
 
   it('creates a fieldset around table questions that do not originally have one', async () => {
@@ -90,7 +109,7 @@ describe('accessible question text construction', () => {
   it('updates a raw forid in an existing legend and avoids rebuilding focus controls', async () => {
     const { quest, accessibility } = await loadAccessibilityFixture(`
       <form class="question active" id="FORID">
-        <fieldset><legend>Hello <span forid="UNKNOWN_RESPONSE" optional="participant">old value</span></legend><span class="screen-reader-focus" tabindex="0"></span><div class="response"><input></div></fieldset>
+        <fieldset><legend>Hello <span forid="UNKNOWN_RESPONSE" optional="participant">old value</span></legend><span class="screen-reader-focus" tabindex="-1"></span><div class="response"><input></div></fieldset>
       </form>
     `);
     const fieldset = quest.root.querySelector('fieldset');
@@ -119,112 +138,27 @@ describe('accessible question text construction', () => {
   });
 });
 
-describe('accessible selection focus and defensive paths', () => {
-  beforeEach(() => vi.useFakeTimers());
+describe('accessible selection announcements and defensive paths', () => {
   afterEach(() => {
     vi.clearAllTimers();
     vi.useRealTimers();
   });
 
-  it('keeps focus on a non-final table checkbox and announces its state', async () => {
+  it('announces table checkbox state without managing focus', async () => {
+    vi.useFakeTimers();
     const { quest, accessibility } = await loadAccessibilityFixture(`
-      <div class="question active"><button class="next">Next</button></div>
-      <span id="srFocusHelper" tabindex="0"></span><div id="ariaLiveSelectionAnnouncer"></div>
+      <div id="ariaLiveSelectionAnnouncer"></div>
       <table><tbody><tr><th>Row</th>
         <td class="response"><label for="CHECK_1">First</label><input id="CHECK_1" type="checkbox" checked></td>
-        <td class="response"><label for="CHECK_2">Second</label><input id="CHECK_2" type="checkbox"></td>
       </tr></tbody></table>
     `);
     const input = quest.root.querySelector('#CHECK_1');
-    const event = { target: input, type: 'change', preventDefault: vi.fn() };
+    input.focus();
+    accessibility.updateAriaLiveSelectionAnnouncerTable(input.closest('.response'));
 
-    accessibility.handleRadioCheckboxTableEvents(event);
-
-    expect(event.preventDefault).toHaveBeenCalledOnce();
-    await vi.advanceTimersByTimeAsync(100);
-    expect(document.activeElement).toBe(quest.root.querySelector('#srFocusHelper'));
-    expect(document.activeElement.closest('td')).toBe(input.closest('td'));
-    await vi.advanceTimersByTimeAsync(150);
+    await vi.advanceTimersByTimeAsync(250);
     expect(quest.root.querySelector('#ariaLiveSelectionAnnouncer').textContent).toBe('First Selected.');
-  });
-
-  it('moves focus from the final table checkbox to the active question Next button', async () => {
-    const { quest, accessibility } = await loadAccessibilityFixture(`
-      <div class="question active"><button class="next">Next</button></div>
-      <span id="srFocusHelper" tabindex="0"></span><div id="ariaLiveSelectionAnnouncer"></div>
-      <table><tbody><tr><th>Row</th><td class="response"><label for="FINAL">Final</label><input id="FINAL" type="checkbox"></td></tr></tbody></table>
-    `);
-
-    accessibility.handleRadioCheckboxTableEvents({
-      target: quest.root.querySelector('#FINAL'),
-      type: 'change',
-      preventDefault: vi.fn(),
-    });
-
-    const helper = quest.root.querySelector('#srFocusHelper');
-    await vi.advanceTimersByTimeAsync(100);
-    expect(document.activeElement).toBe(helper);
-    expect(helper.closest('button')).toBe(quest.root.querySelector('button.next'));
-  });
-
-  it('logs invalid table inputs and missing focus targets without throwing', async () => {
-    const { quest, accessibility } = await loadAccessibilityFixture(`
-      <span id="srFocusHelper" tabindex="0"></span>
-      <table><tbody>
-        <tr><th>First</th><td class="response"><input id="BAD" type="text"><input id="RADIO" type="radio"></td></tr>
-        <tr><td class="response"><input type="radio"></td></tr>
-      </tbody></table>
-    `);
-    const invalid = quest.root.querySelector('#BAD');
-    accessibility.handleRadioCheckboxTableEvents({ target: invalid, type: 'change', preventDefault: vi.fn() });
-    expect(quest.errors.some(([message]) => message.includes('Invalid event type'))).toBe(true);
-
-    accessibility.handleRadioCheckboxTableEvents({
-      target: quest.root.querySelector('#RADIO'),
-      type: 'change',
-      preventDefault: vi.fn(),
-    });
-    await vi.advanceTimersByTimeAsync(100);
-    expect(quest.errors.some(([message]) => message.includes('Next question cell not found'))).toBe(true);
-
-    quest.root.querySelector('#srFocusHelper').remove();
-    accessibility.handleRadioCheckboxTableEvents({
-      target: quest.root.querySelector('tr:last-child input'),
-      type: 'change',
-      preventDefault: vi.fn(),
-    });
-    await vi.advanceTimersByTimeAsync(100);
-    expect(quest.errors.some(([message]) => message.includes('Focus helper not found'))).toBe(true);
-  });
-
-  it('logs missing active-question and Next-button targets for final selections', async () => {
-    const { quest, accessibility } = await loadAccessibilityFixture(`
-      <span id="srFocusHelper" tabindex="0"></span>
-      <table><tbody><tr><th>Only</th><td class="response"><input id="ONLY" type="radio"></td></tr></tbody></table>
-    `);
-    const event = { target: quest.root.querySelector('#ONLY'), type: 'change', preventDefault: vi.fn() };
-
-    accessibility.handleRadioCheckboxTableEvents(event);
-    await vi.advanceTimersByTimeAsync(100);
-    expect(quest.errors.some(([message]) => message === 'Active question not found')).toBe(true);
-
-    quest.root.insertAdjacentHTML('afterbegin', '<div class="question active"></div>');
-    accessibility.handleRadioCheckboxTableEvents(event);
-    await vi.advanceTimersByTimeAsync(100);
-    expect(quest.errors.some(([message]) => message === 'Next question button not found')).toBe(true);
-  });
-
-  it('walks past non-response siblings when ArrowUp leaves a nested text field', async () => {
-    const { quest, accessibility } = await loadAccessibilityFixture(`
-      <div class="response"><button id="PREVIOUS" type="button">Previous</button></div><span>spacing</span><br>
-      <div class="response"><button id="CURRENT" type="button">Current</button></div>
-    `);
-    const current = quest.root.querySelector('#CURRENT');
-    current.focus();
-
-    accessibility.handleUpDownArrowKeys({ key: 'ArrowUp', target: current, preventDefault: vi.fn() });
-    await vi.advanceTimersByTimeAsync(0);
-    expect(document.activeElement).toBe(quest.root.querySelector('#PREVIOUS'));
+    expect(document.activeElement).toBe(input);
   });
 
   it('returns safely when announcer dependencies are absent and clears an existing region', async () => {

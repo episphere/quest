@@ -30,6 +30,12 @@
   font-weight: bold;
 }
 
+/* Preserve Bootstrap's legend clearance when Quest inserts its hidden
+  focus target between the legend and the first response. */
+.question fieldset > legend + .screen-reader-focus + * {
+  clear: left;
+}
+
 /* this is an answer with a text area...*/
 .freeresponse {
   display: flex;
@@ -163,7 +169,7 @@ input[type="text"] {
     cursor: pointer;
     border: none;
     outline: none;
-    overflow: hidden;
+    overflow: visible;
     padding: 1em;
   }
 
@@ -206,6 +212,13 @@ input[type="text"] {
     box-shadow: 0 0 .75vw #b3b3b3;
   }
 
+  .quest-grid.table-layout input[type="checkbox"]:focus-visible + .custom-label::before,
+  .quest-grid.table-layout input[type="radio"]:focus-visible + .custom-label::before {
+    border-color: #1c5d86;
+    outline: 3px solid #1c5d86;
+    outline-offset: 3px;
+  }
+
   .quest-grid.table-layout input[type="checkbox"]:checked + .custom-label,
   .quest-grid.table-layout input[type="radio"]:checked + .custom-label {
     border: none;
@@ -223,8 +236,8 @@ input[type="text"] {
   }
 }
 
-/* 576px matches the default breakpoint for bootstrap xs */
-@media screen and (max-width: 576px) {
+/* Bootstrap's small breakpoint starts at 576px; xs ends immediately below it. */
+@media screen and (max-width: 575.98px) {
   .quest-grid.table-layout {
     display: block;
   }
@@ -279,5 +292,46 @@ input[type="text"] {
       width: 100%;
       height: 100%;
     }
+
+    input[type="checkbox"]:focus-visible + .custom-label,
+    input[type="radio"]:focus-visible + .custom-label {
+      outline: 3px solid #1c5d86;
+      outline-offset: -6px;
+    }
+
+    input[type="checkbox"]:checked:focus-visible + .custom-label,
+    input[type="radio"]:checked:focus-visible + .custom-label {
+      outline-color: #fff;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .quest-grid.table-layout input[type="checkbox"]:focus-visible + .custom-label::before,
+  .quest-grid.table-layout input[type="radio"]:focus-visible + .custom-label::before,
+  .quest-grid.table-layout input[type="checkbox"]:focus-visible + .custom-label,
+  .quest-grid.table-layout input[type="radio"]:focus-visible + .custom-label {
+    outline-color: CanvasText;
+  }
+
+  .quest-grid.table-layout input[type="checkbox"]:checked + .custom-label::after,
+  .quest-grid.table-layout input[type="radio"]:checked + .custom-label::after {
+    forced-color-adjust: none;
+    background-color: Highlight;
+  }
+}
+
+@media (forced-colors: active) and (max-width: 575.98px) {
+  .quest-grid.table-layout input[type="checkbox"]:checked + .custom-label,
+  .quest-grid.table-layout input[type="radio"]:checked + .custom-label {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
+
+  .quest-grid.table-layout input[type="checkbox"]:checked:focus-visible + .custom-label,
+  .quest-grid.table-layout input[type="radio"]:checked:focus-visible + .custom-label {
+    outline-color: HighlightText;
   }
 }

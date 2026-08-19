@@ -40,7 +40,14 @@ function treeThrough(previousQuestionId, currentQuestionId) {
   });
 }
 
+async function waitForQuestionFocus(page, questionId) {
+  // Let Quest's intentional delayed question-focus handoff finish before
+  // Playwright begins a multi-field entry sequence.
+  await expect(activeQuestion(page, questionId).locator('.screen-reader-focus')).toBeFocused();
+}
+
 async function fillCompletePrimaryAddress(page) {
+  await waitForQuestionFocus(page, 'D_121490150');
   const question = activeQuestion(page, 'D_121490150');
   await question.locator('#D_255248624').fill('123');
   await question.locator('#D_945532934').fill('Main Street');
@@ -112,9 +119,11 @@ test.describe('Module 4 residential-address paths @canonical @corpus', () => {
     await goNext(page);
     await continueWithoutAnswering(page);
     await expect(activeQuestion(page, 'D_920576363')).toBeVisible();
+    await waitForQuestionFocus(page, 'D_920576363');
     await activeQuestion(page, 'D_920576363').locator('#D_725583683').fill('Lakeview');
     await goNext(page);
     await expect(activeQuestion(page, 'D_804504024')).toBeVisible();
+    await waitForQuestionFocus(page, 'D_804504024');
     await activeQuestion(page, 'D_804504024').locator('#D_105043152').fill('First Street');
     await activeQuestion(page, 'D_804504024').locator('#D_543135391').fill('Second Avenue');
     await goNext(page);
@@ -133,10 +142,12 @@ test.describe('Module 4 residential-address paths @canonical @corpus', () => {
 
   test('uses missing-field backup for a partial street address without offering the cross-street fallback', async ({ page }) => {
     await openParticipant(page, { markdown: englishAddressFixture });
+    await waitForQuestionFocus(page, 'D_121490150');
     await activeQuestion(page, 'D_121490150').locator('#D_255248624').fill('44');
     await activeQuestion(page, 'D_121490150').locator('#D_945532934').fill('Partial Place');
     await goNext(page);
     await expect(activeQuestion(page, 'D_920576363')).toBeVisible();
+    await waitForQuestionFocus(page, 'D_920576363');
     await activeQuestion(page, 'D_920576363').locator('#D_725583683').fill('Lakeview');
     await goNext(page);
 

@@ -1,0 +1,10 @@
+// Distinction between a requested response and a required response.
+{"name":"TEST_UNANSWERED_MODALS"}
+
+[SOFT?] You may answer this question or continue without answering.
+(1) Optional response
+
+[HARD!] You must answer this question before continuing.
+(1) Required response
+
+[END,end] Unanswered-response modal testing complete.

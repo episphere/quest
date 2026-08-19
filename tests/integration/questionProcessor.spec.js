@@ -159,6 +159,7 @@ describe('QuestionProcessor constructs', () => {
     expect(intro.querySelector('[data-encoded-expression]')).not.toBeNull();
     expect(intro.querySelector('.displayif').getAttribute('displayif')).toBe('equals(SHOW,1)');
     expect(intro.querySelector('[data-bs-toggle="popover"]').getAttribute('data-bs-content')).toBe('Synthetic help text');
+    expect(intro.querySelector('[data-bs-toggle="popover"]').getAttribute('data-bs-trigger')).toBe('manual');
     expect(intro.querySelector('img').src).toBe('https://example.org/test.png');
     expect(intro.querySelector('input[type="hidden"]').getAttribute('skipto')).toBe('TARGET');
     expect(grid.dataset.grid).toBe('true');

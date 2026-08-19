@@ -38,12 +38,39 @@ input.styling[type="radio"] {
   display: inline;
 }
 
-input[type="radio"] {
-  display: none;
+.question input[type="radio"],
+.question input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
 }
 
-input[type="checkbox"] {
-  display: none;
+.question .response > input[type="radio"]:focus-visible + label:not(.custom-label),
+.question .response > input[type="checkbox"]:focus-visible + label:not(.custom-label) {
+  outline: 3px solid #1c5d86;
+  outline-offset: 2px;
+}
+
+.question .popover-dismiss:focus-visible {
+  outline: 3px solid #1c5d86;
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .question .response > input[type="radio"]:focus-visible + label:not(.custom-label),
+  .question .response > input[type="checkbox"]:focus-visible + label:not(.custom-label),
+  .question .popover-dismiss:focus-visible {
+    outline-color: CanvasText;
+  }
+
+  .question .response > input[type="radio"]:checked + label:not(.custom-label),
+  .question .response > input[type="checkbox"]:checked + label:not(.custom-label) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
 }
 
 .show-button {

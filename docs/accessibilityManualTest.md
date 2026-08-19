@@ -4,6 +4,9 @@ Scope: **Quest 2 participant runtime only**
 
 Browser automation can inspect DOM semantics, focus, state, and live regions, but it does not run VoiceOver or JAWS and cannot prove what either screen reader announces. This matrix describes those manual accessibility testing processes.
 
+For the keyboard-only command guide, see
+[`keyboardNavigation.md`](keyboardNavigation.md).
+
 ## Test boundary
 
 - Use only non-production participant data and the canonical fixtures under `tests/fixtures/canonical/`.
@@ -37,6 +40,31 @@ Browser automation can inspect DOM semantics, focus, state, and live regions, bu
 
 “Current” must be replaced with exact version numbers in the test record. Playwright WebKit is not Safari plus VoiceOver, and Chromium with a Windows user-agent string is not JAWS.
 
+## Test record
+
+Create a separate record for every environment, browser, assistive-technology mode, and fixture run. Do not use one blanket result for a scenario or environment.
+
+Record these fields before starting:
+
+| Field | Required value |
+| --- | --- |
+| Date and tester | Test date and tester name or initials |
+| Quest revision | Exact commit SHA and Quest version, if versioned |
+| Environment | Environment-matrix ID and exact operating-system version/build |
+| Browser | Browser name and exact version |
+| Assistive technology | Name and exact version, or `None` for keyboard-only runs |
+| Mode | Full Keyboard Access, Quick Nav, Virtual Cursor, or Forms Mode state, as applicable |
+| Fixture and viewport | Fixture filename and viewport dimensions |
+| Automated prerequisite | Exact command and its pass/fail result |
+
+Record every numbered or table step separately:
+
+| Scenario and step | Result | Actual focus, role/name/state, and spoken output | Evidence or defect |
+| --- | --- | --- | --- |
+| Example: VoiceOver step 2 | `PASS`, `FAIL`, `BLOCKED`, or `NOT RUN` | Record the observed result. Do not write only “as expected” | Link evidence or explain the blocker/omission |
+
+Use `BLOCKED` only when an external condition prevents the step. Use `NOT RUN` only with a reason. A scenario passes only when every required step has an explicit `PASS`; an aggregate environment-level pass cannot replace the per-step record.
+
 ## Keyboard-only baseline — issue #1587
 
 Run KBD-MAC and KBD-WIN without a screen reader. Repeat in both Chrome and Edge for KBD-WIN.
@@ -54,6 +82,8 @@ Run KBD-MAC and KBD-WIN without a screen reader. Repeat in both Chrome and Edge 
 | 9 | Repeat the response-grid fixture at phone width | Each stacked response remains operable and its checked state is visible. |
 
 Raw browser key expectations apply only to this keyboard-only baseline. Do not file a failure solely because a screen reader reserves or reroutes one of these keys.
+
+Standards note for issue #1587: a custom element with `role="button"` must activate with both Enter and Space, as specified by the [WAI-ARIA button pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/). Native `<select>` interaction is implemented by the browser and operating system. The portable Quest contract is that the control remains native, its keys are not canceled, and committed state persists—not that Space, Enter, or Escape has one identical expand/select/collapse sequence in every environment. See the [HTML Standard's select element](https://html.spec.whatwg.org/multipage/form-elements.html#the-select-element) and [WCAG 2.1.1 keyboard guidance](https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html).
 
 ## VoiceOver with Safari — issue #1079
 
@@ -78,10 +108,10 @@ Run each browser once. State explicitly whether each observation occurred in Vir
 2. In Virtual Cursor, navigate to the survey and confirm the first question is announced once with its group name.
 3. Enumerate form controls. Every choice must expose radio/checkbox role, name, and checked state; a focusable generic response container is not an adequate replacement.
 4. Enter Forms Mode and activate a choice with the JAWS default action. Confirm visual state, DOM state, and live announcement agree.
-5. Use the response container/list navigation supplied for Windows. Confirm there is no dead tab stop and no double activation.
+5. Tab through the response list. Focus must land on native inputs and actions only. Generic response containers and empty helper elements must not become stops.
 6. For radio groups, verify native group exclusivity and arrow behavior while in the appropriate mode.
-7. For “Other” text responses, use Up/Down navigation around the embedded text field. Confirm focus neither traps nor skips the neighboring response.
-8. Exercise both grid fixtures. After a radio selection, confirm the next row prompt is announced; after the last radio row, confirm focus proceeds to Next. In the checkbox grid, confirm an intermediate selection stays in its cell and the terminal selection proceeds to Next.
+7. For “Other” text responses, confirm Up/Down remains native text-editing navigation and Tab/Shift+Tab leaves the field in document order. Quest must not turn editing arrows into response-navigation commands.
+8. Exercise both grid fixtures. In Forms Mode, radio arrows must move only within the current row's native group, and Tab must reach the next row. Selecting a radio or checkbox must not automatically move focus to another row or to Next. Confirm JAWS announces the row prompt, column option, and checked state together.
 9. Repeat Next, Back, validation, state restoration, async success/error, and modal focus scenarios from the VoiceOver matrix.
 10. Exit Forms Mode and confirm the Virtual Cursor resumes at a sensible location in the active question.
 
@@ -99,41 +129,3 @@ For every failure, record:
 - the related issue: [#1079](https://github.com/episphere/connect/issues/1079) for JAWS/VoiceOver behavior or [#1587](https://github.com/episphere/connect/issues/1587) for keyboard-only operation.
 
 Pass only when the keyboard-only matrix succeeds independently and both screen readers expose correct role/name/state and predictable focus. A Playwright pass, a user-agent simulation, or success in only one screen-reader mode is not sufficient.
-
-## Test record
-
-Copy this table into the issue or test report for every execution. Do not replace exact versions with “latest” or “current.”
-
-| Field | Recorded value |
-| --- | --- |
-| Protocol version | 1.0.0 |
-| Quest commit and Quest version |  |
-| Questionnaire fixture/version |  |
-| Environment ID |  |
-| OS name, edition, and exact version |  |
-| Browser name and exact version |  |
-| Assistive technology and exact version |  |
-| AT mode / Quick Nav / Full Keyboard Access |  |
-| Tester and date |  |
-| Automated prerequisite run URL/result |  |
-| Steps passed |  |
-| Steps failed |  |
-| Issue/evidence links |  |
-| Overall result | PASS / FAIL / BLOCKED |
-
-Record each step separately; an aggregate PASS must never hide a skipped browser,
-assistive-technology mode, or interaction.
-
-| Environment ID | Procedure / step | AT mode | Result | Actual focus, role/name/state, and spoken output | Evidence / defect |
-| --- | --- | --- | --- | --- | --- |
-| KBD-MAC | Keyboard 1 | Full Keyboard Access | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-| VO-SAF | VoiceOver 1 | Quick Nav off | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-| VO-SAF | VoiceOver 1 | Quick Nav on | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-| KBD-WIN | Keyboard 1 | Browser default | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-| JAWS-CHR | JAWS 1 | Virtual Cursor | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-| JAWS-CHR | JAWS 1 | Forms Mode | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-| JAWS-EDG | JAWS 1 | Virtual Cursor | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-| JAWS-EDG | JAWS 1 | Forms Mode | PASS / FAIL / BLOCKED / NOT RUN |  |  |
-
-Duplicate rows for every numbered step in the applicable procedure. `NOT RUN`
-is not a pass and requires a reason in the final column.

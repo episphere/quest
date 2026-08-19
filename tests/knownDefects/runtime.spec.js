@@ -15,6 +15,13 @@ const expectedCovidGridResponseIds = [
 // contain this identical, truncated display condition for D_114280729.
 const MALFORMED_COVID_GRID_COMPLEMENT = 'someSelected("D_488415137_0","D_488415137_1","D_167695804_0","D_167695804_1","D_730334054_0","D_730334054_1","D_215996690_0","D_215996690_1","D_462737492_0","D_462737492_1","D_469675296_0","D_469675296_1","D_962475128_0","D_962475128_1","D_989576239_0","D_989576239_1","D_338613869_0","D_338613869_1","D_126794793_0","D_126794793_1","D_218793117_0","D_218793117_1","D_524096053_0","SRVCOV_COV19C1_V1R0_1,1","D_814101706_0","D_814101706_1","D_635026188_0","D_238135048_0","D_238135048_1","D_632714520_0","D_632714520_1';
 
+const STANDALONE_TEXTAREA_SURVEY = `
+{"name":"TEXTAREA_RESET"}
+[NOTES?] Enter two short notes.
+|___|notes|
+[END,end] Done.
+`;
+
 function buildBranchedTree() {
   const tree = new Tree();
   tree.add(['Q1', 'Q2', 'Q3']);
@@ -155,6 +162,22 @@ describe('characterized Quest runtime defects', () => {
   it.fails(`${runtimeDefects.legacyQuotedString.localDefectId}: preserves quoted fallback literals`, async () => {
     const evaluateCondition = await loadEvaluator({}, { PRIOR: 'yes' });
     expect(evaluateCondition('equals(PRIOR,"yes")')).toBe(true);
+  });
+
+  it.fails(`${runtimeDefects.textareaReset.localDefectId}: renders Reset for a standalone textarea`, async () => {
+    const quest = await renderFreshQuest({ markdown: STANDALONE_TEXTAREA_SURVEY });
+    expect(quest.root.querySelector('#NOTES [data-click-type="reset"]')).not.toBeNull();
+  });
+
+  it.fails(`${runtimeDefects.textareaReset.localDefectId}: clears a standalone textarea's visible value`, async () => {
+    const quest = await renderFreshQuest({ markdown: STANDALONE_TEXTAREA_SURVEY });
+    const textarea = quest.root.querySelector('#notes');
+    textarea.value = 'Clear this response';
+
+    const { resetChildren } = await import('../../eventHandlers.js');
+    resetChildren(textarea.form);
+
+    expect(textarea.value).toBe('');
   });
 
   it.fails(`${runtimeDefects.corpusMalformedCondition.localDefectId}: rejects a truncated function expression`, async () => {

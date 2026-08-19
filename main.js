@@ -1,4 +1,4 @@
-import { questionQueue, moduleParams, rbAndCbClick, showAllQuestions, swapVisibleQuestion } from "./questionnaire.js";
+import { disposePopovers, questionQueue, moduleParams, rbAndCbClick, showAllQuestions, swapVisibleQuestion } from "./questionnaire.js";
 import { restoreResponses } from "./restoreResponses.js";
 import { addEventListeners } from "./eventHandlers.js";
 import { ariaLiveAnnouncementRegions, progressBar, responseRequestedModal, responseRequiredModal, responseErrorModal, storeErrorModal, submitModal  } from "./common.js";
@@ -7,6 +7,8 @@ import { getStateManager } from "./stateManager.js";
 
 import en from "./i18n/en.js";
 import es from "./i18n/es.js";
+
+const questModuleBasePath = import.meta.url.slice(0, import.meta.url.lastIndexOf('/') + 1);
 
 export let transform = function () { /* init */ };
 transform.rbAndCbClick = rbAndCbClick;
@@ -133,6 +135,12 @@ function setInitialQuestionOnStartup(questionProcessor, activeQuestionID, initia
 }
 
 function setModuleParams(obj, divID, previousResults) {
+  // Bootstrap renders popover tips outside the Quest root. Dispose any
+  // existing instances before a host starts a sequential render.
+  if (moduleParams.questDiv) {
+    disposePopovers(moduleParams.questDiv);
+  }
+
   moduleParams.url = obj.url || '';
   moduleParams.text = obj.text || '';
   moduleParams.store = obj.store;
@@ -149,7 +157,6 @@ function setModuleParams(obj, divID, previousResults) {
   moduleParams.fetchAsyncQuestion = obj.fetchAsyncQuestion;
   moduleParams.delayedParameterArray = obj.delayedParameterArray || [];
   moduleParams.i18n = obj.lang === 'es' ? es : en;
-  moduleParams.isWindowsEnvironment = isWindowsEnvironment();
   moduleParams.isFirefoxBrowser = isFirefoxBrowser();
   moduleParams.isLocalDevelopment = isLocalDevelopment();
   moduleParams.questDiv = document.getElementById(divID);
@@ -157,20 +164,15 @@ function setModuleParams(obj, divID, previousResults) {
   moduleParams.errorLogger = obj.errorLogger || defaultErrorLogger;
 
   // Set the base path for the module. This is used to fetch the stylesheets in initSurvey().
-  moduleParams.basePath = !moduleParams.isLocalDevelopment && moduleParams.questVersion
-    ? `https://cdn.jsdelivr.net/gh/episphere/quest@v${moduleParams.questVersion}/`
-    : 'https://episphere.github.io/quest-dev/'
+  moduleParams.basePath = moduleParams.isLocalDevelopment
+    ? questModuleBasePath
+    : moduleParams.questVersion
+      ? `https://cdn.jsdelivr.net/gh/episphere/quest@v${moduleParams.questVersion}/`
+      : 'https://episphere.github.io/quest-dev/';
 }
 
 function isLocalDevelopment() {
   return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('github');
-}
-
-// Helper for accessibility features. Certain JAWS (Windows) and VoiceOver (Mac) features are handled differently by each platform.
-// This detection helps optimize the user experience on each platform.
-function isWindowsEnvironment() {
-  const userAgent = navigator.userAgent.toLowerCase();
-  return userAgent.indexOf("win") > -1;
 }
 
 // Helper for focus issues in Firefox. Firefox has a bug where the focus is not set correctly on numeric up/down arrows.
