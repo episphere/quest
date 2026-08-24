@@ -801,7 +801,7 @@ export class QuestionProcessor {
     function fPopover(fullmatch, buttonText, title, popText) {
       title = title ? title : "";
       popText = popText.replace(/"/g, "&quot;")
-      return `<a tabindex="0" class="popover-dismiss btn" role="button" title="${title}" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="${popText}">${buttonText}</a>`;
+      return `<a tabindex="0" class="popover-dismiss btn" role="button" title="${title}" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-content="${popText}">${buttonText}</a>`;
     }
 
     // replace |hidden|value| 

@@ -1,0 +1,39 @@
+// Production-shaped extract from locked prod/module4Spanish.txt (D_716117817 v2.0).
+{"name":"D_716117817"}
+
+[D_121490150?]¿Cuál es la dirección completa del lugar donde vive actualmente?
+
+Número de la calle |__|id=D_255248624 minlen=0 maxlen=6|
+Nombre completo de la calle |__|id=D_945532934|
+Apartamento, suite, unidad, edificio, etc. |__|id=D_469838242|
+Ciudad |__|id=D_303500597|
+Estado o provincia |__|id=D_195068098|
+Código postal |__|id=D_202784871|
+País |__|id=D_831127170|
+
+[D_920576363?,displayif=or(or(isNotDefined(D_303500597,false),isNotDefined(D_195068098,false)),or(isNotDefined(D_202784871,false),isNotDefined(D_831127170,false)))] Suministre la siguiente información:
+
+Ciudad: |displayif=exists("D_303500597")| {$D_303500597}|
+|__|id=D_725583683 displayif=doesNotExist("D_303500597")|
+
+Estado o provincia: |displayif=exists("D_195068098")| {$D_195068098}|
+|__|id=D_917021073 displayif=doesNotExist("D_195068098")|
+
+Código postal: |displayif=exists("D_202784871") | {$D_202784871}|
+|__|id=D_970000442 displayif=doesNotExist("D_202784871")|
+
+País: |displayif=exists("D_831127170")| {$D_831127170}|
+|__|id=D_500100435 displayif=doesNotExist("D_831127170")|
+[178420302*] No sé
+
+[D_804504024?,displayif=noneExist("D_255248624","D_945532934") and someExist("D_725583683","D_917021073","D_970000442","D_500100435","D_303500597","D_195068098","D_202784871","D_831127170")] Indique las calles que cruzan la intersección más cercana a esta dirección:
+
+Nombre completo de la calle #1 |__|id=D_105043152|
+Nombre completo de la calle #2 |__|id=D_543135391|
+[178420302*] No sé
+
+[HOMEADD4_1] Esta es la información que nos dio para esta ubicación:
+
+|displayif=someExist("D_255248624","D_945532934","D_469838242","D_303500597","D_725583683","D_195068098","D_917021073","D_202784871","D_970000442","D_831127170","D_500100435")| {$D_105043152} {$D_543135391} {$D_255248624} {$D_945532934} {$D_469838242} {$D_303500597}{$D_725583683} {$D_195068098}{$D_917021073} {$D_202784871}{$D_970000442} {$D_831127170}{$D_500100435}</br>||displayif=noneExist("D_255248624","D_945532934","D_469838242","D_303500597","D_725583683","D_195068098","D_917021073","D_202784871","D_970000442","D_831127170","D_500100435")|Dirección actual|
+
+[END,end] Fin.

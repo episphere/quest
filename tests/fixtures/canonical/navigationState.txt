@@ -1,0 +1,13 @@
+// Navigation, conditional skip, restore, and submission fixture.
+{"name":"TEST_NAV"}
+
+[PATH?] Would you like to answer a detail question?
+(1) Yes -> DETAIL
+(0) No -> SUMMARY
+
+[DETAIL?] Add a short detail.
+|__|id=detail minlen=2 maxlen=30|
+
+[SUMMARY] Review your answers, then continue.
+
+[END,end] You have reached the end of this test survey. Submit your answers.

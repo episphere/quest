@@ -1,0 +1,8 @@
+// Responsive radio-grid fixture.
+{"name":"TEST_GRID"}
+
+[GRID_LEAD] The next question uses a response grid.
+
+|grid?|id="GRID_RATE"|How often do you do each activity?|[GRID_WALK] Walking;[GRID_CYCLE] Cycling;]|[(1: Never)(2: Sometimes)(3: Often)]|
+
+[END,end] You have reached the end of this test survey. Submit your answers.

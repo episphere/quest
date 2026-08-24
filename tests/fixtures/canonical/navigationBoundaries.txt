@@ -1,0 +1,23 @@
+// Default, no-response, explicit-skip, sequential, reset, and back fixture.
+{"name":"TEST_BOUNDARIES"}
+
+[DEFAULT_SOURCE] Continue to the branch question using the default hidden transition.
+< -> PATH >
+
+[DEFAULT_MISS] This question must never be reached from the default transition.
+
+[PATH?] Choose a route, or leave this unanswered to take the no-response route.
+(1) Explicit route -> EXPLICIT_TARGET
+(2) Sequential route
+< #NR -> NO_RESPONSE_TARGET >
+
+[SEQUENTIAL_TARGET] The sequential route was reached.
+< -> END >
+
+[EXPLICIT_TARGET] The explicit route was reached.
+< -> END >
+
+[NO_RESPONSE_TARGET] The no-response route was reached.
+< -> END >
+
+[END,end] Boundary navigation complete.

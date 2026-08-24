@@ -1,0 +1,4 @@
+{"name":"TEST_IMAGE_ALT"}
+
+[PLAIN] Reference image for a participant-facing choice.
+|image|episphere.github.io/quest/images/FemaleBaldness1.png|40,80|

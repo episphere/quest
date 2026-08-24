@@ -1,0 +1,6 @@
+{"name":"TEST_NATIVE_SELECT"}
+
+[STATE?] In which state do you live?
+|state|id=home_state|
+
+[END,end] Complete.

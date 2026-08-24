@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "family": "Libre Baskerville",
+      "style": "normal",
+      "weight": 400,
+      "version": "v24",
+      "stylesheetUrl": "https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap",
+      "url": "https://fonts.gstatic.com/s/librebaskerville/v24/kmKUZrc3Hgbbcjq75U4uslyuy4kn0olVQ-LglH6T17uj8Q4SCQ.ttf",
+      "path": "fonts/libre-baskerville-latin-400-v24.ttf",
+      "mimeType": "font/ttf",
+      "sha256": "f5bc4341f15de5e877d8d95b6b14b33e9a3da1f8fef4ed0700ed407f096cffb6",
+      "bytes": 106728,
+      "license": "SIL Open Font License 1.1",
+      "licensePath": "fonts/OFL-Libre-Baskerville.txt",
+      "licenseSha256": "516bf7fbfdbd0f0e4f50ade6a9127ad83ac7a54370bad6cf70794554569e9c4e",
+      "upstream": "https://github.com/google/fonts/tree/main/ofl/librebaskerville"
+    }
+  ]
+}

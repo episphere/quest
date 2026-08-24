@@ -1,0 +1,180 @@
+name: Quest tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quest-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  FORCE_COLOR: "1"
+
+jobs:
+  quality:
+    name: Unit, integration, and corpus integrity
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Enforce the test-only bootstrap scope
+        if: github.event_name == 'pull_request' && github.head_ref == 'quest-2-test-suite'
+        run: npm run quality:test-only-scope -- --head "${{ github.event.pull_request.head.sha }}"
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .cache/questionnaire
+          key: questionnaire-${{ runner.os }}-${{ hashFiles('tests/corpus/lock.json') }}
+      - run: npm run corpus:fetch
+      - run: npm run corpus:verify
+      - name: Run Vitest with coverage and JUnit output
+        run: |
+          mkdir -p test-results
+          npx vitest run --coverage --reporter=default --reporter=junit --outputFile.junit=test-results/vitest-junit.xml
+      - name: Publish unit-test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quest-unit-reports
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            coverage/
+            test-results/vitest-junit.xml
+
+  chromium:
+    name: Chromium participant and authoring
+    needs: quality
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .cache/questionnaire
+          key: questionnaire-${{ runner.os }}-${{ hashFiles('tests/corpus/lock.json') }}
+      - run: npm run corpus:fetch && npm run corpus:verify
+      - run: npx playwright install --with-deps chromium
+      - name: Run the curated desktop suite and all 29 production smoke tests
+        run: npm run test:e2e:chromium
+      - name: Run representative responsive and Windows branches
+        run: |
+          npm run test:e2e:responsive
+          npm run test:e2e:windows
+      - name: Publish Chromium failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quest-chromium-failures
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            playwright-report/
+            test-results/
+
+  cross-browser:
+    name: Representative ${{ matrix.project }}
+    needs: quality
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: firefox-desktop
+            browser: firefox
+          - project: webkit-desktop
+            browser: webkit
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .cache/questionnaire
+          key: questionnaire-${{ runner.os }}-${{ hashFiles('tests/corpus/lock.json') }}
+      - run: npm run corpus:fetch && npm run corpus:verify
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run canonical, axe, and representative authoring checks
+        run: npx playwright test --project=${{ matrix.project }} --grep "@canonical|@axe|@cross-browser-authoring" --grep-invert @known-defect
+      - name: Publish browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quest-${{ matrix.project }}-failures
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            playwright-report/
+            test-results/
+
+  known-defects:
+    name: Known defects (non-blocking)
+    needs: quality
+    continue-on-error: true
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .cache/questionnaire
+          key: questionnaire-${{ runner.os }}-${{ hashFiles('tests/corpus/lock.json') }}
+      - run: npm run corpus:fetch && npm run corpus:verify
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run test:known-defects
+      - name: Publish known-defect diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quest-known-defects
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            playwright-report/
+            test-results/
+
+  required:
+    name: Quest tests / required
+    if: always()
+    needs: [quality, chromium, cross-browser]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require all blocking lanes
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          if ! jq -e 'all(.[]; .result == "success")' <<< "$RESULTS" >/dev/null; then
+            echo "$RESULTS" | jq .
+            exit 1
+          fi

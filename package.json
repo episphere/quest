@@ -1,0 +1,43 @@
+{
+  "name": "@episphere/quest-dev-tests",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "test": "vitest run tests/unit tests/integration",
+    "test:watch": "vitest tests/unit tests/integration",
+    "test:corpus": "vitest run tests/corpus",
+    "test:coverage": "vitest run --coverage",
+    "quality:test-only-scope": "node tests/quality/scripts/checkTestOnlyScope.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium-desktop --grep-invert @known-defect",
+    "test:e2e:cross-browser": "playwright test --project=firefox-desktop --project=webkit-desktop --grep \"@canonical|@axe|@cross-browser-authoring\" --grep-invert @known-defect",
+    "test:e2e:responsive": "playwright test --project=chromium-phone --project=chromium-tablet --grep \"@responsive|@axe\" --grep-invert @known-defect",
+    "test:e2e:windows": "playwright test --project=chromium-windows-ua --grep \"@windows-a11y|@axe\" --grep-invert @known-defect",
+    "harness:start": "vite --config vite.config.js --host 127.0.0.1",
+    "test:e2e:known-defects": "playwright test --grep @known-defect",
+    "test:known-defects": "node tests/scripts/runKnownDefects.mjs",
+    "test:pr": "npm run corpus:fetch && npm run corpus:verify && npm run test:coverage && npm run test:e2e:chromium && npm run test:e2e:cross-browser && npm run test:e2e:responsive && npm run test:e2e:windows",
+    "test:visual:update": "playwright test --project=chromium-desktop --project=chromium-phone --project=chromium-tablet --grep @visual --update-snapshots",
+    "corpus:fetch": "node tests/corpus/scripts/fetchCorpus.mjs",
+    "corpus:verify": "node tests/corpus/scripts/verifyCorpus.mjs",
+    "corpus:catalog:verify": "vitest run tests/corpus/structuralCatalog.spec.js",
+    "corpus:catalog:update": "vitest run tests/corpus/structuralCatalog.spec.js --update"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@fortawesome/fontawesome-free": "6.4.2",
+    "@playwright/test": "1.60.0",
+    "@vitest/coverage-v8": "3.2.7",
+    "bootstrap": "5.3.3",
+    "bootstrap-authoring": "npm:bootstrap@5.3.2",
+    "jsdom": "29.1.1",
+    "localforage": "1.10.0",
+    "mathjs": "13.0.3",
+    "vite": "7.3.6",
+    "vitest": "3.2.7"
+  }
+}

@@ -7,6 +7,7 @@ import { getStateManager } from "./stateManager.js";
 import { evaluateCondition } from "./evaluateConditions.js";
 import { manageAccessibleQuestion } from "./accessibleQuestionTextBuilder.js";
 export const moduleParams = {};
+const initializedPopoverTriggers = new WeakSet();
 
 // The questionQueue is a Tree. It contains the question ids in the order they should be displayed.
 export const questionQueue = new Tree();
@@ -687,7 +688,8 @@ function showNumUnansweredQuestionsModal(num, nextOrPreviousButton, soft) {
   modal.show();
 
   // Set focus to the modal title
-  document.getElementById("softModalTitle").focus();
+  const modalTitleID = soft ? "softModalTitle" : "hardModalLabel";
+  document.getElementById(modalTitleID).focus();
 
   let modalElement = modal._element;
   modalElement.querySelector('.btn-close').addEventListener('keydown', function (event) {
@@ -846,6 +848,7 @@ export async function swapVisibleQuestion(questionEle) {
 
   const existingQuestionEle = questDiv.querySelector('.question');
   if (existingQuestionEle) {
+    disposePopovers(existingQuestionEle);
     questDiv.replaceChild(questionEle, existingQuestionEle);
   } else {
     // Handle the survey loading case (first quesiton added).
@@ -898,21 +901,6 @@ export async function prepareQuestionDOM(questionElement) {
 
   handleQuestionDisplayIfs(questionElement);
   handleQuestionInputAttributes(questionElement);
-
-  // JAWS (Windows) requires tabindex to be set on the response divs for the radio buttons to be accessible.
-  // The tabindex leads to a negative user experience in VoiceOver (macOS).
-  if (moduleParams.isWindowsEnvironment) {
-    [...questionElement.querySelectorAll("div.response")].forEach((responseElement) => {
-      responseElement.setAttribute("tabindex", "0");
-    });
-
-    [...questionElement.querySelectorAll("td.response")].forEach((responseElement) => {
-      const radioOrCheckbox = responseElement.querySelector('input[type="checkbox"], input[type="radio"]');
-      if (radioOrCheckbox) {
-        radioOrCheckbox.setAttribute("tabindex", "0");
-      }
-    });
-  }
 
   // Remove the reset answer button if there are no response inputs
   const numResponseInputs = countResponseInputs(questionElement);
@@ -1194,7 +1182,7 @@ function handleUserScrollLocation() {
 }
 
 export function isMobileDevice() {
-  return window.matchMedia('(max-width: 576px)').matches;
+  return window.matchMedia('(max-width: 575.98px)').matches;
 }
 
 /**
@@ -1207,7 +1195,65 @@ function initializePopovers() {
 
   [...questDiv.querySelectorAll('[data-bs-toggle="popover"]')].forEach(popoverTriggerEl => {
     if (!bootstrap.Popover.getInstance(popoverTriggerEl)) {
-      new bootstrap.Popover(popoverTriggerEl);
+      new bootstrap.Popover(popoverTriggerEl, { trigger: 'manual' });
+    }
+
+    if (!initializedPopoverTriggers.has(popoverTriggerEl)) {
+      popoverTriggerEl.addEventListener('click', handlePopoverClick);
+      popoverTriggerEl.addEventListener('keydown', handlePopoverKeydown);
+      popoverTriggerEl.addEventListener('focusout', handlePopoverFocusout);
+      initializedPopoverTriggers.add(popoverTriggerEl);
+    }
+  });
+}
+
+function getOrCreatePopover(trigger) {
+  return bootstrap.Popover.getInstance(trigger)
+    || new bootstrap.Popover(trigger, { trigger: 'manual' });
+}
+
+function handlePopoverClick(event) {
+  event.preventDefault();
+  const trigger = event.currentTarget;
+  trigger.focus({ preventScroll: true });
+  getOrCreatePopover(trigger).toggle();
+}
+
+function handlePopoverKeydown(event) {
+  if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+    event.preventDefault();
+    getOrCreatePopover(event.currentTarget).toggle();
+  } else if (event.key === 'Escape') {
+    const trigger = event.currentTarget;
+    const popover = bootstrap.Popover.getInstance(trigger);
+    // Popover instances are created eagerly, so require this trigger's rendered tip to be open.
+    const popoverId = trigger.getAttribute('aria-describedby');
+    const popoverElement = popoverId && trigger.ownerDocument.getElementById(popoverId);
+
+    if (popover && popoverElement?.classList.contains('show')) {
+      event.preventDefault();
+      popover.hide();
+      trigger.focus({ preventScroll: true });
+    }
+  }
+}
+
+function handlePopoverFocusout(event) {
+  bootstrap.Popover.getInstance(event.currentTarget)?.hide();
+}
+
+export function disposePopovers(container) {
+  [...container.querySelectorAll('[data-bs-toggle="popover"]')].forEach((trigger) => {
+    const popover = bootstrap.Popover.getInstance(trigger);
+    if (!popover) return;
+
+    // Bootstrap completes animated hides asynchronously. Disposing during
+    // that transition clears internal state before its callback runs.
+    if (trigger.hasAttribute('aria-describedby')) {
+      trigger.addEventListener('hidden.bs.popover', () => popover.dispose(), { once: true });
+      popover.hide();
+    } else {
+      popover.dispose();
     }
   });
 }

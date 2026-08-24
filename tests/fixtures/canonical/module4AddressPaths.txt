@@ -1,0 +1,50 @@
+// Production-shaped extract from locked prod/module4.txt (D_716117817 v2.0).
+{"name":"D_716117817"}
+
+[D_121490150?] What is the full street address of the place where you live now?
+
+Street number |__|id=D_255248624 minlen=0 maxlen=6|
+Full Street name |__|id=D_945532934|
+Apartment, suite, unit, building, etc. |__|id=D_469838242|
+City |__|id=D_303500597|
+State/Province |__|id=D_195068098|
+Zip code |__|id=D_202784871|
+Country |__|id=D_831127170|
+
+[D_920576363?,displayif=or(or(isNotDefined(D_303500597,false),isNotDefined(D_195068098,false)),or(isNotDefined(D_202784871,false),isNotDefined(D_831127170,false)))] Please provide the following information:
+
+City: |displayif=exists("D_303500597")|{$D_303500597}|
+|__|id=D_725583683 displayif=doesNotExist("D_303500597")|
+
+State/Province: |displayif=exists("D_195068098")| {$D_195068098}|
+|__|id=D_917021073 displayif=doesNotExist("D_195068098")|
+
+Zip code: |displayif=exists("D_202784871") | {$D_202784871}|
+|__|id=D_970000442 displayif=doesNotExist("D_202784871")|
+
+Country: |displayif=exists("D_831127170")| {$D_831127170}|
+|__|id=D_500100435 displayif=doesNotExist("D_831127170")|
+[178420302*] Don't know
+
+[D_804504024?,displayif=noneExist("D_255248624","D_945532934") and someExist("D_725583683","D_917021073","D_970000442","D_500100435","D_303500597","D_195068098","D_202784871","D_831127170")] Please provide the cross streets of the intersection closest to this address:
+
+Full Street name #1 |__|id=D_105043152|
+Full Street name #2 |__|id=D_543135391|
+[178420302*] Don't know
+
+[HOMEADD4_1] Here is the information you gave us for this location:
+
+|displayif=noneExist("D_255248624","D_945532934","D_469838242","D_303500597","D_725583683","D_195068098","D_917021073","D_202784871","D_970000442","D_831127170","D_500100435")|current address</br>||displayif=someExist("D_255248624","D_945532934","D_469838242","D_303500597","D_725583683","D_195068098","D_917021073","D_202784871","D_970000442","D_831127170","D_500100435")| {$D_105043152} {$D_543135391} {$D_255248624} {$D_945532934} {$D_469838242} {$D_303500597} {$D_725583683} {$D_195068098} {$D_917021073} {$D_202784871} {$D_970000442} {$D_831127170} {$D_500100435}|
+
+If this information is <b>not</b> correct, please click the “Back” button to edit your answers before moving on.
+
+[D_290969423?] Within the <b>past 20 years</b>, have you lived anywhere else for at least <b>two years</b>?
+(353358909) Yes -> D_574985342
+(104430631) No -> END
+
+[D_574985342?] What is the full street address of the place you lived before you lived at |displayif=someExist("D_255248624","D_945532934","D_469838242","D_303500597","D_725583683","D_195068098","D_917021073","D_202784871","D_970000442","D_831127170","D_500100435")|<b>{$D_105043152} {$D_543135391} {$D_255248624} {$D_945532934} {$D_469838242} {$D_303500597} {$D_725583683} {$D_195068098} {$D_917021073} {$D_970000442} {$D_831127170} {$D_500100435}</b>||displayif=noneExist("D_255248624","D_945532934","D_469838242","D_303500597","D_725583683","D_195068098","D_917021073","D_202784871","D_970000442","D_831127170","D_500100435")|<b>Current Address</b>|? Please only include addresses where you have lived for <b>at least two years</b>.
+
+Street number |__|id=D_985267931 minlen=0 maxlen=6|
+Full Street name |__|id=D_111275683|
+
+[END,end] Done.

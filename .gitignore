@@ -5,3 +5,8 @@ questionnaires/d2.txt
 node_modules
 testmodules
 testcode
+.cache/
+coverage/
+playwright-report/
+test-results/
+tests/generated/reports/

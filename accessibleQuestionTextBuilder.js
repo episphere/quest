@@ -1,13 +1,15 @@
 import { evaluateCondition } from './evaluateConditions.js';
 import { handleForIDAttributes, moduleParams } from './questionnaire.js';
 
+const QUESTION_TRANSITION_FOCUS_DELAY_MS = 500;
+const MODAL_RETURN_FOCUS_DELAY_MS = 100;
+
 /**
  * Initialize the question text and focus management for screen readers.
  * This drives the screen reader's question announcement and focus when a question is loaded.
  * Set the focus after a brief timeout to ensure the screen reader has time to process the new content.
  * @param {HTMLElement} fieldsetEle - The fieldset element containing the question text.
  * @param {Boolean} questionFocusSet - The flag to manage screen reader focus.
- * @param {Boolean} isModalClose - The flag to reset the questionFocusSet flag on modal close.
  * @returns {Boolean} - The updated questionFocusSet flag.
  */
 
@@ -19,14 +21,24 @@ export function manageAccessibleQuestion(fieldsetEle, questionFocusSet) {
         // Focus the hidden, focusable element
         if (!moduleParams.isRenderer) {
             setTimeout(() => {
-                focusableEle.focus({ preventScroll: true });
-            }, 500);
+                focusAccessibleQuestionTarget(focusableEle);
+            }, QUESTION_TRANSITION_FOCUS_DELAY_MS);
         }
 
         questionFocusSet = true;
     }
 
     return questionFocusSet;
+}
+
+function focusAccessibleQuestionTarget(focusableEle) {
+    // A response or submit dialog may open before a scheduled question-focus
+    // handoff runs. Keep focus in the active modal instead of returning it to
+    // content behind the dialog.
+    const openModal = moduleParams.questDiv?.querySelector('.modal.show');
+    if (focusableEle?.isConnected && !openModal) {
+        focusableEle.focus({ preventScroll: true });
+    }
 }
 
 /**
@@ -41,6 +53,7 @@ export function manageAccessibleQuestion(fieldsetEle, questionFocusSet) {
 
 function buildQuestionText(fieldsetEle) {
     let focusNode = null;
+    let multiQuestionStartIndex = null;
 
     // The conditions for building textContent (survey questions) for the screen reader.
     const textNodeConditional = (node) =>
@@ -103,9 +116,16 @@ function buildQuestionText(fieldsetEle) {
 
             questionElements.push(node.cloneNode(true));
             
-            // Stop collecting for legend if we hit the text node with a question-terminating condition.
-            // Let the handleMultiQuestionSurveyAccessibility() handle the focus node.
+            // Stop collecting for the legend at the end of the primary prompt.
+            // Preserve its next sibling as the boundary before responses (or
+            // before any subsequent prompts in a multi-question fieldset).
             if (node.nodeType === Node.TEXT_NODE && isTerminalText(node.textContent)) {
+                focusNode = node.nextSibling;
+                // The next sibling is the first node that has not been
+                // consumed by the primary prompt. It may be either the first
+                // response or the first fragment of a subsequent prompt, so
+                // the compound-question scan must include it.
+                multiQuestionStartIndex = nodeIndex + 1;
                 break;
             }
 
@@ -131,7 +151,11 @@ function buildQuestionText(fieldsetEle) {
     if (!focusNode) {
         focusNode = fieldsetEle.querySelector('legend') || fieldsetEle.lastChild || fieldsetEle;
     } else {
-        handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, focusNode);
+        handleMultiQuestionSurveyAccessibility(
+            childNodes,
+            fieldsetEle,
+            multiQuestionStartIndex ?? childNodes.indexOf(focusNode) + 1,
+        );
     }
     
     // Create the <legend> tag for screen readers and move the question text into it.
@@ -141,11 +165,10 @@ function buildQuestionText(fieldsetEle) {
 }
 
 // Find additional questions (e.g. QoL multi-question surveys).
-// Start after the focus node since the initial question is handled above for all cases.
+// Start at the supplied unconsumed-node index since the initial question is
+// handled above for all cases.
 // Swap those nodes (text, <b>, <u>, <i>, and embedded <br>) into divs and add a tabindex to make them focusable for screen reader accessibility.
-function handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, focusNode) {
-    let startIndex = childNodes.indexOf(focusNode) + 1;
-
+function handleMultiQuestionSurveyAccessibility(childNodes, fieldsetEle, startIndex) {
     // Array holds the question objects
     let questions = [];
 
@@ -500,7 +523,6 @@ function createFocusableElement(fieldsetEle, focusNode) {
     if (!focusableEle) {
         focusableEle = document.createElement('span');
         focusableEle.classList.add('screen-reader-focus');
-        focusableEle.setAttribute('tabindex', '0');
         focusableEle.style.cssText = `
             position: absolute;
             width: 1px;
@@ -525,156 +547,45 @@ function createFocusableElement(fieldsetEle, focusNode) {
         }
     }
 
+    // A help control can live inside the generated legend. Keep
+    // the question target immediately before that interactive
+    // content so forward Tab navigation does not skip from the target to the
+    // responses or action buttons after the legend.
+    const legendEle = fieldsetEle.querySelector(':scope > legend');
+    const legendPopover = legendEle?.querySelector('[data-bs-toggle="popover"][tabindex="0"]');
+    if (legendPopover && focusableEle.parentElement !== legendEle) {
+        legendEle.prepend(focusableEle);
+    }
+
+    // This target receives deliberate focus after question transitions, but
+    // must not become an extra empty stop in sequential keyboard navigation.
+    focusableEle.setAttribute('tabindex', '-1');
+
     return focusableEle;
 }
 
 /**
- * Close the modal and focus on the question text.
- * Re-build the question text and focus management for screen readers.
- * @param {Event} event - The event object.
+ * Restore question context after an unanswered-response modal closes.
+ * Focus the question target after Bootstrap finishes hiding the modal.
  */
-export function closeModalAndFocusQuestion(event) {
-    const modal = moduleParams.questDiv.querySelector('#softModal');
-    const isWindowClick = event.target === modal;
-    const isButtonClick = event.target.closest('button.btn-close') ||
-        ['modalCloseButton', 'modalContinueButton'].includes(event.target.id);
+export function closeModalAndFocusQuestion() {
+    if (moduleParams.isRenderer) return;
 
-    if (isWindowClick || isButtonClick) {
-        modal.style.display = 'none';
+    // Retain the short modal-settle buffer. For a soft-modal continuation, the newly
+    // activated question is already in the DOM when Bootstrap's hidden event runs.
+    const activeQuestion = moduleParams.questDiv.querySelector('.question.active');
+    if (!activeQuestion) return;
 
-        // Find the active question
-        const activeQuestion = moduleParams.questDiv.querySelector('.question.active');
-        if (activeQuestion) {
-            const questionFocusSet = false;
-            setTimeout(() => {
-                manageAccessibleQuestion(activeQuestion.querySelector('fieldset') || activeQuestion, questionFocusSet);
-            }, 100);
-        }
-    }
-}
+    const accessibleQuestion = activeQuestion.querySelector('fieldset') || activeQuestion;
+    const focusableEle = accessibleQuestion.querySelector('span.screen-reader-focus');
+    // An async question can be active while its host content is still loading.
+    // Its normal prepareQuestionDOM path owns construction and focus once the
+    // final markup is available.
+    if (!focusableEle) return;
 
-// Custom Accessible handling for up/down arrow keys.
-// This ensures focus doesn't trap accessible navigation in lists that have 'Other' text inputs.
-// Only active when moduleParams.isRenderer is false (inactive in the renderer because focus() causes issues).
-export function handleUpDownArrowKeys(event) {
-    if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        focusNextElement(event.target);
-    } else if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        focusPreviousResponse(event.target);
-    }
-}
-
-// Get the next focusable element.
-// Important for JAWS compatibility with text input fields in radio/checkbox groups.
-function focusNextElement(currentElement) {
-    const focusableElements = 'a, button, input:not([type="hidden"]), label, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const allFocusable = Array.from(moduleParams.questDiv.querySelectorAll(focusableElements));
-
-    const currentIndex = allFocusable.indexOf(currentElement);
-    if (currentIndex !== -1) {
-        let newIndex = currentIndex;
-        let nextElement;
-
-        do {
-            newIndex++;
-            nextElement = allFocusable[newIndex];
-        } while (nextElement && (nextElement === currentElement || (nextElement.tagName === 'INPUT' && nextElement.type === 'text' && document.activeElement === nextElement)));
-
-        if (nextElement) {
-            setTimeout(() => {
-                nextElement.focus({ preventScroll: true })
-            }, 0);
-        }
-    }
-}
-
-// Get the previous focuasble 'response' div.
-// Important for JAWS compatibility with text input fields in radio/checkbox groups.
-function focusPreviousResponse(currentElement) {
-    const currentResponse = currentElement.closest('.response');
-    if (currentResponse) {
-        let previousResponse = currentResponse.previousElementSibling;
-        while (previousResponse && !previousResponse.classList.contains('response')) {
-            previousResponse = previousResponse.previousElementSibling;
-        }
-        if (previousResponse) {
-            const focusableElements = previousResponse.querySelectorAll('a, button, input:not([type="hidden"]), label, select, textarea, [tabindex]:not([tabindex="-1"])');
-            if (focusableElements.length > 0) {
-                setTimeout(() => {
-                    focusableElements[0].focus({ preventScroll: true });
-                }, 0);
-            }
-        }
-    }
-    return null;
-}
-
-// Function to handle radio button clicks and changes in lists.
-export function handleRadioCheckboxListEvents(event) {
-    const parentResponseDiv = event.target.closest('.response');
-    const eleToFocus = parentResponseDiv.querySelector('input') || parentResponseDiv;
-    updateAriaLiveSelectionAnnouncer(parentResponseDiv);
     setTimeout(() => {
-        eleToFocus.focus({ preventScroll: true });
-    }, 100);
-}
-
-// JAWS/Windows function to handle radio button clicks and changes in tables.
-// For accessibility. Focus management is seamless in VoiceOver (MAC) but flawed in JAWS (Windows).
-// This manages the screen reader's table focus with a hidden element inside a table cell.
-// The element moves to the cell when a radio button is clicked.
-
-export function handleRadioCheckboxTableEvents(event) {
-    event.preventDefault();
-    const radioOrCheckbox = event.target;
-    const responseCell = radioOrCheckbox.closest('.response');
-
-    if (responseCell) {
-        let currentRow = responseCell.closest('tr');
-
-        switch (radioOrCheckbox.type) {
-            // If it's a radio click, focus the hidden element on the next question (the first column of the next row).
-            case 'radio': {
-
-                // Handle hidden rows and the end of the table.
-                let nextRow = currentRow.nextElementSibling;
-                do {
-                    if (!nextRow) break;
-                    nextRow = nextRow.getAttribute('data-hidden') === 'true' ? nextRow.nextElementSibling : nextRow;
-                } while (nextRow && nextRow.getAttribute('data-hidden') === 'true');
-
-                // If next row exists and it's visible, focus the question (the first cell in the next row).
-                // Otherwise, focus the next question button so the user can continue.
-                nextRow
-                    ? focusNextTableRowQuestion(nextRow)
-                    : focusNextQuestionButton();
-
-                break;
-            }
-
-            // If it's a checkbox click, focus the hidden element on the selection so the user can continue making selections.
-            // If middle of row, place focus back on the checkbox.
-            // If end of last row, focus the next question button so the user can continue.
-            case 'checkbox': {
-                updateAriaLiveSelectionAnnouncerTable(responseCell);
-                const nextCell = responseCell.nextElementSibling;
-                const isLastCellInRow = !nextCell;
-                const isLastRow = !currentRow.nextElementSibling;
-
-                if (isLastRow && isLastCellInRow) {
-                    focusNextQuestionButton();
-                } else {
-                    focusSelectedCheckbox(responseCell);
-                }
-                break;
-            }
-
-            default:
-                moduleParams.errorLogger('RadioCheckboxTableEvent: Invalid event type', event.type);
-        }
-    }
+        focusAccessibleQuestionTarget(focusableEle);
+    }, MODAL_RETURN_FOCUS_DELAY_MS);
 }
 
 // Update the aria-live region with the current selection announcement in a list (for screen readers).
@@ -721,68 +632,6 @@ export function updateAriaLiveSelectionAnnouncerTable(responseDiv) {
     }, 250);
 }
 
-function focusNextTableRowQuestion(nextRow) {
-    setTimeout(() => {
-        const focusHelper = getFocusHelper();
-        if (!focusHelper) return;
-
-        const nextQuestionCell = nextRow.querySelector('th');
-        if (!nextQuestionCell) {
-            moduleParams.errorLogger('RadioCheckboxTableEvent: Next question cell not found', nextRow);
-            return;
-        }
-
-        nextQuestionCell.appendChild(focusHelper);
-        focusHelper.focus({ preventScroll: true });
-    }, 100);
-}
-
-// JAWS/Windows function to focus the next question button after a selection is made.
-// This handles the last row's selection in a radio table and the final selectable cell in a checkbox table.
-function focusNextQuestionButton() {
-    setTimeout(() => {
-        const focusHelper = getFocusHelper();
-        if (!focusHelper) return;
-
-        const activeQuestion = moduleParams.questDiv.querySelector('.question.active');
-        if (!activeQuestion) {
-            moduleParams.errorLogger('Active question not found', document.activeElement);
-            return;
-        }
-
-        const nextQuestionButton = activeQuestion.querySelector('button.next');
-        if (!nextQuestionButton) {
-            moduleParams.errorLogger('Next question button not found', activeQuestion);
-            return;
-        }
-
-        nextQuestionButton.appendChild(focusHelper);
-        focusHelper.focus({ preventScroll: true });
-    }, 100);
-}
-
-// JAWS/Windows function to re-focus a checkbox in a table after it is selected.
-function focusSelectedCheckbox(responseCell) {
-    setTimeout(() => {
-        const focusHelper = getFocusHelper();
-        if (!focusHelper) return;
-
-        responseCell.appendChild(focusHelper);
-        focusHelper.focus({ preventScroll: true });
-    }, 100);
-}
-
-// JAWS/Windows function for accessible focus management.
-function getFocusHelper() {
-    const focusHelper = moduleParams.questDiv.querySelector('#srFocusHelper');
-    if (!focusHelper) {
-        moduleParams.errorLogger('Focus helper not found');
-        return null;
-    }
-
-    return focusHelper;
-}
-
 // Clear the selection accnouncer when a user is navigating between questions (next/back buttons)
 export function clearSelectionAnnouncement() {
     const liveRegion = moduleParams.questDiv.querySelector('#ariaLiveSelectionAnnouncer');
@@ -813,4 +662,3 @@ function handleSummaryUIEdgeCases(fieldset, questionID) {
         }
     }
 }
-

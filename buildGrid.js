@@ -40,7 +40,6 @@ function buildHtmlTable(grid_obj, gridButtonDiv) {
   let grid_html = `
     <form ${grid_obj.args} class="container question" data-grid="true" ${gridPrompt} role="form">
       <div>${grid_text_displayif(shared_text)}</div>
-      <span id="srFocusHelper" tabindex="-1" style="position: absolute; width: 1px; height: 1px; overflow: hidden;"></span>
         <table class="quest-grid table-layout table">`;
   
   // Build the table header row with the question text and response headers. Start with a placeholder for the row header.

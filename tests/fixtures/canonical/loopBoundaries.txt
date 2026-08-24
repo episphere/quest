@@ -1,0 +1,12 @@
+// 0/1/2/25 iteration boundary fixture.
+{"name":"TEST_LOOP_BOUNDARIES"}
+
+[D_900000001!] How many loop iterations should run?
+|__|__|id=D_900000001 min=0 max=25|
+
+<loop max=25>
+[ITEM?,displayif=greaterThanOrEqual(D_900000001,#loop)] Confirm the {##} loop iteration.
+(1) Continue
+</loop>
+
+[END,end] Loop navigation complete.
