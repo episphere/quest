@@ -7,6 +7,9 @@ Browser automation can inspect DOM semantics, focus, state, and live regions, bu
 For the keyboard-only command guide, see
 [`keyboardNavigation.md`](keyboardNavigation.md).
 
+For VoiceOvcer testing, see
+[Quest VoiceOver guide](voiceOverTestingGuide.md). The matrix below is the separate developer protocol using standalone test pages.
+
 ## Test boundary
 
 - Use only non-production participant data and the canonical fixtures under `tests/fixtures/canonical/`.
