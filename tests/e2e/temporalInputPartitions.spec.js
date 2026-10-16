@@ -37,6 +37,18 @@ test.describe('temporal and dynamic numeric validation @core @canonical', () => 
 
   for (const input of INPUTS) {
     test(`${input.type} accepts its valid boundary values and rejects its out-of-range values`, async ({ page }) => {
+      if (input.type === 'date' || input.type === 'time') {
+        const supportsNativeInput = await page.evaluate((type) => {
+          const control = document.createElement('input');
+          control.type = type;
+          return control.type === type;
+        }, input.type);
+        test.skip(
+          !supportsNativeInput,
+          `This browser engine exposes ${input.type} inputs as text and cannot exercise native range validation.`,
+        );
+      }
+
       for (const [value, valid] of input.values) {
         await openParticipant(page, { markdown: surveyFor(input), previousResults: { age: '45' } });
         const control = activeQuestion(page, input.id).locator(`#${input.id}`);

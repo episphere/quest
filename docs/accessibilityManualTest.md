@@ -7,8 +7,9 @@ Browser automation can inspect DOM semantics, focus, state, and live regions, bu
 For the keyboard-only command guide, see
 [`keyboardNavigation.md`](keyboardNavigation.md).
 
-For VoiceOvcer testing, see
-[Quest VoiceOver guide](voiceOverTestingGuide.md). The matrix below is the separate developer protocol using standalone test pages.
+For VoiceOver and JAWS testing, see the
+[Quest VoiceOver guide](voiceOverTestingGuide.md) and
+[Quest JAWS guide](jawsTestingGuide.md).
 
 ## Test boundary
 
@@ -147,6 +148,12 @@ Use `BLOCKED` only when an external condition prevents the step. Use `NOT RUN` o
 ## Keyboard-only baseline — issue #1587
 
 Run KBD-MAC and KBD-WIN without a screen reader. Repeat in both Chrome and Edge for KBD-WIN.
+
+Back clears responses in the current form being left, then returns to the
+earlier question with its saved answers. Moving forward again does not restore
+the cleared responses from the form that was left. For example, entering a
+nickname, going Back, and then going forward again should show an empty nickname
+field.
 
 | Step | Action | Expected result |
 | --- | --- | --- |
