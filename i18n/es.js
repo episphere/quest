@@ -20,6 +20,7 @@ const es = {
     "submitButton": "Enviar",
     "cancelButton": "Cancelar",
     "closeButton": "Cerrar",
+    "progressBarLabel": "Progreso de la encuesta",
 
     "yes": "Sí",
     "no": "No",

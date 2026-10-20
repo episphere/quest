@@ -24,7 +24,7 @@
 [COMBINED_TEXTAREA?] Radio with an embedded text area and skip.
 (1:COMBINED_TEXTAREA_GROUP|COMBINED_TEXTAREA_LABEL) Other details <textarea id="COMBINED_TEXTAREA_VALUE"></textarea> -> EMAIL
 
-[CONFIRM?] Authored confirmation relationship.
+[CONFIRM?] Confirmation relationship.
 <input type="text" id="CONFIRM_ORIGINAL">
 <input type="text" id="CONFIRM_COPY" confirm="CONFIRM_ORIGINAL">
 

@@ -17,26 +17,88 @@ function appendInput({ type = 'text', value = '', attributes = {}, className = '
 
 describe('validation through exported behavior', () => {
   let validateInput;
+  let validationError;
+  let clearValidationError;
   let moduleParams;
 
   beforeEach(async () => {
     ({ questionnaire: { moduleParams } } = await loadFreshModuleGraph());
-    ({ validateInput } = await import('../../validate.js'));
+    ({ validateInput, validationError, clearValidationError } = await import('../../validate.js'));
   });
 
   it('marks required empty values invalid and clears the message after correction', () => {
-    const { form, input } = appendInput({ type: 'text', attributes: { 'data-required': true } });
+    const { form, input } = appendInput({
+      type: 'text',
+      attributes: {
+        'data-required': true,
+        'aria-describedby': 'existing-hint extra-hint',
+      },
+    });
+    input.insertAdjacentHTML('beforebegin', '<span id="existing-hint"></span><span id="extra-hint"></span>');
 
     validateInput(input);
+    const error = input.nextElementSibling;
     expect(input.classList).toContain('invalid');
     expect(form.classList).toContain('invalid');
-    expect(input.nextElementSibling.firstElementChild.innerText).toContain('Please fill out this field');
+    expect(error.firstElementChild.innerText).toContain('Please fill out this field');
+    expect(error.getAttribute('role')).toBe('alert');
+    expect(error.getAttribute('aria-atomic')).toBe('true');
+    expect(error.id).toMatch(/^quest-validation-error-/);
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(input.getAttribute('aria-describedby').split(/\s+/)).toEqual([
+      'existing-hint',
+      'extra-hint',
+      error.id,
+    ]);
 
     input.value = 'valid';
     validateInput(input);
     expect(input.classList).not.toContain('invalid');
     expect(form.classList).not.toContain('invalid');
     expect(input.nextElementSibling).toBeNull();
+    expect(input.hasAttribute('aria-invalid')).toBe(false);
+    expect(input.getAttribute('aria-describedby')).toBe('existing-hint extra-hint');
+  });
+
+  it('updates one live error relationship and restores the existing invalid state exactly', () => {
+    const { input } = appendInput({
+      attributes: {
+        'aria-describedby': 'existing-hint',
+        'aria-invalid': 'grammar',
+      },
+    });
+
+    validationError(input, moduleParams.i18n.validationInputEmptyField);
+    const error = input.nextElementSibling;
+    validationError(input, moduleParams.i18n.validationInputEmptyField);
+
+    expect(input.parentElement.querySelectorAll('.validation-container')).toHaveLength(1);
+    expect(input.getAttribute('aria-describedby').split(/\s+/)).toEqual(['existing-hint', error.id]);
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+
+    clearValidationError(input);
+    expect(input.getAttribute('aria-describedby')).toBe('existing-hint');
+    expect(input.getAttribute('aria-invalid')).toBe('grammar');
+  });
+
+  it('can return a static programmatic error target without live-region semantics', () => {
+    const { input } = appendInput();
+
+    const error = validationError(
+      input,
+      moduleParams.i18n.validationInputEmptyField,
+      [input],
+      { liveRegion: false },
+    );
+    error.tabIndex = -1;
+
+    expect(error).toBe(input.nextElementSibling);
+    expect(error.firstElementChild.innerText).toContain(moduleParams.i18n.validationInputEmptyField);
+    expect(error.tabIndex).toBe(-1);
+    expect(error.hasAttribute('role')).toBe(false);
+    expect(error.hasAttribute('aria-atomic')).toBe(false);
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(input.getAttribute('aria-describedby').split(/\s+/)).toContain(error.id);
   });
 
   it.each([
@@ -114,7 +176,7 @@ describe('validation through exported behavior', () => {
     expect(input.nextElementSibling.firstElementChild.innerText).toContain(message);
   });
 
-  it('accepts a date inside its authored boundaries', () => {
+  it('accepts a date inside its configured boundaries', () => {
     const { input } = appendInput({
       type: 'date',
       value: '2026-06-15',
@@ -147,7 +209,8 @@ describe('validation through exported behavior', () => {
     form.dataset.minCount = '2';
     form.dataset.maxCount = '2';
     form.innerHTML = `
-      <div class="response"><input type="checkbox" name="CHOICES" value="1" checked></div>
+      <span id="checkbox-hint"></span>
+      <div class="response"><input type="checkbox" name="CHOICES" value="1" checked aria-describedby="checkbox-hint"></div>
       <div class="response"><input type="checkbox" name="CHOICES" value="2"></div>
       <div class="response"><input type="checkbox" name="CHOICES" value="3"></div>
     `;
@@ -156,15 +219,29 @@ describe('validation through exported behavior', () => {
     const lastResponse = form.lastElementChild;
 
     validateInput(inputs[0]);
-    expect(lastResponse.nextElementSibling.firstElementChild.innerText).toContain('selected 1');
+    const minimumError = lastResponse.nextElementSibling;
+    expect(minimumError.firstElementChild.innerText).toContain('selected 1');
+    inputs.forEach((input) => {
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+      expect(input.getAttribute('aria-describedby').split(/\s+/)).toContain(minimumError.id);
+    });
 
     inputs[1].checked = true;
     validateInput(inputs[1]);
     expect(lastResponse.classList).not.toContain('invalid');
+    inputs.forEach((input) => expect(input.hasAttribute('aria-invalid')).toBe(false));
+    expect(inputs[0].getAttribute('aria-describedby')).toBe('checkbox-hint');
+    expect(inputs[1].hasAttribute('aria-describedby')).toBe(false);
+    expect(inputs[2].hasAttribute('aria-describedby')).toBe(false);
 
     inputs[2].checked = true;
     validateInput(inputs[2]);
-    expect(lastResponse.nextElementSibling.firstElementChild.innerText).toContain('selected 3');
+    const maximumError = lastResponse.nextElementSibling;
+    expect(maximumError.firstElementChild.innerText).toContain('selected 3');
+    inputs.forEach((input) => {
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+      expect(input.getAttribute('aria-describedby').split(/\s+/)).toContain(maximumError.id);
+    });
   });
 
   it('adds mismatch errors to both confirmation fields and clears both after correction', () => {
@@ -182,11 +259,16 @@ describe('validation through exported behavior', () => {
     expect(original.classList).toContain('invalid');
     expect(confirmation.classList).toContain('invalid');
     expect(confirmation.nextElementSibling.firstElementChild.innerText).toContain('do not match');
+    expect(original.getAttribute('aria-invalid')).toBe('true');
+    expect(confirmation.getAttribute('aria-invalid')).toBe('true');
+    expect(original.getAttribute('aria-describedby')).not.toBe(confirmation.getAttribute('aria-describedby'));
 
     confirmation.value = 'first';
     validateInput(confirmation);
     expect(original.classList).not.toContain('invalid');
     expect(confirmation.classList).not.toContain('invalid');
+    expect(original.hasAttribute('aria-invalid')).toBe(false);
+    expect(confirmation.hasAttribute('aria-invalid')).toBe(false);
   });
 
   it('intentionally skips validation for native radio and time controls', () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { renderFreshQuest } from '../helpers/questRuntime.js';
 
-const authoredMarkupSurvey = `
+const markupSurvey = `
 {"name":"MARKUP_FIDELITY"}
 
 [SOURCE] Source response.
@@ -11,7 +11,7 @@ const authoredMarkupSurvey = `
 
 First production-style paragraph keeps <i>italic detail</i> and <u>underlined detail</u>.
 
-Second production-style paragraph contains <b>|displayif=doesNotEqual(SOURCE,"")|{$SOURCE_VALUE}|</b> and includes |popup|more information|Help title|Authored popup detail|.
+Second production-style paragraph contains <b>|displayif=doesNotEqual(SOURCE,"")|{$SOURCE_VALUE}|</b> and includes |popup|more information|Help title|Popup detail|.
 
 (1) Keep later response
 (2) Clear later response
@@ -114,9 +114,9 @@ function updateSource(input, value) {
   input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
 }
 
-describe('authored question markup fidelity', () => {
+describe('question markup fidelity', () => {
   it('keeps production-style rich markup stable through navigation and source edits', async () => {
-    const quest = await renderFreshQuest({ markdown: authoredMarkupSurvey });
+    const quest = await renderFreshQuest({ markdown: markupSurvey });
     const sourceInput = (await activeQuestion(quest, 'SOURCE')).querySelector('#SOURCE_VALUE');
 
     updateSource(sourceInput, 'Original participant');
@@ -151,7 +151,7 @@ describe('authored question markup fidelity', () => {
       popover: {
         text: 'more information',
         title: 'Help title',
-        content: 'Authored popup detail',
+        content: 'Popup detail',
         role: 'button',
         tabindex: '0',
         trigger: 'manual',

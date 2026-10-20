@@ -75,7 +75,7 @@ test.describe('locked production response piping @corpus', () => {
       await goBack(page);
 
       await expect(activeQuestion(page, firstNameQuestion)).toBeVisible();
-      // The generated form carries the loop suffix, while the authored
+      // The generated form carries the loop suffix, while the source
       // nickname textbox retains its source input ID.
       const nameInput = activeQuestion(page, firstNameQuestion).locator('input[type="text"]');
       await nameInput.fill(nameAfterEdit);

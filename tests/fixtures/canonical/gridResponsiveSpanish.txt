@@ -1,0 +1,8 @@
+// Spanish radio-grid fixture for accessible row and response naming.
+{"name":"TEST_GRID_SPANISH"}
+
+[GRID_LEAD] La siguiente pregunta usa una cuadrícula de respuestas.
+
+|grid?|id="GRID_RATE_ES"|¿Con qué frecuencia realiza cada actividad?|[GRID_CAMINAR] Caminar con {$u:firstName};[GRID_BICICLETA] Andar en bicicleta;]|[(1: Nunca)(2: A veces)(3: A menudo)]|
+
+[END,end] Ha llegado al final de esta encuesta de prueba. Envíe sus respuestas.

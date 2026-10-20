@@ -93,6 +93,25 @@ beforeEach(() => {
   document.documentElement.lang = 'en';
   document.body.innerHTML = '';
 
+  let nextAnimationFrameId = 1;
+  const animationFrameTimers = new Map();
+  vi.stubGlobal('requestAnimationFrame', vi.fn((callback) => {
+    const animationFrameId = nextAnimationFrameId++;
+    const timerId = window.setTimeout(() => {
+      animationFrameTimers.delete(animationFrameId);
+      callback(window.performance.now());
+    }, 16);
+    animationFrameTimers.set(animationFrameId, timerId);
+    return animationFrameId;
+  }));
+  vi.stubGlobal('cancelAnimationFrame', vi.fn((animationFrameId) => {
+    const timerId = animationFrameTimers.get(animationFrameId);
+    if (timerId === undefined) return;
+
+    window.clearTimeout(timerId);
+    animationFrameTimers.delete(animationFrameId);
+  }));
+
   globalThis.bootstrap = {
     Modal: class ModalStub extends BootstrapComponentStub {
       static instances = new WeakMap();
@@ -184,6 +203,9 @@ afterEach(() => {
     unexpectedNetworkAttempts,
     'jsdom attempted network access without an explicit per-test host-boundary stub',
   ).toEqual([]);
+  // Cancel a pending focus handoff so its document listeners do not outlive
+  // the test when fake timers are cleared below.
+  document.dispatchEvent(new Event('pointerdown'));
   vi.clearAllTimers();
   vi.useRealTimers();
   vi.unstubAllGlobals();

@@ -40,14 +40,7 @@ function treeThrough(previousQuestionId, currentQuestionId) {
   });
 }
 
-async function waitForQuestionFocus(page, questionId) {
-  // Let Quest's intentional delayed question-focus handoff finish before
-  // Playwright begins a multi-field entry sequence.
-  await expect(activeQuestion(page, questionId).locator('.screen-reader-focus')).toBeFocused();
-}
-
 async function fillCompletePrimaryAddress(page) {
-  await waitForQuestionFocus(page, 'D_121490150');
   const question = activeQuestion(page, 'D_121490150');
   await question.locator('#D_255248624').fill('123');
   await question.locator('#D_945532934').fill('Main Street');
@@ -71,6 +64,65 @@ test.describe('Module 4 residential-address paths @canonical @corpus', () => {
   test.beforeEach(async ({}, testInfo) => {
     test.skip(!DESKTOP_ENGINES.has(testInfo.project.name), 'Address paths run in the desktop browser matrix.');
   });
+
+  for (const addressCase of [
+    {
+      locale: 'English',
+      markdown: englishAddressFixture,
+      lang: 'en',
+      names: [
+        'Street number',
+        'Full Street name',
+        'Apartment, suite, unit, building, etc.',
+        'City',
+        'State/Province',
+        'Zip code',
+        'Country',
+      ],
+      backupNames: ['City:', 'State/Province:', 'Zip code:', 'Country:'],
+    },
+    {
+      locale: 'Spanish',
+      markdown: spanishAddressFixture,
+      lang: 'es',
+      names: [
+        'Número de la calle',
+        'Nombre completo de la calle',
+        'Apartamento, suite, unidad, edificio, etc.',
+        'Ciudad',
+        'Estado o provincia',
+        'Código postal',
+        'País',
+      ],
+      backupNames: ['Ciudad:', 'Estado o provincia:', 'Código postal:', 'País:'],
+    },
+  ]) {
+    test(`gives every ${addressCase.locale} address field its accessible name`, async ({ page }) => {
+      await openParticipant(page, { markdown: addressCase.markdown, lang: addressCase.lang });
+      const addressInputs = activeQuestion(page, 'D_121490150').locator('input[type="text"]');
+      await expect(addressInputs).toHaveCount(addressCase.names.length);
+
+      for (const [index, accessibleName] of addressCase.names.entries()) {
+        await expect(addressInputs.nth(index)).toHaveAccessibleName(accessibleName);
+      }
+
+      expect(await addressInputs.evaluateAll((inputs) => (
+        new Set(inputs.map((input) => input.getAttribute('aria-label'))).size
+      ))).toBe(addressCase.names.length);
+
+      await goNext(page);
+      await continueWithoutAnswering(page, addressCase.lang);
+      const backupInputs = activeQuestion(page, 'D_920576363').locator('input[type="text"]:visible');
+      await expect(backupInputs).toHaveCount(addressCase.backupNames.length);
+      for (const [index, accessibleName] of addressCase.backupNames.entries()) {
+        await expect(backupInputs.nth(index)).toHaveAccessibleName(accessibleName);
+      }
+      expect(await backupInputs.evaluateAll((inputs) => (
+        new Set(inputs.map((input) => input.getAttribute('aria-label'))).size
+      ))).toBe(addressCase.backupNames.length);
+      await expectHealthyHarness(page);
+    });
+  }
 
   test('keeps a complete primary address out of backup and intersection fallbacks, then stores and reuses it', async ({ page }) => {
     await openParticipant(page, { markdown: englishAddressFixture });
@@ -119,11 +171,9 @@ test.describe('Module 4 residential-address paths @canonical @corpus', () => {
     await goNext(page);
     await continueWithoutAnswering(page);
     await expect(activeQuestion(page, 'D_920576363')).toBeVisible();
-    await waitForQuestionFocus(page, 'D_920576363');
     await activeQuestion(page, 'D_920576363').locator('#D_725583683').fill('Lakeview');
     await goNext(page);
     await expect(activeQuestion(page, 'D_804504024')).toBeVisible();
-    await waitForQuestionFocus(page, 'D_804504024');
     await activeQuestion(page, 'D_804504024').locator('#D_105043152').fill('First Street');
     await activeQuestion(page, 'D_804504024').locator('#D_543135391').fill('Second Avenue');
     await goNext(page);
@@ -142,12 +192,10 @@ test.describe('Module 4 residential-address paths @canonical @corpus', () => {
 
   test('uses missing-field backup for a partial street address without offering the cross-street fallback', async ({ page }) => {
     await openParticipant(page, { markdown: englishAddressFixture });
-    await waitForQuestionFocus(page, 'D_121490150');
     await activeQuestion(page, 'D_121490150').locator('#D_255248624').fill('44');
     await activeQuestion(page, 'D_121490150').locator('#D_945532934').fill('Partial Place');
     await goNext(page);
     await expect(activeQuestion(page, 'D_920576363')).toBeVisible();
-    await waitForQuestionFocus(page, 'D_920576363');
     await activeQuestion(page, 'D_920576363').locator('#D_725583683').fill('Lakeview');
     await goNext(page);
 

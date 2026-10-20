@@ -12,6 +12,248 @@ const elementIdRegex = /id=([^\s]+)/;
 const embeddedHTMLQuestionIDRegex = /id="([^"]+)"/;
 const displayIfRegex = /displayif\s*=\s*.*/;
 const endMatchRegex = /end\s*=\s*(.*)?/;
+const accessibleNameRegex = /(?:^|\s)aria-(?:label|labelledby)\s*=/i;
+const captionBoundaryRegex = /<br\s*\/?\s*>(?:\r?\n)?|\r?\n/i;
+
+function decodeBasicHTMLEntities(value) {
+  return value
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#(?:39|x27);/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>');
+}
+
+function normalizeQuestCondition(condition) {
+  if (!condition) return '';
+  let normalized;
+  try {
+    normalized = decodeURIComponent(condition);
+  } catch {
+    normalized = condition;
+  }
+  normalized = normalized.trim().replace(/"/g, "'");
+
+  let removedOuterParentheses = true;
+  while (removedOuterParentheses && normalized.startsWith('(') && normalized.endsWith(')')) {
+    removedOuterParentheses = false;
+    let depth = 0;
+    for (let index = 0; index < normalized.length; index += 1) {
+      if (normalized[index] === '(') depth += 1;
+      if (normalized[index] === ')') depth -= 1;
+      if (depth === 0 && index < normalized.length - 1) break;
+      if (depth === 0 && index === normalized.length - 1) {
+        normalized = normalized.slice(1, -1).trim();
+        removedOuterParentheses = true;
+      }
+    }
+  }
+
+  return normalized.replace(/\s+/g, '');
+}
+
+function controlWrapperCondition(before) {
+  const currentLine = String(before ?? '').split(captionBoundaryRegex).at(-1) ?? '';
+  return currentLine.match(/\|displayif=([^|]+)\|\s*$/i)?.[1] ?? '';
+}
+
+function effectiveControlCondition(fullmatch, before) {
+  const optionCondition = fullmatch.match(
+    /\bdisplayif\s*=\s*(.+?)(?=\s+[A-Za-z][\w-]*\s*=|\|?$)/i,
+  )?.[1];
+  if (optionCondition) return normalizeQuestCondition(optionCondition);
+
+  return normalizeQuestCondition(controlWrapperCondition(before));
+}
+
+function normalizeCaptionCandidate(fragment, effectiveCondition = '') {
+  let candidate = String(fragment ?? '');
+
+  // Before choice parsing, remove the numeric choice token. After choice parsing, retain only the
+  // still-open label's visible text. Never serialize the surrounding response HTML into the nested control's name.
+  if (/<(?:\/?label\b|div\b[^>]*\bclass\s*=\s*(?:"[^"]*\bresponse\b[^"]*"|'[^']*\bresponse\b[^']*'))/i.test(candidate)) {
+    const openLabelText = candidate.match(/<label\b[^>]*>([^<]*)$/i)?.[1];
+    const closingLabelText = candidate.match(/^([^<]*)<\/label>/i)?.[1];
+    if (!openLabelText && !closingLabelText) return '';
+    candidate = openLabelText ?? closingLabelText;
+  }
+  candidate = candidate.replace(/^\s*(?:\(\d+[^)]*\)|\[\d+[^\]]*\])\s*/, '');
+
+  // A piped response is live participant data, not part of the control's name.
+  // Remove the generated forid subtree while retaining any stable caption text
+  // on the same line (e.g., "City:").
+  candidate = candidate.replace(
+    /<span\b[^>]*\bforid\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)[^>]*>[\s\S]*?<\/span>/gi,
+    '',
+  );
+
+  // Include fixed conditional wording only when the control itself has the
+  // same effective condition. Otherwise discard the conditional phrase while
+  // retaining stable text around it. This avoids freezing a hidden alternate
+  // phrase into the accessible name.
+  let rejectedConditionalCaption = false;
+  candidate = candidate.replace(
+    /\|displayif=([^|]+)\|([^|]*)\|/gi,
+    (_, condition, text) => {
+      if (effectiveCondition && normalizeQuestCondition(condition) === effectiveCondition) {
+        return text;
+      }
+      if (text.replace(/<[^>]*>/g, '').trim()) rejectedConditionalCaption = true;
+      return '';
+    },
+  );
+  if (rejectedConditionalCaption) return '';
+
+  // Reject unmatched or generated dynamic markup (avoid leaking Quest
+  // syntax/attributes into an ARIA attribute).
+  if (/\b(?:displayif|forid|data-[\w-]+)\s*=/i.test(candidate) || candidate.includes('|')) return '';
+
+  return decodeBasicHTMLEntities(candidate)
+    .replace(/<[^>]*>/g, '')
+    // A leading # is commonly an authoring marker. Preserve "# of …" because
+    // it is meaningful visible wording (number of), but remove it elsewhere.
+    .replace(/^\s*#(?!\s*of\b)\s*/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeAdjacentCaption(fragment, edge, effectiveCondition = '') {
+  const segments = String(fragment ?? '').split(captionBoundaryRegex);
+  const candidate = edge === 'before' ? segments.at(-1) : segments[0];
+  const normalized = normalizeCaptionCandidate(candidate, effectiveCondition);
+
+  return normalized.startsWith('->') ? '' : normalized;
+}
+
+function normalizePreviousCaption(fragment, effectiveCondition = '') {
+  const segments = String(fragment ?? '').split(captionBoundaryRegex);
+  if (segments.length < 2) return '';
+  const candidate = segments.at(-2);
+  // Crossing a line boundary is only safe for Quest's conditional row
+  // pattern. Otherwise the previous line may be the overall question prompt,
+  // not a local control caption.
+  if (!/\b(?:displayif|forid)\s*=/i.test(candidate ?? '')) return '';
+  return normalizeCaptionCandidate(candidate, effectiveCondition);
+}
+
+function generatedControlName(before, after, fallback, effectiveCondition = '') {
+  const afterCaption = normalizeAdjacentCaption(after, 'after', effectiveCondition);
+  const beforeCaption = normalizeAdjacentCaption(before, 'before', effectiveCondition);
+  const previousCaption = beforeCaption
+    ? ''
+    : normalizePreviousCaption(before, effectiveCondition);
+
+  if (beforeCaption && afterCaption) return `${beforeCaption}, ${afterCaption}`;
+  if (previousCaption && afterCaption) return `${previousCaption}, ${afterCaption}`;
+  return afterCaption || beforeCaption || previousCaption || fallback;
+}
+
+function generatedControlNameFromReplace(fullmatch, offset, source, fallback) {
+  const before = source.slice(0, offset);
+  return generatedControlName(
+    before,
+    source.slice(offset + fullmatch.length),
+    fallback,
+    effectiveControlCondition(fullmatch, before),
+  );
+}
+
+function escapeChoiceDelimiters(value) {
+  return String(value)
+    .replace(/\(/g, '&#40;')
+    .replace(/\)/g, '&#41;')
+    .replace(/\[/g, '&#91;')
+    .replace(/\]/g, '&#93;');
+}
+
+function escapeAttribute(value) {
+  const escapedValue = String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Choice parsing runs after several scalar expansions. Encode numeric
+  // choice delimiters so later `(1)` / `[2]` parsers cannot rewrite text
+  // inside an accessible-name attribute. Browsers decode the original text.
+  return escapeChoiceDelimiters(escapedValue);
+}
+
+function addGeneratedAccessibleName(options, name) {
+  if (accessibleNameRegex.test(options)) return options;
+  return `${options} aria-label="${escapeAttribute(name)}"`.trim();
+}
+
+function extractAccessibleNameOptions(options) {
+  const accessibleNameOptions = [];
+  const parseableOptions = String(options ?? '').replace(
+    /(?:^|\s)(aria-(?:label|labelledby)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s]+))/gi,
+    (_, option) => {
+      accessibleNameOptions.push(option.trim());
+      return ' ';
+    },
+  ).trim();
+
+  return {
+    parseableOptions,
+    accessibleNameOptions: accessibleNameOptions.join(' '),
+  };
+}
+
+function extractAriaDescribedByOptions(options) {
+  const describedByTokens = [];
+  const parseableOptions = String(options ?? '').replace(
+    /(?:^|\s)aria-describedby\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s]+))/gi,
+    (_, doubleQuotedValue, singleQuotedValue, unquotedValue) => {
+      const value = doubleQuotedValue ?? singleQuotedValue ?? unquotedValue ?? '';
+      describedByTokens.push(...value.split(/\s+/).filter(Boolean));
+      return ' ';
+    },
+  ).trim();
+
+  return {
+    parseableOptions,
+    describedByTokens: [...new Set(describedByTokens)],
+  };
+}
+
+function tokenizeAccessibleLabelValues(source) {
+  const originalSource = String(source ?? '');
+  const replacements = [];
+  let tokenIndex = 0;
+
+  const text = originalSource.replace(
+    /(^|[\s|])(aria-label\s*=\s*)(?:"([^"]*)"|'([^']*)'|([^\s|>]+))/gi,
+    (_, boundary, assignment, doubleQuotedValue, singleQuotedValue, unquotedValue) => {
+      let token;
+      do {
+        // Hyphens make this impossible under Quest's question-ID grammar, so
+        // restoring the token cannot accidentally rewrite a generated name.
+        token = `QUEST-A11Y-OPTION-${tokenIndex}-END`;
+        tokenIndex += 1;
+      } while (originalSource.includes(token));
+
+      const value = doubleQuotedValue ?? singleQuotedValue ?? unquotedValue ?? '';
+      const quote = doubleQuotedValue !== undefined
+        ? '"'
+        : singleQuotedValue !== undefined
+          ? "'"
+          : '';
+      replacements.push({ token, value });
+
+      return `${boundary}${assignment}${quote}${token}${quote}`;
+    },
+  );
+
+  return {
+    text,
+    restore: (processedText) => replacements.reduce(
+      (restoredText, { token, value }) => restoredText.replaceAll(token, () => value),
+      processedText,
+    ),
+  };
+}
 
 export class QuestionProcessor {
   constructor(markdown, precalculated_values, i18n) {
@@ -706,6 +948,12 @@ export class QuestionProcessor {
       .replace(/(?:\r\n|\r|\n)/g, "<br>")
       .replace(/\[_#\]/g, "");
 
+    // Quest's legacy choice transforms scan the question as a string and can
+    // mistake `(1)` or `[2]` inside an aria-label for real responses.
+    // Hide only those label values during parsing, then restore their exact text.
+    const accessibleLabels = tokenizeAccessibleLabelValues(questText);
+    questText = accessibleLabels.text;
+
     let counter = 1;
     questText = questText.replace(/\[\]/g, function () {
       let t = "[" + counter.toString() + "]";
@@ -812,8 +1060,12 @@ export class QuestionProcessor {
 
     // replace |@| with an email input
     questText = questText.replace(/\|@\|(?:([^\|\<]+[^\|]+)\|)?/g, fEmail);
-    function fEmail(fullmatch, opts) {
-      const { options } = guaranteeIdSet(opts, "email");
+    function fEmail(fullmatch, opts, offset, source) {
+      let { options } = guaranteeIdSet(opts, "email");
+      options = addGeneratedAccessibleName(
+        options,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.enterValue),
+      );
       return `<input type='email' ${options} placeholder="user@example.com"></input>`;
     }
 
@@ -821,16 +1073,20 @@ export class QuestionProcessor {
     questText = questText.replace(/\|date\|(?:([^\|\<]+[^\|]+)\|)?/g, fDate);
     questText = questText.replace(/\|month\|(?:([^\|]+)\|)?/g, fMonth);
 
-    function fDate(fullmatch, opts) {
+    function fDate(fullmatch, opts, offset, source) {
       let type = fullmatch.match(/[^|]+/);
       let { options, elementId } = guaranteeIdSet(opts, type);
-      let optionObj = paramSplit(options);
+      const {
+        parseableOptions,
+        accessibleNameOptions,
+      } = extractAccessibleNameOptions(options);
+      let optionObj = paramSplit(parseableOptions);
       // can't have the value uri encoded... 
       if (Object.prototype.hasOwnProperty.call(optionObj, "value")) {
           optionObj.value = decodeURIComponent(optionObj.value);
       }
   
-      options = reduceObj(optionObj);
+      options = `${reduceObj(optionObj)} ${accessibleNameOptions}`.trim();
 
       if (Object.prototype.hasOwnProperty.call(optionObj, "min")) {
         options = options + ` data-min-date-uneval=${optionObj.min}`
@@ -839,14 +1095,18 @@ export class QuestionProcessor {
         options = options + `  data-max-date-uneval=${optionObj.max}`
       }
       
-      const descText = type === 'month' ? "Type month and four-digit year" : type === 'date' ? "Select a date" : "Enter the month and year in format: four digit year - two digit month. YYYY-MM";
+      const descText = i18n.enterValue;
   
       // Adding placeholders and aria-describedby attributes in one line
-      options += ` placeholder='Select ${type}' aria-describedby='${elementId}-desc' aria-label='Select ${type}'`;
+      options += ` placeholder='Select ${type}' aria-describedby='${elementId}-desc'`;
+      options = addGeneratedAccessibleName(
+        options,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.enterValue),
+      );
       return `<input type='${type}' ${options}><span id='${elementId}-desc' class='visually-hidden'>${descText}</span>`;
     }
 
-    function fMonth(fullmatch, opts) {
+    function fMonth(fullmatch, opts, offset, source) {
       const type = fullmatch.match(/[^|]+/);
       const { options, elementId } = guaranteeIdSet(opts, type);
       const questionIDPrefix = questionID.match(idWithLoopSuffixRegex)[1];
@@ -870,8 +1130,11 @@ export class QuestionProcessor {
         unevaluatedDates.push(`data-max-date-uneval=${optionObj.max}`);
       }
   
-      const descText = "Enter the month and year in format: four digit year - two digit month. YYYY-MM";
-      const finalOptions = `${updatedOptions} ${unevaluatedDates.join(' ')} placeholder='Select month' aria-describedby='${elementId}-desc' aria-label='Select month'`;
+      const descText = i18n.validationMonthFormat;
+      const finalOptions = addGeneratedAccessibleName(
+        `${updatedOptions} ${unevaluatedDates.join(' ')} placeholder='Select month' aria-describedby='${elementId}-desc'`,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.enterValue),
+      );
 
       return `<input type='${type}' ${finalOptions}><span id='${elementId}-desc' class='visually-hidden'>${descText}</span>`;
     }
@@ -879,36 +1142,56 @@ export class QuestionProcessor {
     // replace |tel| with phone input
 
     questText = questText.replace(/\|tel\|(?:([^\|\<]+[^\|]+)\|)?/g, fPhone);
-    function fPhone(fullmatch, opts) {
-      const { options } = guaranteeIdSet(opts, "tel");
+    function fPhone(fullmatch, opts, offset, source) {
+      let { options } = guaranteeIdSet(opts, "tel");
+      options = addGeneratedAccessibleName(
+        options,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.enterValue),
+      );
       return `<input type='tel' ${options} pattern="[0-9]{3}-?[0-9]{3}-?[0-9]{4}" maxlength="12" placeholder='###-###-####'></input>`;
     }
 
     // replace |SSN| with SSN input
     questText = questText.replace(/\|SSN\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSN);
-    function fSSN(fullmatch, opts) {
-      const { options } = guaranteeIdSet(opts, "SSN");
+    function fSSN(fullmatch, opts, offset, source) {
+      let { options } = guaranteeIdSet(opts, "SSN");
+      options = addGeneratedAccessibleName(
+        options,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.enterValue),
+      );
       return `<input type='text' ${options} id="SSN" class="SSN" inputmode="numeric" maxlength="11" pattern="[0-9]{3}-?[0-9]{2}-?[0-9]{4}"   placeholder="_ _ _-_ _-_ _ _ _"></input>`;
     }
 
     // replace |SSNsm| with SSN input
     questText = questText.replace(/\|SSNsm\|(?:([^\|\<]+[^\|]+)\|)?/g, fSSNsm);
-    function fSSNsm(fullmatch, opts) {
-      const { options } = guaranteeIdSet(opts, "SSNsm");
+    function fSSNsm(fullmatch, opts, offset, source) {
+      let { options } = guaranteeIdSet(opts, "SSNsm");
+      options = addGeneratedAccessibleName(
+        options,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.enterValue),
+      );
       return `<input type='text' ${options} class="SSNsm" inputmode="numeric" maxlength="4" pattern='[0-9]{4}'placeholder="_ _ _ _"></input>`;
     }
 
     // replace |zip| with text input
     questText = questText.replace(/\|zip\|(?:([^\|\<]+[^\|]+)\|)?/g, fzip);
-    function fzip(fullmatch, opts) {
-      const { options, elementId } = guaranteeIdSet(opts, "zip");
+    function fzip(fullmatch, opts, offset, source) {
+      let { options, elementId } = guaranteeIdSet(opts, "zip");
+      options = addGeneratedAccessibleName(
+        options,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.enterValue),
+      );
       return `<input type='text' ${options} id=${elementId} class="zipcode" pattern="^[0-9]{5}(?:-[0-9]{4})?$"   placeholder="_ _ _ _ _"></input>`;
     }
 
     // replace |state| with state dropdown
     questText = questText.replace(/\|state\|(?:([^\|\<]+[^\|]+)\|)?/g, fState);
-    function fState(fullmatch, opts) {
-      const { options } = guaranteeIdSet(opts, "state");
+    function fState(fullmatch, opts, offset, source) {
+      let { options } = guaranteeIdSet(opts, "state");
+      options = addGeneratedAccessibleName(
+        options,
+        generatedControlNameFromReplace(fullmatch, offset, source, i18n.chooseState),
+      );
       return `<select ${options}>
         <option value='' disabled selected>${i18n.chooseState}: </option>
         <option value='AL'>Alabama</option>
@@ -1079,29 +1362,45 @@ export class QuestionProcessor {
 
     // replace |time| with a time input
     questText = questText.replace(/\|time\|(?:([^\|\<]+[^\|]+)\|)?/g, fTime);
-    function fTime(x, opts) {
-      const { options, elementId } = guaranteeIdSet(opts, "time");
+    function fTime(fullmatch, opts, offset, source) {
+      let { options, elementId } = guaranteeIdSet(opts, "time");
+      const hasAccessibleName = accessibleNameRegex.test(options);
+      const accessibleName = generatedControlNameFromReplace(
+        fullmatch,
+        offset,
+        source,
+        i18n.enterValue,
+      );
+      const generatedLabel = hasAccessibleName
+        ? ''
+        : `<label for='${elementId}' class='visually-hidden'>${escapeAttribute(accessibleName)}</label>`;
       return `
-        <label for='${elementId}' class='visually-hidden'>Enter Time</label>
-        <input type='time' id='${elementId}' ${options} aria-label='Enter Time'>
+        ${generatedLabel}
+        <input type='time' id='${elementId}' ${options}>
       `;
     }
 
-    // TODO: (future): format for number input boxes needs adjustment for screen readers (description text first or aria description)
     // replace |__|__|  with a number box...
     questText = questText.replace(/\|(?:__\|){2,}(?:([^\|\<]+[^\|]+)\|)?/g, fNum);
 
-    function fNum(fullmatch, opts) {
-      const value = questText.startsWith('<br>') ? questText.split('<br>')[0] : '';
+    function fNum(fullmatch, opts, offset, source) {
       // make sure that the element id is set...
       let { options, elementId } = guaranteeIdSet(opts, "num");
-      
-      options = options.replaceAll('"', "'");
+      const hasDisplayIfWrapper = Boolean(controlWrapperCondition(source.slice(0, offset)));
+      const opensFollowingDisplayIf = source
+        .slice(offset + fullmatch.length)
+        .startsWith('|displayif=');
+
+      const extractedAccessibleNames = extractAccessibleNameOptions(options);
+      const extractedDescriptions = extractAriaDescribedByOptions(
+        extractedAccessibleNames.parseableOptions,
+      );
+      options = extractedDescriptions.parseableOptions.replaceAll('"', "'");
       //instead of replacing max and min with data-min and data-max, they need to be added, as the up down buttons are needed for input type number
       let optionObj = paramSplit(options)
 
       //replace options with split values (uri encoded)
-      options = reduceObj(optionObj)
+      options = `${reduceObj(optionObj)} ${extractedAccessibleNames.accessibleNameOptions}`.trim();
       if (Object.prototype.hasOwnProperty.call(optionObj, "min")) {
         options = options + ` data-min="${optionObj.min}"`
       }
@@ -1110,7 +1409,15 @@ export class QuestionProcessor {
       }
 
       // Handle not converted and not yet calculated min and max values
-      const minMaxValueTest = (value) => { return value && !value.startsWith('valueOr') && !value.includes('isDefined') && value !== '0' ? value : ''; }
+      const minMaxValueTest = (value) => {
+        return value !== undefined
+          && value !== null
+          && value !== ''
+          && !value.startsWith('valueOr')
+          && !value.includes('isDefined')
+          ? value
+          : '';
+      }
       // Evaluate min and max, ensuring they are valid numbers or get evaluated if they aren't.
       const evaluateMinMax = (value) => {
         let result = minMaxValueTest(value);
@@ -1126,26 +1433,74 @@ export class QuestionProcessor {
       let max = evaluateMinMax(optionObj.max);
 
       // Build the description text
-      const descriptionText = `This field accepts numbers. Please enter a whole number ${min && max ? `between ${min} and ${max}` : ''}.`;
-      const defaultPlaceholder = `placeholder="${moduleParams.i18n.enterValue}"`;
+      const numberConstraints = [];
+      if (min !== '') {
+        numberConstraints.push(i18n.validationNumberGreaterThan.replace('{0}', min));
+      }
+      if (max !== '') {
+        numberConstraints.push(i18n.validationNumberLessThan.replace('{0}', max));
+      }
+      const descriptionText = numberConstraints.join('. ') || i18n.enterValue;
+      const defaultPlaceholder = `placeholder="${i18n.enterValue}"`;
 
       // Use default placeholder when min to max range is a large distribution, e.g. max weight (999) and max age (125), max pills (100).
       // Same for min == 0. Show default placeholder for those cases.
       let placeholder;
       if (max && max >= 50) {
         placeholder = defaultPlaceholder;
-      } else if (min && max) {
+      } else if (min && min !== '0' && max) {
         const avgValue = Math.floor((parseInt(min, 10) + parseInt(max, 10)) / 2);
         placeholder = `placeholder="${moduleParams.i18n.example}: ${avgValue}"`;
       } else {
         placeholder = defaultPlaceholder;
       }
 
-      options += ` ${placeholder} aria-describedby="${elementId}-desc"`;
+      const generatedAccessibleName = generatedControlNameFromReplace(
+        fullmatch,
+        offset,
+        source,
+        i18n.enterValue,
+      );
+      const usesGeneratedFallbackName = !extractedAccessibleNames.accessibleNameOptions
+        && generatedAccessibleName === i18n.enterValue;
+      const generatedDescriptionId = `${elementId}-desc`;
+      const preservesGeneratedDescriptionReference = extractedDescriptions.describedByTokens
+        .includes(generatedDescriptionId);
+      const shouldGenerateDescription = numberConstraints.length > 0
+        || !usesGeneratedFallbackName
+        || preservesGeneratedDescriptionReference;
+      const describedByTokens = [
+        ...extractedDescriptions.describedByTokens,
+        ...(shouldGenerateDescription ? [generatedDescriptionId] : []),
+      ];
 
-      //onkeypress forces whole numbers
-      return `<input type='number' aria-label='${value}' step='any' onkeypress='return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questionID}' ${options}>
-              <div id="${elementId}-desc" class="visually-hidden">${descriptionText}</div><br>`;
+      options += ` ${placeholder}`;
+      if (describedByTokens.length > 0) {
+        options += ` aria-describedby="${escapeAttribute([...new Set(describedByTokens)].join(' '))}"`;
+      }
+      options = addGeneratedAccessibleName(
+        options,
+        generatedAccessibleName,
+      );
+
+      // onkeypress forces whole numbers. Keep the OR operators encoded until
+      // the browser parses the HTML: a later Quest pass uses raw pipes as
+      // display-condition delimiters and must not consume generated script.
+      const input = `<input type='number' step='any' onkeypress='return (event.charCode == 8 &#124;&#124; event.charCode == 0 &#124;&#124; event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questionID}' ${options}>`;
+      const description = shouldGenerateDescription
+        ? `<div id="${elementId}-desc" class="visually-hidden">${descriptionText}</div><br>`
+        : '<br>';
+
+      // A number macro can itself be the content of a displayif.
+      // In the compact `...number||displayif=...` form, the number parser
+      // consumes the wrapper's closing pipe. Restore it only at that exact
+      // boundary. Ordinary, already-closed wrappers must not gain a literal pipe.
+      if (hasDisplayIfWrapper) {
+        const restoredClosingDelimiter = opensFollowingDisplayIf ? '|' : '';
+        return `${input}${description}${restoredClosingDelimiter}`;
+      }
+      return `${input}
+              ${description}`;
     }
 
     // replace |__| or [text box:xxx] with an input box...
@@ -1155,13 +1510,31 @@ export class QuestionProcessor {
       return `|__|id=${id} name=${questionID}|`;
     }
 
-    questText = questText.replace(/(.*)?\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?(.*)?/g, fText);
-    function fText(fullmatch, value1, opts, value2) {
+    // Keep text-input parsing on the line that contains the macro |__|.
+    // without these boundaries, Firefox can exhaust its regular-expression stack by
+    // retrying the optional greedy captures across long, pipe-rich prompts.
+    questText = questText.replace(/^(.*)\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?(.*)$/gm, fText);
+    function fText(fullmatch, value1, opts, value2, offset, source) {
       let { options } = guaranteeIdSet(opts, "txt");
       options = options.replaceAll(/(min|max)len\s*=\s*(\d+)/g,'data-$1len=$2')
-      
-      const ariaLabel = i18n.enterValue;
-      const inputElement = `<input type='text' aria-label='${ariaLabel}' name='${questionID}' ${options}></input>`;
+
+      const before = source.slice(0, offset);
+      const inlineCaption = generatedControlName(
+        value1,
+        value2,
+        '',
+        effectiveControlCondition(fullmatch, before),
+      );
+      options = addGeneratedAccessibleName(
+        options,
+        inlineCaption || generatedControlNameFromReplace(
+          fullmatch,
+          offset,
+          source,
+          i18n.enterValue,
+        ),
+      );
+      const inputElement = `<input type='text' name='${questionID}' ${options}></input>`;
       
       if (value1 && value1.includes('div')) {
         return `${value1}${inputElement}${value2 || ''}`;
@@ -1175,7 +1548,7 @@ export class QuestionProcessor {
 
     // replace |___| with a textarea...
     questText = questText.replace(/\|___\|((\w+)\|)?/g, fTextArea);
-    function fTextArea(x1, y1, z1) {
+    function fTextArea(fullmatch, y1, z1, offset, source) {
       let elId = "";
       if (z1 == undefined) {
         elId = questionID + "_ta";
@@ -1183,8 +1556,13 @@ export class QuestionProcessor {
         elId = z1;
       }
 
-      return `<label for="${elId}" class="visually-hidden"></label>
-        <textarea id='${elId}' name='${elId}' style="resize:auto;" aria-label='Enter your response'></textarea>`;
+      const accessibleName = generatedControlNameFromReplace(
+        fullmatch,
+        offset,
+        source,
+        i18n.enterValue,
+      );
+      return `<textarea id='${elId}' name='${elId}' style="resize:auto;" aria-label="${escapeAttribute(accessibleName)}"></textarea>`;
     }
 
     // replace #YNP with Yes No input: `(1) Yes, (0) No, (99) Prefer not to answer`
@@ -1317,12 +1695,15 @@ export class QuestionProcessor {
     );
     questText = questText.replace(
       /<textarea ([^>]*)><\/textarea>\s*->\s*([^\s<]+)/g,
-      "<textarea $1 skipTo=$2 aria-label='Enter your response'></textarea>"
+      (_, attributes, skipTarget) => (
+        `<textarea ${addGeneratedAccessibleName(attributes, i18n.enterValue)} skipTo=${skipTarget}></textarea>`
+      ),
     );
     questText = questText.replace(/<\/div><br>/g, "</div>");
+    questText = accessibleLabels.restore(questText);
 
     // handle the back/next/reset buttons
-    const hasInputfield = questText.includes('input');
+    const hasInputfield = /<(?:input|textarea)\b/i.test(questText);
     const questButtonsDiv = this.getButtonDiv(hasInputfield, questionID, endMatch, target);
     
     return `

@@ -1,0 +1,19 @@
+{"name":"CONDITIONAL_COMPOUND_RADIO_GROUPS"}
+
+[TRAVEL_MODES?] Which types of transportation did you use? Select all that apply.
+[1] Car
+[2] Walking
+
+[TRAVEL_DURATION?,displayif=valueIsOneOf("TRAVEL_MODES",1,2)] How long did each selected trip take?
+
+|displayif=equals(TRAVEL_MODES,1)|Car|
+(1:CAR_DURATION,displayif=equals(TRAVEL_MODES,1)) Under 15 minutes
+(2:CAR_DURATION,displayif=equals(TRAVEL_MODES,1)) 15 to 30 minutes
+(3:CAR_DURATION,displayif=equals(TRAVEL_MODES,1)) More than 30 minutes
+
+|displayif=equals(TRAVEL_MODES,2)|Walking|
+(1:WALK_DURATION,displayif=equals(TRAVEL_MODES,2)) Under 15 minutes
+(2:WALK_DURATION,displayif=equals(TRAVEL_MODES,2)) 15 to 30 minutes
+(3:WALK_DURATION,displayif=equals(TRAVEL_MODES,2)) More than 30 minutes
+
+[END,end] Done.

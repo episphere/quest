@@ -104,7 +104,7 @@ describe('questionnaire runtime helpers', () => {
     expect(concept.style.display).toBe('none');
   });
 
-  it('handles modal checks, radio-with-text selection, and active state from textbox input', async () => {
+  it('accepts only the confirmed response-modal value while preserving edit and dismissal prompts', async () => {
     const { quest, textboxinput } = await loadRuntime();
     const form = quest.root.querySelector('#Q1');
     form.querySelector('fieldset').innerHTML = `
@@ -117,23 +117,67 @@ describe('questionnaire runtime helpers', () => {
     const radio = form.querySelector('#OTHER');
     const text = form.querySelector('#OTHER_TEXT');
     text.value = '6';
+    text.focus();
 
     textboxinput(text);
 
+    const responseModal = quest.root.querySelector('#softModalResponse');
     expect(radio.checked).toBe(true);
-    expect(quest.root.querySelector('#softModalResponse').classList).toContain('show');
+    expect(responseModal.classList).toContain('show');
     expect(quest.root.querySelector('#modalResponseBody').innerText).toBe('Confirm this value');
+    expect(responseModal.getAttribute('aria-describedby')).toBe('modalResponseBody');
+    expect(document.activeElement).toBe(quest.root.querySelector('#modalResponseBody'));
     expect(quest.state.getActiveQuestionState().Q1).toEqual({ Q1: '99', OTHER_TEXT: '6' });
+
+    responseModal.querySelector('#modalResponseContinueButton').click();
+    globalThis.bootstrap.Modal.getInstance(responseModal).hide();
+    expect(document.activeElement).toBe(text);
+    expect(text.dataset.acceptedModalValue).toBe('6');
+
+    textboxinput(text);
+    expect(responseModal.classList).not.toContain('show');
+    expect(quest.state.getActiveQuestionState().Q1).toEqual({ Q1: '99', OTHER_TEXT: '6' });
+
+    text.value = '7';
+    textboxinput(text);
+    expect(responseModal.classList).toContain('show');
+    expect(text.hasAttribute('data-accepted-modal-value')).toBe(false);
+    responseModal.querySelector('#modalResponseCloseButton').click();
+    globalThis.bootstrap.Modal.getInstance(responseModal).hide();
+    expect(document.activeElement).toBe(text);
+
+    textboxinput(text);
+    expect(responseModal.classList).toContain('show');
+    responseModal.querySelector('.btn-close').click();
+    globalThis.bootstrap.Modal.getInstance(responseModal).hide();
+    textboxinput(text);
+    expect(responseModal.classList).toContain('show');
+    globalThis.bootstrap.Modal.getInstance(responseModal).hide();
+    textboxinput(text);
+    expect(responseModal.classList).toContain('show');
+    expect(quest.state.getActiveQuestionState().Q1).toEqual({ Q1: '99', OTHER_TEXT: '7' });
+
+    const hostControl = document.createElement('button');
+    document.body.appendChild(hostControl);
+    hostControl.focus();
+    globalThis.bootstrap.Modal.getInstance(responseModal).hide();
+    expect(document.activeElement).toBe(hostControl);
+
+    textboxinput(text);
+    const inputFocus = vi.spyOn(text, 'focus');
+    responseModal._questRenderDisposal = true;
+    globalThis.bootstrap.Modal.getInstance(responseModal).hide();
+    expect(inputFocus).not.toHaveBeenCalled();
   });
 
   it('clears mutually exclusive checkbox and text siblings, including stale validation UI', async () => {
-    const { quest, handleXOR } = await loadRuntime();
+    const { quest, handleXOR, moduleParams } = await loadRuntime();
+    const { validationError } = await import('../../validate.js');
     const form = quest.root.querySelector('#Q1');
     form.querySelector('fieldset').innerHTML = `
       <div id="XOR_GROUP">
         <input type="checkbox" id="CHECK" name="CHECK" value="1" xor="GROUP" checked>
-        <input type="text" id="TEXT" name="TEXT" value="old" xor="GROUP" class="invalid">
-        <div class="validation-container"><span>Old error</span></div>
+        <input type="text" id="TEXT" name="TEXT" value="old" xor="GROUP" aria-describedby="existing-hint">
       </div>
     `;
     quest.state.setNumResponseInputs('Q1', 2);
@@ -141,12 +185,16 @@ describe('questionnaire runtime helpers', () => {
     quest.state.setResponse('Q1', 'TEXT', 2, 'old');
     const check = form.querySelector('#CHECK');
     const text = form.querySelector('#TEXT');
-    form.querySelector('.validation-container span').innerText = 'Old error';
+    validationError(text, moduleParams.i18n.validationInputEmptyField);
+    const errorId = form.querySelector('.validation-container').id;
+    expect(text.getAttribute('aria-describedby').split(/\s+/)).toEqual(['existing-hint', errorId]);
 
     expect(handleXOR(check)).toBe('1');
     expect(text.value).toBe('');
     expect(text.classList).not.toContain('invalid');
     expect(form.querySelector('.validation-container')).toBeNull();
+    expect(text.hasAttribute('aria-invalid')).toBe(false);
+    expect(text.getAttribute('aria-describedby')).toBe('existing-hint');
     expect(quest.state.getActiveQuestionState().Q1.TEXT).toBeUndefined();
 
     text.value = '';

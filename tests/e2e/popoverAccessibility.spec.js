@@ -6,7 +6,6 @@ import {
   goNext,
   harnessSnapshot,
   openParticipant,
-  waitInHarness,
 } from './support/harness.js';
 
 const DESKTOP_ENGINES = new Set([
@@ -48,7 +47,6 @@ test.describe('production-shaped popover accessibility @canonical', () => {
 
   test('includes question-text help in the natural post-render Tab order with visible focus', async ({ page }, testInfo) => {
     await openParticipant(page, { markdown: POPOVER_MARKDOWN });
-    await waitInHarness(page, 550);
 
     const question = activeQuestion(page, 'PLAIN');
     const focusTarget = question.locator('.screen-reader-focus');
@@ -75,7 +73,6 @@ test.describe('production-shaped popover accessibility @canonical', () => {
 
   test('supports pointer, Enter, Space, Escape, and focus-departure behavior exactly once', async ({ page }) => {
     await openParticipant(page, { markdown: POPOVER_MARKDOWN });
-    await waitInHarness(page, 550);
 
     const question = activeQuestion(page, 'PLAIN');
     await expect(question.locator('legend')).toContainText('Please read the following survey help.');
@@ -130,7 +127,6 @@ test.describe('production-shaped popover accessibility @canonical', () => {
 
   test('does not let a help control nested in a response label answer the question', async ({ page }) => {
     await openParticipant(page, { markdown: RESPONSE_POPOVER_MARKDOWN });
-    await waitInHarness(page, 550);
     const question = activeQuestion(page, 'EYE_COLOR');
     const trigger = question.getByRole('button', { name: 'Hazel' });
     const response = trigger.locator('xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " response ")]');
@@ -159,7 +155,6 @@ test.describe('production-shaped popover accessibility @canonical', () => {
 
   test('disposes an open popover during navigation and reinitializes it on Back', async ({ page }) => {
     await openParticipant(page, { markdown: POPOVER_MARKDOWN });
-    await waitInHarness(page, 550);
     const trigger = activeQuestion(page, 'PLAIN').getByRole('button', { name: 'More information' });
     await trigger.click();
     await expect(helpPopover(page)).toBeVisible();
@@ -178,7 +173,6 @@ test.describe('production-shaped popover accessibility @canonical', () => {
 
   test('disposes an open popover before a sequential host render', async ({ page }) => {
     await openParticipant(page, { markdown: POPOVER_MARKDOWN });
-    await waitInHarness(page, 550);
     const originalTrigger = activeQuestion(page, 'PLAIN').getByRole('button', { name: 'More information' });
     await originalTrigger.click();
     await expect(helpPopover(page)).toBeVisible();
@@ -202,7 +196,6 @@ test.describe('production-shaped popover accessibility @canonical', () => {
     expect(renderResult).toBe(true);
     await expect(activeQuestion(page, 'PLAIN')).toBeVisible();
     await expect(helpPopover(page)).toHaveCount(0);
-    await waitInHarness(page, 550);
 
     const newTrigger = activeQuestion(page, 'PLAIN').getByRole('button', { name: 'More information' });
     await newTrigger.focus();

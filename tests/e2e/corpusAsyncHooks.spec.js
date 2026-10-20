@@ -94,6 +94,11 @@ test.describe('locked production asynchronous host contracts @corpus', () => {
 
         if (outcomeName === 'rejection') {
           expect(validationMessages.join(' ')).toContain('Error fetching question');
+          const error = form.locator('.validation-container');
+          await expect(error).toHaveText('Error fetching question. Please go back and try again.');
+          await expect(error).toHaveAttribute('tabindex', '-1');
+          await expect(error).not.toHaveAttribute('role');
+          await expect(error).toBeFocused();
           expect(call.error.message).toBe('Deterministic host callback failure');
           expect(snapshot.logs.errors.some((entry) => (
             entry.message.includes('Deterministic host callback failure')

@@ -185,7 +185,7 @@ describe('locked production loop expansion and navigation', () => {
     expect(exactQuestionIndex(processor, `${vaccineLoop.firstId}_25_25`)).toBeGreaterThan(finalValidIndex);
   });
 
-  it.each(LOOP_CASES)('$label routes an authored early exit to the next iteration', async (loop) => {
+  it.each(LOOP_CASES)('$label routes an early exit to the next iteration', async (loop) => {
     const { processor } = await createProcessor(lockedMarkdown(loop.file), { [loop.countId]: '2' });
     prepareLoop(processor, loop.firstId);
     const earlyExitIndex = exactQuestionIndex(processor, `${loop.earlyExitId}_1_1`);

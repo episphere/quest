@@ -46,16 +46,13 @@ function handleObjectResponse(formElement, response) {
     const resObject = response[resKey];
     const multiq = formElement.querySelector(`input[name='${resKey}'][value='${CSS.escape(resObject)}']`);
 
-    let handled = false;
     if (typeof resObject === 'string') {
       handleStringInObjectResponse(formElement, resKey, resObject);
-      handled = true;
 
     } else if (typeof resObject === 'object') {
       // Handle the array case
       if (Array.isArray(resObject)) {
         getFromRbCb(formElement, resKey, resObject);
-        handled = true;  
       
       // Handle XOR objects
       } else {
@@ -65,33 +62,12 @@ function handleObjectResponse(formElement, response) {
             xorElement.value = resObject[xorElement.id];
           }
         });
-        handled = true;  
       }
     }
 
     // check for mulitple radio buttons on 1 page.
     if (multiq) {
       multiq.checked = true
-      handled = true;
-    }
-
-    if (handled) return;
-
-    if (typeof resObject === "string") {
-      const element = document.getElementById(resKey);
-      if (element.tagName == "DIV" || element.tagName == "FORM") {
-        const selector = `input[value='${response[resKey]}']`;
-        const selectedRadioElement = element.querySelector(selector);
-        if (selectedRadioElement) {
-          selectedRadioElement.checked = true;
-        } else {
-          moduleParams.errorLogger("RESTORE RESPONSE: Problem with DIV/FORM:", element);
-        }
-        radioAndCheckboxUpdate(selectedRadioElement);
-      } else {
-        element.value = resObject;
-        textboxinput(element, false);
-      }
     }
   });
 }
@@ -126,19 +102,27 @@ function handleStringInObjectResponse(questionElement, id, value) {
 export function restoreResponses(results, questionID) {
   const appState = getStateManager();
   appState.clearActiveQuestionState();
-  
-  const formElement = document.querySelector("#" + CSS.escape(questionID));
-  if (!formElement || !results[questionID]) return;
 
-  const response = results[questionID];
+  // The tree stores question tokens, including trailing soft/hard markers.
+  // Rendered form IDs and response keys omit the markers.
+  const normalizedQuestionID = questionID.replace(/[?!]$/, '');
+  const formElement = moduleParams.questDiv?.querySelector(
+    `form.question[id="${CSS.escape(normalizedQuestionID)}"]`,
+  );
+  if (!formElement || !Object.prototype.hasOwnProperty.call(results, normalizedQuestionID)) return;
+
+  const response = results[normalizedQuestionID];
+  // An explicit null/undefined value is the host's deletion tombstone. It is
+  // valid persisted state, but there is no participant response to restore.
+  if (response == null) return;
 
   // CASE 1: The response is a simple string value.
   if (typeof response === "string") {
     handleSimpleStringResponse(formElement, response);
 
   // CASE 2: Array
-  } else if (Array.isArray(results[questionID])) {
-      getFromRbCb(formElement, questionID, results[questionID]);
+  } else if (Array.isArray(response)) {
+      getFromRbCb(formElement, normalizedQuestionID, response);
 
   // CASE 3: Object
   } else if (typeof response === "object") {

@@ -7,6 +7,7 @@ import * as bootstrap from 'bootstrap';
 import { transform } from '../../main.js';
 import { moduleParams } from '../../questionnaire.js';
 import { getStateManager } from '../../stateManager.js';
+import { MANUAL_SCENARIOS } from './participantScenarios.js';
 
 globalThis.bootstrap = bootstrap;
 
@@ -255,14 +256,37 @@ async function render(config = {}) {
 window.questHarness = { ready: true, render, snapshot, flush, wait };
 window.dispatchEvent(new CustomEvent('quest-harness-ready'));
 
-const manualFixture = new URLSearchParams(window.location.search).get('fixture');
-if (manualFixture) {
-  if (!/^[a-z0-9-]+\.txt$/i.test(manualFixture)) {
-    errorLogger(new Error(`Invalid manual fixture name: ${manualFixture}`));
+const manualQuery = new URLSearchParams(window.location.search);
+const manualFixture = manualQuery.get('fixture');
+const manualScenario = manualQuery.get('scenario');
+const manualLanguage = manualQuery.get('lang');
+
+if (manualFixture || manualScenario || manualLanguage) {
+  const scenario = manualScenario ? MANUAL_SCENARIOS[manualScenario] : null;
+  let queryError = null;
+
+  if (!manualFixture) {
+    queryError = new Error('Manual scenario and language queries require a fixture');
+  } else if (!/^[a-z0-9-]+\.txt$/i.test(manualFixture)) {
+    queryError = new Error(`Invalid manual fixture name: ${manualFixture}`);
+  } else if (manualScenario && !scenario) {
+    queryError = new Error(`Invalid manual scenario: ${manualScenario}`);
+  } else if (scenario && scenario.fixture !== manualFixture) {
+    queryError = new Error(`Manual scenario ${manualScenario} requires fixture ${scenario.fixture}`);
+  } else if (manualLanguage && !['en', 'es'].includes(manualLanguage)) {
+    queryError = new Error(`Invalid manual language: ${manualLanguage}`);
+  }
+
+  if (queryError) {
+    errorLogger(queryError);
   } else {
     fetch(`/tests/fixtures/canonical/${manualFixture}`)
       .then((response) => response.ok ? response.text() : Promise.reject(new Error(`Fixture request failed: ${response.status}`)))
-      .then((markdown) => render({ markdown }))
+      .then((markdown) => render({
+        ...scenario?.config,
+        ...(manualLanguage ? { lang: manualLanguage } : {}),
+        markdown,
+      }))
       .catch(errorLogger);
   }
 }

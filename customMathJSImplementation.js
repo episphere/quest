@@ -241,7 +241,16 @@ export const customMathJSFunctions = {
   },
 
   dateCompare: function (month1, year1, month2, year2) {
-    if ([month1, month2].some((m) => { let m1 = parseInt(m); m1 < 0 || m1 > 11 })) {
+    const invalidMonth = [month1, month2].some((month) => {
+      if (
+        month == null
+        || !['number', 'string'].includes(typeof month)
+        || (typeof month === 'string' && month.trim() === '')
+      ) return true;
+      const numericMonth = Number(month);
+      return !Number.isInteger(numericMonth) || numericMonth < 0 || numericMonth > 11;
+    });
+    if (invalidMonth) {
       throw 'DateCompareError:months need to be from 0 (Jan) to 11 (Dec)'
     }
 

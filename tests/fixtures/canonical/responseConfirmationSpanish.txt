@@ -1,0 +1,5 @@
+{"name":"TEST_RESPONSE_CONFIRMATION"}
+
+[D_724181652?] ¿Cuánto pesaba hace tres años? Si no sabe el peso exacto, dé su mejor aproximación. |displayif=equals(D_407056417,536341288)|Si hace tres años estuvo embarazada, ¿cuánto pesaba antes del embarazo?|
+<br/>
+|__|__|__|min=0 max=999 softedit=true modalif=value<70 modalvalue='¿Este peso es correcto?'| Núm. de libras  (lbs)

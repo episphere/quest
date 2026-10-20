@@ -97,7 +97,7 @@ describe('Quest MathJS extensions', () => {
     const { evaluateCondition } = await import('../../evaluateConditions.js');
 
     // Quoted IDs stay in the MathJS path and use scalar coercion. Legacy
-    // authored expressions use a bare response ID. MathJS rejects that symbol
+    // Legacy expressions use a bare response ID. MathJS rejects that symbol
     // and Quest's fallback evaluator correctly treats equals as membership.
     expect(fn.valueEquals('CHECKS', 1)).toBe(false);
     expect(fn.equals('CHECKS', 3)).toBe(false);
@@ -138,6 +138,14 @@ describe('Quest MathJS extensions', () => {
     expect(fn.dateCompare(0, 2026, 1, 2026)).toBe(-1);
     expect(fn.dateCompare(1, 2026, 1, 2026)).toBe(0);
     expect(fn.dateCompare(2, 2026, 1, 2026)).toBe(1);
+    expect(fn.dateCompare('0', 2026, '11', 2026)).toBe(-1);
+    expect(fn.dateCompare(11, 2026, 0, 2027)).toBe(-1);
+    expect(() => fn.dateCompare(-1, 2026, 1, 2026)).toThrow('months need to be');
+    expect(() => fn.dateCompare(1, 2026, 12, 2026)).toThrow('months need to be');
+    expect(() => fn.dateCompare('not-a-month', 2026, 1, 2026)).toThrow('months need to be');
+    expect(() => fn.dateCompare(1.5, 2026, 1, 2026)).toThrow('months need to be');
+    expect(() => fn.dateCompare(' ', 2026, 1, 2026)).toThrow('months need to be');
+    expect(() => fn.dateCompare(false, 2026, 1, 2026)).toThrow('months need to be');
     expect(fn.yearMonth('2026-04').toString()).toBe('2026-04');
     expect(fn.yearMonth('not-a-month')).toBe(false);
     expect(fn.isSelected('ROW_VALUE_0')).toBe(false);
@@ -220,7 +228,7 @@ describe('Quest MathJS extensions', () => {
     expect(fn.selectionCount('SCALAR')).toBe(0);
   });
 
-  it('registers custom functions at the top level for authored MathJS expressions', async () => {
+  it('registers custom functions at the top level for MathJS expressions', async () => {
     const { initializeCustomMathJSFunctions, math, customMathJSFunctions: fn } = await loadMathWithState({ ANSWER: '1' });
     initializeCustomMathJSFunctions();
 

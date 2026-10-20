@@ -1,0 +1,19 @@
+{"name":"CONDITIONAL_COMPOUND_RADIO_GROUPS_SPANISH"}
+
+[TRAVEL_MODES?] ¿Qué tipos de transporte utilizó? Seleccione todas las opciones que correspondan.
+[1] Automóvil
+[2] A pie
+
+[TRAVEL_DURATION?,displayif=valueIsOneOf("TRAVEL_MODES",1,2)] ¿Cuánto duró cada viaje seleccionado?
+
+|displayif=equals(TRAVEL_MODES,1)|Automóvil|
+(1:CAR_DURATION,displayif=equals(TRAVEL_MODES,1)) Menos de 15 minutos
+(2:CAR_DURATION,displayif=equals(TRAVEL_MODES,1)) De 15 a 30 minutos
+(3:CAR_DURATION,displayif=equals(TRAVEL_MODES,1)) Más de 30 minutos
+
+|displayif=equals(TRAVEL_MODES,2)|A pie|
+(1:WALK_DURATION,displayif=equals(TRAVEL_MODES,2)) Menos de 15 minutos
+(2:WALK_DURATION,displayif=equals(TRAVEL_MODES,2)) De 15 a 30 minutos
+(3:WALK_DURATION,displayif=equals(TRAVEL_MODES,2)) Más de 30 minutos
+
+[END,end] Fin.

@@ -40,8 +40,10 @@ describe('host boundary success, delay, and failure behavior', () => {
 
     await answerAndAdvance(quest);
     await vi.waitFor(() => expect(quest.root.querySelector('form.active')?.id).toBe('Q1'));
+    await vi.waitFor(() => expect(
+      quest.root.querySelector('#storeErrorModal').classList.contains('show'),
+    ).toBe(true));
 
-    expect(quest.root.querySelector('#storeErrorModal').classList).toContain('show');
     expect(quest.errors.flat().join(' ')).toContain('Error syncing state to store');
   });
 

@@ -1,0 +1,15 @@
+{"name":"COMPOUND_RADIO_GROUPS"}
+
+[COMPOUND_RADIOS?] For each activity, choose the answer that best describes you.
+
+Can you prepare a simple meal?
+(1:MEAL) Without difficulty
+(2:MEAL) With some difficulty
+(3:MEAL) Unable to do
+
+Can you walk for 15 minutes?
+(1:WALK) Without difficulty
+(2:WALK) With some difficulty
+(3:WALK) Unable to do
+
+[END,end] Done.

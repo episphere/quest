@@ -134,6 +134,10 @@ class QuestRenderer {
           console.warn("Using memory for setItem (LF fallback):", key);
           return Promise.resolve(value);
         },
+        removeItem: (key) => {
+          console.warn("Using memory for removeItem (LF fallback):", key);
+          return Promise.resolve();
+        },
         clear: () => {
           console.warn("Using memory for clear (LF fallback)");
           return Promise.resolve();
@@ -418,7 +422,16 @@ class QuestRenderer {
 
   async clearLocalForage() {
     try {
-      await localforage.clear();
+      // Clear the default LocalForage store when it is available, but
+      // do not let that optional cleanup block the active Quest adapter. This
+      // matters when initialization fell back because browser storage failed.
+      if (typeof localforage !== "undefined" && typeof localforage.clear === "function") {
+        try {
+          await localforage.clear();
+        } catch (err) {
+          console.warn("Unable to clear global LocalForage; continuing with Quest storage:", err);
+        }
+      }
       await this.questLocalForage.removeItem("previousResults");
       
       // Clear the PreviousResults data

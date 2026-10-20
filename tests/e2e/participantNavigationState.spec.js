@@ -193,30 +193,87 @@ test.describe('participant navigation and state @core @canonical', () => {
   for (const storeFailure of [
     {
       label: 'non-200 result',
-      config: { storeMode: 'non200' },
+      outcome: {
+        kind: 'resolve',
+        value: { code: 503, message: 'Synthetic non-200 store response' },
+      },
     },
     {
       label: 'rejected operation',
-      config: { storeMode: 'rejected' },
+      outcome: { kind: 'reject', message: 'Synthetic store rejection' },
     },
   ]) {
-    test(`reverts navigation and reports the host error after a ${storeFailure.label}`, async ({ page }) => {
+    test(`restores the response and permits an exact retry after a ${storeFailure.label}`, async ({ page }) => {
       await openParticipant(page, {
         fixture: 'navigationState.txt',
-        ...storeFailure.config,
+        storeOutcomes: [
+          storeFailure.outcome,
+          { kind: 'resolve', value: { code: 200 } },
+        ],
       });
       await selectLabeledResponse(page, 'Yes');
       await goNext(page);
       await flushHarness(page);
 
       await expect(activeQuestion(page, 'PATH')).toBeVisible();
-      await expect(page.locator('#storeErrorModal')).toHaveClass(/show/);
-      const snapshot = await expectHealthyHarness(page, { allowErrors: true });
-      expect(snapshot.logs.errors.some((entry) => entry.message.includes('syncToStore'))).toBe(true);
-      expect(snapshot.logs.storeCalls).toHaveLength(1);
-      expect(snapshot.logs.storeCalls[0].outcome.kind).toBe(
-        storeFailure.config.storeMode === 'rejected' ? 'reject' : 'resolve',
+      await expect(activeQuestion(page, 'PATH').locator('#PATH_1')).toBeChecked();
+      const storeErrorModal = page.locator('#storeErrorModal');
+      const storeErrorDialog = page.getByRole('dialog', { name: 'Error saving response' });
+      await expect(storeErrorModal).toHaveClass(/show/);
+      await expect(storeErrorDialog).toHaveAccessibleDescription(
+        'There was an error saving your response. Please try again.',
       );
+      await expect(storeErrorDialog.locator('[role="alert"]')).toHaveCount(0);
+      await expect(storeErrorDialog.locator('#storeErrorModalBody')).toHaveAttribute('tabindex', '-1');
+      await expect(storeErrorDialog.locator('#storeErrorModalBody')).toBeFocused();
+      const failed = await expectHealthyHarness(page, { allowErrors: true });
+      expect(failed.logs.errors.filter((entry) => entry.message.includes('syncToStore'))).toHaveLength(1);
+      expect(failed.logs.storeCalls).toHaveLength(1);
+      expect(failed.logs.storeCalls[0].outcome.kind).toBe(storeFailure.outcome.kind);
+      expect(failed.logs.storeCalls[0].changes).toEqual({
+        'TEST_NAV.PATH': '1',
+        'TEST_NAV.treeJSON': expect.any(String),
+      });
+      expect(JSON.parse(failed.logs.storeCalls[0].changes['TEST_NAV.treeJSON']).currentNode).toBe('PATH?');
+      expect(failed.state.survey).toEqual({});
+      expect(failed.state.active).toEqual({ PATH: '1' });
+      expect(failed.state.mapping).toMatchObject({ PATH: 'PATH' });
+      expect(failed.state.cache).toMatchObject({ PATH: '1' });
+
+      await storeErrorModal.evaluate((element) => {
+        element.addEventListener('hidden.bs.modal', () => {
+          const activeElement = document.activeElement;
+          element.__questFocusAtHidden = {
+            isQuestionTarget: activeElement?.classList?.contains('screen-reader-focus') ?? false,
+            questionId: activeElement?.closest?.('form.question.active')?.id ?? null,
+          };
+        }, { once: true });
+      });
+      await storeErrorDialog.getByRole('button', { name: 'Close' }).first().click();
+      await expect(storeErrorModal).not.toHaveClass(/show/);
+      expect(await storeErrorModal.evaluate((element) => element.__questFocusAtHidden)).toEqual({
+        isQuestionTarget: true,
+        questionId: 'PATH',
+      });
+      await expect(activeQuestion(page, 'PATH').locator('.screen-reader-focus')).toBeFocused();
+      await goNext(page);
+      await flushHarness(page);
+
+      await expect(activeQuestion(page, 'DETAIL')).toBeVisible();
+      const retried = await expectHealthyHarness(page, { allowErrors: true });
+      expect(retried.logs.storeCalls).toHaveLength(2);
+      expect(retried.logs.storeCalls[1]).toMatchObject({
+        status: 'fulfilled',
+        value: { code: 200 },
+      });
+      expect(retried.logs.storeCalls[1].changes).toEqual(
+        retried.logs.storeCalls[0].changes,
+      );
+      expect(retried.state.survey).toEqual({
+        PATH: '1',
+        treeJSON: retried.logs.storeCalls[1].changes['TEST_NAV.treeJSON'],
+      });
+      expect(retried.state.active).toEqual({});
     });
   }
 

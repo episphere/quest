@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { parseGrid } from '../../buildGrid.js';
 import { Tree } from '../../tree.js';
-import { renderFreshQuest, SIMPLE_SURVEY } from '../helpers/questRuntime.js';
+import { renderFreshQuest } from '../helpers/questRuntime.js';
+import { readLockedMarkdown } from '../e2e/support/corpus.js';
 import { runtimeDefects } from './registry.js';
 
 const expectedCovidGridResponseIds = [
@@ -11,16 +11,36 @@ const expectedCovidGridResponseIds = [
   'D_814101706', 'D_635026188', 'D_238135048', 'D_632714520',
 ].flatMap((id) => [`${id}_0`, `${id}_1`]);
 
-// Reviewed against the locked English and Spanish COVID Markdown. Both files
-// contain this identical, truncated display condition for D_114280729.
-const MALFORMED_COVID_GRID_COMPLEMENT = 'someSelected("D_488415137_0","D_488415137_1","D_167695804_0","D_167695804_1","D_730334054_0","D_730334054_1","D_215996690_0","D_215996690_1","D_462737492_0","D_462737492_1","D_469675296_0","D_469675296_1","D_962475128_0","D_962475128_1","D_989576239_0","D_989576239_1","D_338613869_0","D_338613869_1","D_126794793_0","D_126794793_1","D_218793117_0","D_218793117_1","D_524096053_0","SRVCOV_COV19C1_V1R0_1,1","D_814101706_0","D_814101706_1","D_635026188_0","D_238135048_0","D_238135048_1","D_632714520_0","D_632714520_1';
+function lockedCovidGridCondition(locale) {
+  const gridLine = readLockedMarkdown('moduleCOVID19', locale)
+    .split(/\r?\n/)
+    .find((line) => line.includes('id="D_114280729"'));
+  const condition = gridLine?.match(/\bdisplayif=(.*?)\|/)?.[1];
+  if (!condition) throw new Error(`Missing locked ${locale} D_114280729 grid condition`);
+  return condition;
+}
 
-const STANDALONE_TEXTAREA_SURVEY = `
-{"name":"TEXTAREA_RESET"}
-[NOTES?] Enter two short notes.
-|___|notes|
-[END,end] Done.
-`;
+function lockedQuestionMarkdown(module, locale, questionId) {
+  const markdown = readLockedMarkdown(module, locale);
+  const lines = markdown.split(/\r?\n/);
+  const questionStart = lines.findIndex((line) => (
+    line.trimStart().startsWith(`[${questionId}?`)
+  ));
+  const nextQuestion = lines.findIndex((line, index) => (
+    index > questionStart && /^\s*\[[^\]]+\]/.test(line)
+  ));
+  const metadata = lines.find((line) => /^\s*\{.*"name".*\}\s*$/.test(line));
+
+  if (questionStart < 0 || !metadata) {
+    throw new Error(`Missing locked ${module} ${locale} question ${questionId}`);
+  }
+
+  const questionLines = lines.slice(
+    questionStart,
+    nextQuestion < 0 ? lines.length : nextQuestion,
+  );
+  return `${metadata}\n${questionLines.join('\n')}\n[KNOWN_DEFECT_END,end] Done.`;
+}
 
 function buildBranchedTree() {
   const tree = new Tree();
@@ -31,40 +51,6 @@ function buildBranchedTree() {
   tree.add('Q1B');
   tree.next();
   return tree;
-}
-
-async function loadStateManager(initialState = {}) {
-  vi.resetModules();
-  const questionnaire = await import('../../questionnaire.js');
-  questionnaire.moduleParams.errorLogger = vi.fn();
-  questionnaire.moduleParams.previousResults = {};
-  const stateModule = await import('../../stateManager.js');
-  stateModule.initializeStateManager();
-  const appState = stateModule.getStateManager();
-  appState.loadInitialSurveyState(initialState);
-  appState.setQuestionProcessor({
-    findQuestion: () => ({ question: null }),
-    findGridRadioCheckboxEle: () => null,
-  });
-  return appState;
-}
-
-async function loadMathWithState(initialState = {}) {
-  const appState = await loadStateManager(initialState);
-  const mathModule = await import('../../customMathJSImplementation.js');
-  mathModule.customMathJSFunctions.appState = appState;
-  return mathModule.customMathJSFunctions;
-}
-
-async function loadEvaluator(state = {}, previousResults = {}) {
-  vi.resetModules();
-  const questionnaire = await import('../../questionnaire.js');
-  questionnaire.moduleParams.errorLogger = vi.fn();
-  questionnaire.moduleParams.previousResults = previousResults;
-  const stateModule = await import('../../stateManager.js');
-  stateModule.initializeStateManager();
-  stateModule.getStateManager().loadInitialSurveyState(state);
-  return (await import('../../evaluateConditions.js')).evaluateCondition;
 }
 
 async function loadQuestionProcessor(markdown) {
@@ -99,12 +85,6 @@ async function loadQuestionProcessor(markdown) {
   return { processor, errorLogger: questionnaire.moduleParams.errorLogger };
 }
 
-async function answerAndAdvance(quest) {
-  quest.root.querySelector('#Q1_1').click();
-  quest.root.querySelector('#Q1 .next').click();
-  await vi.waitFor(() => expect(quest.store).toHaveBeenCalled());
-}
-
 describe('characterized Quest runtime defects', () => {
   beforeEach(() => vi.useRealTimers());
 
@@ -127,124 +107,81 @@ describe('characterized Quest runtime defects', () => {
     expect(tree.rootNode.children.map(({ value }) => value)).toEqual(['Q1', 'Q2']);
   });
 
-  it.fails(`${runtimeDefects.treeHasNext.localDefectId}: reports lookahead without mutation`, () => {
+  it.fails(`${runtimeDefects.treeHasNext.localDefectId}: reports lookahead without throwing or mutation`, () => {
     const tree = new Tree();
     tree.add('Q1');
+    expect(() => tree.hasNext()).not.toThrow();
     expect(tree.hasNext()).toBe(true);
     expect(tree.currentNode).toBe(tree.rootNode);
   });
 
-  it.fails(`${runtimeDefects.gridRowCondition.localDefectId}: encodes a row condition once`, () => {
-    const html = parseGrid(
-      '|grid?|id=GRID|Shared|[ROW,displayif=equals(SHOW,1)]Conditional row;|(1:Yes)|',
-      '<div class="question-buttons"><button class="next">Next</button></div>',
+  it.fails.each([
+    ['English', 'en'],
+    ['Spanish', 'es'],
+  ])(`${runtimeDefects.corpusMalformedCondition.localDefectId}: %s COVID Markdown keeps the complete grid complement`, (_, locale) => {
+    const sourceCondition = lockedCovidGridCondition(locale);
+    const expectedCondition = `someSelected("${expectedCovidGridResponseIds.join('","')}")`;
+    expect(sourceCondition).toBe(expectedCondition);
+  });
+
+  it.fails.each([
+    ['English', 'en'],
+    ['Spanish', 'es'],
+  ])(`${runtimeDefects.corpusDuplicateScalarId.localDefectId}: %s Module 1 age and year alternatives use distinct response IDs`, async (
+    _,
+    locale,
+  ) => {
+    const { processor } = await loadQuestionProcessor(
+      lockedQuestionMarkdown('module1', locale, 'D_317093647'),
     );
-    const template = document.createElement('template');
-    template.innerHTML = html;
-    expect(decodeURIComponent(template.content.querySelector('[data-displayif]').dataset.displayif)).toBe('equals(SHOW,1)');
+    const inputs = Array.from(
+      processor.findQuestion('D_317093647').question.querySelectorAll('input[type="number"]'),
+    );
+
+    expect(inputs).toHaveLength(2);
+    expect(new Set(inputs.map(({ id }) => id)).size).toBe(inputs.length);
   });
 
-  it.fails(`${runtimeDefects.mathDotValue.localDefectId}: resolves a dot-notation leaf`, async () => {
-    const fn = await loadMathWithState({ OBJECT: { NESTED: 'value' } });
-    expect(fn.getKeyedValue('OBJECT.NESTED')).toBe('value');
-  });
+  it.fails(`${runtimeDefects.overlappingStoreFailure.localDefectId}: keeps local and host responses consistent when an earlier write fails late`, async () => {
+    let resolveFirstStore;
+    const hostResponses = {};
+    const applySuccessfulChanges = (changes) => {
+      Object.entries(changes).forEach(([namespacedKey, value]) => {
+        const key = namespacedKey.replace(/^TEST_MODULE\./, '');
+        if (key === 'treeJSON') return;
+        if (value === undefined) delete hostResponses[key];
+        else hostResponses[key] = value;
+      });
+    };
+    const store = vi.fn((changes) => {
+      if (store.mock.calls.length === 1) {
+        return new Promise((resolve) => {
+          resolveFirstStore = resolve;
+        });
+      }
+      applySuccessfulChanges(changes);
+      return Promise.resolve({ code: 200 });
+    });
+    const quest = await renderFreshQuest({ params: { store } });
 
-  it.fails(`${runtimeDefects.mathDotExists.localDefectId}: recognizes an existing dot-notation leaf`, async () => {
-    const fn = await loadMathWithState({ OBJECT: { NESTED: 'value' } });
-    expect(fn.exists('OBJECT.NESTED')).toBe(true);
-  });
+    quest.root.querySelector('#Q1_1').click();
+    quest.root.querySelector('#Q1 .next').click();
+    await vi.waitFor(() => expect(quest.root.querySelector('form.active')?.id).toBe('Q2'));
+    const secondResponse = quest.root.querySelector('#Q2_TEXT');
+    secondResponse.value = 'later';
+    secondResponse.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    quest.root.querySelector('#Q2 .next').click();
+    await vi.waitFor(() => expect(store).toHaveBeenCalledTimes(2));
 
-  it.fails(`${runtimeDefects.mathMonthRange.localDefectId}: rejects month 12`, async () => {
-    const fn = await loadMathWithState();
-    expect(() => fn.dateCompare(12, 2026, 1, 2027)).toThrow('months need to be');
-  });
+    resolveFirstStore({ code: 503 });
+    await vi.waitFor(() => expect(quest.errors).toHaveLength(1));
+    await vi.waitFor(() => expect(
+      quest.root.querySelector('#storeErrorModal').classList.contains('show'),
+    ).toBe(true));
 
-  it.fails(`${runtimeDefects.legacyQuotedString.localDefectId}: preserves quoted fallback literals`, async () => {
-    const evaluateCondition = await loadEvaluator({}, { PRIOR: 'yes' });
-    expect(evaluateCondition('equals(PRIOR,"yes")')).toBe(true);
-  });
-
-  it.fails(`${runtimeDefects.textareaReset.localDefectId}: renders Reset for a standalone textarea`, async () => {
-    const quest = await renderFreshQuest({ markdown: STANDALONE_TEXTAREA_SURVEY });
-    expect(quest.root.querySelector('#NOTES [data-click-type="reset"]')).not.toBeNull();
-  });
-
-  it.fails(`${runtimeDefects.textareaReset.localDefectId}: clears a standalone textarea's visible value`, async () => {
-    const quest = await renderFreshQuest({ markdown: STANDALONE_TEXTAREA_SURVEY });
-    const textarea = quest.root.querySelector('#notes');
-    textarea.value = 'Clear this response';
-
-    const { resetChildren } = await import('../../eventHandlers.js');
-    resetChildren(textarea.form);
-
-    expect(textarea.value).toBe('');
-  });
-
-  it.fails(`${runtimeDefects.corpusMalformedCondition.localDefectId}: rejects a truncated function expression`, async () => {
-    const evaluateCondition = await loadEvaluator();
-    expect(evaluateCondition('someSelected("D_632714520_1')).toBe(false);
-  });
-
-  it.fails.each(['English', 'Spanish'])(`${runtimeDefects.corpusMalformedCondition.localDefectId}: %s COVID Markdown keeps the complete grid complement`, async () => {
-    const authoredResponseIds = [...MALFORMED_COVID_GRID_COMPLEMENT.matchAll(/"([^"]+)"/g)]
-      .map(([, responseId]) => responseId);
-
-    expect(authoredResponseIds).toEqual(expectedCovidGridResponseIds);
-
-    const evaluateCondition = await loadEvaluator();
-    expect(evaluateCondition(MALFORMED_COVID_GRID_COMPLEMENT)).toBe(false);
-  });
-
-  it.fails.each(['non200', 'reject'])(
-    `${runtimeDefects.storeRollback.localDefectId}: restores the snapshot after a %s store result`,
-    async (storeMode) => {
-      const quest = await renderFreshQuest({ storeMode });
-      await answerAndAdvance(quest);
-      await vi.waitFor(() => expect(quest.root.querySelector('form.active')?.id).toBe('Q1'));
-      expect(quest.state.getSurveyState()).not.toHaveProperty('Q1');
-    },
-  );
-
-  it.fails(`${runtimeDefects.sequentialHostCallbacks.localDefectId}: rebinds second-render callbacks`, async () => {
-    const first = await renderFreshQuest();
-    const secondStore = vi.fn(async () => ({ code: 200 }));
-    document.body.innerHTML = '<div id="secondRoot"></div>';
-    await first.transform.render({
-      activate: true,
-      text: SIMPLE_SURVEY.replace('TEST_MODULE', 'SECOND_MODULE'),
-      store: secondStore,
-      errorLogger: () => {},
-    }, 'secondRoot');
-    document.querySelector('#Q1_1').click();
-    document.querySelector('#Q1 .next').click();
-    await vi.waitFor(() => expect(secondStore).toHaveBeenCalled());
-  });
-
-  it.fails(`${runtimeDefects.finalCompoundResponseRemoval.localDefectId}: removes the question after its final compound response is cleared`, async () => {
-    const appState = await loadStateManager();
-    appState.setResponse('Q1', 'ONLY', 2, 'selected');
-
-    appState.removeResponseItem('Q1', 'ONLY', 2);
-
-    expect(appState.getActiveQuestionState()).not.toHaveProperty('Q1');
-    expect(appState.getResponseToQuestionMapping()).not.toHaveProperty('ONLY.Q1');
-    expect(appState.getCache()).not.toHaveProperty('ONLY.Q1');
-  });
-
-  it.fails(`${runtimeDefects.clearedRestoredResponseLookup.localDefectId}: does not return a restored scalar after it is cleared`, async () => {
-    const appState = await loadStateManager({ Q1: 'restored' });
-    appState.setActiveQuestionState('Q1');
-
-    appState.setResponse('Q1', 'Q1', 1, '');
-
-    expect(appState.findResponseValue('Q1')).toBeUndefined();
-  });
-
-  it.fails(`${runtimeDefects.unsyncedArrayResponseLookup.localDefectId}: returns a live checkbox array before storage`, async () => {
-    const appState = await loadStateManager();
-    appState.setResponse('Q1', 'CHECKBOX', 2, ['one', 'two']);
-
-    expect(appState.findResponseValue('CHECKBOX', 'Q1')).toEqual(['one', 'two']);
+    expect(hostResponses).toEqual({ Q2: 'later' });
+    const { treeJSON, ...localResponses } = quest.state.getSurveyState();
+    expect(localResponses).toEqual(hostResponses);
   });
 
   it.fails(`${runtimeDefects.malformedLoopContinuation.localDefectId}: rejects a malformed loop continuation without throwing`, async () => {
@@ -307,7 +244,7 @@ describe('characterized Quest runtime defects', () => {
     )).toBe(true);
   });
 
-  it.fails(`${runtimeDefects.explicitCombinedChoiceName.localDefectId}: preserves an authored combined-choice name exactly`, async () => {
+  it.fails(`${runtimeDefects.explicitCombinedChoiceName.localDefectId}: preserves a specified combined-choice name exactly`, async () => {
     const { processor } = await loadQuestionProcessor(`
       {"name":"EXPLICIT_COMBINED_NAME"}
       [Q1?] Other response.

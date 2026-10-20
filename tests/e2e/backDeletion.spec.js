@@ -7,7 +7,6 @@ import {
   openParticipant,
   selectLabeledResponse,
 } from './support/harness.js';
-import { runtimeDefects } from '../knownDefects/registry.js';
 
 const questName = 'TEST_NAV';
 const pathQuestion = 'PATH';
@@ -95,19 +94,14 @@ test.describe('Back response deletion and branch pruning @core', () => {
       persistedData,
     });
     await expect(activeQuestion(page, pathQuestion)).toBeVisible();
-    // Reaffirm the retained parent route before revisiting its child. Quest's
-    // separate raw-tree-token response-restoration behavior is not part of
-    // this deletion contract.
-    await activeQuestion(page, pathQuestion).locator('label[for="PATH_1"]').click();
+    await expect(activeQuestion(page, pathQuestion).locator('#PATH_1')).toBeChecked();
     await goNext(page);
     await expect(activeQuestion(page, detailQuestion)).toBeVisible();
     await expect(activeQuestion(page, detailQuestion).locator('#detail')).toHaveValue('');
     await expectHealthyHarness(page);
   });
 
-  test('restores a retained parent response from the raw tree token written by Back @known-defect', async ({ page }) => {
-    const defect = runtimeDefects.backResumeResponseRestoration;
-
+  test('restores a retained parent response from the raw tree token written by Back', async ({ page }) => {
     await openParticipant(page, {
       fixture: 'navigationState.txt',
       persistedData: {
@@ -117,7 +111,6 @@ test.describe('Back response deletion and branch pruning @core', () => {
     });
 
     await expect(activeQuestion(page, pathQuestion)).toBeVisible();
-    test.fail(true, `${defect.localDefectId}: ${defect.reason}`);
     await expect(activeQuestion(page, pathQuestion).locator('#PATH_1'))
       .toBeChecked({ timeout: 1_000 });
   });

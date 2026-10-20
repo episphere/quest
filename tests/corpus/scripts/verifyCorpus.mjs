@@ -23,7 +23,7 @@ async function main() {
   console.log(`Verified questionnaire corpus at ${summary.commit}:`);
   console.log(`- ${summary.files} prod files (${summary.localeCounts.en} en, ${summary.localeCounts.es} es)`);
   console.log(`- ${summary.modules} logical modules`);
-  console.log(`- ${summary.sourceQuestionCount} authored question markers`);
+  console.log(`- ${summary.sourceQuestionCount} question markers`);
 }
 
 main().catch((error) => {

@@ -1,0 +1,21 @@
+// Production-shaped extract from locked prod/module1Spanish.txt (D_912857732 v4.0).
+{"name":"D_726699695_V2"}
+
+[D_912857732?] Las siguientes preguntas tratan sobre cuánto pesaba en diferentes momentos de su vida. Si no recuerda el peso exacto, dé su mejor aproximación. |displayif=equals(D_407056417,536341288)|Si estuvo embarazada en cualquiera de estos momentos, ¿cuánto pesaba antes del embarazo?| ¿Cuánto pesaba cuando tenía...?
+
+|displayif=_value("age") >=18|a. 18 años|
+|displayif=_value("age") >=18||__|__|__|id=D_821387277 min=0 max=999 softedit=true modalif=value<70 modalvalue='¿Este peso es correcto?'||displayif=_value("age") >=18|NÚM. DE LIBRAS (lbs)|
+
+|displayif=_value("age") >=25|b. 25 años|
+|displayif=_value("age") >=25||__|__|__|id=D_121646540 min=0 max=999 softedit=true modalif=value<70 modalvalue='¿Este peso es correcto?'||displayif=_value("age") >=25|NÚM. DE LIBRAS (lbs)|
+
+|displayif=_value("age") >=35|c. 35 años|
+|displayif=_value("age") >=35||__|__|__|id=D_950080618 min=0 max=999 softedit=true modalif=value<70 modalvalue='¿Este peso es correcto?'||displayif=_value("age") >=35|NÚM. DE LIBRAS (lbs)|
+
+|displayif=_value("age") >=45|d. 45 años|
+|displayif=_value("age") >=45||__|__|__|id=D_407167089 min=0 max=999 softedit=true modalif=value<70 modalvalue='¿Este peso es correcto?'||displayif=_value("age") >=45|NÚM. DE LIBRAS (lbs)|
+
+|displayif=_value("age") >=55|e. 55 años|
+|displayif=_value("age") >=55||__|__|__|id=D_503154158 min=0 max=999 softedit=true modalif=value<70 modalvalue='¿Este peso es correcto?'||displayif=_value("age") >=55|NÚM. DE LIBRAS (lbs)|
+
+[END,end]  Respondió a todas las preguntas de este cuestionario. Para enviar sus respuestas, seleccione el botón “Enviar Encuesta”.

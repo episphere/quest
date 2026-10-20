@@ -2,6 +2,82 @@ import { callExchangeValues, moduleParams } from "./questionnaire.js";
 import { translate } from "./common.js";
 import { math } from './customMathJSImplementation.js';
 
+let validationErrorSequence = 0;
+const validationAssociations = new WeakMap();
+
+function nextValidationErrorId(ownerDocument) {
+    let errorId;
+    do {
+        validationErrorSequence += 1;
+        errorId = `quest-validation-error-${validationErrorSequence}`;
+    } while (ownerDocument.getElementById(errorId));
+    return errorId;
+}
+
+function descriptionTokens(element) {
+    return (element.getAttribute('aria-describedby') ?? '')
+        .split(/\s+/)
+        .filter(Boolean);
+}
+
+function addDescriptionToken(element, token) {
+    const tokens = new Set(descriptionTokens(element));
+    tokens.add(token);
+    element.setAttribute('aria-describedby', [...tokens].join(' '));
+}
+
+function removeDescriptionToken(element, token) {
+    const tokens = descriptionTokens(element).filter((current) => current !== token);
+    if (tokens.length > 0) {
+        element.setAttribute('aria-describedby', tokens.join(' '));
+    } else {
+        element.removeAttribute('aria-describedby');
+    }
+}
+
+function restoreValidationTarget(target, errorId, priorAriaInvalid) {
+    removeDescriptionToken(target, errorId);
+    if (priorAriaInvalid === null) {
+        target.removeAttribute('aria-invalid');
+    } else {
+        target.setAttribute('aria-invalid', priorAriaInvalid);
+    }
+}
+
+function associateValidationError(errorElement, relatedTargets) {
+    const targets = [...new Set(relatedTargets)]
+        .filter((target) => target?.matches?.('input, select, textarea'));
+    let metadata = validationAssociations.get(errorElement);
+    if (!metadata) {
+        metadata = { targets: new Map() };
+        validationAssociations.set(errorElement, metadata);
+    }
+
+    const nextTargets = new Set(targets);
+    metadata.targets.forEach((priorAriaInvalid, target) => {
+        if (!nextTargets.has(target)) {
+            restoreValidationTarget(target, errorElement.id, priorAriaInvalid);
+            metadata.targets.delete(target);
+        }
+    });
+
+    targets.forEach((target) => {
+        if (!metadata.targets.has(target)) {
+            metadata.targets.set(target, target.getAttribute('aria-invalid'));
+        }
+        target.setAttribute('aria-invalid', 'true');
+        addDescriptionToken(target, errorElement.id);
+    });
+}
+
+function clearValidationAssociations(errorElement) {
+    const metadata = validationAssociations.get(errorElement);
+    metadata?.targets.forEach((priorAriaInvalid, target) => {
+        restoreValidationTarget(target, errorElement.id, priorAriaInvalid);
+    });
+    validationAssociations.delete(errorElement);
+}
+
 export function validateInput(inputElement) {
 
     let handlers = {
@@ -40,13 +116,22 @@ export function clearValidationError(inputElement) {
         inputElement.nextElementSibling?.classList.contains('validation-container')) {
 
         let errDiv = inputElement.nextElementSibling;
+        const form = inputElement.closest("form");
+        clearValidationAssociations(errDiv);
         errDiv.parentNode.removeChild(errDiv)
 
         inputElement.classList.remove("invalid");
-        inputElement.closest("form").classList.remove("invalid");
+        if (!form?.querySelector('.validation-container')) {
+            form?.classList.remove("invalid");
+        }
     }
 }
-export function validationError(inputElement, errorMsg) {
+export function validationError(
+    inputElement,
+    errorMsg,
+    relatedTargets = [inputElement],
+    { liveRegion = true } = {},
+) {
     let errSpan = null
     let errDiv = null;
 
@@ -54,7 +139,7 @@ export function validationError(inputElement, errorMsg) {
     // or create a new one...
     if (inputElement && inputElement.nextElementSibling?.classList.contains('validation-container')) {
         errDiv = inputElement.nextElementSibling;
-        errSpan = inputElement.nextElementSibling.firstChild;
+        errSpan = errDiv.firstElementChild;
     } else {
         errDiv = document.createElement("div")
         errDiv.classList.add('validation-container');
@@ -63,15 +148,26 @@ export function validationError(inputElement, errorMsg) {
         // styling should be performed by CSS
         errDiv.style.minHeight = "30px";
         errSpan.style.height = "inherit";
-        errSpan.style.color = "red";
-
         errDiv.appendChild(errSpan);
         inputElement.insertAdjacentElement("afterend", errDiv);
     }
 
+    if (!errDiv.id) {
+        errDiv.id = nextValidationErrorId(inputElement.ownerDocument);
+    }
+    if (liveRegion) {
+        errDiv.setAttribute('role', 'alert');
+        errDiv.setAttribute('aria-atomic', 'true');
+    } else {
+        errDiv.removeAttribute('role');
+        errDiv.removeAttribute('aria-atomic');
+    }
+    associateValidationError(errDiv, relatedTargets);
+
     errSpan.innerText = errorMsg
     inputElement.classList.add("invalid");
-    inputElement.closest("form").classList.add("invalid");
+    inputElement.closest("form")?.classList.add("invalid");
+    return errDiv;
 }
 
 function validate_number(inputElement) {
@@ -260,15 +356,14 @@ function validate_count(inputElement){
         let maxCount = inputElement.form.dataset.maxCount;
 
         let selectedCount = inputElement.form.querySelectorAll(`[name=${inputElement.name}]:checked`).length;
-        let lastElement = inputElement.form.querySelectorAll(`[name=${inputElement.name}]`);
-
-        lastElement = lastElement.item(lastElement.length - 1).closest(".response");
+        const relatedInputs = [...inputElement.form.querySelectorAll(`[name=${inputElement.name}]`)];
+        const lastElement = relatedInputs.at(-1).closest(".response");
 
         if (hasMin && selectedCount < minCount) {
-            validationError(lastElement, translate("validationCountMore", [selectedCount, minCount]));
+            validationError(lastElement, translate("validationCountMore", [selectedCount, minCount]), relatedInputs);
         } 
         else if (hasMax && selectedCount > maxCount) {
-            validationError(lastElement, translate("validationCountLess", [selectedCount, maxCount]));
+            validationError(lastElement, translate("validationCountLess", [selectedCount, maxCount]), relatedInputs);
         } 
         else {
             clearValidationError(lastElement)

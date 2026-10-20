@@ -42,9 +42,9 @@ function summaryDisplayArms(source) {
     const nextArmStart = armStarts[index + 1]?.index ?? source.length;
     const lineEnd = source.indexOf('\n', contentStart);
     const contentBoundary = Math.min(nextArmStart, lineEnd === -1 ? source.length : lineEnd);
-    const authoredContent = source.slice(contentStart, contentBoundary);
-    const closingPipe = authoredContent.lastIndexOf('|');
-    const content = closingPipe === -1 ? authoredContent : authoredContent.slice(0, closingPipe);
+    const sourceContent = source.slice(contentStart, contentBoundary);
+    const closingPipe = sourceContent.lastIndexOf('|');
+    const content = closingPipe === -1 ? sourceContent : sourceContent.slice(0, closingPipe);
     return [{
       kind: addressCondition[1],
       conditionIds: idsIn(addressCondition[2], QUOTED_ID),

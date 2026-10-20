@@ -42,13 +42,14 @@ function buildHtmlTable(grid_obj, gridButtonDiv) {
       <div>${grid_text_displayif(shared_text)}</div>
         <table class="quest-grid table-layout table">`;
   
-  // Build the table header row with the question text and response headers. Start with a placeholder for the row header.
-  grid_html += '<thead class="hr" role="rowgroup"><tr><th class="nr hr"></th>';
+  // Build the table header row with the response headers. The first cell is a
+  // visual spacer above the row-header column, not a header of its own.
+  grid_html += '<thead class="hr"><tr><td class="nr grid-corner-spacer"></td>';
   grid_obj.responses.forEach((resp) => {
     const header_text = resp.text;
     grid_html += `<th class="hr" scope="col" data-header="${header_text}">${header_text}</th>`;
   });
-  grid_html += '</tr></thead><tbody role="rowgroup">';
+  grid_html += '</tr></thead><tbody>';
   
   // now lets handle each question...
   grid_obj.questions.forEach((question) => {
@@ -59,17 +60,18 @@ function buildHtmlTable(grid_obj, gridButtonDiv) {
 
     // Start the row for the question, then add the row header (question text)
     grid_html +=
-      `<tr role="row" data-question-id="${question.id}" data-gridrow="true" aria-labelledby="qtext${question.id}" ${displayif}>
+      `<tr data-question-id="${question.id}" data-gridrow="true" ${displayif}>
         <th scope="row" id="qtext${question.id}" class="nr">${question_text}</th>`;
 
 
     // All selectable responses for a given question share the same 'name' attribute to link them as a group
-    // The label is used as a click target for the radio/checkbox input
+    // The label is used as a click target for the radio/checkbox input. Its
+    // hidden row context is populated after piped and conditional text resolves.
     grid_obj.responses.forEach((resp, resp_index) => {
         grid_html += `
-          <td class="response" data-question-id="${question.id}" data-header="${resp.text}" role="gridcell">
+          <td class="response" data-question-id="${question.id}" data-header="${resp.text}">
             <input type="${resp.type}" name="${question.id}" id="${question.id}_${resp_index}" value="${resp.value}" data-gridcell="true" data-grid="true">
-            <label for="${question.id}_${resp_index}" id="label${question.id}_${resp_index}" class="custom-label">${resp.text}</label>
+            <label for="${question.id}_${resp_index}" id="label${question.id}_${resp_index}" class="custom-label"><span class="visually-hidden grid-label-row-context"></span><span class="grid-label-response-text">${resp.text}</span></label>
           </td>`;
     });
 
@@ -127,7 +129,9 @@ export function parseGrid(text, ...args) {
       // the value, then evaluate the markdown.
       question_text = grid_replace_piped_variables(question_text)
 
-      let question_obj = { id: match[1], question_text: question_text, displayif: encodeURIComponent(displayIf) };
+      // Keep the expression raw in the parsed model. The HTML
+      // boundary in buildHtmlTable encodes it once for the data attribute.
+      let question_obj = { id: match[1], question_text: question_text, displayif: displayIf };
       grid_obj.questions.push(question_obj);
     }
   

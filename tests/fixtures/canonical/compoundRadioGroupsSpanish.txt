@@ -1,0 +1,15 @@
+{"name":"COMPOUND_RADIO_GROUPS_SPANISH"}
+
+[COMPOUND_RADIOS?] Para cada actividad, elija la respuesta que mejor lo describa.
+
+¿Puede preparar una comida sencilla?
+(1:MEAL) Sin dificultad
+(2:MEAL) Con alguna dificultad
+(3:MEAL) No puedo hacerlo
+
+¿Puede caminar durante 15 minutos?
+(1:WALK) Sin dificultad
+(2:WALK) Con alguna dificultad
+(3:WALK) No puedo hacerlo
+
+[END,end] Fin.

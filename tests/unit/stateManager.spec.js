@@ -50,7 +50,7 @@ describe('state manager', () => {
     expect(manager.getActiveQuestionState()).toEqual({ Q1: undefined, Q2: { ROW_A: '1', ROW_B: ['2', '3'] } });
 
     manager.removeResponseItem('Q2', 'ROW_A', 2);
-    expect(manager.getActiveQuestionState().Q2).toEqual({ ROW_A: undefined, ROW_B: ['2', '3'] });
+    expect(manager.getActiveQuestionState().Q2).toEqual({ ROW_B: ['2', '3'] });
 
     manager.removeResponse('Q2');
     expect(manager.getActiveQuestionState().Q2).toBeUndefined();
@@ -60,7 +60,7 @@ describe('state manager', () => {
     expect(manager.getActiveQuestionState().Q3).toBeUndefined();
   });
 
-  it('keeps live response mappings and cache entries coherent through removals', async () => {
+  it('keeps live mappings and explicit cache tombstones coherent through removals', async () => {
     const { manager } = await createManager();
 
     manager.setResponse('SINGLE', 'SINGLE', 1, 'yes');
@@ -85,9 +85,13 @@ describe('state manager', () => {
     manager.removeResponseItem('MISSING', 'MISSING', 1);
 
     expect(manager.getResponseToQuestionMapping()).toEqual({
+      SINGLE: 'SINGLE',
+      'FIRST.MULTI': 'MULTI.FIRST',
       'SECOND.MULTI': 'MULTI.SECOND',
     });
     expect(manager.getCache()).toEqual({
+      SINGLE: undefined,
+      'FIRST.MULTI': undefined,
       'SECOND.MULTI': ['two', 'three'],
     });
     expect(manager.findResponseValue('SINGLE')).toBeUndefined();
@@ -239,6 +243,90 @@ describe('state manager', () => {
     expect(manager.getSurveyState()).toHaveProperty('Q1', undefined);
   });
 
+  it('collapses the final compound removal into a question-level store deletion', async () => {
+    const { manager, store } = await createManager();
+    manager.setResponse('Q1', 'FIRST', 2, 'one');
+    manager.setResponse('Q1', 'SECOND', 2, 'two');
+
+    manager.removeResponseItem('Q1', 'FIRST', 2);
+    expect(manager.getActiveQuestionState().Q1).toEqual({ SECOND: 'two' });
+    expect(manager.getActiveQuestionState().Q1).not.toHaveProperty('FIRST');
+    expect(manager.getCache()).toHaveProperty('FIRST.Q1', undefined);
+
+    manager.removeResponseItem('Q1', 'SECOND', 2);
+    const deletionState = manager.getActiveQuestionState();
+    expect(Object.prototype.hasOwnProperty.call(deletionState, 'Q1')).toBe(true);
+    expect(deletionState.Q1).toBeUndefined();
+    expect(manager.getCache()).toMatchObject({
+      'FIRST.Q1': undefined,
+      'SECOND.Q1': undefined,
+    });
+
+    manager.syncToStore(document.querySelector('.next'));
+    await vi.waitFor(() => expect(store).toHaveBeenCalledOnce());
+
+    expect(store.mock.calls[0][0]).toHaveProperty('STATE_TEST.Q1', undefined);
+    expect(manager.getActiveQuestionState()).toEqual({});
+    expect(manager.getSurveyState()).toHaveProperty('Q1', undefined);
+  });
+
+  it('keeps a cleared restored response absent before and after synchronization', async () => {
+    const { manager, store } = await createManager();
+    manager.loadInitialSurveyState({ Q1: 'restored' });
+    manager.setActiveQuestionState('Q1');
+
+    manager.setResponse('Q1', 'Q1', 1, '');
+
+    expect(manager.getSurveyState().Q1).toBe('restored');
+    expect(manager.getActiveQuestionState()).toHaveProperty('Q1', undefined);
+    expect(manager.getCache()).toHaveProperty('Q1', undefined);
+    expect(manager.findResponseValue('Q1')).toBeUndefined();
+
+    manager.setResponse('Q1', 'Q1', 1, 'replacement');
+    expect(manager.findResponseValue('Q1')).toBe('replacement');
+    manager.setResponse('Q1', 'Q1', 1, '');
+
+    manager.syncToStore(document.querySelector('.next'));
+    await vi.waitFor(() => expect(store).toHaveBeenCalledOnce());
+
+    expect(store.mock.calls[0][0]).toHaveProperty('STATE_TEST.Q1', undefined);
+    expect(manager.getSurveyState()).toHaveProperty('Q1', undefined);
+    expect(manager.findResponseValue('Q1')).toBeUndefined();
+  });
+
+  it('returns every live compound value shape before synchronization', async () => {
+    const { manager } = await createManager();
+    manager.setResponse('Q1', 'PRIMITIVE', 3, 'one');
+    manager.setResponse('Q1', 'ARRAY', 3, ['two', 'three']);
+    manager.setResponse('Q1', 'OBJECT', 3, { nested: 'four' });
+
+    expect(manager.findResponseValue('PRIMITIVE', 'Q1')).toBe('one');
+    expect(manager.findResponseValue('ARRAY', 'Q1')).toEqual(['two', 'three']);
+    expect(manager.findResponseValue('OBJECT', 'Q1')).toEqual({ nested: 'four' });
+    expect(manager.findResponseValue('PRIMITIVE')).toBe('one');
+    expect(manager.findResponseValue('ARRAY')).toEqual(['two', 'three']);
+    expect(manager.findResponseValue('OBJECT')).toEqual({ nested: 'four' });
+
+    manager.removeResponseItem('Q1', 'ARRAY', 3);
+    expect(manager.findResponseValue('ARRAY', 'Q1')).toBeUndefined();
+    expect(manager.findResponseValue('ARRAY')).toBeUndefined();
+    expect(manager.findResponseValue('PRIMITIVE')).toBe('one');
+  });
+
+  it('keeps untouched restored compound siblings available after a live clear', async () => {
+    const { manager } = await createManager();
+    manager.loadInitialSurveyState({ Q1: { FIRST: 'old', SECOND: 'retained' } });
+    manager.setActiveQuestionState('Q1');
+
+    manager.setResponse('Q1', 'FIRST', 2, '');
+
+    expect(manager.getActiveQuestionState().Q1).toEqual({ SECOND: 'retained' });
+    expect(manager.findResponseValue('FIRST', 'Q1')).toBeUndefined();
+    expect(manager.findResponseValue('FIRST')).toBeUndefined();
+    expect(manager.findResponseValue('SECOND', 'Q1')).toBe('retained');
+    expect(manager.findResponseValue('SECOND')).toBe('retained');
+  });
+
   it('submits completion metadata without mutating the production payload contract', async () => {
     const { manager, store } = await createManager();
 
@@ -290,16 +378,16 @@ describe('state manager', () => {
     expect(manager.getQuestionProcessor()).toBeNull();
   });
 
-  it('clears the existing manager when the module graph is initialized again', async () => {
+  it('reinitializes the existing manager with the next render state', async () => {
     const { manager } = await createManager();
     manager.loadInitialSurveyState({ Q1: 'saved' });
     manager.setActiveQuestionState('Q1');
 
     const stateModule = await import('../../stateManager.js');
-    stateModule.initializeStateManager(vi.fn(async () => ({ code: 200 })), { Q2: 'ignored' });
+    stateModule.initializeStateManager(vi.fn(async () => ({ code: 200 })), { Q2: 'next render' });
 
     expect(stateModule.getStateManager()).toBe(manager);
-    expect(manager.getSurveyState()).toEqual({});
+    expect(manager.getSurveyState()).toEqual({ Q2: 'next render' });
     expect(manager.getActiveQuestionState()).toEqual({});
   });
 
@@ -361,7 +449,7 @@ describe('state manager', () => {
     expect(await manager.submitSurvey()).toBeUndefined();
   });
 
-  it('logs invalid store rollback click types and automatically hides the recovery modal', async () => {
+  it('logs invalid store rollback click types and keeps the recovery modal open until dismissal', async () => {
     vi.useFakeTimers();
     document.body.innerHTML += '<div id="storeErrorModal"></div>';
     const store = vi.fn(async () => ({ code: 503 }));
@@ -373,7 +461,10 @@ describe('state manager', () => {
     manager.syncToStore(button);
     await vi.waitFor(() => expect(moduleParams.errorLogger).toHaveBeenCalledWith('Invalid click type (handleStoreError):', 'unknown'));
     expect(document.querySelector('#storeErrorModal').classList).toContain('show');
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(6000);
+    expect(document.querySelector('#storeErrorModal').classList).toContain('show');
+
+    globalThis.bootstrap.Modal.getInstance(document.querySelector('#storeErrorModal')).hide();
     expect(document.querySelector('#storeErrorModal').classList).not.toContain('show');
   });
 
