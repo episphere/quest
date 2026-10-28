@@ -6,7 +6,6 @@ import {
   harnessSnapshot,
   openParticipant,
   selectLabeledResponse,
-  waitInHarness,
 } from './support/harness.js';
 
 const CONTROL_PROJECTS = new Set([
@@ -73,7 +72,7 @@ test.describe('participant controls @core @canonical', () => {
     await expect(activeQuestion(page, 'END')).toBeVisible();
     await activeQuestion(page).getByRole('button', { name: 'Submit your survey' }).click();
     await expect(page.locator('#submitModal')).toHaveClass(/show/);
-    await expect(page.locator('#submitModalTitle')).toBeFocused();
+    await expect(page.locator('#submitModalBodyText')).toBeFocused();
     await page.locator('#submitModalButton').click();
 
     const snapshot = await expectHealthyHarness(page);
@@ -105,15 +104,40 @@ test.describe('participant controls @core @canonical', () => {
   test('blocks an out-of-range number and clears the error after correction', async ({ page }) => {
     await openParticipant(page, { fixture: 'validation.txt' });
     const number = activeQuestion(page, 'BOUNDED').locator('#bounded');
+    const initialDescriptionId = await number.getAttribute('aria-describedby');
+    expect(initialDescriptionId).toBe('bounded-desc');
 
     await number.fill('9');
     await goNext(page);
     await expect(activeQuestion(page, 'BOUNDED')).toBeVisible();
-    await expect(activeQuestion(page).locator('.validation-container')).toContainText('Value must be less than or equal to 3');
+    const error = activeQuestion(page).locator('.validation-container');
+    await expect(error).toContainText('Value must be less than or equal to 3');
+    await expect(error).toHaveAttribute('role', 'alert');
+    await expect(error).toHaveAttribute('aria-atomic', 'true');
+    const errorId = await error.getAttribute('id');
+    expect(errorId).toMatch(/^quest-validation-error-/);
+    await expect(number).toHaveAttribute('aria-invalid', 'true');
+    expect((await number.getAttribute('aria-describedby')).split(/\s+/)).toEqual([
+      initialDescriptionId,
+      errorId,
+    ]);
+    const invalidDescription = await number.evaluate((input) => (
+      input.getAttribute('aria-describedby')
+        .split(/\s+/)
+        .map((id) => document.getElementById(id)?.textContent.trim())
+        .filter(Boolean)
+        .join(' ')
+    ));
+    await expect(number).toHaveAccessibleDescription(invalidDescription);
 
     await number.fill('2');
     await number.blur();
     await expect(activeQuestion(page).locator('.validation-container')).toHaveCount(0);
+    await expect(number).not.toHaveAttribute('aria-invalid');
+    await expect(number).toHaveAttribute('aria-describedby', initialDescriptionId);
+    await expect(number).toHaveAccessibleDescription(
+      await page.locator(`#${initialDescriptionId}`).textContent(),
+    );
     await goNext(page);
     await expect(activeQuestion(page, 'END')).toBeVisible();
     await expectHealthyHarness(page);
@@ -121,7 +145,6 @@ test.describe('participant controls @core @canonical', () => {
 
   test('delegated keyboard submits activate Next, Reset, and Back with Enter and Space @windows-a11y', async ({ page }) => {
     await openParticipant(page, { fixture: 'navigationState.txt' });
-    await waitInHarness(page, 550);
 
     async function pressAction(name, key, expectedQuestionId) {
       const button = activeQuestion(page).getByRole('button', { name });

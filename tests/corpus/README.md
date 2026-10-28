@@ -37,7 +37,7 @@ same full-list parser boundary. For each survey it records:
 The lock's `sourceQuestionCount` field counts question markers.
 That is not always the number of runtime forms: grid row markers are folded
 into grid forms, while loops are expanded to as many as 25 iterations. The
-catalog uses the clearer name `authoredMarkerCount` and separately reports the
+catalog uses the clearer name `markerCount` and separately reports the
 actual parser-produced form count.
 
 Regenerate the catalog only when a reviewed questionnaire lock or Quest parser

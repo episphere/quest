@@ -29,7 +29,7 @@ test.describe('locked production checkbox fan-out and XOR state @corpus', () => 
     test.skip(testInfo.project.name !== 'chromium-desktop', 'Production branch paths run once in Chromium.');
   });
 
-  test('queues selected oral-hygiene and nested mouthwash routes once, in authored order, and restores both checkbox arrays', async ({ page }) => {
+  test('queues selected oral-hygiene and nested mouthwash routes once, in source order, and restores both checkbox arrays', async ({ page }) => {
     const markdown = readLockedMarkdown('moduleMouthwash');
     await openParticipant(page, {
       markdown,

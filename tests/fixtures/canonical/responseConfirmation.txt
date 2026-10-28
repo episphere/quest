@@ -1,0 +1,5 @@
+{"name":"TEST_RESPONSE_CONFIRMATION"}
+
+[D_724181652?] How much did you weigh three years ago? If you don’t know your exact weight, please make your best guess. |displayif=equals(D_407056417,536341288)|If you were pregnant three years ago, how much did you weigh before your pregnancy?|
+<br/>
+|__|__|__|min=0 max=999 softedit=true modalif=value<70 modalvalue='Is this weight correct?'| #Pounds (lbs)

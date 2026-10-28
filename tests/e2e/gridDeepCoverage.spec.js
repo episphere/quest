@@ -14,12 +14,23 @@ import {
   selectProductionSleepGridRows,
 } from './support/gridDeepCoverageFixtures.js';
 
-const CHECKBOX_GRID_PROJECTS = new Set(['chromium-desktop', 'chromium-phone']);
+const DEEP_GRID_PROJECTS = new Set(['chromium-desktop', 'chromium-phone']);
+
+const CONDITIONAL_GRID_MARKDOWN = `
+{"name":"TEST_CONDITIONAL_GRID"}
+[GRID_LEAD] The next question uses condition-driven rows.
+|grid?|id="GRID_CONDITIONAL"|How often does each visible activity occur?|[
+[ROW_VISIBLE,displayif=equals(SHOW_VISIBLE,1)] Visible activity;
+[ROW_HIDDEN,displayif=equals(SHOW_HIDDEN,1)] Hidden activity;]|
+(1:Never)
+(2:Often)|
+[END,end] Done.
+`;
 
 test.describe('deep participant grid coverage @canonical @responsive', () => {
   test.beforeEach(async ({}, testInfo) => {
     test.skip(
-      !CHECKBOX_GRID_PROJECTS.has(testInfo.project.name),
+      !DEEP_GRID_PROJECTS.has(testInfo.project.name),
       'This deep grid walk runs at the desktop and phone layout boundaries.',
     );
   });
@@ -34,7 +45,10 @@ test.describe('deep participant grid coverage @canonical @responsive', () => {
     await expect(rows).toHaveCount(9);
     await expect(grid.locator('th[scope="col"]')).toHaveCount(4);
     const firstRowSecondOption = grid.locator('#D_403155173_1');
-    await expect(firstRowSecondOption.locator('xpath=following-sibling::label')).toHaveText('Slight Chance');
+    await expect(
+      firstRowSecondOption.locator('xpath=following-sibling::label').locator('.grid-label-response-text'),
+    ).toHaveText('Slight Chance');
+    await expect(firstRowSecondOption).toHaveAccessibleName('Sitting and reading Slight Chance');
     await selectProductionSleepGridRows(grid, expectedRows);
     await expect(firstRowSecondOption).toBeChecked();
 
@@ -80,9 +94,50 @@ test.describe('deep participant grid coverage @canonical @responsive', () => {
     for (const [rowId, value] of Object.entries(expectedRows)) {
       await expect(grid.locator(`input[name="${rowId}"][value="${value}"]`)).toBeChecked();
     }
+    await expect(firstRowSecondOption).toHaveAccessibleName('Sitting and reading Slight Chance');
     const focusTarget = grid.locator('.screen-reader-focus');
     await expect(focusTarget).toHaveAttribute('tabindex', '-1');
     await expect(focusTarget).toBeFocused();
+    await expectHealthyHarness(page);
+  });
+
+  test('evaluates each conditional row from a once-encoded expression and stores only visible selections', async ({ page }) => {
+    await openParticipant(page, {
+      markdown: CONDITIONAL_GRID_MARKDOWN,
+      previousResults: {
+        SHOW_VISIBLE: '1',
+        SHOW_HIDDEN: '0',
+      },
+    });
+    await goNext(page);
+
+    const grid = activeQuestion(page, 'GRID_CONDITIONAL');
+    const visibleRow = grid.locator('tr[data-question-id="ROW_VISIBLE"]');
+    const hiddenRow = grid.locator('tr[data-question-id="ROW_HIDDEN"]');
+    await expect(visibleRow).toHaveAttribute('data-displayif', 'equals(SHOW_VISIBLE%2C1)');
+    await expect(hiddenRow).toHaveAttribute('data-displayif', 'equals(SHOW_HIDDEN%2C1)');
+    await expect(visibleRow).toBeVisible();
+    await expect(hiddenRow).not.toBeVisible();
+    await expect(hiddenRow).toHaveAttribute('data-hidden', 'true');
+
+    const selected = visibleRow.locator('input[value="2"]');
+    await selected.locator('xpath=following-sibling::label').click();
+    await expect(selected).toHaveAccessibleName('Visible activity Often');
+    await expect(selected).toBeChecked();
+    const expectedRows = { ROW_VISIBLE: '2' };
+    expect((await harnessSnapshot(page)).state.active).toEqual({
+      GRID_CONDITIONAL: expectedRows,
+    });
+
+    await goNext(page);
+    await expect(activeQuestion(page, 'END')).toBeVisible();
+    await flushHarness(page);
+    const stored = await harnessSnapshot(page);
+    expect(stored.state.survey).toMatchObject({ GRID_CONDITIONAL: expectedRows });
+    expect(stored.logs.storeCalls.at(-1).changes['TEST_CONDITIONAL_GRID.GRID_CONDITIONAL'])
+      .toEqual(expectedRows);
+    expect(stored.logs.storeCalls.at(-1).changes['TEST_CONDITIONAL_GRID.GRID_CONDITIONAL'])
+      .not.toHaveProperty('ROW_HIDDEN');
     await expectHealthyHarness(page);
   });
 });

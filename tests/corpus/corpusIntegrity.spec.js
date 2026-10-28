@@ -77,7 +77,7 @@ describe('questionnaire corpus lock', () => {
     expect(schema.properties.files.items.properties.language.enum).toEqual(['en', 'es']);
   });
 
-  it('strips authored comments before analyzing question IDs', () => {
+  it('strips comments before analyzing question IDs', () => {
     const analysis = analyzeQuestionnaireText([
       '//{"version":"1.0"}',
       '{"name":"D_123"}',

@@ -1,6 +1,5 @@
 import { moduleParams } from './questionnaire.js';
 import { initializeCustomMathJSFunctions, math } from './customMathJSImplementation.js';
-import { initializeStateManager } from './stateManager.js';
 import { QuestionProcessor } from './questionProcessor.js';
 import { getStateManager } from './stateManager.js';
 
@@ -14,7 +13,6 @@ import { getStateManager } from './stateManager.js';
  * @returns {Array} - An array containing the transformed contents, questName, and retrievedData.
  */
 export async function initSurvey(markdown) {
-    initializeStateManager(moduleParams.store);
     initializeCustomMathJSFunctions();
 
     const precalculated_values = getPreCalculatedValues(markdown);

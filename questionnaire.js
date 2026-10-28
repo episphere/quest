@@ -5,7 +5,8 @@ import { math } from './customMathJSImplementation.js';
 import { restoreResponses } from "./restoreResponses.js";
 import { getStateManager } from "./stateManager.js";
 import { evaluateCondition } from "./evaluateConditions.js";
-import { manageAccessibleQuestion } from "./accessibleQuestionTextBuilder.js";
+import { beginQuestionFocusHandoff, manageAccessibleQuestion } from "./accessibleQuestionTextBuilder.js";
+import { focusModalDescription } from './modalFocus.js';
 export const moduleParams = {};
 const initializedPopoverTriggers = new WeakSet();
 
@@ -401,10 +402,16 @@ export const handleForIDAttributes = (forIDElementArray, returnToQuestion = fals
 export function textboxinput(inputElement, validate = true) {
 
   let evalBool = "";
-  const modalElement = document.getElementById('softModalResponse');
-  if (!modalElement.classList.contains('show')) {
+  if (
+    Object.prototype.hasOwnProperty.call(inputElement.dataset, 'acceptedModalValue')
+    && inputElement.dataset.acceptedModalValue !== inputElement.value
+  ) {
+    delete inputElement.dataset.acceptedModalValue;
+  }
+  const modalElement = moduleParams.questDiv?.querySelector('#softModalResponse');
+  if (modalElement && !modalElement.classList.contains('show')) {
   
-    const modal = new bootstrap.Modal(modalElement);
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
     if (inputElement.getAttribute("modalif") && inputElement.value != "") {
       evalBool = math.evaluate(
@@ -412,11 +419,57 @@ export function textboxinput(inputElement, validate = true) {
       );
     }
 
-    if (inputElement.getAttribute("softedit") == "true" && evalBool == true) {
+    if (
+      inputElement.getAttribute("softedit") == "true"
+      && evalBool == true
+      && inputElement.dataset.acceptedModalValue !== inputElement.value
+    ) {
       if (inputElement.getAttribute("modalvalue")) {
-        document.getElementById("modalResponseBody").innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
+        modalElement.querySelector('#modalResponseBody').innerText = decodeURIComponent(inputElement.getAttribute("modalvalue"));
+        const acceptButton = modalElement.querySelector('#modalResponseContinueButton');
+        if (modalElement.__questAcceptResponseHandler) {
+          acceptButton.removeEventListener(
+            'click',
+            modalElement.__questAcceptResponseHandler,
+            true,
+          );
+        }
+        const acceptResponseValue = () => {
+          if (inputElement.isConnected && inputElement.ownerDocument === modalElement.ownerDocument) {
+            inputElement.dataset.acceptedModalValue = inputElement.value;
+          }
+          modal.hide();
+        };
+        modalElement.__questAcceptResponseHandler = acceptResponseValue;
+        acceptButton.addEventListener('click', acceptResponseValue, { capture: true, once: true });
+
+        modalElement.addEventListener('hidden.bs.modal', () => {
+          acceptButton.removeEventListener('click', acceptResponseValue, true);
+          if (modalElement.__questAcceptResponseHandler === acceptResponseValue) {
+            delete modalElement.__questAcceptResponseHandler;
+          }
+          if (modalElement._questRenderDisposal) return;
+
+          const questDiv = moduleParams.questDiv;
+          const ownerDocument = inputElement.ownerDocument;
+          const activeElement = ownerDocument.activeElement;
+          const focusMayReturn = !activeElement
+            || activeElement === ownerDocument.body
+            || activeElement === ownerDocument.documentElement
+            || modalElement.contains(activeElement);
+
+          if (
+            questDiv?.contains(modalElement)
+            && questDiv.contains(inputElement)
+            && inputElement.closest('.question.active')
+            && focusMayReturn
+          ) {
+            inputElement.focus({ preventScroll: true });
+          }
+        }, { once: true });
 
         modal.show();
+        focusModalDescription(modalElement);
       }
     }
   }
@@ -475,6 +528,8 @@ export function radioAndCheckboxClearTextInput(inputElement) {
 
     if (textBox && radioOrCheckbox && !radioOrCheckbox.checked) {
       textBox.value = ""
+      delete textBox.dataset.acceptedModalValue;
+      clearValidationError(textBox);
       const formID = inputElement.form.id;
       const inputID = textBox.id;
 
@@ -526,9 +581,9 @@ function clearSelection(inputElement) {
 
         default:
           element.value = element == inputElement ? inputElement.value : "";
+          if (element !== inputElement) delete element.dataset.acceptedModalValue;
           setResponsesInState(element.form, element.value, element.id);
-          if (element.nextElementSibling && element.nextElementSibling.children.length !== 0) element.nextElementSibling.children[0].innerText = "";
-          element.form.classList.remove("invalid");
+          clearValidationError(element);
           appState.removeResponseItem(element.form.id, element.id, appState.getNumResponseInputs(element.form.id));
           break;
       }
@@ -586,17 +641,8 @@ function resetSiblingDOMValues(sibling) {
     sibling.checked = sibling.dataset.reset ? false : sibling.checked;
   } else {
     sibling.value = "";
-    clearXORValidationMessage(sibling);
-  }
-}
-
-function clearXORValidationMessage(inputElement) {
-  const messageSpan = inputElement.nextElementSibling?.children[0];
-  if (messageSpan?.tagName === "SPAN" && messageSpan.innerText.length !== 0) {
-    messageSpan.innerText = "";
-    inputElement.classList.remove("invalid");
-    inputElement.form.classList.remove('invalid');
-    inputElement.nextElementSibling.remove();
+    delete sibling.dataset.acceptedModalValue;
+    clearValidationError(sibling);
   }
 }
 
@@ -664,20 +710,22 @@ async function analyzeFormResponses(nextOrPreviousButton) {
 function showNumUnansweredQuestionsModal(num, nextOrPreviousButton, soft) {
   const prompt = translate("basePrompt", [num > 1 ? "are" : "is", num, num > 1 ? "s" : ""]);
 
+  const questDiv = moduleParams.questDiv;
   const modalID = soft ? 'softModal' : 'hardModal';
-  const modal = new bootstrap.Modal(document.getElementById(modalID));
+  const modalElement = questDiv?.querySelector(`[id="${modalID}"]`);
+  if (!modalElement) return;
+
+  const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
   const softModalText = translate("softPrompt");
   const hardModalText = translate("hardPrompt", [num > 1 ? "s" : ""]);
 
   const modalBodyTextId = soft ? "modalBodyText" : "hardModalBodyText";
-  const modalBodyTextEle = document.getElementById(modalBodyTextId);
+  const modalBodyTextEle = modalElement.querySelector(`[id="${modalBodyTextId}"]`);
 
   modalBodyTextEle.innerText = `${prompt} ${soft ? softModalText : hardModalText}`;
-  modalBodyTextEle.setAttribute('tabindex', '0');
-  modalBodyTextEle.setAttribute('role', 'alert');
 
   if (soft) {
-    const continueButton = document.getElementById("modalContinueButton");
+    const continueButton = modalElement.querySelector('[id="modalContinueButton"]');
     continueButton.removeEventListener("click", continueButton.clickHandler);
     continueButton.clickHandler = async () => {
       await getNextQuestion(nextOrPreviousButton);
@@ -686,12 +734,8 @@ function showNumUnansweredQuestionsModal(num, nextOrPreviousButton, soft) {
   }
 
   modal.show();
+  focusModalDescription(modalElement);
 
-  // Set focus to the modal title
-  const modalTitleID = soft ? "softModalTitle" : "hardModalLabel";
-  document.getElementById(modalTitleID).focus();
-
-  let modalElement = modal._element;
   modalElement.querySelector('.btn-close').addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
       modal.hide();
@@ -788,7 +832,7 @@ export async function getNextQuestion(nextOrPreviousButton, revertOnStoreError =
     questionQueue.next();
   }
 
-  await swapVisibleQuestion(nextQuestionEle);
+  await swapVisibleQuestion(nextQuestionEle, { skipAsyncQuestionLoad: revertOnStoreError });
 }
 
 function exitLoop(nextQuestionEle) {
@@ -832,10 +876,11 @@ function exitLoop(nextQuestionEle) {
  * Update the active question in the DOM.
  * Identifies the existing question and swaps it with the new question.
  * If an existing question is not found (this happens on startup), the new question is appended to the parent div.
- * @param {HTMLElement} questDiv - The parent div housing the Quest UI.
- * @param {string} questionHTMLString - The HTML string of the question to be swapped in.
+ * @param {HTMLElement} questionEle - The prepared question form to activate.
+ * @param {object} [options] - Navigation-only preparation options.
+ * @param {boolean} [options.skipAsyncQuestionLoad=false] - Reuse cached async markup during store rollback.
  */
-export async function swapVisibleQuestion(questionEle) {
+export async function swapVisibleQuestion(questionEle, { skipAsyncQuestionLoad = false } = {}) {
   // return early if the renderer tool is active and displaying the full question list.
   if (moduleParams.renderFullQuestionList) return;
 
@@ -859,7 +904,7 @@ export async function swapVisibleQuestion(questionEle) {
   }
 
   // Ensure the question is appended to the active DOM before calling prepareQuestionDOM for accessibility.
-  await prepareQuestionDOM(questionEle);
+  await prepareQuestionDOM(questionEle, { skipAsyncQuestionLoad });
 
   return questionEle;
 }
@@ -874,6 +919,7 @@ export function showAllQuestions(allProcessedQuestionsMap) {
     if (questionEle.id === 'END_OF_LOOP') {
       questionEle.style.display = 'none';
     }
+    syncGridLabelRowContexts(questionEle);
     fragment.appendChild(questionEle);
   });
 
@@ -887,47 +933,64 @@ export function showAllQuestions(allProcessedQuestionsMap) {
 
 // Manage the text builder for screen readers (only build when necessary)
 let questionFocusSet;
-export async function prepareQuestionDOM(questionElement) {
+export async function prepareQuestionDOM(questionElement, { skipAsyncQuestionLoad = false } = {}) {
   // Fail gently in the renderer tool.
   if (!questionElement && !moduleParams.activate) return;
   // Reset the questionFocusSet flag to reset accessibility features.
   questionFocusSet = false;
 
-  // Handle questions in moduleParams.asyncQuestionsMap. These are fetched externally and appended to the DOM. Uncommon. Connect example: SOCcer.
-  if (Object.keys(moduleParams.asyncQuestionsMap).length > 0 && Object.keys(moduleParams.asyncQuestionsMap).includes(questionElement.id) && moduleParams.fetchAsyncQuestion instanceof Function) {
-    const fieldset = questionElement.querySelector('fieldset') || questionElement.querySelector('tbody');
-    await manageAsyncQuestionLoad(fieldset, questionElement.id);
-  }
+  // Begin listening before an asynchronous question load so participant or
+  // host interaction during that wait can cancel the eventual focus handoff.
+  const questionFocusHandoff = moduleParams.activate && !moduleParams.isRenderer
+    ? beginQuestionFocusHandoff(questionElement.ownerDocument)
+    : null;
+  let preferredQuestionFocusTarget = null;
 
-  handleQuestionDisplayIfs(questionElement);
-  handleQuestionInputAttributes(questionElement);
-
-  // Remove the reset answer button if there are no response inputs
-  const numResponseInputs = countResponseInputs(questionElement);
-  if (numResponseInputs === 0 && questionElement.id !== 'END') {
-    const resetButton = questionElement.querySelector('.reset');
-    if (resetButton) {
-      resetButton.remove();
+  try {
+    // Handle questions in moduleParams.asyncQuestionsMap. These are fetched externally and appended to the DOM. Uncommon. Connect example: SOCcer.
+    if (!skipAsyncQuestionLoad && Object.keys(moduleParams.asyncQuestionsMap).length > 0 && Object.keys(moduleParams.asyncQuestionsMap).includes(questionElement.id) && moduleParams.fetchAsyncQuestion instanceof Function) {
+      const fieldset = questionElement.querySelector('fieldset') || questionElement.querySelector('tbody');
+      preferredQuestionFocusTarget = await manageAsyncQuestionLoad(fieldset, questionElement.id);
     }
+
+    handleQuestionDisplayIfs(questionElement);
+    handleQuestionInputAttributes(questionElement);
+
+    // Remove the reset answer button if there are no response inputs
+    const numResponseInputs = countResponseInputs(questionElement);
+    if (numResponseInputs === 0 && questionElement.id !== 'END') {
+      const resetButton = questionElement.querySelector('.reset');
+      if (resetButton) {
+        resetButton.remove();
+      }
+    }
+
+    const appState = getStateManager();
+    const questionProcessor = appState.getQuestionProcessor();
+
+    if (moduleParams.showProgressBarInQuest) {
+      updateProgressBar(questionProcessor);
+    }
+
+    if (moduleParams.activate) {
+      handleUserScrollLocation();
+
+      // Handle accessibility features after the question renders.
+      // The question text is at the opening fieldset tag OR at the top of the nextElement form for tables.
+      questionFocusSet = manageAccessibleQuestion(
+        questionElement.querySelector('fieldset') || questionElement,
+        questionFocusSet,
+        questionFocusHandoff,
+        preferredQuestionFocusTarget,
+      );
+    }
+
+    // Popovers get initialized last, after all other DOM and accessibility operations, to ensure they are in the DOM and visible (Bootstrap 5 requirement).
+    initializePopovers();
+  } catch (error) {
+    questionFocusHandoff?.cancel();
+    throw error;
   }
-
-  const appState = getStateManager();
-  const questionProcessor = appState.getQuestionProcessor();
-
-  if (moduleParams.showProgressBarInQuest) {  
-    updateProgressBar(questionProcessor);
-  }
-
-  if (moduleParams.activate) {
-    handleUserScrollLocation();
-
-    // Handle accessibility features after the question renders.
-    // The question text is at the opening fieldset tag OR at the top of the nextElement form for tables.
-    questionFocusSet = manageAccessibleQuestion(questionElement.querySelector('fieldset') || questionElement, questionFocusSet);
-  }
-
-  // Popovers get initialized last, after all other DOM and accessibility operations, to ensure they are in the DOM and visible (Bootstrap 5 requirement).
-  initializePopovers();
 }
 
 /**
@@ -937,7 +1000,7 @@ export async function prepareQuestionDOM(questionElement) {
  */
 function updateProgressBar(questionProcessor) {
   const progressBar = moduleParams.questDiv.querySelector('.progress-bar');
-  const progressText = document.getElementById('progressBarText');
+  const progressText = moduleParams.questDiv.querySelector('#progressBarText');
   if (!progressBar || !progressText) return;
   
   let completionPercentage = 0;
@@ -954,7 +1017,7 @@ function updateProgressBar(questionProcessor) {
     }
 
     progressBar.style.width = `${completionPercentage}%`;
-    progressBar.setAttribute('aria-valuenow', `${Math.round(completionPercentage)}%`);
+    progressBar.setAttribute('aria-valuenow', String(completionPercentage));
     progressText.textContent = `${Math.round(completionPercentage)}%`;
   }
 }
@@ -980,17 +1043,27 @@ async function manageAsyncQuestionLoad(fieldset, questionID) {
     moduleParams.i18n.language,
   ];
   
+  let errorFocusTarget = null;
+
   try {
     await moduleParams.fetchAsyncQuestion(funcToFetch, args);
 
   } catch (error) {
     moduleParams.errorLogger(`Error fetching async question: ${error}, Function: ${funcToFetch}, Args: ${relatedArgs}`);
-    validationError(fieldset, `Error fetching question. Please go back and try again.`);
+    errorFocusTarget = validationError(
+      fieldset,
+      `Error fetching question. Please go back and try again.`,
+      [fieldset],
+      { liveRegion: false },
+    );
+    errorFocusTarget.tabIndex = -1;
     
   } finally {
     removeLoadingTextNode(fieldset);
     hideLoadingIndicator();
   }
+
+  return errorFocusTarget;
 }
 
 // For async questions: Make sure the loading text is visible.
@@ -1006,18 +1079,15 @@ function insertLoadingTextNode(fieldset) {
   }
 }
 
-// For async questions: If a response element is found, remove the loading text.
+// For async questions: Remove the loading text once the host operation settles.
 function removeLoadingTextNode(fieldset) {
   const loadingText = moduleParams.i18n.loading;
-  const responseElement = fieldset.querySelector('.response');
-  if (responseElement) {
-    const loadingTextNode = Array.from(fieldset.childNodes).find(node =>
-      node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() === loadingText
-    );
+  const loadingTextNode = Array.from(fieldset.childNodes).find(node =>
+    node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() === loadingText
+  );
 
-    if (loadingTextNode) {
-      fieldset.removeChild(loadingTextNode);
-    }
+  if (loadingTextNode) {
+    fieldset.removeChild(loadingTextNode);
   }
 }
 
@@ -1063,6 +1133,44 @@ function handleQuestionDisplayIfs(questionElement) {
       elm.style.display = "";
     }
   });
+
+  syncGridLabelRowContexts(questionElement);
+}
+
+function syncGridLabelRowContexts(questionElement) {
+  [...questionElement.querySelectorAll('[data-gridrow="true"]')].forEach((row) => {
+    const rowHeader = row.querySelector('th[scope="row"]');
+    if (!rowHeader) return;
+
+    const rowContext = resolvedGridRowText(rowHeader);
+    row.querySelectorAll('.grid-label-row-context').forEach((context) => {
+      context.textContent = rowContext ? `${rowContext} ` : '';
+    });
+  });
+}
+
+function resolvedGridRowText(rowHeader) {
+  const parts = [];
+  const collectText = (node) => {
+    if (node.nodeType === 3) {
+      parts.push(node.nodeValue ?? '');
+      return;
+    }
+    if (node.nodeType !== 1) return;
+    if (node.hidden || node.getAttribute('aria-hidden') === 'true' || node.style.display === 'none') return;
+    if (node.tagName === 'BR') {
+      parts.push(' ');
+      return;
+    }
+    if (node.hasAttribute('data-gridreplace') && typeof node.innerText === 'string') {
+      parts.push(node.textContent || node.innerText);
+      return;
+    }
+    node.childNodes.forEach(collectText);
+  };
+
+  collectText(rowHeader);
+  return parts.join('').replace(/\s+/g, ' ').trim();
 }
 
 export function manageDisplayIfSpansAndDivs(elm) {  
@@ -1271,6 +1379,8 @@ function isMonthInputSupported() {
 }
 
 export async function getPreviousQuestion(nextOrPreviousButton, revertOnStoreError = false) {
+  const navigationRoot = moduleParams.questDiv;
+
   // Get the previousElement from questionQueue
   let pv = questionQueue.previous();
   while (pv.value.value.substring(0, 9) === "_CONTINUE") {
@@ -1287,7 +1397,12 @@ export async function getPreviousQuestion(nextOrPreviousButton, revertOnStoreErr
   const previousElementID = pv.value.value;
   const previousQuestionEle = questionProcessor.loadPreviousQuestion(previousElementID);
 
-  await swapVisibleQuestion(previousQuestionEle);
+  await swapVisibleQuestion(previousQuestionEle, { skipAsyncQuestionLoad: revertOnStoreError });
+
+  if (moduleParams.questDiv !== navigationRoot || !navigationRoot?.contains(previousQuestionEle)) {
+    return;
+  }
+
   restoreResponses(appState.getSurveyState(), previousElementID);
 }
 

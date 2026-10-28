@@ -161,7 +161,6 @@ async function expectGridFocusIndicatorUnclipped(label) {
 
 async function openPlainTextarea(page) {
   await openParticipant(page, { markdown: TEXTAREA_KEYBOARD_MARKDOWN });
-  await waitInHarness(page, 550);
   const textarea = activeQuestion(page, 'NOTES').locator('#notes');
   await textarea.fill('first\nsecond');
   return textarea;
@@ -208,11 +207,54 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     expect(state.end).toBe(0);
   });
 
+  test('standalone textarea Reset clears its visible value and active response with native keyboard activation', async ({ page }, testInfo) => {
+    test.skip(!NATIVE_KEYBOARD_PROJECTS.has(testInfo.project.name), 'The textarea Reset contract runs in every desktop engine and the Windows browser branch.');
+
+    await openParticipant(page, {
+      markdown: TEXTAREA_KEYBOARD_MARKDOWN,
+      persistedData: {
+        NOTES: 'Previously stored notes',
+        treeJSON: JSON.stringify({
+          rootNode: { value: null, children: [{ value: 'NOTES?', children: [] }] },
+          currentNode: 'NOTES?',
+        }),
+      },
+    });
+    const question = activeQuestion(page, 'NOTES');
+    const textarea = question.locator('#notes');
+    const reset = question.getByRole('button', { name: 'Reset this answer' });
+    await expect(textarea).toHaveValue('Previously stored notes');
+
+    for (const [key, value] of [
+      ['Enter', 'Clear this response with Enter'],
+      ['Space', 'Clear this response with Space'],
+    ]) {
+      await textarea.fill(value);
+      await textarea.blur();
+      expect((await harnessSnapshot(page)).state.active.NOTES).toBe(value);
+
+      await reset.focus();
+      await expect(reset).toBeFocused();
+      await page.keyboard.press(key);
+      await expect(textarea).toHaveValue('');
+      await expect(reset).toBeFocused();
+      expect((await harnessSnapshot(page)).state.active.NOTES).toBeUndefined();
+    }
+
+    await goNext(page);
+    await page.getByRole('button', { name: 'Continue Without Answering' }).click();
+    await expect(activeQuestion(page, 'END')).toBeVisible();
+    const snapshot = await expectHealthyHarness(page);
+    const deletion = snapshot.logs.storeCalls.findLast(({ changes }) => (
+      Object.hasOwn(changes, 'TEST_TEXTAREA_KEYBOARD.NOTES')
+    ));
+    expect(deletion.changes['TEST_TEXTAREA_KEYBOARD.NOTES']).toBeUndefined();
+  });
+
   test('choice-linked textarea arrows remain native and move its multiline caret', async ({ page }, testInfo) => {
     test.skip(!NATIVE_KEYBOARD_PROJECTS.has(testInfo.project.name), 'The native textarea contract runs in every desktop engine and the Windows browser branch.');
 
     await openParticipant(page, { markdown: CHOICE_LINKED_TEXTAREA_MARKDOWN });
-    await waitInHarness(page, 550);
     const textarea = activeQuestion(page, 'OTHER').locator('#OTHER_TEXT');
     await textarea.fill('first\nsecond');
     await textarea.focus();
@@ -244,7 +286,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     test.skip(!NATIVE_KEYBOARD_PROJECTS.has(testInfo.project.name), 'The native link contract runs in every desktop engine and the Windows browser branch.');
 
     await openParticipant(page, { markdown: LINK_KEYBOARD_MARKDOWN });
-    await waitInHarness(page, 550);
     const link = activeQuestion(page, 'LINK').getByRole('link', { name: 'keyboard help' });
     await link.focus();
     await expect(link).toBeFocused();
@@ -256,7 +297,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     test.skip(!NATIVE_KEYBOARD_PROJECTS.has(testInfo.project.name), 'The native control contract runs in every desktop engine and the Windows browser branch.');
 
     await openParticipant(page);
-    await waitInHarness(page, 550);
     const question = activeQuestion(page, 'CHOICE');
     const first = question.locator('#CHOICE_1');
     const second = question.locator('#CHOICE_2');
@@ -301,7 +341,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     test.skip(!TAB_PROJECTS.has(testInfo.project.name), 'Safari Full Keyboard Access has a separate manual contract.');
 
     await openParticipant(page);
-    await waitInHarness(page, 550);
     const first = activeQuestion(page, 'CHOICE').locator('#CHOICE_1');
     const second = activeQuestion(page, 'CHOICE').locator('#CHOICE_2');
     await page.locator('#host-before').focus();
@@ -348,7 +387,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
       markdown: readLockedMarkdown('module1'),
       persistedData: { treeJSON: treeAt(questionId, 'SECTION1') },
     });
-    await waitInHarness(page, 550);
 
     const question = activeQuestion(page, questionId);
     const focusTarget = question.locator('.screen-reader-focus');
@@ -422,7 +460,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     ))).toBe(true);
 
     await goBack(page);
-    await waitInHarness(page, 550);
     await expect(activeQuestion(page, questionId).locator('.screen-reader-focus')).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(activeQuestion(page, questionId).locator(`#${questionId}_522680498`)).toBeFocused();
@@ -443,7 +480,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
       markdown: readLockedMarkdown('module1'),
       persistedData: { treeJSON: treeAt(questionId, 'RACEETHINTRO') },
     });
-    await waitInHarness(page, 550);
 
     const question = activeQuestion(page, questionId);
     const first = question.locator(`#${firstId}`);
@@ -507,8 +543,8 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     })).toBe(true);
 
     await goBack(page);
-    await waitInHarness(page, 550);
     const restored = activeQuestion(page, questionId);
+    await expect(restored.locator('.screen-reader-focus')).toBeFocused();
     await expect(restored.locator(`#${firstId}`)).toBeChecked();
     await expect(restored.locator(`#${secondId}`)).toBeChecked();
     await expect(restored.locator(`#${otherId}`)).toBeChecked();
@@ -536,7 +572,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     ))).toBe(true);
 
     await goBack(page);
-    await waitInHarness(page, 550);
     await expect(activeQuestion(page, questionId).locator(`#${exclusiveId}`)).toBeChecked();
     await expectHealthyHarness(page);
   });
@@ -549,7 +584,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
       markdown: readLockedMarkdown('module1'),
       persistedData: { treeJSON: treeAt(questionId, 'RACEETHINTRO') },
     });
-    await waitInHarness(page, 550);
 
     const question = activeQuestion(page, questionId);
     const other = question.locator(`#${questionId}_807835037`);
@@ -569,7 +603,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
       previousResults: { age: '45' },
       persistedData: { treeJSON: treeAt(questionId, 'D_700374192') },
     });
-    await waitInHarness(page, 550);
 
     const question = activeQuestion(page, questionId);
     const textarea = question.locator(`#${textareaId}`);
@@ -608,7 +641,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     ))).toBe(true);
 
     await goBack(page);
-    await waitInHarness(page, 550);
     await expect(activeQuestion(page, questionId).locator('.screen-reader-focus')).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(activeQuestion(page, questionId).locator(`#${textareaId}`)).toBeFocused();
@@ -620,12 +652,10 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     test.skip(!TAB_PROJECTS.has(testInfo.project.name), 'Safari Full Keyboard Access has a separate manual contract.');
 
     await openParticipant(page);
-    await waitInHarness(page, 550);
     const choice = activeQuestion(page, 'CHOICE').locator('#CHOICE_1');
     await pressSpace(page, choice);
     await goNext(page);
     await expect(activeQuestion(page, 'CHECKS')).toBeVisible();
-    await waitInHarness(page, 550);
 
     const checks = activeQuestion(page, 'CHECKS');
     const email = checks.locator('#CHECKS_1');
@@ -673,7 +703,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     test.skip(!NATIVE_KEYBOARD_PROJECTS.has(testInfo.project.name), 'The native select contract runs in every desktop engine and the Windows browser branch.');
 
     await openParticipant(page, { fixture: 'nativeSelect.txt' });
-    await waitInHarness(page, 550);
     const select = activeQuestion(page, 'STATE').locator('#home_state');
     await select.focus();
     await expect(select).toBeFocused();
@@ -718,9 +747,7 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
 
     await page.setViewportSize({ width: 1_000, height: 800 });
     await openParticipant(page, { fixture: 'gridResponsive.txt' });
-    await waitInHarness(page, 550);
     await goNext(page);
-    await waitInHarness(page, 550);
     const grid = activeQuestion(page, 'GRID_RATE');
     const never = grid.locator('#GRID_WALK_0');
     const neverLabel = never.locator('xpath=following-sibling::label');
@@ -799,7 +826,14 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
 
     await activeQuestion(page, 'END').getByRole('button', { name: 'Back to the previous section' }).click();
     await expect(activeQuestion(page, 'GRID_RATE')).toBeVisible();
-    await expect(activeQuestion(page, 'GRID_RATE').locator('#GRID_WALK_1')).toBeChecked();
+    const restoredChoice = activeQuestion(page, 'GRID_RATE').locator('#GRID_WALK_1');
+    await expect(restoredChoice).toBeChecked();
+    await expect(restoredChoice).not.toHaveAttribute('aria-labelledby');
+    await expect(restoredChoice.locator('xpath=following-sibling::label').locator('.grid-label-row-context'))
+      .toHaveText('Walking');
+    await expect(restoredChoice).toHaveAccessibleName(
+      'Walking Sometimes',
+    );
   });
 
   test('native checkbox-grid traversal and selection retain native focus', async ({ page }, testInfo) => {
@@ -807,9 +841,7 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
 
     await page.setViewportSize({ width: 1_000, height: 800 });
     await openParticipant(page, { fixture: 'gridCheckboxFocus.txt' });
-    await waitInHarness(page, 550);
     await goNext(page);
-    await waitInHarness(page, 550);
     const grid = activeQuestion(page, 'GRID_CHECK');
     const controls = [
       grid.locator('#GRID_CHECK_ROW_A_0'),
@@ -849,7 +881,6 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     test.skip(testInfo.project.name !== 'chromium-desktop', 'Forced-colors rendering is exercised once in Chromium.');
     await page.emulateMedia({ forcedColors: 'active' });
     await openParticipant(page);
-    await waitInHarness(page, 550);
     const choice = activeQuestion(page, 'CHOICE').locator('#CHOICE_1');
     const label = activeQuestion(page, 'CHOICE').locator('label[for="CHOICE_1"]');
     await choice.focus();
@@ -867,9 +898,7 @@ test.describe('native participant keyboard navigation @canonical @keyboard @wind
     })).toMatchObject({ forcedColorAdjust: 'none' });
 
     await openParticipant(page, { fixture: 'gridResponsive.txt' });
-    await waitInHarness(page, 550);
     await goNext(page);
-    await waitInHarness(page, 550);
     const gridChoice = activeQuestion(page, 'GRID_RATE').locator('#GRID_WALK_1');
     const gridLabel = gridChoice.locator('xpath=following-sibling::label');
     await gridChoice.focus();

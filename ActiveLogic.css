@@ -36,6 +36,20 @@
   clear: left;
 }
 
+/* Native compound subgroup legends replace plain prompt blocks. Neutralize
+   Bootstrap's larger, floated legend styling so participant layout is stable. */
+.question .compound-radio-group > legend.compound-radio-group-legend {
+  float: none;
+  width: auto;
+  margin-bottom: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.question .compound-radio-group.compound-radio-group-first > legend.compound-radio-group-legend {
+  margin-bottom: 1.5rem;
+}
+
 /* this is an answer with a text area...*/
 .freeresponse {
   display: flex;
@@ -126,7 +140,8 @@ input[type="text"] {
     word-wrap: break-word;
   }
 
-  .quest-grid.table-layout th.nr {
+  .quest-grid.table-layout th.nr,
+  .quest-grid.table-layout td.grid-corner-spacer {
     padding: clamp(5px, 1vw, 10px);
     text-align: center;
     vertical-align: middle;

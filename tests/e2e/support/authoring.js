@@ -90,16 +90,22 @@ export const GITHUB_BLOB_MODULE_URL = 'https://github.com/episphere/questionnair
 export const GITHUB_WEB_RAW_MODULE_URL = 'https://github.com/episphere/questionnaire/raw/locked/prod/canonical.txt';
 export const GITHUB_RAW_MODULE_URL = 'https://raw.githubusercontent.com/episphere/questionnaire/locked/prod/canonical.txt';
 
-const LOCALFORAGE_FALLBACK_SCRIPT = `
-  window.localforage = {
-    createInstance() {
-      throw new Error('Synthetic LocalForage initialization failure');
-    },
-    clear() {
-      return Promise.resolve();
-    }
-  };
-`;
+function localForageFallbackScript(mode) {
+  const clearImplementation = mode === 'initialization-and-clear-failure'
+    ? "return Promise.reject(new Error('Synthetic global LocalForage clear failure'));"
+    : 'return Promise.resolve();';
+
+  return `
+    window.localforage = {
+      createInstance() {
+        throw new Error('Synthetic LocalForage initialization failure');
+      },
+      clear() {
+        ${clearImplementation}
+      }
+    };
+  `;
+}
 
 function normalizeModuleResponse(response) {
   if (typeof response === 'string') {
@@ -161,11 +167,14 @@ export async function installAuthoringRoutes(page, diagnostics, {
     await page.route(asset.url, async (route) => {
       diagnostics.fulfilledExternalRequests.push(asset.url);
 
-      if (asset.url.includes('localforage') && localForageMode === 'initialization-failure') {
+      if (asset.url.includes('localforage') && [
+        'initialization-failure',
+        'initialization-and-clear-failure',
+      ].includes(localForageMode)) {
         await route.fulfill({
           status: 200,
           contentType: 'application/javascript',
-          body: LOCALFORAGE_FALLBACK_SCRIPT,
+          body: localForageFallbackScript(localForageMode),
         });
         return;
       }

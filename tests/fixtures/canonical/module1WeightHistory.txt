@@ -1,0 +1,21 @@
+// Production-shaped extract from locked prod/module1.txt (D_912857732 v4.0).
+{"name":"D_726699695_V2"}
+
+[D_912857732?] The next questions ask about how much you weighed at different times in your life. If you don’t remember your exact weight, please make your best guess. |displayif=equals(D_407056417,536341288)|If you were pregnant at any of these times, how much did you weigh before your pregnancy?| How much did you weigh when you were...
+
+|displayif=_value("age") >= 18|a. 18 years old|
+|__|__|__|id=D_821387277 displayif=(_value("age") >= 18) min=0 max=999 softedit=true modalif=value<70 modalvalue='Is the weight correct?'||displayif=_value("age") >=18|#Pounds (lbs)|
+
+|displayif=_value("age") >= 25|b. 25 years old|
+|__|__|__|id=D_121646540 displayif=(_value("age") >= 25) min=0 max=999 softedit=true modalif=value<70 modalvalue='Is the weight correct?'||displayif=_value("age") >=25|#Pounds (lbs)|
+
+|displayif=_value("age") >= 35|c. 35 years old|
+|__|__|__|id=D_950080618 displayif=(_value("age") >= 35) min=0 max=999 softedit=true modalif=value<70 modalvalue='Is the weight correct?'||displayif=_value("age") >=35|#Pounds (lbs)|
+
+|displayif=_value("age") >= 45|d. 45 years old|
+|__|__|__|id=D_407167089 displayif=(_value("age") >= 45) min=0 max=999 softedit=true modalif=value<70 modalvalue='Is the weight correct?'||displayif=_value("age") >=45|#Pounds (lbs)|
+
+|displayif=_value("age") >= 55|e. 55 years old|
+|__|__|__|id=D_503154158 displayif=(_value("age") >= 55) min=0 max=999 softedit=true modalif=value<70 modalvalue='Is the weight correct?'||displayif=_value("age") >=55|#Pounds (lbs)|
+
+[END,end]  You have answered all of the questions in this survey. To submit your answers, select the “Submit Survey” button.

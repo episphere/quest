@@ -20,6 +20,7 @@ const en = {
     "submitButton": "Submit",
     "cancelButton": "Cancel",
     "closeButton": "Close",
+    "progressBarLabel": "Survey progress",
 
     "yes": "Yes",
     "no": "No",

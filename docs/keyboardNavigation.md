@@ -36,8 +36,10 @@ to guess.
 - For Safari, enable **Press Tab to highlight each item on a web page** and/or
   macOS Keyboard Navigation before testing.
 - Confirm every focused control has a visible indicator.
-- Confirm each command performs one action, updates the visible state, and is
-  stored. Use Back to confirm the stored selection is restored.
+- Confirm each command performs one action and updates the visible state.
+  After Next, use Back to confirm the earlier question's saved answer is
+  restored. Back clears responses in the current form being left. Moving
+  forward to that form again must not restore those cleared responses.
 - Confirm arrow keys remain native inside text fields and that Quest does not
   impose a custom key sequence on native dropdowns.
 - After Next, Back, or dialog dismissal, confirm focus moves to the current

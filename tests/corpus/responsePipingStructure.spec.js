@@ -156,7 +156,7 @@ function gridSourcesInHTML(html) {
   );
 }
 
-function parsedPipePairs(markdown, locale, authoredPairs) {
+function parsedPipePairs(markdown, locale, sourcePairs) {
   configureProcessor(locale);
   const processor = new QuestionProcessor(markdown, {
     current_date: new Date('2024-07-15T12:00:00.000Z'),
@@ -168,7 +168,7 @@ function parsedPipePairs(markdown, locale, authoredPairs) {
   }, locale === 'es' ? es : en);
   getStateManager().setQuestionProcessor(processor);
   const parsed = new Set();
-  const remaining = new Set(authoredPairs);
+  const remaining = new Set(sourcePairs);
   for (const [index, question] of processor.questions.entries()) {
     const destination = normaliseLoopId(question.questionIDExactSearch);
     const questionSources = new Set([
@@ -228,16 +228,16 @@ describe.skipIf(unavailable.length > 0)('locked production response-piping struc
     expect(displayLists).toEqual(EXPECTED_DISPLAY_LISTS);
   });
 
-  it('keeps every authored destination/source pair in its own forid or grid-replacement runtime output', () => {
+  it('keeps every destination/source pair in its own forid or grid-replacement runtime output', () => {
     for (const entry of entries) {
       const markdown = withoutComments(readFileSync(entry.path, 'utf8'));
-      const authoredPairs = new Set(directPairs(markdown).map(pipePairKey));
-      if (authoredPairs.size === 0) continue;
-      const parsedPairs = parsedPipePairs(markdown, entry.locale, authoredPairs);
+      const sourcePairs = new Set(directPairs(markdown).map(pipePairKey));
+      if (sourcePairs.size === 0) continue;
+      const parsedPairs = parsedPipePairs(markdown, entry.locale, sourcePairs);
 
       expect(
-        [...authoredPairs].filter((pair) => !parsedPairs.has(pair)),
-        `${entry.module}/${entry.locale}: every authored destination/source pair must survive in its own runtime form`,
+        [...sourcePairs].filter((pair) => !parsedPairs.has(pair)),
+        `${entry.module}/${entry.locale}: every destination/source pair must survive in its own runtime form`,
       ).toEqual([]);
     }
   }, 180_000);

@@ -3,6 +3,7 @@ import { clearValidationError, validationError } from "./validate.js";
 import { hideLoadingIndicator, showLoadingIndicator, translate } from './common.js';
 import { nextButtonClicked, getPreviousQuestion } from "./questionnaire.js";
 import { getStateManager } from "./stateManager.js";
+import { focusModalDescription } from './modalFocus.js';
 import { closeModalAndFocusQuestion, updateAriaLiveSelectionAnnouncer, updateAriaLiveSelectionAnnouncerTable, clearSelectionAnnouncement } from "./accessibleQuestionTextBuilder.js";
 // Debounced version of handleInputEvent
 const debouncedHandleInputEvent = debounce(handleInputEvent, 250);
@@ -39,10 +40,10 @@ export function addEventListeners() {
   moduleParams.questDiv.addEventListener('submit', handleSubmitEvent);
 
   // These modals are siblings of the questions. Restore question context
-  // after either one closes, regardless of whether it was dismissed by a
-  // button, Escape, or a backdrop click.
-  const responseModals = moduleParams.questDiv.querySelectorAll('#softModal, #hardModal');
-  responseModals.forEach((modal) => {
+  // after one closes, regardless of whether it was dismissed by a button,
+  // Escape, or a backdrop click.
+  const questionContextModals = moduleParams.questDiv.querySelectorAll('#softModal, #hardModal, #storeErrorModal');
+  questionContextModals.forEach((modal) => {
     modal.removeEventListener('hidden.bs.modal', closeModalAndFocusQuestion);
     modal.addEventListener('hidden.bs.modal', closeModalAndFocusQuestion);
   });
@@ -88,6 +89,7 @@ function handleClickEvent(event) {
         if (!target.checked) {
           inputElement.dataset.lastValue = inputElement.value;
           inputElement.value = '';
+          delete inputElement.dataset.acceptedModalValue;
         } else if ('lastValue' in inputElement.dataset) {
           inputElement.value = inputElement.dataset.lastValue;
         }
@@ -255,11 +257,17 @@ export function resetChildren(target) {
   for (let node of nodes) {
     if (node.type === "radio" || node.type === "checkbox") {
       node.checked = false;
-    } else if (node.type === "text" || node.type === "time" || node.type === "date" || node.type === "month" || node.type === "number") {
+    } else if (node.type === "text" || node.type === "textarea" || node.type === "time" || node.type === "date" || node.type === "month" || node.type === "number") {
       node.value = "";
+      delete node.dataset.lastValue;
+      delete node.dataset.acceptedModalValue;
       clearValidationError(node)
     }
   }
+
+  [...target.querySelectorAll('.validation-container')].forEach((validationContainer) => {
+    clearValidationError(validationContainer.previousElementSibling);
+  });
 }
 
 // Debounce the input event to prevent multiple rapid-fire events.
@@ -276,30 +284,35 @@ function debounce(func, wait) {
 }
 
 function handleSubmitSurveyClick(submitTrigger) {
-  const submitModalElement = moduleParams.questDiv.querySelector('#submitModal');
-  const submitModal = new bootstrap.Modal(submitModalElement);
-  const submitModalBodyTextEle = moduleParams.questDiv.querySelector('#submitModalBodyText');
-  submitModalBodyTextEle.setAttribute('tabindex', '0');
-  submitModalBodyTextEle.setAttribute('role', 'alert');
+  const questDiv = moduleParams.questDiv;
+  const submitModalElement = questDiv.querySelector('#submitModal');
+  const submitModal = bootstrap.Modal.getOrCreateInstance(submitModalElement);
 
   // Bootstrap cannot infer the control because Quest opens this
   // modal programmatically. Restore focus after Escape, Cancel, or Close.
   submitModalElement.addEventListener('hidden.bs.modal', () => {
-    if (submitTrigger?.isConnected) {
+    if (submitModalElement._questRenderDisposal) return;
+
+    const ownerDocument = submitModalElement.ownerDocument;
+    const activeElement = ownerDocument.activeElement;
+    const focusMayReturn = !activeElement
+      || activeElement === ownerDocument.body
+      || activeElement === ownerDocument.documentElement
+      || submitModalElement.contains(activeElement);
+
+    if (
+      moduleParams.questDiv === questDiv
+      && questDiv.contains(submitModalElement)
+      && questDiv.contains(submitTrigger)
+      && submitTrigger.closest('.question.active')
+      && focusMayReturn
+    ) {
       submitTrigger.focus({ preventScroll: true });
     }
   }, { once: true });
 
   submitModal.show();
-
-  //Force focus to the modal title
-  moduleParams.questDiv.querySelector('#submitModalTitle').focus();
-
-  submitModalElement.querySelector('.btn-close').addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-      submitModal.hide();
-    }
-  });
+  focusModalDescription(submitModalElement);
 }
 
 // Event listener to submit the survey and reload the page.

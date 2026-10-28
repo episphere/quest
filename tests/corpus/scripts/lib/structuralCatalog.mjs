@@ -7,7 +7,7 @@
  * later path-generation work.
  */
 
-export const STRUCTURAL_CATALOG_SCHEMA_VERSION = 1;
+export const STRUCTURAL_CATALOG_SCHEMA_VERSION = 2;
 
 const LOOP_SUFFIX = /_(\d+)_(\d+)[?!]?$/;
 const ASYNC_MARKUP_ID = /^\[([^\]|?!]+)[?!]?\]$/;
@@ -447,7 +447,7 @@ export function buildStructuralCatalogRecord({
     path: record.path ?? null,
     questName: record.questName ?? null,
     version: record.version ?? null,
-    authoredMarkerCount: Number.isInteger(record.sourceQuestionCount) ? record.sourceQuestionCount : null,
+    markerCount: Number.isInteger(record.sourceQuestionCount) ? record.sourceQuestionCount : null,
     processedQuestionIds: questionRecords.map(({ id }) => id),
     questionRecords,
     transitions,
@@ -462,7 +462,7 @@ export function buildStructuralCatalogRecord({
     },
     unresolvedTargets: [...unresolvedByTarget.values()],
     counts: {
-      authoredMarkerCount: Number.isInteger(record.sourceQuestionCount) ? record.sourceQuestionCount : null,
+      markerCount: Number.isInteger(record.sourceQuestionCount) ? record.sourceQuestionCount : null,
       processorQuestionCount: questions.length,
       processedQuestionCount: processor?.processedQuestions?.size ?? questionRecords.filter(({ domId }) => domId !== null).length,
       renderedFormCount: renderedForms.length,

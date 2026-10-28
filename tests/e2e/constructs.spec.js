@@ -56,24 +56,29 @@ test.describe('canonical Markdown construct renderer @canonical @constructs', ()
     await expect(root.locator('#CONFIRM #CONFIRM_COPY')).toHaveAttribute('data-confirm', 'CONFIRM_ORIGINAL');
     await expect(root.locator('#CONFIRM #CONFIRM_ORIGINAL')).toHaveAttribute('data-confirmation-for', 'CONFIRM_COPY');
 
-    const scalarTypes = {
-      EMAIL_VALUE: 'email',
-      PHONE_VALUE: 'tel',
-      FULL_SSN_VALUE: 'text',
-      SHORT_SSN_VALUE: 'text',
-      ZIP_VALUE: 'text',
-      DATE_VALUE: 'date',
-      MONTH_VALUE: 'month',
-      TIME_VALUE: 'time',
-      NUMBER_VALUE: 'number',
-      TEXT_VALUE: 'text',
-      TEXTBOX_VALUE: 'text',
+    const scalarControls = {
+      EMAIL_VALUE: { type: 'email', name: 'Email address' },
+      PHONE_VALUE: { type: 'tel', name: 'Telephone' },
+      FULL_SSN_VALUE: { type: 'text', name: 'Full SSN' },
+      SHORT_SSN_VALUE: { type: 'text', name: 'Last four SSN digits' },
+      ZIP_VALUE: { type: 'text', name: 'ZIP code' },
+      DATE_VALUE: { type: 'date', name: 'Date' },
+      MONTH_VALUE: { type: 'month', name: 'Month' },
+      NUMBER_VALUE: { type: 'number', name: 'Number' },
+      TEXT_VALUE: { type: 'text', name: 'Text before, text after.' },
+      TEXTBOX_VALUE: { type: 'text', name: 'Text-box macro' },
     };
-    for (const [id, type] of Object.entries(scalarTypes)) {
+    for (const [id, { type, name }] of Object.entries(scalarControls)) {
       await expect(root.locator(`#${id}`), `${id} should render as ${type}`).toHaveAttribute('type', type);
+      await expect(root.locator(`#${id}`), `${id} should retain its caption`).toHaveAttribute('aria-label', name);
     }
+    await expect(root.locator('#TIME_VALUE')).toHaveAttribute('type', 'time');
+    await expect(root.locator('#TIME_VALUE')).not.toHaveAttribute('aria-label');
+    await expect(root.locator('label[for="TIME_VALUE"]')).toHaveText('Time');
     await expect(root.locator('#STATE_VALUE')).toHaveJSProperty('tagName', 'SELECT');
+    await expect(root.locator('#STATE_VALUE')).toHaveAttribute('aria-label', 'State');
     await expect(root.locator('#TEXTAREA_VALUE')).toHaveJSProperty('tagName', 'TEXTAREA');
+    await expect(root.locator('#TEXTAREA_VALUE')).toHaveAttribute('aria-label', 'Long answer');
     await expect(root.locator('#HIDDEN_VALUE')).toHaveAttribute('data-hidden', 'true');
     await expect(root.locator('#YES_NO input[type="radio"]')).toHaveCount(2);
     await expect(root.locator('#YES_NO_PREFER input[type="radio"]')).toHaveCount(3);
@@ -82,6 +87,13 @@ test.describe('canonical Markdown construct renderer @canonical @constructs', ()
     await expect(root.locator('#NO_RESPONSE_SKIP input.noresponse[skipto="GRID_RADIO"]')).toHaveCount(1);
     await expect(root.locator('#GRID_RADIO input[type="radio"]')).toHaveCount(4);
     await expect(root.locator('#GRID_CHECKBOX input[type="checkbox"]')).toHaveCount(2);
+    const rendererGridRadio = root.locator('#GRID_RADIO #GRID_ROW_A_0');
+    const rendererGridCheckbox = root.locator('#GRID_CHECKBOX #GRID_CHECK_ROW_0');
+    await expect(rendererGridRadio).not.toHaveAttribute('aria-labelledby');
+    await expect(rendererGridRadio.locator('xpath=following-sibling::label')).toHaveText('First row Never');
+    await expect(rendererGridCheckbox.locator('xpath=following-sibling::label')).toHaveText('A row Alpha');
+    expect(await rendererGridRadio.evaluate((element) => element.labels?.length ?? 0)).toBe(1);
+    expect(await rendererGridCheckbox.evaluate((element) => element.labels?.length ?? 0)).toBe(1);
     await expect(root.locator('form.question[id^="LOOP_ITEM_"]')).toHaveCount(2);
 
     expect(diagnostics.fulfilledExternalRequests).toContain(

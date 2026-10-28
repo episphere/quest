@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { renderFreshQuest } from '../helpers/questRuntime.js';
 
 // This is the nine-row sleep grid from the locked production module2.txt
-// corpus (commit 7ae99a22af325cf0e14be047a7636462db9bfd50). Keeping the authored
+// corpus (commit 7ae99a22af325cf0e14be047a7636462db9bfd50). Keeping the source
 // IDs and response values makes the state-shape contract reviewable.
 const PRODUCTION_SLEEP_GRID_SURVEY = `
 {"name":"TEST_PRODUCTION_GRID"}
@@ -140,7 +140,10 @@ describe('deep grid state coverage', () => {
     expect(phone.checked).toBe(false);
     expect(email.checked).toBe(true);
     expect(quest.state.getCache()['ROW_PHONE.GRID_CHECKBOX_STATE']).toBeUndefined();
-    expect(quest.state.getResponseToQuestionMapping()['ROW_PHONE.GRID_CHECKBOX_STATE']).toBeUndefined();
+    // Condition lookups without a question ID must not fall back to a restored value that the participant has cleared.
+    expect(quest.state.getResponseToQuestionMapping()['ROW_PHONE.GRID_CHECKBOX_STATE'])
+      .toBe('GRID_CHECKBOX_STATE.ROW_PHONE');
+    expect(quest.state.findResponseValue('ROW_PHONE')).toBeUndefined();
 
     grid.querySelector('button.reset').click();
     expect(grid.querySelectorAll('input[type="checkbox"]:checked')).toHaveLength(0);
@@ -161,13 +164,22 @@ describe('deep grid state coverage', () => {
     const visibleRow = grid.querySelector('[data-question-id="D_374567479"]');
     const hiddenRow = grid.querySelector('[data-question-id="D_966214244"]');
 
+    expect(visibleRow.dataset.displayif).toBe('equals(SHOW_TASTE%2C1)');
+    expect(decodeURIComponent(visibleRow.dataset.displayif)).toBe('equals(SHOW_TASTE,1)');
+    expect(hiddenRow.dataset.displayif).toBe('equals(SHOW_FATIGUE%2C1)');
     expect(visibleRow.style.display).not.toBe('none');
     expect(hiddenRow.style.display).toBe('none');
     expect(hiddenRow.dataset.hidden).toBe('true');
     visibleRow.querySelector('input[value="232063618"]').click();
+    const expectedRows = { D_374567479: '232063618' };
+    expect(quest.state.getActiveQuestionState()).toEqual({ GRID_CONDITIONAL: expectedRows });
     grid.querySelector('button.next').click();
 
     await vi.waitFor(() => expect(quest.root.querySelector('form.question.active')?.id).toBe('END'));
+    expect(quest.state.getSurveyState()).toMatchObject({ GRID_CONDITIONAL: expectedRows });
+    expect(quest.calls.store.at(-1)['TEST_CONDITIONAL_GRID.GRID_CONDITIONAL']).toEqual(expectedRows);
+    expect(quest.calls.store.at(-1)['TEST_CONDITIONAL_GRID.GRID_CONDITIONAL'])
+      .not.toHaveProperty('D_966214244');
     expect(quest.root.querySelector('#softModal').classList.contains('show')).toBe(false);
     expect(quest.errors).toEqual([]);
   });
@@ -183,8 +195,16 @@ describe('deep grid state coverage', () => {
     const grid = quest.root.querySelector('#GRID_VALIDATION');
 
     grid.querySelector('button.next').click();
-    await vi.waitFor(() => expect(quest.root.querySelector(`#${modalId}`).classList.contains('show')).toBe(true));
-    expect(quest.root.querySelector(`#${modalId} [role="alert"]`)).not.toBeNull();
+    const modal = quest.root.querySelector(`#${modalId}`);
+    await vi.waitFor(() => expect(modal.classList.contains('show')).toBe(true));
+    const descriptionId = modal.getAttribute('aria-describedby');
+    const description = modal.querySelector(`#${descriptionId}`);
+    expect(description).not.toBeNull();
+    expect(description.innerText.trim()).not.toBe('');
+    expect(description.hasAttribute('role')).toBe(false);
+    expect(description.getAttribute('tabindex')).toBe('-1');
+    expect(description).toBe(document.activeElement);
+    expect(modal.querySelector('[role="alert"]')).toBeNull();
     expect(quest.root.querySelector('form.question.active')?.id).toBe('GRID_VALIDATION');
     expect(quest.errors).toEqual([]);
   });

@@ -165,8 +165,12 @@ input[type="checkbox"]:checked + label {
 .next:hover,
 .reset:hover,
 .previous:hover {
-  background-color: rgb(55, 133, 203);
-  border: solid 3px rgb(55, 133, 203);
+  background-color: rgb(44, 109, 168);
+  border: solid 3px rgb(44, 109, 168);
+}
+
+.validation-container > span {
+  color: rgb(193, 18, 31);
 }
 
 .next:focus,

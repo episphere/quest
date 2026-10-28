@@ -42,6 +42,31 @@ describe('response restoration', () => {
     expect(quest.state.getActiveQuestionState().CHECK).toEqual(['1', '3']);
   });
 
+  it.each([
+    ['soft', 'SOFT?'],
+    ['hard', 'HARD!'],
+  ])('restores a %s question from its raw tree token', async (_, treeToken) => {
+    const questionID = treeToken.slice(0, -1);
+    const quest = await renderFreshQuest({
+      markdown: `
+        {"name":"RESTORE_MARKED"}
+        [${treeToken}] Choose one.
+        (1) Selected response
+        (2) Other response
+        [END,end] Done.
+      `,
+      persistedData: {
+        [questionID]: '1',
+        treeJSON: treeAt(treeToken),
+      },
+    });
+
+    expect(quest.root.querySelector('form.active')?.id).toBe(questionID);
+    expect(quest.root.querySelector(`#${questionID}_1`).checked).toBe(true);
+    expect(quest.state.getActiveQuestionState()).toEqual({ [questionID]: '1' });
+    expect(JSON.parse(quest.questionQueue.toJSON()).currentNode).toBe(treeToken);
+  });
+
   it('restores compound strings, radio values, and checkbox arrays by response key', async () => {
     const quest = await renderFreshQuest({
       markdown: `
@@ -68,9 +93,14 @@ describe('response restoration', () => {
     expect(quest.root.querySelector('#CHECK_GROUP_2').checked).toBe(true);
     expect(quest.root.querySelector('#RADIO_GROUP_8').checked).toBe(true);
     expect(quest.root.querySelector('#DETAIL').value).toBe('restored detail');
+    expect(quest.state.getActiveQuestionState().MULTI).toEqual({
+      CHECK_GROUP: ['1', '2'],
+      RADIO_GROUP: '8',
+      DETAIL: 'restored detail',
+    });
   });
 
-  it('restores XOR object values into authored XOR controls', async () => {
+  it('restores XOR object values into XOR controls', async () => {
     const quest = await renderFreshQuest({
       markdown: `
         {"name":"RESTORE_XOR"}
@@ -119,6 +149,8 @@ describe('response restoration', () => {
     const { restoreResponses } = await import('../../restoreResponses.js');
 
     expect(() => restoreResponses({}, 'Q1')).not.toThrow();
+    expect(() => restoreResponses({ Q1: undefined }, 'Q1')).not.toThrow();
+    expect(() => restoreResponses({ Q1: null }, 'Q1')).not.toThrow();
     expect(() => restoreResponses({ MISSING: 'value' }, 'MISSING')).not.toThrow();
     expect(quest.errors).toEqual([]);
   });
