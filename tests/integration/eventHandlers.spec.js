@@ -387,6 +387,8 @@ describe('delegated runtime event handling', () => {
     expect(instance).not.toBeNull();
     const hidePopover = vi.spyOn(instance, 'hide');
     expect(trigger.dataset.bsTrigger).toBe('manual');
+    expect(trigger.getAttribute('aria-description')).toBe('Help title');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
 
     trigger.focus();
     expect(trigger.hasAttribute('aria-describedby')).toBe(false);
@@ -403,6 +405,7 @@ describe('delegated runtime event handling', () => {
     const popoverElement = document.getElementById(popoverId);
     expect(popoverElement).not.toBeNull();
     expect(popoverElement.classList.contains('show')).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
 
     const escape = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Escape' });
     expect(trigger.dispatchEvent(escape)).toBe(false);
@@ -410,6 +413,7 @@ describe('delegated runtime event handling', () => {
     expect(hidePopover).toHaveBeenCalledOnce();
     expect(popoverElement.classList.contains('show')).toBe(false);
     expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
     expect(document.activeElement).toBe(trigger);
 
     const click = new MouseEvent('click', { bubbles: true, cancelable: true });
@@ -418,9 +422,57 @@ describe('delegated runtime event handling', () => {
     const reopenedPopoverElement = document.getElementById(trigger.getAttribute('aria-describedby'));
     expect(reopenedPopoverElement).not.toBeNull();
     expect(reopenedPopoverElement.classList.contains('show')).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
 
     trigger.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
     expect(reopenedPopoverElement.classList.contains('show')).toBe(false);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it.each([
+    ['Help title', 'Help title'],
+    ['  Specific   explanation  ', 'Specific explanation'],
+    ['more information', 'more information'],
+  ])('describes a closed popover using its existing heading %j without changing the trigger text', async (heading, description) => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY.replace('Help title', heading) });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+
+    expect(trigger.textContent).toBe('more information');
+    expect(trigger.hasAttribute('aria-label')).toBe(false);
+    expect(trigger.getAttribute('aria-description')).toBe(description);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(quest.root.querySelector('#ariaLiveHelpAnnouncer').textContent).toBe('');
+  });
+
+  it('keeps expanded state tied to the visible tip after canceled show and hide events', async () => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    const instance = bootstrap.Popover.getInstance(trigger);
+    trigger.focus();
+    trigger.addEventListener('show.bs.popover', (event) => event.preventDefault(), { once: true });
+
+    instance.show();
+    await Promise.resolve();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+    expect(quest.root.querySelector('#ariaLiveHelpAnnouncer').textContent).toBe('');
+
+    instance.show();
+    const tip = document.getElementById(trigger.getAttribute('aria-describedby'));
+    expect(tip?.classList.contains('show')).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    trigger.addEventListener('hide.bs.popover', (event) => event.preventDefault(), { once: true });
+    trigger.click();
+    await Promise.resolve();
+    expect(tip.classList.contains('show')).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(quest.root.querySelector('#ariaLiveHelpAnnouncer').textContent).toBe('Help title Synthetic help text');
+
+    trigger.click();
+    await Promise.resolve();
+    expect(tip.classList.contains('show')).toBe(false);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
   });
 
   it('disposes an open popover after its hidden lifecycle event', async () => {
@@ -436,6 +488,7 @@ describe('delegated runtime event handling', () => {
     const popoverElement = document.getElementById(trigger.getAttribute('aria-describedby'));
     expect(popoverElement).not.toBeNull();
     expect(popoverElement.classList.contains('show')).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
 
     const { disposePopovers } = await import('../../questionnaire.js');
     disposePopovers(quest.root);
@@ -444,7 +497,121 @@ describe('delegated runtime event handling', () => {
     expect(hiddenModal).not.toHaveBeenCalled();
     expect(popoverElement.classList.contains('show')).toBe(false);
     expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
     expect(bootstrap.Popover.getInstance(trigger)).toBeNull();
+  });
+
+  it.each(['Enter', ' ', 'click'])('announces existing popover text on %s without moving focus', async (activation) => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    const announcer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
+    expect(announcer).not.toBeNull();
+    expect(announcer.getAttribute('aria-live')).toBe('polite');
+    expect(announcer.getAttribute('aria-atomic')).toBe('true');
+    expect(announcer.textContent).toBe('');
+
+    trigger.focus();
+    if (activation === 'click') trigger.click();
+    else trigger.dispatchEvent(new KeyboardEvent('keydown', { key: activation, bubbles: true, cancelable: true }));
+
+    expect(quest.root.querySelector('#ariaLiveHelpAnnouncer')).toBe(announcer);
+    expect(announcer.textContent).toBe('Help title Synthetic help text');
+    expect(document.activeElement).toBe(trigger);
+    expect(document.getElementById(trigger.getAttribute('aria-describedby'))?.getAttribute('role')).toBe('tooltip');
+    expect(quest.root.querySelector('#ariaLiveQuestionAnnouncer').textContent).toBe('');
+    expect(quest.root.querySelector('#ariaLiveSelectionAnnouncer').textContent).toBe('');
+
+    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    expect(announcer.textContent).toBe('');
+    trigger.click();
+    expect(announcer.textContent).toBe('Help title Synthetic help text');
+    trigger.click();
+    expect(announcer.textContent).toBe('');
+  });
+
+  it.each([
+    ['en', '', 'Informational Text'],
+    ['es', '', 'Texto de ayuda'],
+    ['en', '   |', 'Informational Text'],
+    ['es', '   |', 'Texto de ayuda'],
+  ])('uses the %s trigger-description fallback for heading %j without inventing an opening heading', async (lang, headingToken, description) => {
+    const quest = await renderFreshQuest({
+      markdown: POPOVER_SURVEY.replace('Help title|', headingToken),
+      params: { lang },
+    });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    expect(trigger.getAttribute('aria-description')).toBe(description);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+
+    trigger.click();
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(quest.root.querySelector('#ariaLiveHelpAnnouncer')?.textContent).toBe('Synthetic help text');
+  });
+
+  it('does not announce a late shown event after focus leaves or disposal', async () => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY });
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    trigger.click();
+    const announcer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
+    expect(announcer?.textContent).toBe('Help title Synthetic help text');
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    trigger.dispatchEvent(new Event('hidden.bs.popover'));
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    document.getElementById('afterQuest').focus();
+    expect(announcer.textContent).toBe('');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    trigger.dispatchEvent(new Event('shown.bs.popover'));
+    expect(announcer.textContent).toBe('');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+
+    trigger.click();
+    const { disposePopovers } = await import('../../questionnaire.js');
+    disposePopovers(quest.root);
+    expect(announcer.textContent).toBe('');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    trigger.dispatchEvent(new Event('shown.bs.popover'));
+    expect(announcer.textContent).toBe('');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('does not let an older popover clear a newer help announcement', async () => {
+    const quest = await renderFreshQuest({
+      markdown: POPOVER_SURVEY.replace('Synthetic help text|.', 'Synthetic help text| and |popup|another explanation|Second title|Second help text|.'),
+    });
+    const [first, second] = quest.root.querySelectorAll('[data-bs-toggle="popover"]');
+    const announcer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
+    first.click();
+    second.click();
+    expect(announcer?.textContent).toBe('Second title Second help text');
+    first.dispatchEvent(new Event('hide.bs.popover'));
+    first.dispatchEvent(new Event('hidden.bs.popover'));
+    first.dispatchEvent(new Event('shown.bs.popover'));
+    expect(announcer.textContent).toBe('Second title Second help text');
+    expect(first.getAttribute('aria-expanded')).toBe('false');
+    expect(second.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('does not update the new render from an old popover lifecycle event', async () => {
+    const quest = await renderFreshQuest({ markdown: POPOVER_SURVEY });
+    const oldTrigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    oldTrigger.click();
+    const oldAnnouncer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
+    expect(oldAnnouncer?.textContent).toBe('Help title Synthetic help text');
+
+    await quest.transform.render({ activate: true, text: POPOVER_SURVEY, lang: 'en', store: quest.store }, 'questionnaireRoot', {});
+    const newAnnouncer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
+    const newTrigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+    newTrigger.click();
+    expect(newAnnouncer?.textContent).toBe('Help title Synthetic help text');
+    expect(oldAnnouncer.textContent).toBe('');
+    oldTrigger.dispatchEvent(new Event('hide.bs.popover'));
+    oldTrigger.dispatchEvent(new Event('hidden.bs.popover'));
+    oldTrigger.dispatchEvent(new Event('shown.bs.popover'));
+    expect(newAnnouncer.textContent).toBe('Help title Synthetic help text');
+    expect(oldTrigger.getAttribute('aria-expanded')).toBe('false');
+    expect(newTrigger.getAttribute('aria-expanded')).toBe('true');
   });
 
   it('does not emit duplicate popover lifecycle events for repeated show or hide calls', async () => {
@@ -476,12 +643,14 @@ describe('delegated runtime event handling', () => {
 
     expect(bootstrap.Popover.getInstance(trigger)).not.toBeNull();
     expect(trigger.hasAttribute('aria-describedby')).toBe(false);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
 
     const { disposePopovers } = await import('../../questionnaire.js');
     disposePopovers(quest.root);
 
     expect(hiddenPopover).not.toHaveBeenCalled();
     expect(bootstrap.Popover.getInstance(trigger)).toBeNull();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
   });
 
   it('updates the live selection announcement without requiring listeners on individual controls', async () => {
@@ -508,7 +677,7 @@ describe('delegated runtime event handling', () => {
     expect(fieldset.querySelectorAll('.screen-reader-focus')).toHaveLength(1);
     expect(fieldset.querySelector('.screen-reader-focus').tabIndex).toBe(-1);
     expect([...fieldset.querySelectorAll('br')].every((br) => br.getAttribute('aria-hidden') === 'true')).toBe(true);
-    expect(quest.root.querySelectorAll('#srAnnouncerContainer [aria-live="polite"]')).toHaveLength(2);
+    expect(quest.root.querySelectorAll('#srAnnouncerContainer [aria-live="polite"]')).toHaveLength(3);
   });
 
   it('moves focus to the constructed screen-reader stop after a question transition', async () => {

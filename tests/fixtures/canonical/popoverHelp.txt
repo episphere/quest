@@ -1,0 +1,11 @@
+// Production-shaped manual screen-reader fixture from locked prod/module3.txt, question D_352986465.
+// Remote response-image tokens are intentionally omitted so this canonical fixture remains offline.
+{"name":"TEST_POPOVER_HELP_EN"}
+
+[D_352986465?] How many |popup|freckles|Informational Text|We are interested in freckling on the back and shoulders, not the face and arms. Your face and arms are more exposed to the sun and may have a different amount of freckling.| do you have on your back and shoulders now? Please see the pictures below for examples.
+(259218831) No freckles
+(519761171) A few freckles
+(800179850) Some freckles
+(455684772) A lot of freckles
+
+[END,end] You have answered all of the questions in this survey. To submit your answers, select the “Submit Survey” button.

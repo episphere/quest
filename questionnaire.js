@@ -9,6 +9,7 @@ import { beginQuestionFocusHandoff, manageAccessibleQuestion } from "./accessibl
 import { focusModalDescription } from './modalFocus.js';
 export const moduleParams = {};
 const initializedPopoverTriggers = new WeakSet();
+let activePopoverAnnouncement = null;
 
 // The questionQueue is a Tree. It contains the question ids in the order they should be displayed.
 export const questionQueue = new Tree();
@@ -1302,6 +1303,15 @@ function initializePopovers() {
   const questDiv = moduleParams.questDiv;
 
   [...questDiv.querySelectorAll('[data-bs-toggle="popover"]')].forEach(popoverTriggerEl => {
+    // Read before Bootstrap moves title into data-bs-original-title. Keep the
+    // visible word as the name; a description does not alter the question name.
+    const heading = popoverTriggerEl.getAttribute('data-bs-title')
+      || popoverTriggerEl.getAttribute('title')
+      || popoverTriggerEl.getAttribute('data-bs-original-title')
+      || '';
+    popoverTriggerEl.setAttribute('aria-description',
+      heading.replace(/\s+/g, ' ').trim() || translate('popoverHelpDescription'));
+
     if (!bootstrap.Popover.getInstance(popoverTriggerEl)) {
       new bootstrap.Popover(popoverTriggerEl, { trigger: 'manual' });
     }
@@ -1310,14 +1320,69 @@ function initializePopovers() {
       popoverTriggerEl.addEventListener('click', handlePopoverClick);
       popoverTriggerEl.addEventListener('keydown', handlePopoverKeydown);
       popoverTriggerEl.addEventListener('focusout', handlePopoverFocusout);
+      popoverTriggerEl.addEventListener('shown.bs.popover', announcePopoverHelp);
+      for (const lifecycle of ['inserted', 'shown', 'hide', 'hidden']) {
+        popoverTriggerEl.addEventListener(`${lifecycle}.bs.popover`, updatePopoverExpandedState);
+      }
       initializedPopoverTriggers.add(popoverTriggerEl);
     }
+    synchronizePopoverExpandedState(popoverTriggerEl);
   });
+}
+
+function updatePopoverExpandedState(event) {
+  const trigger = event.currentTarget;
+  if (event.type === 'inserted.bs.popover' || event.type === 'hide.bs.popover') {
+    // Bootstrap updates .show after these events. Wait until the current task
+    // finishes so canceled hides and rapid close/reopen cycles stay truthful.
+    queueMicrotask(() => synchronizePopoverExpandedState(trigger));
+  } else {
+    synchronizePopoverExpandedState(trigger);
+  }
+}
+
+function synchronizePopoverExpandedState(trigger) {
+  if (!trigger.isConnected || !moduleParams.questDiv?.contains(trigger)) return;
+  const popoverId = trigger.getAttribute('aria-describedby');
+  const popoverElement = popoverId ? trigger.ownerDocument.getElementById(popoverId) : null;
+  const expanded = Boolean(popoverElement?.matches('.popover.show'));
+  trigger.setAttribute('aria-expanded', String(expanded));
+  if (!expanded) clearPopoverHelpForTrigger(trigger);
 }
 
 function getOrCreatePopover(trigger) {
   return bootstrap.Popover.getInstance(trigger)
     || new bootstrap.Popover(trigger, { trigger: 'manual' });
+}
+
+function announcePopoverHelp(event) {
+  const trigger = event.currentTarget;
+  const questDiv = moduleParams.questDiv;
+  const announcer = questDiv?.querySelector('#ariaLiveHelpAnnouncer');
+  const popoverId = trigger.getAttribute('aria-describedby');
+  const popoverElement = popoverId && trigger.ownerDocument.getElementById(popoverId);
+  if (!trigger.isConnected || !questDiv?.contains(trigger) || !announcer?.isConnected
+      || trigger.ownerDocument.activeElement !== trigger || !popoverElement?.classList.contains('show')) return;
+  if (activePopoverAnnouncement?.popoverElement === popoverElement) return;
+
+  // Updating a pre-existing live region announces newly opened help without
+  // moving focus or relying on a late aria-describedby change to be spoken.
+  clearPopoverHelpForTrigger(activePopoverAnnouncement?.trigger);
+  const text = [...popoverElement.querySelectorAll('.popover-header, .popover-body')]
+    .map(element => element.textContent.replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+    .join(' ');
+  if (!text) return;
+
+  announcer.textContent = text;
+  activePopoverAnnouncement = { trigger, announcer, popoverElement };
+}
+
+function clearPopoverHelpForTrigger(trigger) {
+  // Older lifecycle events must not clear a different popover or render.
+  if (!activePopoverAnnouncement || activePopoverAnnouncement.trigger !== trigger) return;
+  activePopoverAnnouncement.announcer.textContent = '';
+  activePopoverAnnouncement = null;
 }
 
 function handlePopoverClick(event) {
@@ -1347,11 +1412,32 @@ function handlePopoverKeydown(event) {
 }
 
 function handlePopoverFocusout(event) {
-  bootstrap.Popover.getInstance(event.currentTarget)?.hide();
+  const trigger = event.currentTarget;
+  const popover = bootstrap.Popover.getInstance(trigger);
+  popover?.hide();
+  if (!popover || trigger.hasAttribute('aria-describedby')) return;
+
+  // Bootstrap toggle queues its opening even with a zero delay. If focus
+  // leaves before a tip exists, hide() cannot cancel that pending show.
+  // Wait until an in-progress show has returned before disposing its instance.
+  queueMicrotask(() => {
+    if (bootstrap.Popover.getInstance(trigger) !== popover
+        || trigger.ownerDocument.activeElement === trigger) return;
+    if (trigger.hasAttribute('aria-describedby')) {
+      popover.hide();
+      return;
+    }
+    popover.dispose();
+    if (trigger.isConnected && moduleParams.questDiv?.contains(trigger)) {
+      // Reinitialize immediately so Bootstrap keeps the native title hidden.
+      new bootstrap.Popover(trigger, { trigger: 'manual' });
+    }
+  });
 }
 
 export function disposePopovers(container) {
   [...container.querySelectorAll('[data-bs-toggle="popover"]')].forEach((trigger) => {
+    clearPopoverHelpForTrigger(trigger);
     const popover = bootstrap.Popover.getInstance(trigger);
     if (!popover) return;
 

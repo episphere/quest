@@ -30,6 +30,8 @@ For VoiceOver and JAWS testing, see the
   `fixture=compoundRadioGroupsSpanish.txt&lang=es`; for conditionally displayed
   radio subgroups use `fixture=conditionalCompoundRadioGroups.txt` and
   repeat with `fixture=conditionalCompoundRadioGroupsSpanish.txt&lang=es`.
+- For the popover scenario, use `fixture=popoverHelp.txt`
+  and repeat with `fixture=popoverHelpSpanish.txt&lang=es`.
 - Keep Quest inside `#root > .row > #questionnaireRoot`.
 - Start each manual scenario from a new browser page. The participant harness intentionally permits one render per page so one scenario cannot contaminate the next; Quest's sequential-render behavior is covered separately by automation.
 - Do not enable browser extensions other than the screen reader under test.
@@ -47,6 +49,38 @@ For each URL, navigate through all five visible weight fields. Confirm each fiel
 includes its distinct age and unit context. In Spanish, type `18.5` with the
 physical keyboard and confirm the field contains `185`: whole numbers are
 accepted while decimal punctuation is filtered without a browser error.
+
+### Inline question help (popovers)
+
+Run this scenario in every VoiceOver and JAWS environment and required mode.
+Open both language-specific URLs in a new page:
+
+- English: `http://127.0.0.1:4173/tests/harness/participant.html?fixture=popoverHelp.txt&lang=en`
+- Spanish: `http://127.0.0.1:4173/tests/harness/participant.html?fixture=popoverHelpSpanish.txt&lang=es`
+
+For each URL:
+
+1. Navigate through the question with the screen reader's reading cursor and
+   form-control navigation. Confirm the complete question remains available,
+   including the text after the inline **freckles** or **pecas** help button.
+2. Move to the help button. Confirm its name is **freckles** or **pecas**, it is
+   identified as a button with collapsed state, and its short description is
+   **Informational Text** or **Texto de ayuda**. Exact spoken order varies by
+   screen reader and settings. Use the screen reader's default action. Confirm
+   focus remains on the button, its state becomes expanded, the visual popup
+   opens, and the help heading followed by the complete body is announced once.
+   Record the command used and the actual spoken order.
+3. Press Escape. Confirm the popup closes, the button returns to collapsed state
+   with its short description, focus remains on it, and reading can continue
+   with the rest of the question after that button.
+4. Open the help again and immediately press Escape. Wait at least one second
+   and confirm the popup stays closed, focus remains on the help button, and
+   the help announcement does not unexpectedly restart.
+5. Open the help again, immediately move to a response, select it, and activate
+   Next. On the completion screen, wait at least one second and
+   confirm the completion prompt is announced and the help is not replayed.
+
+Speech already queued or underway may finish after dismissal.
 
 ## Runnable dialog and asynchronous scenarios
 
@@ -187,6 +221,7 @@ First run with Quick Nav off. Repeat response navigation and activation with Qui
 10. Open and close requested-response, required-response, submit, response-confirmation, and configured store-error dialogs. Confirm dialog name and description, focus entry, keyboard containment, each close action, and immediate return to the invoking control or active question context. Leave the store-error dialog open for at least six seconds and confirm it remains open with focus contained, then dismiss it manually. After each dismissal, immediately move to or activate a response, wait at least one second, and confirm focus never jumps back.
 11. Open each compound-radio fixture. Enter both activity groups and traverse all answers. Confirm VoiceOver announces the visible activity prompt as the radio-group name, each answer as the radio name, and its checked state. Confirm the activity prompt is not a separate empty or alert stop.
 12. Open each conditional compound-radio fixture. Select both travel modes and continue. Confirm each mode prompt is announced once when entering its group; each answer name and checked state is announced once; and exiting does not repeat the full answer list. Use Back, remove one mode, and continue again. Confirm the removed group is absent, the retained group is still named correctly, and no duplicate, empty, or separate repeated-prompt stop is announced.
+13. Run the English and Spanish inline question-help protocol above. Confirm the help heading and full body are announced exactly once, dismissal preserves the surrounding question context, and help is not unexpectedly replayed after closing or navigation.
 
 ## JAWS with Chrome and Edge — issue #1079
 
@@ -204,6 +239,7 @@ Run each browser once. State explicitly whether each observation occurred in Vir
 10. Exit Forms Mode and confirm the Virtual Cursor resumes at a sensible location in the active question.
 11. Open each compound-radio fixture. In Virtual Cursor and Forms Mode, enter both activity groups and traverse all answers. Confirm JAWS announces the visible activity prompt when entering its group, preserves the concise answer name and checked state, and does not expose the activity prompt as a separate alert or form control.
 12. Open each conditional compound-radio fixture. Select both travel modes and continue. In Virtual Cursor and Forms Mode, confirm each mode prompt is announced once on group entry; each answer name and checked state is announced once; and exiting does not repeat the full answer list. Use Back, remove one mode, and continue again. Confirm the removed group is absent, the retained group remains correctly named, and no duplicate, empty, or separate repeated-prompt stop is exposed.
+13. Run the English and Spanish inline question-help protocol above in Virtual Cursor and Forms Mode. Confirm the help heading and full body are announced exactly once, dismissal preserves the surrounding question context, and help is not unexpectedly replayed after closing or navigation.
 
 The conditional fixture follows the WAI-ARIA radio-group contract: the visible
 mode prompt names a `radiogroup`, and `aria-owns` associates native radios that
