@@ -277,7 +277,19 @@ test.describe('locked Module 4 rich response markup fidelity @canonical @corpus'
       expect(initial.radioLabels.every(({ id, labelCount, labelFor }) => (
         labelCount === 1 && labelFor === id
       ))).toBe(true);
+      const help = question.getByRole('button', { name: expectation.popupText, exact: true });
+      const helpLabel = question.locator('label[for="D_539909957_123108471"]');
+      await expect(help).toHaveCSS('color', 'rgb(42, 114, 165)');
+      await helpLabel.click({ position: { x: 8, y: 8 } });
+      await expect(question.locator('#D_539909957_123108471')).toBeChecked();
+      await expect(helpLabel).toHaveCSS('background-color', 'rgb(60, 145, 222)');
+      await expect(help).toHaveCSS('color', 'rgb(255, 255, 255)');
+      await help.click();
+      await expect(help).toHaveAttribute('aria-expanded', 'true');
+      await expect(question.locator('#D_539909957_123108471')).toBeChecked();
+      await page.keyboard.press('Escape');
       await question.locator('label[for="D_539909957_463122075"]').click();
+      await expect(help).toHaveCSS('color', 'rgb(42, 114, 165)');
       const selected = await richAddressProjection(question);
       expect(selected.checkedRadio).toBe('D_539909957_463122075');
       await goNext(page);

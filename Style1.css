@@ -57,6 +57,12 @@ input.styling[type="radio"] {
   outline-offset: 2px;
 }
 
+/* Match inline help to the rest of the selected response text. */
+.question .response > input[type="radio"]:checked + label:not(.custom-label) .popover-dismiss.btn,
+.question .response > input[type="checkbox"]:checked + label:not(.custom-label) .popover-dismiss.btn {
+  color: inherit !important;
+}
+
 @media (forced-colors: active) {
   .question .response > input[type="radio"]:focus-visible + label:not(.custom-label),
   .question .response > input[type="checkbox"]:focus-visible + label:not(.custom-label),

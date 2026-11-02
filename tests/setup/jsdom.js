@@ -134,30 +134,49 @@ beforeEach(() => {
           this._tip.id = `test-popover-${this.constructor.nextTipId++}`;
           this._tip.classList.add('popover');
           this._tip.setAttribute('role', 'tooltip');
+          const title = this._element.getAttribute('data-bs-title') || this._element.getAttribute('title');
+          if (title) {
+            const header = this._element.ownerDocument.createElement('h3');
+            header.className = 'popover-header';
+            header.textContent = title;
+            this._tip.append(header);
+          }
+          const body = this._element.ownerDocument.createElement('div');
+          body.className = 'popover-body';
+          body.textContent = this._element.getAttribute('data-bs-content') ?? '';
+          this._tip.append(body);
         }
 
         return this._tip;
       }
 
       show() {
-        const tip = this._getTipElement();
-        if (tip.classList.contains('show')) return;
+        if (this._tip?.classList.contains('show')) return;
 
+        const showEvent = new Event('show.bs.popover', { bubbles: true, cancelable: true });
+        if (!this._element.dispatchEvent(showEvent) || !this._element.isConnected) return;
+
+        const tip = this._getTipElement();
         this._element.setAttribute('aria-describedby', tip.id);
-        this._element.ownerDocument.body.append(tip);
+        if (!tip.isConnected) {
+          this._element.ownerDocument.body.append(tip);
+          this._element.dispatchEvent(new Event('inserted.bs.popover', { bubbles: true }));
+        }
         tip.classList.add('show');
-        this._element.dispatchEvent(new Event(`shown.bs.${this.constructor.eventNamespace}`));
+        this._element.dispatchEvent(new Event(`shown.bs.${this.constructor.eventNamespace}`, { bubbles: true }));
       }
 
       hide() {
         const tip = this._tip;
         if (!tip?.classList.contains('show')) return;
 
+        const hideEvent = new Event('hide.bs.popover', { bubbles: true, cancelable: true });
+        if (!this._element.dispatchEvent(hideEvent)) return;
         tip.classList.remove('show');
         this._element.removeAttribute('aria-describedby');
         tip.remove();
         this._tip = null;
-        this._element.dispatchEvent(new Event(`hidden.bs.${this.constructor.eventNamespace}`));
+        this._element.dispatchEvent(new Event(`hidden.bs.${this.constructor.eventNamespace}`, { bubbles: true }));
       }
 
       toggle() {
