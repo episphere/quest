@@ -21,6 +21,7 @@ const en = {
     "cancelButton": "Cancel",
     "closeButton": "Close",
     "progressBarLabel": "Survey progress",
+    "popoverHelpDescription": "Informational Text",
 
     "yes": "Yes",
     "no": "No",

@@ -1,0 +1,11 @@
+// Production-shaped manual screen-reader fixture from locked prod/module3Spanish.txt, question D_352986465.
+// Remote response-image tokens are intentionally omitted so this canonical fixture remains offline.
+{"name":"TEST_POPOVER_HELP_ES"}
+
+[D_352986465?] ¿Cuántas |popup|pecas|Texto de ayuda|Nos interesan las pecas en la espalda y los hombros, no en la cara ni en los brazos. La cara y los brazos están más expuestos al sol y pueden tener una cantidad diferente de pecas.| tiene ahora en la espalda y los hombros? Consulte las siguientes fotografías para ver algunos ejemplos.
+(259218831) Sin pecas
+(519761171) Unas cuantas pecas
+(800179850) Algunas pecas
+(455684772) Muchas pecas
+
+[END,end] Respondió a todas las preguntas de este cuestionario. Para enviar sus respuestas, seleccione el botón “Enviar Encuesta”.
