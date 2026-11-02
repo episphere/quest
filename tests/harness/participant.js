@@ -228,7 +228,7 @@ async function render(config = {}) {
   if (rendered) throw new Error('Quest is stateful: participant harness permits one render per page. Reload for a fresh module graph.');
   rendered = true;
   currentConfig = structuredClone(normalizeHarnessConfig(config));
-  document.documentElement.lang = currentConfig.lang === 'es' ? 'es' : 'en';
+  document.documentElement.lang = currentConfig.hostLang ?? (currentConfig.lang === 'es' ? 'es' : 'en');
   questRoot.style.visibility = 'hidden';
   const params = {
     activate: currentConfig.activate ?? true,

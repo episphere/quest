@@ -8,6 +8,7 @@ import {
   openParticipant,
   waitInHarness,
 } from './support/harness.js';
+import { readLockedMarkdown, treeAt } from './support/corpus.js';
 
 const DESKTOP_ENGINES = new Set([
   'chromium-desktop',
@@ -361,6 +362,20 @@ test.describe('production-shaped popover accessibility @canonical', () => {
   });
 
   for (const [lang, expectation] of Object.entries(PRODUCTION_HELP)) {
+    test(`announces ${lang} help in the survey language under an opposite-language host`, async ({ page }) => {
+      const hostLang = lang === 'es' ? 'en' : 'es';
+      await openParticipant(page, { fixture: expectation.fixture, lang, hostLang });
+      const trigger = activeQuestion(page, 'D_352986465').getByRole('button', { name: expectation.trigger, exact: true });
+      const announcer = helpAnnouncer(page);
+
+      await expect(page.locator('html')).toHaveAttribute('lang', hostLang);
+      await expect(announcer).toHaveAttribute('lang', lang);
+      await trigger.click();
+      await expectOpenHelp({ trigger, popover: helpPopover(page, expectation.body), announcer, title: expectation.title, body: expectation.body });
+      await expect(page.locator('html')).toHaveAttribute('lang', hostLang);
+      await expectHealthyHarness(page);
+    });
+
     test(`preserves the full ${lang} prompt around inline help and announces its production text`, async ({ page }) => {
       await openParticipant(page, {
         fixture: expectation.fixture,
@@ -393,6 +408,94 @@ test.describe('production-shaped popover accessibility @canonical', () => {
     });
   }
 
+  for (const [lang, name] of [['en', 'Hazel'], ['es', 'Color avellana']]) {
+    test(`keeps the selected ${lang} production eye-color help styling consistent without changing the answer`, async ({ page }) => {
+      await openParticipant(page, {
+        markdown: readLockedMarkdown('module3', lang),
+        lang,
+        persistedData: { treeJSON: treeAt('D_857219333') },
+      });
+      const question = activeQuestion(page, 'D_857219333');
+      const trigger = question.getByRole('button', { name, exact: true });
+      const radio = question.locator('#D_857219333_696181630');
+      const label = question.locator('label[for="D_857219333_696181630"]');
+
+      await expect(trigger).toHaveCSS('color', 'rgb(42, 114, 165)');
+      await label.click({ position: { x: 8, y: 8 } });
+      await expect(radio).toBeChecked();
+      await expect(label).toHaveCSS('background-color', 'rgb(60, 145, 222)');
+      await expect(trigger).toHaveCSS('color', 'rgb(255, 255, 255)');
+      await radio.focus();
+      await page.keyboard.press('Tab');
+      await expect(trigger).toBeFocused();
+      await page.keyboard.press('Space');
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await expect(radio).toBeChecked();
+      expect((await harnessSnapshot(page)).state.active).toMatchObject({ D_857219333: '696181630' });
+      await page.keyboard.press('Escape');
+      await expect(trigger).toBeFocused();
+      await expect(trigger).toHaveCSS('outline-style', 'solid');
+      await expect(trigger).toHaveCSS('outline-width', '3px');
+
+      await question.locator('.response > label').first().click();
+      await expect(radio).not.toBeChecked();
+      await expect(trigger).toHaveCSS('color', 'rgb(42, 114, 165)');
+      await expectHealthyHarness(page);
+    });
+  }
+
+  test('keeps defensive checkbox help styling consistent when selecting and clearing the answer', async ({ page }) => {
+    await openParticipant(page, { markdown: RESPONSE_POPOVER_MARKDOWN.replace(/\((\d+)\)/g, '[$1]') });
+    const question = activeQuestion(page, 'EYE_COLOR');
+    const trigger = question.getByRole('button', { name: 'Hazel' });
+    const label = trigger.locator('xpath=ancestor::label');
+    const checkbox = question.locator('input[type="checkbox"]').nth(1);
+    await expect(trigger).toHaveCSS('color', 'rgb(42, 114, 165)');
+    await label.click({ position: { x: 8, y: 8 } });
+    await expect(checkbox).toBeChecked();
+    await expect(label).toHaveCSS('background-color', 'rgb(60, 145, 222)');
+    await expect(trigger).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await label.click({ position: { x: 8, y: 8 } });
+    await expect(checkbox).not.toBeChecked();
+    await expect(trigger).toHaveCSS('color', 'rgb(42, 114, 165)');
+    await expectHealthyHarness(page);
+  });
+
+  for (const type of ['radio', 'checkbox']) {
+    test(`preserves selected help system colors for ${type} responses in forced-colors mode`, async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name !== 'chromium-desktop', 'Forced-colors rendering is checked once in Chromium; checkbox coverage protects the supported parser syntax.');
+      await page.emulateMedia({ forcedColors: 'active' });
+      await openParticipant(page, {
+        markdown: type === 'radio'
+          ? RESPONSE_POPOVER_MARKDOWN
+          : RESPONSE_POPOVER_MARKDOWN.replace(/\((\d+)\)/g, '[$1]'),
+      });
+      const question = activeQuestion(page, 'EYE_COLOR');
+      const trigger = question.getByRole('button', { name: 'Hazel' });
+      const label = trigger.locator('xpath=ancestor::label');
+      const input = question.locator(`input[type="${type}"]`).nth(1);
+      await label.click({ position: { x: 8, y: 8 } });
+      await expect(input).toBeChecked();
+      await expect(label).toHaveCSS('forced-color-adjust', 'none');
+      const selectedTextColor = await label.evaluate((element) => getComputedStyle(element).color);
+      const selectedBackground = await label.evaluate((element) => getComputedStyle(element).backgroundColor);
+      await expect(trigger).toHaveCSS('color', selectedTextColor);
+      expect(selectedTextColor).not.toBe(selectedBackground);
+      await input.focus();
+      await page.keyboard.press('Tab');
+      await expect(trigger).toBeFocused();
+      await page.keyboard.press('Space');
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await expect(trigger).toHaveCSS('color', selectedTextColor);
+      await expect(input).toBeChecked();
+      await page.keyboard.press('Escape');
+      await expect(trigger).toBeFocused();
+      await expect(trigger).toHaveCSS('outline-style', 'solid');
+      await expect(trigger).toHaveCSS('outline-width', '3px');
+      await expectHealthyHarness(page);
+    });
+  }
+
   test('does not let a help control nested in a response label answer the question', async ({ page }) => {
     await openParticipant(page, { markdown: RESPONSE_POPOVER_MARKDOWN });
     const question = activeQuestion(page, 'EYE_COLOR');
@@ -401,6 +504,7 @@ test.describe('production-shaped popover accessibility @canonical', () => {
     const radio = response.locator('input[type="radio"]');
     const label = response.locator('label');
 
+    await expect(trigger).toHaveCSS('color', 'rgb(42, 114, 165)');
     await expectClosedHelp(trigger, 'Informational Text');
     await expect(label).toHaveText('Hazel');
     await expect(radio).toHaveAccessibleName('Hazel');
@@ -424,6 +528,8 @@ test.describe('production-shaped popover accessibility @canonical', () => {
     // Click the response-card padding, not its nested help control.
     await label.click({ position: { x: 8, y: 8 } });
     await expect(radio).toBeChecked();
+    await expect(label).toHaveCSS('background-color', 'rgb(60, 145, 222)');
+    await expect(trigger).toHaveCSS('color', 'rgb(255, 255, 255)');
     expect((await harnessSnapshot(page)).state.active).toMatchObject({ EYE_COLOR: '696181630' });
     await expectHealthyHarness(page);
   });

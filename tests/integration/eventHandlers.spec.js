@@ -44,6 +44,25 @@ const POPOVER_SURVEY = `
 [END,end] Done.
 `;
 
+const LOCALIZED_POPOVER_SURVEYS = {
+  en: {
+    markdown: `
+{"name":"EVENT_POPOVER_EN"}
+[HELP] Read |popup|freckles|Informational Text|We are interested in freckling on the back and shoulders, not the face and arms. Your face and arms are more exposed to the sun and may have a different amount of freckling.|.
+[END,end] Done.
+`,
+    announcement: 'Informational Text We are interested in freckling on the back and shoulders, not the face and arms. Your face and arms are more exposed to the sun and may have a different amount of freckling.',
+  },
+  es: {
+    markdown: `
+{"name":"EVENT_POPOVER_ES"}
+[HELP] Lea |popup|pecas|Texto de ayuda|Nos interesan las pecas en la espalda y los hombros, no en la cara ni en los brazos. La cara y los brazos están más expuestos al sol y pueden tener una cantidad diferente de pecas.|.
+[END,end] Fin.
+`,
+    announcement: 'Texto de ayuda Nos interesan las pecas en la espalda y los hombros, no en la cara ni en los brazos. La cara y los brazos están más expuestos al sol y pueden tener una cantidad diferente de pecas.',
+  },
+};
+
 const COMPOUND_DELETION_SURVEY = `
 {"name":"EVENT_COMPOUND_DELETE"}
 [Q1?] Select a response or add detail.
@@ -530,6 +549,28 @@ describe('delegated runtime event handling', () => {
   });
 
   it.each([
+    ['en', 'es'],
+    ['es', 'en'],
+  ])('keeps %s help announcements in the survey language under an %s host document', async (surveyLang, hostLang) => {
+    document.documentElement.lang = hostLang;
+    const localizedSurvey = LOCALIZED_POPOVER_SURVEYS[surveyLang];
+    const quest = await renderFreshQuest({
+      markdown: localizedSurvey.markdown,
+      params: { lang: surveyLang },
+    });
+    const announcer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
+    const trigger = quest.root.querySelector('[data-bs-toggle="popover"]');
+
+    expect(document.documentElement.lang).toBe(hostLang);
+    expect(announcer.getAttribute('lang')).toBe(surveyLang);
+
+    trigger.click();
+
+    expect(announcer.textContent).toBe(localizedSurvey.announcement);
+    expect(document.documentElement.lang).toBe(hostLang);
+  });
+
+  it.each([
     ['en', '', 'Informational Text'],
     ['es', '', 'Texto de ayuda'],
     ['en', '   |', 'Informational Text'],
@@ -598,12 +639,14 @@ describe('delegated runtime event handling', () => {
     const oldTrigger = quest.root.querySelector('[data-bs-toggle="popover"]');
     oldTrigger.click();
     const oldAnnouncer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
+    expect(oldAnnouncer?.getAttribute('lang')).toBe('en');
     expect(oldAnnouncer?.textContent).toBe('Help title Synthetic help text');
 
-    await quest.transform.render({ activate: true, text: POPOVER_SURVEY, lang: 'en', store: quest.store }, 'questionnaireRoot', {});
+    await quest.transform.render({ activate: true, text: POPOVER_SURVEY, lang: 'es', store: quest.store }, 'questionnaireRoot', {});
     const newAnnouncer = quest.root.querySelector('#ariaLiveHelpAnnouncer');
     const newTrigger = quest.root.querySelector('[data-bs-toggle="popover"]');
     newTrigger.click();
+    expect(newAnnouncer?.getAttribute('lang')).toBe('es');
     expect(newAnnouncer?.textContent).toBe('Help title Synthetic help text');
     expect(oldAnnouncer.textContent).toBe('');
     oldTrigger.dispatchEvent(new Event('hide.bs.popover'));

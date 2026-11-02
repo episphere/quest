@@ -16,7 +16,7 @@ export const ariaLiveAnnouncementRegions = () => {
         <div id="srAnnouncerContainer" class="visually-hidden">
             <div id="ariaLiveQuestionAnnouncer" aria-live="polite"></div>
             <div id="ariaLiveSelectionAnnouncer" aria-live="polite"></div>
-            <div id="ariaLiveHelpAnnouncer" aria-live="polite" aria-atomic="true"></div>
+            <div id="ariaLiveHelpAnnouncer" lang="${translate('language')}" aria-live="polite" aria-atomic="true"></div>
         </div>
     `;
 }

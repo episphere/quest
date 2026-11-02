@@ -37,8 +37,8 @@ body {
   min-width: 0;
 }
 
-/* Match Connect's blue, inline popover controls without restyling other links. */
-#questionnaireRoot .popover-dismiss.btn {
+/* Match Connect's blue, inline controls. */
+:where(#questionnaireRoot) .popover-dismiss.btn {
   color: #2A72A5 !important;
   padding: 0;
   vertical-align: inherit;
