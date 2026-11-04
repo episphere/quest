@@ -60,9 +60,11 @@ Open both language-specific URLs in a new page:
 
 For each URL:
 
-1. Navigate through the question with the screen reader's reading cursor and
-   form-control navigation. Confirm the complete question remains available,
-   including the text after the inline **freckles** or **pecas** help button.
+1. On arrival, confirm the complete question is announced once without opening
+   help. Then navigate with the screen reader's reading cursor and form-control
+   navigation. The visible text may be read again in pieces around inline popovers, which act like buttons. All text after it must remain available.
+   On iPhone VoiceOver, use right swipes to navigate and a double-tap to activate
+   the focused help button. To dismiss it without a keyboard, activate it again.
 2. Move to the help button. Confirm its name is **freckles** or **pecas**, it is
    identified as a button with collapsed state, and its short description is
    **Informational Text** or **Texto de ayuda**. Exact spoken order varies by
@@ -79,8 +81,25 @@ For each URL:
 5. Open the help again, immediately move to a response, select it, and activate
    Next. On the completion screen, wait at least one second and
    confirm the completion prompt is announced and the help is not replayed.
+6. Use Back to return. Confirm the full question is announced once, the response
+   is still selected, and the help button remains reachable and usable.
 
 Speech already queued or underway may finish after dismissal.
+
+### Tap-water response with a number box
+
+- English: `http://127.0.0.1:4173/tests/harness/participant.html?fixture=tapWaterNumber.txt&lang=en`
+- Spanish: `http://127.0.0.1:4173/tests/harness/participant.html?fixture=tapWaterNumberSpanish.txt&lang=es`
+
+In Safari with VoiceOver, reach the first radio option before entering its number
+box. Confirm its name is only **times per day** or **veces al día**, without the
+numeric range. Reach the number box and confirm its existing 0–999 guidance is
+available there, not as a separate reading stop afterward. Record whether
+VoiceOver still says “and more items”.
+Repeat after entering `1000` and correcting it to `3`. The error should have red
+text on a white background within the selected blue response, then disappear
+after correction. Then select another option, confirm the number clears, and
+check that Reset and Next/Back still work.
 
 ## Runnable dialog and asynchronous scenarios
 

@@ -15,6 +15,62 @@ const endMatchRegex = /end\s*=\s*(.*)?/;
 const accessibleNameRegex = /(?:^|\s)aria-(?:label|labelledby)\s*=/i;
 const captionBoundaryRegex = /<br\s*\/?\s*>(?:\r?\n)?|\r?\n/i;
 
+function scopeChoiceNumberDescriptions(question, destinationDocument) {
+  const descriptions = question.querySelectorAll('label > [data-quest-number-description]');
+  if (!descriptions.length) return;
+  const usedIds = new Set(Array.from(question.querySelectorAll('[id]'), ({ id }) => id));
+  const lastDescription = new Map();
+  for (const description of descriptions) {
+    const label = description.parentElement;
+    const number = description.previousElementSibling;
+    const choice = label?.previousElementSibling;
+    if (
+      label?.tagName !== 'LABEL'
+      || !label.parentElement?.classList.contains('response')
+      || !choice?.matches('input[type="radio"], input[type="checkbox"]')
+      || !choice.id
+      || label.htmlFor !== choice.id
+      || !number?.matches('input[type="number"]')
+      || description.id !== `${number.id}-desc`
+      || !(number.getAttribute('aria-describedby') ?? '').split(/\s+/).includes(description.id)
+    ) continue;
+
+    // Name only plain captions. Preserve explicit names and complex labels.
+    // Keep the number inside its label for layout and response events.
+    const captionNodes = Array.from(label.childNodes).filter((node) => {
+      if (node === number || node === description) return false;
+      if (node.nodeType === Node.TEXT_NODE) return Boolean(node.textContent.trim());
+      return node.nodeType !== Node.ELEMENT_NODE || node.tagName !== 'BR';
+    });
+    if (
+      captionNodes.length === 1
+      && captionNodes[0].nodeType === Node.TEXT_NODE
+      && !choice.hasAttribute('aria-label')
+      && !choice.hasAttribute('aria-labelledby')
+    ) {
+      const caption = question.ownerDocument.createElement('span');
+      const baseId = `${choice.id}-caption`;
+      let captionId = baseId;
+      let suffix = 2;
+      while (usedIds.has(captionId) || destinationDocument.getElementById(captionId)) {
+        captionId = `${baseId}-${suffix++}`;
+      }
+      usedIds.add(captionId);
+      caption.id = captionId;
+      caption.setAttribute('data-quest-choice-caption', '');
+      captionNodes[0].replaceWith(caption);
+      caption.appendChild(captionNodes[0]);
+      choice.setAttribute('aria-labelledby', captionId);
+    }
+
+    // Keep hints out of choice names and reading order.
+    // aria-describedby still exposes the hidden hint to the number.
+    (lastDescription.get(label) ?? label).after(description);
+    description.hidden = true;
+    lastDescription.set(label, description);
+  }
+}
+
 function decodeBasicHTMLEntities(value) {
   return value
     .replace(/&nbsp;/gi, ' ')
@@ -399,6 +455,7 @@ export class QuestionProcessor {
     template.innerHTML = htmlString.trim();
 
     const newQuestionEle = template.content.firstChild;
+    scopeChoiceNumberDescriptions(newQuestionEle, template.ownerDocument);
 
     // Add the loop data to the loopDataArr to support the exitLoop function.
     if (newQuestionEle.hasAttribute("loopmax") && newQuestionEle.hasAttribute("firstquestion") && newQuestionEle.getAttribute("firstquestion") == '1') {
@@ -948,9 +1005,7 @@ export class QuestionProcessor {
       .replace(/(?:\r\n|\r|\n)/g, "<br>")
       .replace(/\[_#\]/g, "");
 
-    // Quest's legacy choice transforms scan the question as a string and can
-    // mistake `(1)` or `[2]` inside an aria-label for real responses.
-    // Hide only those label values during parsing, then restore their exact text.
+    // Protect choice-like aria-label text during parsing, then restore it unchanged.
     const accessibleLabels = tokenizeAccessibleLabelValues(questText);
     questText = accessibleLabels.text;
 
@@ -1483,18 +1538,13 @@ export class QuestionProcessor {
         generatedAccessibleName,
       );
 
-      // onkeypress forces whole numbers. Keep the OR operators encoded until
-      // the browser parses the HTML: a later Quest pass uses raw pipes as
-      // display-condition delimiters and must not consume generated script.
+      // Encode || so the later displayif parser cannot consume this handler.
       const input = `<input type='number' step='any' onkeypress='return (event.charCode == 8 &#124;&#124; event.charCode == 0 &#124;&#124; event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57' name='${questionID}' ${options}>`;
       const description = shouldGenerateDescription
-        ? `<div id="${elementId}-desc" class="visually-hidden">${descriptionText}</div><br>`
+        ? `<div id="${elementId}-desc" class="visually-hidden" data-quest-number-description>${descriptionText}</div><br>`
         : '<br>';
 
-      // A number macro can itself be the content of a displayif.
-      // In the compact `...number||displayif=...` form, the number parser
-      // consumes the wrapper's closing pipe. Restore it only at that exact
-      // boundary. Ordinary, already-closed wrappers must not gain a literal pipe.
+      // Restore only the closing pipe consumed in `...number||displayif=...`.
       if (hasDisplayIfWrapper) {
         const restoredClosingDelimiter = opensFollowingDisplayIf ? '|' : '';
         return `${input}${description}${restoredClosingDelimiter}`;
@@ -1510,9 +1560,7 @@ export class QuestionProcessor {
       return `|__|id=${id} name=${questionID}|`;
     }
 
-    // Keep text-input parsing on the line that contains the macro |__|.
-    // without these boundaries, Firefox can exhaust its regular-expression stack by
-    // retrying the optional greedy captures across long, pipe-rich prompts.
+    // Stay on the macro's line to avoid Firefox regex stack exhaustion.
     questText = questText.replace(/^(.*)\|(?:__\|)(?:([^\s<][^|<]+[^\s<])\|)?(.*)$/gm, fText);
     function fText(fullmatch, value1, opts, value2, offset, source) {
       let { options } = guaranteeIdSet(opts, "txt");

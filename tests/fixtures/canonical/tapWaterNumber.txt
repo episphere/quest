@@ -1,0 +1,12 @@
+// Manual screen-reader fixture: unchanged question D_285545471 from locked prod/module4.txt.
+{"name":"TEST_TAP_WATER_NUMBER_EN"}
+
+[D_285545471?] In a <b>usual week</b>, about how often do you drink tap water from your home? We are interested in all tap water, whether or not it has been filtered or treated.
+(706062016) times per day |__|__|id=D_936382173 min=0 max=999|
+(594557208) 5 to 6 times per week
+(471294296) 3 to 4 times per week
+(198347104) 1 to 2 times per week
+(693256778) Less than once per week
+(703370365) I drink tap water but don’t know how often
+
+[END,end] You have answered all of the questions in this survey. To submit your answers, select the “Submit Survey” button.
