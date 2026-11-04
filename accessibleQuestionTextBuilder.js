@@ -295,10 +295,9 @@ function buildQuestionText(fieldsetEle) {
         );
     }
     
-    // Create the <legend> tag for screen readers and move the question text into it.
+    // Build the legend and question focus target.
     const updatedFieldset = manageAccessibleFieldset(fieldsetEle, questionElements);
-    // Create and return the hidden, focusable element for screen reader focus management.
-    const focusableEle = createFocusableElement(updatedFieldset, focusNode);
+    const focusableEle = createFocusableElement(updatedFieldset, focusNode, Boolean(staticCompoundPlan));
     manageCompoundRadioGroups(updatedFieldset, Boolean(staticCompoundPlan));
     return focusableEle;
 }
@@ -950,15 +949,66 @@ function handleQuestionBRElements(fieldset, maxBrs = 3) {
     }
 }
 
-/**
- * Create a hidden, focusable element for screen reader focus management in each question.
- * @param {HTMLElement} fieldsetEle - The fieldset element containing the question text.
- * @param {Node} focusNode - The node to place the focusable element after.
- * @returns {HTMLElement} - The hidden, focusable element for screen reader focus management.
- */
+function findQuestionFocusElement(fieldsetEle) {
+    // Keep copied prompt text out of the native group name.
+    const precedingTarget = fieldsetEle.previousElementSibling;
+    if (precedingTarget?.matches('span.screen-reader-focus[data-question-prompt-focus]')) {
+        return precedingTarget;
+    }
+    return fieldsetEle.querySelector('span.screen-reader-focus');
+}
 
-function createFocusableElement(fieldsetEle, focusNode) {
-    let focusableEle = fieldsetEle.querySelector('span.screen-reader-focus');
+function staticHelpPromptText(fieldsetEle, isStaticCompound) {
+    const question = fieldsetEle.closest('form.question');
+    const legend = fieldsetEle.querySelector(':scope > legend');
+    if (
+        moduleParams.isRenderer
+        || !question
+        || fieldsetEle.tagName !== 'FIELDSET'
+        || fieldsetEle.parentElement !== question
+        || isStaticCompound
+        || Object.hasOwn(moduleParams.asyncQuestionsMap ?? {}, question.id)
+        || fieldsetEle.querySelector('table, fieldset, [role="radiogroup"], [role="alert"][tabindex="0"]')
+        || !legend?.querySelector('[data-bs-toggle="popover"][tabindex="0"]')
+    ) return null;
+
+    // Exclude compound groups before their fieldsets are built.
+    const radioNames = new Set(Array.from(fieldsetEle.querySelectorAll('input[type="radio"]'), ({ name }) => name));
+    if (radioNames.size > 1) return null;
+
+    // Copy only static legend text. Form-level conditions do not change wording.
+    const dynamicPromptSelector = '.displayif, [displayif], [forid], [name], [data-encoded-expression], [data-displaylist-args], [hidden], [inert]';
+    if (legend.matches(dynamicPromptSelector) || legend.querySelector(dynamicPromptSelector)) return null;
+    if (legend.getAttribute('aria-hidden') === 'true' || legend.style.display === 'none' || legend.style.visibility === 'hidden') return null;
+    const staticTags = new Set(['B', 'STRONG', 'EM', 'I', 'SPAN', 'BR', 'SMALL', 'SUB', 'SUP', 'U', 'S', 'MARK']);
+    for (const element of legend.querySelectorAll('*')) {
+        if (element.matches('span.screen-reader-focus')) continue;
+        const isHelpButton = element.matches('button[data-bs-toggle="popover"][tabindex="0"], a[data-bs-toggle="popover"][role="button"][tabindex="0"]:not([href])');
+        if (
+            (!staticTags.has(element.tagName) && !isHelpButton)
+            || (!isHelpButton && element.hasAttribute('role'))
+            || (!isHelpButton && (element.hasAttribute('class') || element.hasAttribute('id')))
+            || element.hasAttribute('contenteditable')
+            || element.hasAttribute('aria-label')
+            || element.hasAttribute('aria-labelledby')
+            || (!isHelpButton && element.hasAttribute('tabindex'))
+            || (element.getAttribute('aria-hidden') === 'true' && element.tagName !== 'BR')
+            || element.style.display === 'none'
+            || element.style.visibility === 'hidden'
+            || element.ownerDocument.defaultView.getComputedStyle(element).display === 'none'
+            || (isHelpButton && (element.disabled || element.getAttribute('aria-disabled') === 'true'))
+        ) return null;
+    }
+
+    const text = legend.cloneNode(true);
+    text.querySelectorAll('.screen-reader-focus').forEach((element) => element.remove());
+    text.querySelectorAll('br').forEach((element) => element.replaceWith(' '));
+    return text.textContent.replace(/\s+/g, ' ').trim() || null;
+}
+
+/** Reuse one focus target. Vopy text only for static help prompts. */
+function createFocusableElement(fieldsetEle, focusNode, isStaticCompound = false) {
+    let focusableEle = findQuestionFocusElement(fieldsetEle);
     if (!focusableEle) {
         focusableEle = document.createElement('span');
         focusableEle.classList.add('screen-reader-focus');
@@ -973,65 +1023,67 @@ function createFocusableElement(fieldsetEle, focusNode) {
             white-space: nowrap;
             border: 0;
         `;
+    }
 
-        if (focusNode && focusNode !== fieldsetEle && fieldsetEle.contains(focusNode)) {
-            fieldsetEle.insertBefore(focusableEle, focusNode);
-        } else {
-            const legendEle = fieldsetEle.querySelector('legend');
-            if (legendEle) {
-                legendEle.after(focusableEle);
+    const promptText = staticHelpPromptText(fieldsetEle, isStaticCompound);
+    if (promptText) {
+        // iOS VoiceOver needs text here to read past inline help.
+        focusableEle.textContent = promptText;
+        focusableEle.setAttribute('data-question-prompt-focus', '');
+        focusableEle.lang = moduleParams.i18n.language;
+        fieldsetEle.before(focusableEle);
+    } else {
+        // Clear stale copied text if a cached question no longer qualifies.
+        const wasPromptTarget = focusableEle.hasAttribute('data-question-prompt-focus');
+        focusableEle.textContent = '';
+        focusableEle.removeAttribute('data-question-prompt-focus');
+        focusableEle.removeAttribute('lang');
+        if (!fieldsetEle.contains(focusableEle) || wasPromptTarget) {
+            if (focusNode && focusNode !== fieldsetEle && fieldsetEle.contains(focusNode)) {
+                fieldsetEle.insertBefore(focusableEle, focusNode);
             } else {
-                fieldsetEle.appendChild(focusableEle);
+                const legendEle = fieldsetEle.querySelector('legend');
+                if (legendEle) {
+                    legendEle.after(focusableEle);
+                } else {
+                    fieldsetEle.appendChild(focusableEle);
+                }
             }
+        }
+
+        // Keep forward Tab navigation from skipping inline help.
+        const legendEle = fieldsetEle.querySelector(':scope > legend');
+        const legendPopover = legendEle?.querySelector('[data-bs-toggle="popover"][tabindex="0"]');
+        if (legendPopover && focusableEle.parentElement !== legendEle) {
+            legendEle.prepend(focusableEle);
         }
     }
 
-    // A help control can live inside the generated legend. Keep
-    // the question target immediately before that interactive
-    // content so forward Tab navigation does not skip from the target to the
-    // responses or action buttons after the legend.
-    const legendEle = fieldsetEle.querySelector(':scope > legend');
-    const legendPopover = legendEle?.querySelector('[data-bs-toggle="popover"][tabindex="0"]');
-    if (legendPopover && focusableEle.parentElement !== legendEle) {
-        legendEle.prepend(focusableEle);
-    }
-
-    // This target receives deliberate focus after question transitions, but
-    // must not become an extra empty stop in sequential keyboard navigation.
+    // Allow programmatic focus without adding a Tab stop.
     focusableEle.setAttribute('tabindex', '-1');
 
     return focusableEle;
 }
 
-/**
- * Restore question context after an unanswered-response modal closes.
- * Focus the question target after Bootstrap finishes hiding the modal.
- */
+/** Restore question focus after Bootstrap closes a response modal. */
 export function closeModalAndFocusQuestion(event) {
     if (moduleParams.isRenderer) return;
     if (event?.currentTarget?._questRenderDisposal) return;
 
     const questDiv = moduleParams.questDiv;
-    // An obsolete modal can finish hiding after a sequential question render.
-    // Never let its lifecycle move focus inside the replacement Quest instance.
+    // Ignore hidden events from an obsolete render.
     if (event?.currentTarget && !questDiv?.contains(event.currentTarget)) return;
 
-    // For a soft-modal continuation, the newly activated question is already in
-    // the DOM when Bootstrap's hidden event runs. Its normal handoff is replaced
-    // here so the question receives focus only once.
+    // Restore the current question, including a soft-modal continuation.
     const activeQuestion = questDiv?.querySelector('.question.active');
     if (!activeQuestion) return;
 
     const accessibleQuestion = activeQuestion.querySelector('fieldset') || activeQuestion;
-    const focusableEle = accessibleQuestion.querySelector('span.screen-reader-focus');
-    // An async question can be active while its host content is still loading.
-    // Its normal prepareQuestionDOM path owns construction and focus once the
-    // final markup is available.
+    const focusableEle = findQuestionFocusElement(accessibleQuestion);
+    // Async question preparation owns focus until its content is ready.
     if (!focusableEle) return;
 
-    // Bootstrap has finished hiding the dialog before this event fires, and
-    // the question markup is already prepared. Cancel any transition handoff
-    // so no later task can pull focus away from the participant's next action.
+    // Cancel the pending handoff to prevent a second focus move.
     clearQuestionFocusHandoff();
 
     const ownerDocument = accessibleQuestion.ownerDocument;
@@ -1042,8 +1094,7 @@ export function closeModalAndFocusQuestion(event) {
         || activeElement === ownerDocument.documentElement
         || dismissedModal?.contains(activeElement);
 
-    // A participant, host, or future Bootstrap trigger may have already moved
-    // focus while the dialog was closing. Respect that newer focus decision.
+    // Preserve focus already moved by the participant, host, or Bootstrap.
     if (!focusStillBelongsToDismissal) return;
 
     focusAccessibleQuestionTarget(focusableEle);
@@ -1080,9 +1131,13 @@ export function updateAriaLiveSelectionAnnouncer(responseDiv) {
 
     const actionText = input.checked ? 'Selected.' : 'Unselected.';
     const isTable = responseDiv.closest('table') !== null;
+    const caption = label.querySelector(':scope > [data-quest-choice-caption]');
+    const labelText = caption && input.getAttribute('aria-labelledby') === caption.id
+        ? caption.textContent
+        : label.textContent;
     const announcementText = isTable
         ? `${actionText}`
-        : `${label.textContent} ${actionText}`;
+        : `${labelText} ${actionText}`;
 
     scheduleSelectionAnnouncement(liveRegion, announcementText, 100);
 }
