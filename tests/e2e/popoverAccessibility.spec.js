@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { test, expect } from './support/test.js';
 import {
   activeQuestion,
@@ -70,6 +71,46 @@ function helpPopover(page, content = 'Synthetic help text') {
 
 function helpAnnouncer(page) {
   return page.locator('#questionnaireRoot #ariaLiveHelpAnnouncer');
+}
+
+async function openLockedSunQuestion(page, lang, questionId = 'D_352986465', config = {}) {
+  // Preserve the production image markup without making external network
+  // requests. These tests assess prompt/focus behavior, not image descriptions.
+  await page.route('https://user-images.githubusercontent.com/64271614/*', (route) => route.fulfill({
+    contentType: 'image/png',
+    path: fileURLToPath(new URL('./assets/FemaleBaldness1.png', import.meta.url)),
+  }));
+  return openParticipant(page, {
+    markdown: readLockedMarkdown('module3', lang),
+    lang,
+    persistedData: { treeJSON: treeAt(questionId) },
+    ...config,
+  });
+}
+
+async function expectPromptFocus(question, prompt, lang) {
+  const helper = question.locator(':scope > .screen-reader-focus[data-question-prompt-focus]');
+  const fieldset = question.locator(':scope > fieldset');
+  await expect(question.locator('.screen-reader-focus')).toHaveCount(1);
+  await expect(helper).toHaveText(prompt);
+  await expect(helper).toHaveAttribute('lang', lang);
+  await expect(helper).toBeFocused();
+  await expect(fieldset).toHaveAccessibleName(prompt);
+  return helper;
+}
+
+async function dismissAndExpectPromptFocus(page, modal, helper) {
+  await modal.evaluate((element) => {
+    element.addEventListener('hidden.bs.modal', () => {
+      element.__promptFocusedAtHidden = document.activeElement?.matches(
+        'form.question.active > .screen-reader-focus[data-question-prompt-focus]',
+      ) ?? false;
+    }, { once: true });
+  });
+  await page.keyboard.press('Escape');
+  await expect(modal).not.toHaveClass(/show/);
+  expect(await modal.evaluate((element) => element.__promptFocusedAtHidden)).toBe(true);
+  await expect(helper).toBeFocused();
 }
 
 async function expectClosedHelp(trigger, description) {
@@ -376,25 +417,27 @@ test.describe('production-shaped popover accessibility @canonical', () => {
       await expectHealthyHarness(page);
     });
 
-    test(`preserves the full ${lang} prompt around inline help and announces its production text`, async ({ page }) => {
-      await openParticipant(page, {
-        fixture: expectation.fixture,
-        lang,
-      });
+    test(`focuses the full ${lang} production prompt while preserving independently accessible inline help`, async ({ page }) => {
+      await openLockedSunQuestion(page, lang, 'D_352986465', { hostLang: 'en' });
 
       const question = activeQuestion(page, 'D_352986465');
-      const legend = question.locator('legend.question-text');
       const trigger = question.getByRole('button', { name: expectation.trigger, exact: true });
       const announcer = helpAnnouncer(page);
 
-      await expect(legend).toHaveText(expectation.prompt);
-      await expect(question.getByRole('group', { name: expectation.prompt, exact: true })).toHaveCount(1);
+      await expectPromptFocus(question, expectation.prompt, lang);
+      // The visible legend stays available for intentional rereading with a
+      // screen reader's swipe/reading commands. Browser tests do not assert speech.
+      await expect(page.locator('#ariaLiveQuestionAnnouncer')).toBeEmpty();
+      await expect(announcer).toBeEmpty();
+      await expect(trigger).toHaveAccessibleName(expectation.trigger);
       await expect(trigger).toBeVisible();
       await expect(trigger).toHaveCSS('color', 'rgb(42, 114, 165)');
       await expect(trigger).toHaveCSS('padding-left', '0px');
       await expect(trigger).toHaveCSS('padding-right', '0px');
       await expectClosedHelp(trigger, expectation.title);
-      await trigger.click();
+      await page.keyboard.press('Tab');
+      await expect(trigger).toBeFocused();
+      await page.keyboard.press('Space');
       await expectOpenHelp({
         trigger,
         popover: helpPopover(page, expectation.body),
@@ -403,10 +446,49 @@ test.describe('production-shaped popover accessibility @canonical', () => {
         body: expectation.body,
       });
       await page.keyboard.press('Escape');
+      await expect(trigger).toBeFocused();
       await expectClosedHelp(trigger, expectation.title);
       await expectHealthyHarness(page);
     });
   }
+
+  test('refreshes one prompt target through production Next and cached Back navigation', async ({ page }) => {
+    const expectation = PRODUCTION_HELP.en;
+    await openLockedSunQuestion(page, 'en', 'D_524971659');
+    const preceding = activeQuestion(page, 'D_524971659');
+    await preceding.locator('label[for="D_524971659_353358909"]').click();
+    await goNext(page);
+
+    const question = activeQuestion(page, 'D_352986465');
+    const helper = await expectPromptFocus(question, expectation.prompt, 'en');
+    await helper.evaluate((element) => {
+      window.__cachedPopoverPromptTarget = element;
+      element.textContent = 'Stale test-only prompt';
+    });
+    await question.locator('label[for="D_352986465_259218831"]').click();
+    await goNext(page);
+    await expect(activeQuestion(page, 'END')).toBeVisible();
+
+    await activeQuestion(page, 'END').getByRole('button', { name: 'Back to the previous section' }).click();
+    const restored = activeQuestion(page, 'D_352986465');
+    const restoredHelper = await expectPromptFocus(restored, expectation.prompt, 'en');
+    expect(await restoredHelper.evaluate((element) => element === window.__cachedPopoverPromptTarget)).toBe(true);
+    await page.keyboard.press('Tab');
+    await expect(restored.getByRole('button', { name: expectation.trigger, exact: true })).toBeFocused();
+    await expectHealthyHarness(page);
+  });
+
+  test('restores the outside-fieldset prompt target when a response dialog closes', async ({ page }) => {
+    await openLockedSunQuestion(page, 'en');
+    const question = activeQuestion(page, 'D_352986465');
+    const helper = await expectPromptFocus(question, PRODUCTION_HELP.en.prompt, 'en');
+
+    await goNext(page);
+    const softModal = page.locator('#softModal');
+    await expect(softModal).toHaveClass(/show/);
+    await dismissAndExpectPromptFocus(page, softModal, helper);
+    await expectHealthyHarness(page);
+  });
 
   for (const [lang, name] of [['en', 'Hazel'], ['es', 'Color avellana']]) {
     test(`keeps the selected ${lang} production eye-color help styling consistent without changing the answer`, async ({ page }) => {

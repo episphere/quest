@@ -1,0 +1,12 @@
+// Manual screen-reader fixture: unchanged question D_285545471 from locked prod/module4Spanish.txt.
+{"name":"TEST_TAP_WATER_NUMBER_ES"}
+
+[D_285545471?] En una <b>semana habitual</b>, ¿con qué frecuencia bebe agua de la llave de su casa? Nos interesa toda el agua de la llave, sin importar si se pasa por un filtro o si se potabiliza.
+(706062016) |__|__|id=D_936382173 min=0 max=999| veces al día
+(594557208) De 5 a 6 veces por semana
+(471294296) De 3 a 4 veces por semana
+(198347104) De 1 a 2 veces por semana
+(693256778) Menos de una vez a la semana
+(703370365) Bebo agua de la llave, pero no sé con qué frecuencia
+
+[END,end] Respondió a todas las preguntas de este cuestionario. Para enviar sus respuestas, seleccione el botón “Enviar Encuesta”.

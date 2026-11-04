@@ -146,4 +146,16 @@ test.describe('documented manual accessibility URLs @canonical', () => {
       expect(snapshot.activeQuestionId).toBeNull();
     }
   });
+
+  for (const [locale, fixture] of [
+    ['en', 'tapWaterNumber.txt'],
+    ['es', 'tapWaterNumberSpanish.txt'],
+  ]) {
+    test(`loads the ${locale} tap-water number-label retest page`, async ({ page }) => {
+      await openManualScenario(page, `fixture=${fixture}&lang=${locale}`);
+      await expect(activeQuestion(page, 'D_285545471')).toBeVisible();
+      await expect(page.locator('html')).toHaveAttribute('lang', locale);
+      expect((await harnessSnapshot(page)).logs.errors).toEqual([]);
+    });
+  }
 });
