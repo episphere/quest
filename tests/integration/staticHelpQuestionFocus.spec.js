@@ -71,6 +71,28 @@ describe('static inline-help question focus', () => {
     expect(quest.errors).toEqual([]);
   });
 
+  it('builds the full prompt inside a temporarily hidden root without changing its style', async () => {
+    vi.useFakeTimers();
+    const rootStyle = 'visibility: hidden !important; min-height: 1px;';
+    const quest = await renderFreshQuest({
+      markdown: readFileSync(join(import.meta.dirname, '../fixtures/canonical/popoverHelp.txt'), 'utf8'),
+      params: {
+        retrieve: async () => {
+          document.getElementById('questionnaireRoot').setAttribute('style', rootStyle);
+        },
+      },
+    });
+    const parts = questionParts(quest);
+
+    expectStaticPromptTarget(parts, localizedPrompts.en.freckles, 'en');
+    expect(quest.root.getAttribute('style')).toBe(rootStyle);
+    expect(window.getComputedStyle(parts.legend).visibility).toBe('hidden');
+    quest.root.style.visibility = 'visible';
+    await vi.advanceTimersByTimeAsync(20);
+    expect(document.activeElement).toBe(parts.helper);
+    expect(quest.errors).toEqual([]);
+  });
+
   it('retains existing focus behavior when help is only in a response label', async () => {
     vi.useFakeTimers();
     const quest = await renderLockedQuestion('D_857219333');
@@ -128,10 +150,12 @@ describe('static inline-help question focus', () => {
   });
 
   it.each([
-    'class-styled hidden formatting',
-    'a help-button accessible-name override',
-    'a stylesheet-hidden bare fragment',
-  ])('returns a prepared real prompt to its original target for %s', async (variant) => {
+    ['class-styled hidden formatting', 'visibility', 'hidden'],
+    ['a help-button accessible-name override'],
+    ['a stylesheet-hidden bare fragment', 'display', 'none'],
+    ['a stylesheet visibility-hidden bare fragment', 'visibility', 'hidden'],
+    ['a stylesheet visibility-collapsed bare fragment', 'visibility', 'collapse'],
+  ])('returns a prepared real prompt to its original target for %s', async (variant, property, value) => {
     vi.useFakeTimers();
     const quest = await renderLockedQuestion('D_352986465');
     const original = questionParts(quest);
@@ -153,20 +177,21 @@ describe('static inline-help question focus', () => {
           stylesheet.textContent = '.static-help-hidden { visibility: hidden; }';
         } else {
           // The fragment itself has no class, ID, or inline hiding attribute.
-          stylesheet.textContent = '#D_352986465 > fieldset > legend.question-text > span:not(.screen-reader-focus) { display: none; }';
+          stylesheet.textContent = `#D_352986465 > fieldset > legend.question-text > span:not(.screen-reader-focus) { ${property}: ${value}; }`;
         }
         document.head.append(stylesheet);
         const computed = window.getComputedStyle(fragment);
-        if (variant === 'class-styled hidden formatting') {
-          expect(computed.visibility).toBe('hidden');
-        } else {
+        if (variant !== 'class-styled hidden formatting') {
           expect(fragment.attributes).toHaveLength(0);
-          expect(computed.display).toBe('none');
         }
+        expect(computed[property]).toBe(value);
       }
 
+      const rootStyle = 'visibility: hidden !important; min-height: 1px;';
+      quest.root.setAttribute('style', rootStyle);
       await prepareQuestionDOM(original.form);
       const fallback = questionParts(quest);
+      expect(quest.root.getAttribute('style')).toBe(rootStyle);
       expect(fallback.helper).toBe(original.helper);
       expect(fallback.form.querySelectorAll('span.screen-reader-focus')).toHaveLength(1);
       expect(fallback.form.querySelector(promptTargetSelector)).toBeNull();
@@ -177,6 +202,26 @@ describe('static inline-help question focus', () => {
     } finally {
       stylesheet?.remove();
     }
+  });
+
+  it('restores the root style if computed prompt measurement throws', async () => {
+    vi.useFakeTimers();
+    const quest = await renderLockedQuestion('D_352986465');
+    const { form, legend } = questionParts(quest);
+    const fragment = document.createElement('span');
+    fragment.append(legend.firstChild);
+    legend.prepend(fragment);
+    const rootStyle = 'visibility: hidden !important; min-height: 1px;';
+    quest.root.setAttribute('style', rootStyle);
+    const getComputedStyle = window.getComputedStyle.bind(window);
+    vi.spyOn(window, 'getComputedStyle').mockImplementation((element, ...args) => {
+      if (element === fragment) throw new Error('Computed style unavailable');
+      return getComputedStyle(element, ...args);
+    });
+    const { prepareQuestionDOM } = await import('../../questionnaire.js');
+
+    await expect(prepareQuestionDOM(form)).rejects.toThrow('Computed style unavailable');
+    expect(quest.root.getAttribute('style')).toBe(rootStyle);
   });
 
   it.each([

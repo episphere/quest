@@ -15,7 +15,7 @@ const endMatchRegex = /end\s*=\s*(.*)?/;
 const accessibleNameRegex = /(?:^|\s)aria-(?:label|labelledby)\s*=/i;
 const captionBoundaryRegex = /<br\s*\/?\s*>(?:\r?\n)?|\r?\n/i;
 
-function scopeChoiceNumberDescriptions(question) {
+function scopeChoiceNumberDescriptions(question, destinationDocument) {
   const descriptions = question.querySelectorAll('label > [data-quest-number-description]');
   if (!descriptions.length) return;
   const usedIds = new Set(Array.from(question.querySelectorAll('[id]'), ({ id }) => id));
@@ -52,7 +52,7 @@ function scopeChoiceNumberDescriptions(question) {
       const baseId = `${choice.id}-caption`;
       let captionId = baseId;
       let suffix = 2;
-      while (usedIds.has(captionId) || question.ownerDocument.getElementById(captionId)) {
+      while (usedIds.has(captionId) || destinationDocument.getElementById(captionId)) {
         captionId = `${baseId}-${suffix++}`;
       }
       usedIds.add(captionId);
@@ -455,7 +455,7 @@ export class QuestionProcessor {
     template.innerHTML = htmlString.trim();
 
     const newQuestionEle = template.content.firstChild;
-    scopeChoiceNumberDescriptions(newQuestionEle);
+    scopeChoiceNumberDescriptions(newQuestionEle, template.ownerDocument);
 
     // Add the loop data to the loopDataArr to support the exitLoop function.
     if (newQuestionEle.hasAttribute("loopmax") && newQuestionEle.hasAttribute("firstquestion") && newQuestionEle.getAttribute("firstquestion") == '1') {

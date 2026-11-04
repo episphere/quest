@@ -958,6 +958,26 @@ function findQuestionFocusElement(fieldsetEle) {
     return fieldsetEle.querySelector('span.screen-reader-focus');
 }
 
+function hasVisiblePromptContent(legend) {
+    const root = moduleParams.questDiv;
+    const ownerWindow = legend.ownerDocument.defaultView;
+    const hasRenderMask = root?.contains(legend) && root.style.visibility === 'hidden';
+    const originalStyle = hasRenderMask ? root.getAttribute('style') : null;
+    try {
+        // Ignore only the host's inline render mask, synchronously and without focus.
+        if (hasRenderMask) {
+            root.style.setProperty('visibility', 'visible', root.style.getPropertyPriority('visibility'));
+        }
+        return [legend, ...legend.querySelectorAll('*')].every((element) => {
+            if (element.matches('span.screen-reader-focus')) return true;
+            const style = ownerWindow.getComputedStyle(element);
+            return style.display !== 'none' && !['hidden', 'collapse'].includes(style.visibility);
+        });
+    } finally {
+        if (hasRenderMask) root.setAttribute('style', originalStyle);
+    }
+}
+
 function staticHelpPromptText(fieldsetEle, isStaticCompound) {
     const question = fieldsetEle.closest('form.question');
     const legend = fieldsetEle.querySelector(':scope > legend');
@@ -995,10 +1015,10 @@ function staticHelpPromptText(fieldsetEle, isStaticCompound) {
             || (element.getAttribute('aria-hidden') === 'true' && element.tagName !== 'BR')
             || element.style.display === 'none'
             || element.style.visibility === 'hidden'
-            || element.ownerDocument.defaultView.getComputedStyle(element).display === 'none'
             || (isHelpButton && (element.disabled || element.getAttribute('aria-disabled') === 'true'))
         ) return null;
     }
+    if (!hasVisiblePromptContent(legend)) return null;
 
     const text = legend.cloneNode(true);
     text.querySelectorAll('.screen-reader-focus').forEach((element) => element.remove());

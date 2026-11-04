@@ -115,6 +115,38 @@ describe('choice-linked numeric descriptions', () => {
     expect(quest.errors).toEqual([]);
   });
 
+  it('avoids caption IDs already mounted in the host document', async () => {
+    const existingId = 'HOST_COLLISION_1-caption';
+    let hostCaption;
+    const quest = await renderFreshQuest({
+      markdown: `
+        {"name":"HOST_CAPTION_COLLISION"}
+        [HOST_COLLISION?] Pick one.
+        (1) times per day |__|__|id=HOST_COLLISION_NUMBER min=0 max=999|
+        [END,end] Done.
+      `,
+      params: {
+        retrieve: async () => {
+          hostCaption = document.createElement('span');
+          hostCaption.id = existingId;
+          hostCaption.textContent = 'Existing host content.';
+          document.body.prepend(hostCaption);
+          return { data: {} };
+        },
+      },
+    });
+    const form = quest.root.querySelector('#HOST_COLLISION');
+    const { caption } = expectScopedHint(form, 'HOST_COLLISION_NUMBER');
+
+    expect(hostCaption.isConnected).toBe(true);
+    expect(caption.id).not.toBe(existingId);
+    expect(document.getElementById(existingId)).toBe(hostCaption);
+    expect(hostCaption.textContent).toBe('Existing host content.');
+    expect(document.querySelectorAll(`[id="${existingId}"]`)).toHaveLength(1);
+    expect(document.getElementById(caption.id)).toBe(caption);
+    expect(quest.errors).toEqual([]);
+  });
+
   it.each([
     ['aria-label', 'Existing choice name'],
     ['aria-labelledby', 'existing-choice-name'],
