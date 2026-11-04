@@ -114,6 +114,7 @@ export function manageAccessibleQuestion(
 
         // Build the question text and get the focusable element
         let focusableEle = buildQuestionText(fieldsetEle);
+        nameStaticHelpResponses(fieldsetEle);
         const transitionFocusTarget = preferredFocusTarget?.isConnected
             ? preferredFocusTarget
             : focusableEle;
@@ -958,17 +959,68 @@ function findQuestionFocusElement(fieldsetEle) {
     return fieldsetEle.querySelector('span.screen-reader-focus');
 }
 
-function hasVisiblePromptContent(legend) {
+function nameStaticHelpResponses(fieldset) {
+    // Clear only names we generated. Preserve any later host override.
+    fieldset.querySelectorAll('input[data-quest-help-choice-name]').forEach((input) => {
+        if (input.getAttribute('aria-label') === input.getAttribute('data-quest-help-choice-name')) {
+            input.removeAttribute('aria-label');
+        }
+        input.removeAttribute('data-quest-help-choice-name');
+    });
+    if (
+        moduleParams.isRenderer
+        || fieldset.tagName !== 'FIELDSET'
+        || !fieldset.parentElement?.matches('form.question')
+        || Object.hasOwn(moduleParams.asyncQuestionsMap ?? {}, fieldset.parentElement.id)
+        || fieldset.querySelector('table, fieldset, [role="radiogroup"]')
+    ) return;
+
+    const dynamic = '.displayif, [displayif], [forid], [original-forid], [name], [data-encoded-expression], [data-displaylist-args], [hidden], [inert], [contenteditable], [aria-label], [aria-labelledby]';
+    const formatting = new Set(['B', 'STRONG', 'EM', 'I', 'BR']);
+    const helpSelector = 'a.popover-dismiss[data-bs-toggle="popover"][role="button"][tabindex="0"]:not([href]), button.popover-dismiss[data-bs-toggle="popover"][tabindex="0"]';
+    for (const input of fieldset.querySelectorAll(':scope > .response > input[type="radio"]')) {
+        const response = input.parentElement;
+        const label = input.nextElementSibling;
+        if (
+            input.hasAttribute('aria-label') || input.hasAttribute('aria-labelledby')
+            || label?.tagName !== 'LABEL' || label.htmlFor !== input.id || input.labels.length !== 1
+            || !label.querySelector(helpSelector)
+            || response.matches(dynamic) || label.matches(dynamic) || label.querySelector(dynamic)
+            || [response, input, label].some((element) => element.getAttribute('aria-hidden') === 'true')
+        ) continue;
+
+        const unsupported = [...label.querySelectorAll('*')].some((element) => {
+            const isHelp = element.matches(helpSelector);
+            return (!formatting.has(element.tagName) && !isHelp)
+                || (!isHelp && (element.hasAttribute('class') || element.hasAttribute('id')
+                    || element.hasAttribute('role') || element.hasAttribute('tabindex')))
+                || (element.getAttribute('aria-hidden') === 'true' && element.tagName !== 'BR')
+                || (isHelp && (element.disabled || element.getAttribute('aria-disabled') === 'true'));
+        });
+        if (unsupported || !hasVisiblePromptContent(response)) continue;
+
+        const caption = label.cloneNode(true);
+        caption.querySelectorAll('br').forEach((br) => br.replaceWith(' '));
+        const name = caption.textContent.replace(/\s+/g, ' ').trim();
+        if (name) {
+            // Safari can summarize the rich native label instead of reading its name.
+            input.setAttribute('aria-label', name);
+            input.setAttribute('data-quest-help-choice-name', name);
+        }
+    }
+}
+
+function hasVisiblePromptContent(content) {
     const root = moduleParams.questDiv;
-    const ownerWindow = legend.ownerDocument.defaultView;
-    const hasRenderMask = root?.contains(legend) && root.style.visibility === 'hidden';
+    const ownerWindow = content.ownerDocument.defaultView;
+    const hasRenderMask = root?.contains(content) && root.style.visibility === 'hidden';
     const originalStyle = hasRenderMask ? root.getAttribute('style') : null;
     try {
         // Ignore only the host's inline render mask, synchronously and without focus.
         if (hasRenderMask) {
             root.style.setProperty('visibility', 'visible', root.style.getPropertyPriority('visibility'));
         }
-        return [legend, ...legend.querySelectorAll('*')].every((element) => {
+        return [content, ...content.querySelectorAll('*')].every((element) => {
             if (element.matches('span.screen-reader-focus')) return true;
             const style = ownerWindow.getComputedStyle(element);
             return style.display !== 'none' && !['hidden', 'collapse'].includes(style.visibility);
