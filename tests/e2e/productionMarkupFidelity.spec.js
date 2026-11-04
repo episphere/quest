@@ -50,12 +50,16 @@ const INTRO_EXPECTATIONS = {
 
 const ADDRESS_EXPECTATIONS = {
   en: {
+    choiceCaption: 'Water from the tap or refrigerator that has not been filtered or treated',
+    negation: 'not',
     popupText: 'filtered or treated',
     popupTitle: 'Informational Text',
     popupContent: 'Please only include water that has not been filtered or treated through reverse osmosis, distillation, or filters that remove lead, chlorine, pesticides, or other chemicals. You can include water filtered with water softeners, which are filters that remove only sediment from the water.',
     fallbackAddress: 'the current address you provided',
   },
   es: {
+    choiceCaption: 'Agua de la llave (grifo) o del refrigerador que no se haya filtrado o potabilizado',
+    negation: 'no',
     popupText: 'filtrado o potabilizado',
     popupTitle: 'Texto de ayuda',
     popupContent: 'Incluya solo agua que no se filtró ni que se potabilizó mediante ósmosis inversa, destilación o filtros que eliminan plomo, cloro, plaguicidas u otras sustancias químicas. Puede incluir agua filtrada con descalcificadores, que son filtros que solo eliminan los sedimentos del agua.',
@@ -279,6 +283,11 @@ test.describe('locked Module 4 rich response markup fidelity @canonical @corpus'
       ))).toBe(true);
       const help = question.getByRole('button', { name: expectation.popupText, exact: true });
       const helpLabel = question.locator('label[for="D_539909957_123108471"]');
+      const waterChoice = question.locator('input[type="radio"]').first();
+      // Speech remains a manual check; assert the native control's flat name.
+      await expect(waterChoice).toHaveAttribute('aria-label', expectation.choiceCaption);
+      await expect(waterChoice).toHaveAccessibleName(expectation.choiceCaption);
+      await expect(helpLabel.locator('b')).toHaveText(expectation.negation);
       await expect(help).toHaveCSS('color', 'rgb(42, 114, 165)');
       await helpLabel.click({ position: { x: 8, y: 8 } });
       await expect(question.locator('#D_539909957_123108471')).toBeChecked();
@@ -286,6 +295,8 @@ test.describe('locked Module 4 rich response markup fidelity @canonical @corpus'
       await expect(help).toHaveCSS('color', 'rgb(255, 255, 255)');
       await help.click();
       await expect(help).toHaveAttribute('aria-expanded', 'true');
+      await expect(waterChoice).toHaveAttribute('aria-label', expectation.choiceCaption);
+      await expect(waterChoice).toHaveAccessibleName(expectation.choiceCaption);
       await expect(question.locator('#D_539909957_123108471')).toBeChecked();
       await page.keyboard.press('Escape');
       await question.locator('label[for="D_539909957_463122075"]').click();
@@ -298,6 +309,9 @@ test.describe('locked Module 4 rich response markup fidelity @canonical @corpus'
       await goBack(page);
       await expect(activeQuestion(page, 'D_539909957')).toBeVisible();
       expect(await richAddressProjection(activeQuestion(page, 'D_539909957'))).toEqual(selected);
+      const restoredChoice = activeQuestion(page, 'D_539909957').locator('input[type="radio"]').first();
+      await expect(restoredChoice).toHaveAttribute('aria-label', expectation.choiceCaption);
+      await expect(restoredChoice).toHaveAccessibleName(expectation.choiceCaption);
       await expectHealthyHarness(page);
     });
   }
